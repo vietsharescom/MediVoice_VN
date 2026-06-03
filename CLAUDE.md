@@ -12,7 +12,7 @@
 | Project | MediVoice VN — Phần mềm quản lý phòng khám tư + AI Voice |
 | Positioning | **"Documentation Assistant"** — AI tạo nháp, BS chịu trách nhiệm |
 | Market | Phòng mạch tư nhân lâm sàng có đăng ký BYT — VN |
-| Stack | Python 3.10, FastAPI, PhoWhisper-small, PhoBERT+CRF, SQLite, Fernet, Tauri |
+| Stack | Python 3.10, FastAPI, PhoWhisper-small, PhoBERT+CRF, SQLite, Fernet, PWA |
 | Compliance | NĐ13/2023 · TT32/2023 · TT13/2025 · Luật KCB 2023 · Luật AI 134/2025 |
 | Pilot | Phòng khám Đà Nẵng (Andy) + Phòng mạch Sài Gòn (BS partner) |
 | GitHub | https://github.com/vietsharescom/MediVoice_VN |
@@ -35,10 +35,10 @@
 | Field | Value |
 |---|---|
 | Version | v0.2.0 |
-| Status | **Design finalized — sẵn sàng code Phase 0** |
-| Tests | N/A (chưa có code) |
-| Blocker | Drug database strategy (cần giải quyết trước code) |
-| Next task | BENCH-001: Benchmark PhoWhisper trên audio thực tế |
+| Status | **ISO_VN complete — sẵn sàng code Sprint 1** |
+| Tests | **61/61 PASS** (pipeline + compliance + governance) |
+| Blocker | Không — tất cả critical gaps đã đóng |
+| Next task | BENCH-001: Andy lấy audio Đà Nẵng → benchmark PhoWhisper |
 
 **Key files:**
 - [BACKLOG.md](docs/records/BACKLOG.md) — task tracker
@@ -208,8 +208,8 @@ LƯU Ý QUAN TRỌNG:
 | ASR | PhoWhisper-small (BSD-3-Clause) | Only VN medical ASR, offline |
 | Training data | VietMed dataset (MIT) | Commercial OK |
 | NLP/NER | PhoBERT + CRF (MIT) | Best VN NER |
-| Desktop | **Tauri** (Rust) | 10MB vs Electron 150MB |
-| Mobile | Web responsive (Phase 1) | Không build native app |
+| Frontend | **PWA** (FastAPI + HTML/JS) | Mobile-first — BS dùng phone |
+| Mobile | Web responsive Phase 0 | Không build native app |
 | Database | SQLite + WAL + Fernet | Simple, offline, encrypted |
 | Cloud | VN only: VNG/FPT/VNPT | NĐ13/2023 compliant |
 | Export Ph0 | PDF | Universal, no integration needed |
@@ -217,7 +217,7 @@ LƯU Ý QUAN TRỌNG:
 | Export Ph2 | FHIR R4 | When TT13/2025 enforced |
 | Zalo Ph0 | Manual share | No API risk |
 | Zalo Ph1 | Share SDK + OA (non-medical only) | Zalo bans medical content via OA |
-| Drug DB | TBD — blocker | Must resolve before L1b |
+| Drug DB | drug_db.json (110 thuốc) | Phase 0 curated, expand từ pilot |
 
 ---
 

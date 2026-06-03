@@ -6,11 +6,9 @@
 
 ## IMMEDIATE — TRƯỚC KHI CODE
 
-- [ ] **DRUG-DB-001** 🔴 Giải quyết drug database VN (mua hoặc tự xây) — blocker cho L1b
 - [ ] **LEGAL-001** 🔴 Thuê luật sư VN (healthtech + data + AI) — trước khi launch
 - [ ] **BENCH-001** 🟡 Benchmark PhoWhisper-small vs medium trên 10–20 audio thực tế từ Đà Nẵng
 - [ ] **BENCH-002** 🟡 Đo CEER (Clinical Entity Error Rate): tên thuốc VN + liều + chẩn đoán
-- [ ] **ICD-001** 🟢 Tải ICD-10-VN database (QĐ5837/BYT) — xác nhận format và license
 
 ---
 
@@ -99,14 +97,18 @@
 ## DONE
 
 - [x] Research thị trường VN (~15h, 2026-06-02)
-- [x] CLAUDE.md v1.1 → v0.2.0
-- [x] PROJECT_KICKOFF S1–S9
-- [x] BRS.md v0.1 → v0.2 (pending)
-- [x] VISION.md v0.1 → v0.2 (pending)
-- [x] BACKLOG.md, DECISIONS.md v0.2
-- [x] Git init + first commit
-- [x] Third-party review (ChatGPT + Grok + Copilot — 2026-06-03)
-- [x] Design finalization (2 layers + 3 gói + 9 modules + workflow)
+- [x] CLAUDE.md v0.2.0 — 2 layers, 3 gói, 9 modules, mobile-first
+- [x] VISION.md v0.2.0, BRS.md v0.2.0
+- [x] BACKLOG.md, DECISIONS.md v0.2.0 (32 decisions locked)
+- [x] Third-party review: ChatGPT + Grok + Copilot (A+B+C+D) — 2026-06-03
+- [x] Design finalization (2 layers + 3 gói + 9 modules + mobile-first)
+- [x] Data reference: ICD-10-VN (15,026) + TT23 (9,124) + drug_db (110) + Mẫu 15/BV-01
+- [x] Enforcement: 61 tests + pre-commit hooks + pipeline stubs L0–L10
+- [x] ISO_VN framework: CONSTITUTION + governance code + risk engine
+- [x] DRUG-DB-001: drug_db.json 110 thuốc (TT07/2017 + TT28/2024) ✅
+- [x] ICD-001: icd10vn.json 15,026 mã (HL7 Vietnam) ✅
+- [x] PROJECT_KICKOFF S1–S9 done (S10 Andy ký sau)
+- [x] Git init + 6 commits + pushed to GitHub
 
 ---
 
