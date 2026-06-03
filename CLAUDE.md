@@ -19,14 +19,20 @@
 
 ---
 
-## SESSION START — ĐỌC CÁI NÀY TRƯỚC
+## ⚡ CLAUDE: ĐỌC FILE NÀY → LÀM NGAY 4 BƯỚC SAU
+
+> Claude PHẢI tự động thực hiện khi Andy mở phiên mới — không cần nhắc.
+> Kích hoạt khi Andy nói: "bắt đầu", "start", "mở phiên", hoặc câu đầu tiên bất kỳ.
 
 ```
-1. Đọc: Section CURRENT STATE bên dưới
-2. Đọc: BACKLOG.md (xem TODO + DOING)
-3. Chạy: python -m pytest tests/ -q  (sau khi có code)
-4. Báo cáo 1 dòng: "v{X} | {N} tests | Next: {task} | Ready."
+BƯỚC 1: Đọc CURRENT STATE (section ngay dưới đây)
+BƯỚC 2: Đọc docs/records/BACKLOG.md (task IMMEDIATE + PHASE 0)
+BƯỚC 3: Chạy: pytest tests/ -q
+BƯỚC 4: Báo cáo 1 dòng duy nhất:
+         "v{X} | {N} tests PASS | Next: {task} | Ready."
 ```
+
+**Không hỏi gì thêm. Chỉ báo cáo 1 dòng rồi chờ Andy.**
 
 ---
 
@@ -251,13 +257,45 @@ KPIs Pilot:
 
 ---
 
-## SESSION END
+## ⚡ CLAUDE: KẾT THÚC PHIÊN — LÀM NGAY 5 BƯỚC
+
+> Kích hoạt khi Andy nói: "đóng phiên", "kết thúc", "close session".
 
 ```
-1. Update BACKLOG.md (move DOING → DONE, add new tasks)
-2. Update CHANGELOG.md nếu có code thay đổi
-3. Update CURRENT STATE section bên trên
-4. Báo: "Done. Remaining: {task list}"
+BƯỚC 1: Update BACKLOG.md
+         - DOING → DONE cho tasks đã hoàn thành
+         - Thêm tasks mới nếu phát sinh
+
+BƯỚC 2: Update CHANGELOG.md
+         - Thêm entry nếu có code thay đổi
+
+BƯỚC 3: Update CURRENT STATE (section trên)
+         - Version, Status, Tests, Blocker, Next task
+
+BƯỚC 4: Tạo session report
+         File: docs/records/sessions/DS-VN-SES-YYYYMMDD.md
+         (xem template bên dưới)
+
+BƯỚC 5: git add -A && git commit && git push
+         Message: "chore(session-end): close session YYYY-MM-DD"
+```
+
+### Template session report (DS-VN-SES-YYYYMMDD.md)
+
+```markdown
+# DS-VN-SES-YYYYMMDD
+# MediVoice VN | Session YYYY-MM-DD
+# ISO/IEC 42001:2023 Cl.7.5 + Cl.9.1
+
+## Trạng thái đầu → cuối
+v{X} | {N} tests → v{X} | {N} tests
+
+## Đã hoàn thành
+- task 1
+- task 2
+
+## Phiên mới tiếp theo
+Next: {task}
 ```
 
 ---
