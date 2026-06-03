@@ -13,7 +13,7 @@
 | Market | Vietnam — phòng khám tư nhân, trung tâm CĐHA |
 | Stack | Python 3.10, FastAPI, PhoWhisper-small, PhoBERT+CRF, SQLite, Fernet |
 | Compliance | ISO_VN: NĐ13/2023 · TT32/2023 · TT13/2025 · Luật AI 134/2025 |
-| GitHub | TBD |
+| GitHub | https://github.com/vietsharescom/MediVoice_VN |
 
 ---
 
