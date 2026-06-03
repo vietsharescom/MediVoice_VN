@@ -1,0 +1,4069 @@
+{
+  "_meta": {
+    "source": "MediVoice VN Phase 0 Drug Database",
+    "sources_used": [
+      "TT07/2017/TT-BYT - Danh muc thuoc khong ke don (243 hoat chat)",
+      "TT28/2024/TT-BYT - Danh muc thuoc thiet yeu",
+      "Common VN primary care prescriptions"
+    ],
+    "total_drugs": 110,
+    "version": "0.1.0",
+    "categories": {
+      "Giảm đau": 3,
+      "Chống viêm NSAIDs": 4,
+      "Chống viêm COX-2": 2,
+      "Kháng sinh Penicillin": 1,
+      "Kháng sinh Penicillin + ức chế beta-lactamase": 1,
+      "Kháng sinh Macrolide": 2,
+      "Kháng sinh Cephalosporin 1G": 1,
+      "Kháng sinh Cephalosporin 2G": 1,
+      "Kháng sinh Cephalosporin 3G": 1,
+      "Kháng sinh Quinolone": 2,
+      "Kháng sinh Tetracycline": 2,
+      "Kháng sinh Nitroimidazole": 1,
+      "Kháng sinh Sulfonamide": 1,
+      "Tiêu đờm": 2,
+      "Long đờm": 1,
+      "Giãn phế quản beta-2": 1,
+      "Giãn phế quản Xanthine": 1,
+      "Chống dị ứng": 1,
+      "Kháng histamine thế hệ 2": 4,
+      "Corticosteroid": 2,
+      "Ức chế bơm proton": 3,
+      "Kháng H2": 2,
+      "Prokinetic": 2,
+      "Chống nôn 5-HT3": 1,
+      "Cầm tiêu chảy": 1,
+      "Bảo vệ niêm mạc": 1,
+      "Nhuận tràng": 1,
+      "Nhuận tràng kích thích": 1,
+      "Chống co thắt ruột": 2,
+      "Hạ áp Calcium antagonist": 1,
+      "Hạ áp ARB": 2,
+      "Hạ áp ACE inhibitor": 2,
+      "Beta-blocker": 2,
+      "Lợi tiểu quai Henle": 1,
+      "Lợi tiểu Thiazide": 1,
+      "Hạ lipid Statin": 3,
+      "Chống đông máu": 1,
+      "Kháng tiểu cầu": 1,
+      "Nitrate": 1,
+      "Nitrate cấp": 1,
+      "Tiểu đường type 2 Biguanide": 1,
+      "Tiểu đường type 2 Sulfonylurea": 3,
+      "Insulin tác dụng nhanh": 1,
+      "Tiểu đường DPP-4 inhibitor": 1,
+      "Thần kinh": 2,
+      "Chống trầm cảm TCA": 1,
+      "Benzodiazepine": 2,
+      "Điều trị migraine": 1,
+      "Chóng mặt": 2,
+      "Bổ sung khớp": 1,
+      "Gout cấp": 1,
+      "Hạ acid uric": 1,
+      "Bổ sung canxi": 1,
+      "Chống nấm Azole": 1,
+      "Chống nấm toàn thân": 1,
+      "Kháng virus Herpes": 1,
+      "Kháng sinh tại chỗ": 1,
+      "Corticosteroid tại chỗ": 1,
+      "Kháng sinh nhỏ mắt": 2,
+      "Thông mũi": 1,
+      "Vitamin": 2,
+      "Vitamin nhóm B": 4,
+      "Khoáng chất": 3,
+      "Tẩy giun": 3,
+      "Hormone tuyến giáp": 1,
+      "Chống cường giáp": 1,
+      "Alpha-blocker": 1,
+      "5-alpha reductase inhibitor": 1,
+      "Corticosteroid tiêm": 1,
+      "NSAIDs tiêm": 1,
+      "NSAIDs mạnh": 1,
+      "Opioid nhẹ": 1
+    },
+    "otc_count": 38,
+    "rx_count": 72
+  },
+  "by_inn": {
+    "Paracetamol": {
+      "inn": "Paracetamol",
+      "brands": [
+        "Panadol",
+        "Efferalgan",
+        "Tylenol",
+        "Hapacol",
+        "Doliprane",
+        "Paracetamol"
+      ],
+      "forms": [
+        "viên 500mg",
+        "viên 325mg",
+        "gói bột 250mg",
+        "siro 120mg/5ml",
+        "đặt hậu môn 150mg"
+      ],
+      "typical": "500mg - 1g x 3-4 lần/ngày",
+      "category": "Giảm đau / Hạ sốt",
+      "otc": true,
+      "keywords": [
+        "para",
+        "paracetamol",
+        "hapacol",
+        "panadol",
+        "efferalgan",
+        "hạ sốt",
+        "giảm đau đầu"
+      ]
+    },
+    "Ibuprofen": {
+      "inn": "Ibuprofen",
+      "brands": [
+        "Brufen",
+        "Advil",
+        "Nurofen",
+        "Ibuprofen"
+      ],
+      "forms": [
+        "viên 200mg",
+        "viên 400mg",
+        "viên 600mg",
+        "gói cốm 200mg",
+        "siro 100mg/5ml"
+      ],
+      "typical": "400mg x 3 lần/ngày sau ăn",
+      "category": "Giảm đau / Hạ sốt / Chống viêm",
+      "otc": true,
+      "keywords": [
+        "ibuprofen",
+        "brufen",
+        "advil",
+        "nurofen"
+      ]
+    },
+    "Aspirin (Acetylsalicylic acid)": {
+      "inn": "Aspirin (Acetylsalicylic acid)",
+      "brands": [
+        "Aspirin",
+        "Aspegic",
+        "Cardioaspirin"
+      ],
+      "forms": [
+        "viên 100mg",
+        "viên 325mg",
+        "viên 500mg",
+        "gói bột 100mg"
+      ],
+      "typical": "100mg/ngày (tim mạch); 500mg x 3 lần (giảm đau)",
+      "category": "Giảm đau / Chống kết tập tiểu cầu",
+      "otc": true,
+      "keywords": [
+        "aspirin",
+        "aspegic",
+        "acetylsalicylic",
+        "aspirin 81",
+        "aspirin 100"
+      ]
+    },
+    "Diclofenac": {
+      "inn": "Diclofenac",
+      "brands": [
+        "Voltaren",
+        "Cataflam",
+        "Diclofenac",
+        "Clofen"
+      ],
+      "forms": [
+        "viên 25mg",
+        "viên 50mg",
+        "viên 75mg",
+        "gel bôi",
+        "ống tiêm 75mg"
+      ],
+      "typical": "50mg x 2-3 lần/ngày sau ăn",
+      "category": "Chống viêm NSAIDs",
+      "otc": true,
+      "keywords": [
+        "diclofenac",
+        "voltaren",
+        "cataflam",
+        "clofen"
+      ]
+    },
+    "Meloxicam": {
+      "inn": "Meloxicam",
+      "brands": [
+        "Mobic",
+        "Meloxicam",
+        "Loxitane"
+      ],
+      "forms": [
+        "viên 7.5mg",
+        "viên 15mg",
+        "ống tiêm 15mg"
+      ],
+      "typical": "7.5-15mg x 1 lần/ngày",
+      "category": "Chống viêm NSAIDs",
+      "otc": false,
+      "keywords": [
+        "meloxicam",
+        "mobic",
+        "7.5mg",
+        "15mg"
+      ]
+    },
+    "Naproxen": {
+      "inn": "Naproxen",
+      "brands": [
+        "Naprosyn",
+        "Aleve",
+        "Naproxen"
+      ],
+      "forms": [
+        "viên 250mg",
+        "viên 500mg"
+      ],
+      "typical": "500mg x 2 lần/ngày",
+      "category": "Chống viêm NSAIDs",
+      "otc": true,
+      "keywords": [
+        "naproxen",
+        "naprosyn"
+      ]
+    },
+    "Celecoxib": {
+      "inn": "Celecoxib",
+      "brands": [
+        "Celebrex",
+        "Celecoxib"
+      ],
+      "forms": [
+        "viên 100mg",
+        "viên 200mg"
+      ],
+      "typical": "200mg x 1-2 lần/ngày",
+      "category": "Chống viêm COX-2",
+      "otc": false,
+      "keywords": [
+        "celecoxib",
+        "celebrex"
+      ]
+    },
+    "Piroxicam": {
+      "inn": "Piroxicam",
+      "brands": [
+        "Feldene",
+        "Piroxicam"
+      ],
+      "forms": [
+        "viên 10mg",
+        "viên 20mg",
+        "gel bôi"
+      ],
+      "typical": "20mg x 1 lần/ngày",
+      "category": "Chống viêm NSAIDs",
+      "otc": true,
+      "keywords": [
+        "piroxicam",
+        "feldene"
+      ]
+    },
+    "Amoxicillin": {
+      "inn": "Amoxicillin",
+      "brands": [
+        "Amoxicillin",
+        "Augmentin (+ clavulanate)",
+        "Amoxil",
+        "Clamoxyl"
+      ],
+      "forms": [
+        "viên 250mg",
+        "viên 500mg",
+        "gói bột 250mg",
+        "siro 125mg/5ml",
+        "viên 875mg"
+      ],
+      "typical": "500mg x 3 lần/ngày x 5-7 ngày",
+      "category": "Kháng sinh Penicillin",
+      "otc": false,
+      "keywords": [
+        "amoxicillin",
+        "amoxil",
+        "amox",
+        "augmentin",
+        "clamoxyl",
+        "penicillin"
+      ]
+    },
+    "Amoxicillin/Clavulanate": {
+      "inn": "Amoxicillin/Clavulanate",
+      "brands": [
+        "Augmentin",
+        "Co-Amoxiclav",
+        "Curam"
+      ],
+      "forms": [
+        "viên 625mg",
+        "viên 1000mg",
+        "gói bột 312.5mg",
+        "siro 228mg/5ml"
+      ],
+      "typical": "625mg x 3 lần/ngày hoặc 1000mg x 2 lần/ngày",
+      "category": "Kháng sinh Penicillin + ức chế beta-lactamase",
+      "otc": false,
+      "keywords": [
+        "augmentin",
+        "co-amoxiclav",
+        "amoxicillin clavulanate",
+        "curam"
+      ]
+    },
+    "Azithromycin": {
+      "inn": "Azithromycin",
+      "brands": [
+        "Zithromax",
+        "Azithromycin",
+        "Azicin",
+        "Azitro"
+      ],
+      "forms": [
+        "viên 250mg",
+        "viên 500mg",
+        "gói bột 200mg/5ml"
+      ],
+      "typical": "500mg x 1 lần/ngày x 3 ngày",
+      "category": "Kháng sinh Macrolide",
+      "otc": false,
+      "keywords": [
+        "azithromycin",
+        "zithromax",
+        "azicin",
+        "azitro",
+        "azithro"
+      ]
+    },
+    "Clarithromycin": {
+      "inn": "Clarithromycin",
+      "brands": [
+        "Klacid",
+        "Klaricid",
+        "Clarithromycin"
+      ],
+      "forms": [
+        "viên 250mg",
+        "viên 500mg",
+        "gói cốm 125mg/5ml"
+      ],
+      "typical": "500mg x 2 lần/ngày x 7-14 ngày",
+      "category": "Kháng sinh Macrolide",
+      "otc": false,
+      "keywords": [
+        "clarithromycin",
+        "klacid",
+        "klaricid"
+      ]
+    },
+    "Cephalexin": {
+      "inn": "Cephalexin",
+      "brands": [
+        "Keflex",
+        "Cephalexin",
+        "Cefalexin"
+      ],
+      "forms": [
+        "viên 250mg",
+        "viên 500mg",
+        "gói bột 125mg/5ml"
+      ],
+      "typical": "500mg x 4 lần/ngày",
+      "category": "Kháng sinh Cephalosporin 1G",
+      "otc": false,
+      "keywords": [
+        "cephalexin",
+        "cefalexin",
+        "keflex",
+        "cephalosporin"
+      ]
+    },
+    "Cefuroxime": {
+      "inn": "Cefuroxime",
+      "brands": [
+        "Zinnat",
+        "Cefuroxime",
+        "Cefoxim"
+      ],
+      "forms": [
+        "viên 125mg",
+        "viên 250mg",
+        "viên 500mg",
+        "gói bột 125mg/5ml"
+      ],
+      "typical": "250-500mg x 2 lần/ngày",
+      "category": "Kháng sinh Cephalosporin 2G",
+      "otc": false,
+      "keywords": [
+        "cefuroxime",
+        "zinnat",
+        "cefoxim"
+      ]
+    },
+    "Cefixime": {
+      "inn": "Cefixime",
+      "brands": [
+        "Suprax",
+        "Cefix",
+        "Cefixime",
+        "Cefspan"
+      ],
+      "forms": [
+        "viên 100mg",
+        "viên 200mg",
+        "gói bột 100mg/5ml"
+      ],
+      "typical": "200mg x 2 lần/ngày hoặc 400mg x 1 lần/ngày",
+      "category": "Kháng sinh Cephalosporin 3G",
+      "otc": false,
+      "keywords": [
+        "cefixime",
+        "suprax",
+        "cefix",
+        "cefspan"
+      ]
+    },
+    "Ciprofloxacin": {
+      "inn": "Ciprofloxacin",
+      "brands": [
+        "Cipro",
+        "Ciprofloxacin",
+        "Cifran"
+      ],
+      "forms": [
+        "viên 250mg",
+        "viên 500mg",
+        "viên 750mg"
+      ],
+      "typical": "500mg x 2 lần/ngày x 7-14 ngày",
+      "category": "Kháng sinh Quinolone",
+      "otc": false,
+      "keywords": [
+        "ciprofloxacin",
+        "cipro",
+        "cifran",
+        "quinolone"
+      ]
+    },
+    "Levofloxacin": {
+      "inn": "Levofloxacin",
+      "brands": [
+        "Tavanic",
+        "Levofloxacin",
+        "Levaquin"
+      ],
+      "forms": [
+        "viên 250mg",
+        "viên 500mg",
+        "viên 750mg"
+      ],
+      "typical": "500mg x 1 lần/ngày x 7-10 ngày",
+      "category": "Kháng sinh Quinolone",
+      "otc": false,
+      "keywords": [
+        "levofloxacin",
+        "tavanic",
+        "levaquin"
+      ]
+    },
+    "Doxycycline": {
+      "inn": "Doxycycline",
+      "brands": [
+        "Vibramycin",
+        "Doxycycline",
+        "Doxymycin"
+      ],
+      "forms": [
+        "viên 100mg"
+      ],
+      "typical": "100mg x 2 lần/ngày x 7 ngày",
+      "category": "Kháng sinh Tetracycline",
+      "otc": false,
+      "keywords": [
+        "doxycycline",
+        "vibramycin",
+        "doxymycin"
+      ]
+    },
+    "Metronidazole": {
+      "inn": "Metronidazole",
+      "brands": [
+        "Flagyl",
+        "Metronidazole",
+        "Klion"
+      ],
+      "forms": [
+        "viên 250mg",
+        "viên 500mg",
+        "gel âm đạo"
+      ],
+      "typical": "500mg x 3 lần/ngày x 7 ngày",
+      "category": "Kháng sinh Nitroimidazole",
+      "otc": false,
+      "keywords": [
+        "metronidazole",
+        "flagyl",
+        "klion",
+        "metronidazol"
+      ]
+    },
+    "Trimethoprim/Sulfamethoxazole": {
+      "inn": "Trimethoprim/Sulfamethoxazole",
+      "brands": [
+        "Bactrim",
+        "Biseptol",
+        "Cotrimoxazole"
+      ],
+      "forms": [
+        "viên 480mg (80+400mg)",
+        "viên 960mg"
+      ],
+      "typical": "960mg x 2 lần/ngày x 5-7 ngày",
+      "category": "Kháng sinh Sulfonamide",
+      "otc": false,
+      "keywords": [
+        "cotrimoxazole",
+        "bactrim",
+        "biseptol",
+        "trimethoprim",
+        "sulfamethoxazole"
+      ]
+    },
+    "Tetracycline": {
+      "inn": "Tetracycline",
+      "brands": [
+        "Tetracycline"
+      ],
+      "forms": [
+        "viên 250mg",
+        "viên 500mg"
+      ],
+      "typical": "500mg x 4 lần/ngày",
+      "category": "Kháng sinh Tetracycline",
+      "otc": false,
+      "keywords": [
+        "tetracycline"
+      ]
+    },
+    "Ambroxol": {
+      "inn": "Ambroxol",
+      "brands": [
+        "Mucosolvan",
+        "Ambroxol",
+        "Mucosol",
+        "Ambrobene"
+      ],
+      "forms": [
+        "viên 30mg",
+        "siro 15mg/5ml",
+        "ống tiêm 15mg"
+      ],
+      "typical": "30mg x 3 lần/ngày",
+      "category": "Tiêu đờm",
+      "otc": true,
+      "keywords": [
+        "ambroxol",
+        "mucosolvan",
+        "mucosol",
+        "tiêu đờm",
+        "long đờm"
+      ]
+    },
+    "Bromhexine": {
+      "inn": "Bromhexine",
+      "brands": [
+        "Bisolvon",
+        "Bromhexine",
+        "Bromhexin"
+      ],
+      "forms": [
+        "viên 8mg",
+        "siro 4mg/5ml"
+      ],
+      "typical": "8mg x 3 lần/ngày",
+      "category": "Tiêu đờm",
+      "otc": true,
+      "keywords": [
+        "bromhexine",
+        "bromhexin",
+        "bisolvon"
+      ]
+    },
+    "Guaifenesin": {
+      "inn": "Guaifenesin",
+      "brands": [
+        "Robitussin",
+        "Guaifenesin",
+        "Tussin"
+      ],
+      "forms": [
+        "viên 200mg",
+        "siro 100mg/5ml"
+      ],
+      "typical": "200-400mg x 4 lần/ngày",
+      "category": "Long đờm",
+      "otc": true,
+      "keywords": [
+        "guaifenesin",
+        "guaiphenesin",
+        "robitussin"
+      ]
+    },
+    "Salbutamol": {
+      "inn": "Salbutamol",
+      "brands": [
+        "Ventolin",
+        "Salbutamol",
+        "Albuterol",
+        "Proventil"
+      ],
+      "forms": [
+        "viên 2mg",
+        "viên 4mg",
+        "bình xịt 100mcg/nhát",
+        "khí dung 2.5mg/2.5ml"
+      ],
+      "typical": "2-4mg x 3-4 lần/ngày; MDI: 1-2 nhát x 3-4 lần/ngày",
+      "category": "Giãn phế quản beta-2",
+      "otc": false,
+      "keywords": [
+        "salbutamol",
+        "ventolin",
+        "albuterol",
+        "giãn phế quản",
+        "khó thở",
+        "hen"
+      ]
+    },
+    "Theophylline": {
+      "inn": "Theophylline",
+      "brands": [
+        "Theostat",
+        "Theodur",
+        "Uniphylline"
+      ],
+      "forms": [
+        "viên 100mg",
+        "viên 200mg",
+        "viên phóng thích chậm 300mg"
+      ],
+      "typical": "200-400mg x 2 lần/ngày",
+      "category": "Giãn phế quản Xanthine",
+      "otc": false,
+      "keywords": [
+        "theophylline",
+        "theostat",
+        "theodur"
+      ]
+    },
+    "Montelukast": {
+      "inn": "Montelukast",
+      "brands": [
+        "Singulair",
+        "Montelukast"
+      ],
+      "forms": [
+        "viên nhai 4mg",
+        "viên nhai 5mg",
+        "viên 10mg"
+      ],
+      "typical": "10mg x 1 lần/ngày (buổi tối)",
+      "category": "Chống dị ứng / hen",
+      "otc": false,
+      "keywords": [
+        "montelukast",
+        "singulair"
+      ]
+    },
+    "Cetirizine": {
+      "inn": "Cetirizine",
+      "brands": [
+        "Zyrtec",
+        "Cetirizine",
+        "Cetizin",
+        "Reactine"
+      ],
+      "forms": [
+        "viên 5mg",
+        "viên 10mg",
+        "siro 5mg/5ml"
+      ],
+      "typical": "10mg x 1 lần/ngày",
+      "category": "Kháng histamine thế hệ 2",
+      "otc": true,
+      "keywords": [
+        "cetirizine",
+        "cetirizin",
+        "zyrtec",
+        "cetizin",
+        "reactine",
+        "dị ứng",
+        "nổi mề đay"
+      ]
+    },
+    "Loratadine": {
+      "inn": "Loratadine",
+      "brands": [
+        "Claritin",
+        "Clarityne",
+        "Loratadin"
+      ],
+      "forms": [
+        "viên 10mg",
+        "siro 5mg/5ml"
+      ],
+      "typical": "10mg x 1 lần/ngày",
+      "category": "Kháng histamine thế hệ 2",
+      "otc": true,
+      "keywords": [
+        "loratadine",
+        "loratadin",
+        "claritin",
+        "clarityne"
+      ]
+    },
+    "Fexofenadine": {
+      "inn": "Fexofenadine",
+      "brands": [
+        "Telfast",
+        "Fexofenadine",
+        "Allegra"
+      ],
+      "forms": [
+        "viên 60mg",
+        "viên 120mg",
+        "viên 180mg"
+      ],
+      "typical": "120-180mg x 1 lần/ngày",
+      "category": "Kháng histamine thế hệ 2",
+      "otc": true,
+      "keywords": [
+        "fexofenadine",
+        "fexofenadin",
+        "telfast",
+        "allegra"
+      ]
+    },
+    "Desloratadine": {
+      "inn": "Desloratadine",
+      "brands": [
+        "Aerius",
+        "Desloratadine"
+      ],
+      "forms": [
+        "viên 5mg",
+        "siro 2.5mg/5ml"
+      ],
+      "typical": "5mg x 1 lần/ngày",
+      "category": "Kháng histamine thế hệ 2",
+      "otc": true,
+      "keywords": [
+        "desloratadine",
+        "desloratadin",
+        "aerius"
+      ]
+    },
+    "Prednisolone": {
+      "inn": "Prednisolone",
+      "brands": [
+        "Prednisolone",
+        "Predsol",
+        "Solone"
+      ],
+      "forms": [
+        "viên 5mg",
+        "viên 20mg",
+        "viên 30mg"
+      ],
+      "typical": "20-60mg/ngày (tùy chỉ định)",
+      "category": "Corticosteroid",
+      "otc": false,
+      "keywords": [
+        "prednisolone",
+        "predsol",
+        "corticoid",
+        "cortison"
+      ]
+    },
+    "Dexamethasone": {
+      "inn": "Dexamethasone",
+      "brands": [
+        "Dexamethasone",
+        "Decadron",
+        "Dexa"
+      ],
+      "forms": [
+        "viên 0.5mg",
+        "ống tiêm 4mg/1ml",
+        "ống tiêm 8mg/2ml"
+      ],
+      "typical": "0.5-9mg/ngày (tùy chỉ định)",
+      "category": "Corticosteroid",
+      "otc": false,
+      "keywords": [
+        "dexamethasone",
+        "dexamethason",
+        "decadron",
+        "dexa",
+        "corticoid"
+      ]
+    },
+    "Omeprazole": {
+      "inn": "Omeprazole",
+      "brands": [
+        "Losec",
+        "Prilosec",
+        "Omeprazol",
+        "Omeprazole",
+        "Lomac"
+      ],
+      "forms": [
+        "viên 10mg",
+        "viên 20mg",
+        "viên 40mg",
+        "ống tiêm 40mg"
+      ],
+      "typical": "20-40mg x 1 lần/ngày trước ăn sáng",
+      "category": "Ức chế bơm proton",
+      "otc": true,
+      "keywords": [
+        "omeprazole",
+        "omeprazol",
+        "losec",
+        "prilosec",
+        "lomac",
+        "ppi",
+        "dạ dày",
+        "loét",
+        "trào ngược"
+      ]
+    },
+    "Esomeprazole": {
+      "inn": "Esomeprazole",
+      "brands": [
+        "Nexium",
+        "Esomeprazole"
+      ],
+      "forms": [
+        "viên 20mg",
+        "viên 40mg"
+      ],
+      "typical": "20-40mg x 1 lần/ngày",
+      "category": "Ức chế bơm proton",
+      "otc": false,
+      "keywords": [
+        "esomeprazole",
+        "nexium",
+        "esomeprazol"
+      ]
+    },
+    "Pantoprazole": {
+      "inn": "Pantoprazole",
+      "brands": [
+        "Pantoloc",
+        "Protonix",
+        "Pantoprazole"
+      ],
+      "forms": [
+        "viên 20mg",
+        "viên 40mg",
+        "ống tiêm 40mg"
+      ],
+      "typical": "40mg x 1 lần/ngày",
+      "category": "Ức chế bơm proton",
+      "otc": false,
+      "keywords": [
+        "pantoprazole",
+        "pantoprazol",
+        "pantoloc",
+        "protonix"
+      ]
+    },
+    "Famotidine": {
+      "inn": "Famotidine",
+      "brands": [
+        "Pepcid",
+        "Famotidin",
+        "Famotidine"
+      ],
+      "forms": [
+        "viên 20mg",
+        "viên 40mg"
+      ],
+      "typical": "20mg x 2 lần/ngày hoặc 40mg x 1 lần/ngày",
+      "category": "Kháng H2",
+      "otc": true,
+      "keywords": [
+        "famotidine",
+        "famotidin",
+        "pepcid"
+      ]
+    },
+    "Ranitidine": {
+      "inn": "Ranitidine",
+      "brands": [
+        "Zantac",
+        "Ranitidine",
+        "Ranitidin"
+      ],
+      "forms": [
+        "viên 150mg",
+        "viên 300mg"
+      ],
+      "typical": "150mg x 2 lần/ngày hoặc 300mg x 1 lần/ngày",
+      "category": "Kháng H2",
+      "otc": true,
+      "keywords": [
+        "ranitidine",
+        "ranitidin",
+        "zantac"
+      ]
+    },
+    "Domperidone": {
+      "inn": "Domperidone",
+      "brands": [
+        "Motilium",
+        "Domperidone",
+        "Dompan"
+      ],
+      "forms": [
+        "viên 10mg",
+        "hỗn dịch 5mg/5ml",
+        "viên nhai 10mg"
+      ],
+      "typical": "10mg x 3 lần/ngày trước ăn",
+      "category": "Prokinetic / Chống nôn",
+      "otc": false,
+      "keywords": [
+        "domperidone",
+        "domperidon",
+        "motilium",
+        "dompan",
+        "buồn nôn",
+        "nôn"
+      ]
+    },
+    "Metoclopramide": {
+      "inn": "Metoclopramide",
+      "brands": [
+        "Primperan",
+        "Metoclopramide",
+        "Plasil"
+      ],
+      "forms": [
+        "viên 10mg",
+        "ống tiêm 10mg"
+      ],
+      "typical": "10mg x 3 lần/ngày trước ăn",
+      "category": "Prokinetic / Chống nôn",
+      "otc": false,
+      "keywords": [
+        "metoclopramide",
+        "metoclopramid",
+        "primperan",
+        "plasil"
+      ]
+    },
+    "Ondansetron": {
+      "inn": "Ondansetron",
+      "brands": [
+        "Zofran",
+        "Ondansetron",
+        "Zofran ODT"
+      ],
+      "forms": [
+        "viên 4mg",
+        "viên 8mg",
+        "ống tiêm 4mg/2ml",
+        "viên tan 4mg"
+      ],
+      "typical": "4-8mg x 2-3 lần/ngày",
+      "category": "Chống nôn 5-HT3",
+      "otc": false,
+      "keywords": [
+        "ondansetron",
+        "zofran",
+        "nôn sau hóa trị",
+        "chống nôn"
+      ]
+    },
+    "Loperamide": {
+      "inn": "Loperamide",
+      "brands": [
+        "Imodium",
+        "Loperamide",
+        "Loperamid"
+      ],
+      "forms": [
+        "viên 2mg",
+        "nang 2mg"
+      ],
+      "typical": "4mg liều đầu, sau đó 2mg mỗi lần tiêu chảy",
+      "category": "Cầm tiêu chảy",
+      "otc": true,
+      "keywords": [
+        "loperamide",
+        "loperamid",
+        "imodium",
+        "tiêu chảy"
+      ]
+    },
+    "Diosmectite": {
+      "inn": "Diosmectite",
+      "brands": [
+        "Smecta",
+        "Diosmectit",
+        "Smetite"
+      ],
+      "forms": [
+        "gói bột 3g"
+      ],
+      "typical": "1 gói x 3 lần/ngày",
+      "category": "Bảo vệ niêm mạc / tiêu chảy",
+      "otc": true,
+      "keywords": [
+        "smecta",
+        "diosmectite",
+        "diosmectit",
+        "smetite",
+        "tiêu chảy"
+      ]
+    },
+    "Lactulose": {
+      "inn": "Lactulose",
+      "brands": [
+        "Duphalac",
+        "Lactulose",
+        "Laevolac"
+      ],
+      "forms": [
+        "chai siro 667mg/ml",
+        "gói 10g/15ml"
+      ],
+      "typical": "15-30ml x 1-3 lần/ngày",
+      "category": "Nhuận tràng",
+      "otc": false,
+      "keywords": [
+        "lactulose",
+        "duphalac",
+        "laevolac",
+        "táo bón"
+      ]
+    },
+    "Bisacodyl": {
+      "inn": "Bisacodyl",
+      "brands": [
+        "Dulcolax",
+        "Bisacodyl",
+        "Norgalax"
+      ],
+      "forms": [
+        "viên bọc 5mg",
+        "viên đặt 10mg"
+      ],
+      "typical": "5-10mg x 1 lần/ngày trước ngủ",
+      "category": "Nhuận tràng kích thích",
+      "otc": true,
+      "keywords": [
+        "bisacodyl",
+        "dulcolax",
+        "táo bón",
+        "nhuận tràng"
+      ]
+    },
+    "Alverin + Simethicone": {
+      "inn": "Alverin + Simethicone",
+      "brands": [
+        "Meteospasmyl",
+        "Spasmaverine"
+      ],
+      "forms": [
+        "viên nang"
+      ],
+      "typical": "1 viên x 3 lần/ngày trước ăn",
+      "category": "Chống co thắt ruột",
+      "otc": false,
+      "keywords": [
+        "alverin",
+        "spasmaverine",
+        "meteospasmyl",
+        "đau bụng",
+        "ruột kích thích"
+      ]
+    },
+    "Mebeverine": {
+      "inn": "Mebeverine",
+      "brands": [
+        "Duspatalin",
+        "Mebeverine",
+        "Duspatol"
+      ],
+      "forms": [
+        "viên 135mg",
+        "viên 200mg phóng thích chậm"
+      ],
+      "typical": "135mg x 3 lần/ngày trước ăn 20 phút",
+      "category": "Chống co thắt ruột",
+      "otc": false,
+      "keywords": [
+        "mebeverine",
+        "duspatalin",
+        "duspatol",
+        "ruột kích thích",
+        "đau bụng"
+      ]
+    },
+    "Amlodipine": {
+      "inn": "Amlodipine",
+      "brands": [
+        "Norvasc",
+        "Amlodipine",
+        "Amlor",
+        "Amlodipin"
+      ],
+      "forms": [
+        "viên 5mg",
+        "viên 10mg"
+      ],
+      "typical": "5-10mg x 1 lần/ngày",
+      "category": "Hạ áp Calcium antagonist",
+      "otc": false,
+      "keywords": [
+        "amlodipine",
+        "amlodipine",
+        "norvasc",
+        "amlor",
+        "amlodipin",
+        "huyết áp",
+        "cao huyết áp"
+      ]
+    },
+    "Losartan": {
+      "inn": "Losartan",
+      "brands": [
+        "Cozaar",
+        "Losartan",
+        "Lozar"
+      ],
+      "forms": [
+        "viên 25mg",
+        "viên 50mg",
+        "viên 100mg"
+      ],
+      "typical": "50-100mg x 1 lần/ngày",
+      "category": "Hạ áp ARB",
+      "otc": false,
+      "keywords": [
+        "losartan",
+        "cozaar",
+        "lozar",
+        "huyết áp",
+        "arb"
+      ]
+    },
+    "Valsartan": {
+      "inn": "Valsartan",
+      "brands": [
+        "Diovan",
+        "Valsartan"
+      ],
+      "forms": [
+        "viên 40mg",
+        "viên 80mg",
+        "viên 160mg",
+        "viên 320mg"
+      ],
+      "typical": "80-320mg x 1 lần/ngày",
+      "category": "Hạ áp ARB",
+      "otc": false,
+      "keywords": [
+        "valsartan",
+        "diovan"
+      ]
+    },
+    "Enalapril": {
+      "inn": "Enalapril",
+      "brands": [
+        "Vasotec",
+        "Enalapril",
+        "Renitec"
+      ],
+      "forms": [
+        "viên 5mg",
+        "viên 10mg",
+        "viên 20mg"
+      ],
+      "typical": "5-20mg x 1-2 lần/ngày",
+      "category": "Hạ áp ACE inhibitor",
+      "otc": false,
+      "keywords": [
+        "enalapril",
+        "vasotec",
+        "renitec",
+        "acei",
+        "ace inhibitor"
+      ]
+    },
+    "Perindopril": {
+      "inn": "Perindopril",
+      "brands": [
+        "Coversyl",
+        "Perindopril",
+        "Prestalia"
+      ],
+      "forms": [
+        "viên 4mg",
+        "viên 8mg",
+        "viên 10mg"
+      ],
+      "typical": "4-10mg x 1 lần/ngày",
+      "category": "Hạ áp ACE inhibitor",
+      "otc": false,
+      "keywords": [
+        "perindopril",
+        "coversyl",
+        "prestalia"
+      ]
+    },
+    "Bisoprolol": {
+      "inn": "Bisoprolol",
+      "brands": [
+        "Concor",
+        "Bisoprolol",
+        "Cardicor"
+      ],
+      "forms": [
+        "viên 2.5mg",
+        "viên 5mg",
+        "viên 10mg"
+      ],
+      "typical": "2.5-10mg x 1 lần/ngày",
+      "category": "Beta-blocker",
+      "otc": false,
+      "keywords": [
+        "bisoprolol",
+        "concor",
+        "cardicor",
+        "beta blocker"
+      ]
+    },
+    "Atenolol": {
+      "inn": "Atenolol",
+      "brands": [
+        "Tenormin",
+        "Atenolol"
+      ],
+      "forms": [
+        "viên 25mg",
+        "viên 50mg",
+        "viên 100mg"
+      ],
+      "typical": "25-100mg x 1 lần/ngày",
+      "category": "Beta-blocker",
+      "otc": false,
+      "keywords": [
+        "atenolol",
+        "tenormin"
+      ]
+    },
+    "Furosemide": {
+      "inn": "Furosemide",
+      "brands": [
+        "Lasix",
+        "Furosemide",
+        "Frusemide"
+      ],
+      "forms": [
+        "viên 20mg",
+        "viên 40mg",
+        "ống tiêm 20mg/2ml"
+      ],
+      "typical": "20-80mg x 1-2 lần/ngày",
+      "category": "Lợi tiểu quai Henle",
+      "otc": false,
+      "keywords": [
+        "furosemide",
+        "furosemid",
+        "lasix",
+        "lợi tiểu"
+      ]
+    },
+    "Hydrochlorothiazide": {
+      "inn": "Hydrochlorothiazide",
+      "brands": [
+        "HCTZ",
+        "Hydrochlorothiazide",
+        "Esidrex"
+      ],
+      "forms": [
+        "viên 25mg",
+        "viên 50mg"
+      ],
+      "typical": "12.5-25mg x 1 lần/ngày",
+      "category": "Lợi tiểu Thiazide",
+      "otc": false,
+      "keywords": [
+        "hydrochlorothiazide",
+        "hctz",
+        "esidrex",
+        "lợi tiểu"
+      ]
+    },
+    "Atorvastatin": {
+      "inn": "Atorvastatin",
+      "brands": [
+        "Lipitor",
+        "Atorvastatin",
+        "Torvast"
+      ],
+      "forms": [
+        "viên 10mg",
+        "viên 20mg",
+        "viên 40mg",
+        "viên 80mg"
+      ],
+      "typical": "10-80mg x 1 lần/ngày (buổi tối)",
+      "category": "Hạ lipid Statin",
+      "otc": false,
+      "keywords": [
+        "atorvastatin",
+        "lipitor",
+        "torvast",
+        "statin",
+        "mỡ máu",
+        "cholesterol"
+      ]
+    },
+    "Rosuvastatin": {
+      "inn": "Rosuvastatin",
+      "brands": [
+        "Crestor",
+        "Rosuvastatin",
+        "Rosucard"
+      ],
+      "forms": [
+        "viên 5mg",
+        "viên 10mg",
+        "viên 20mg",
+        "viên 40mg"
+      ],
+      "typical": "5-40mg x 1 lần/ngày",
+      "category": "Hạ lipid Statin",
+      "otc": false,
+      "keywords": [
+        "rosuvastatin",
+        "crestor",
+        "rosucard",
+        "statin",
+        "mỡ máu"
+      ]
+    },
+    "Simvastatin": {
+      "inn": "Simvastatin",
+      "brands": [
+        "Zocor",
+        "Simvastatin",
+        "Simvor"
+      ],
+      "forms": [
+        "viên 10mg",
+        "viên 20mg",
+        "viên 40mg"
+      ],
+      "typical": "10-40mg x 1 lần/ngày (buổi tối)",
+      "category": "Hạ lipid Statin",
+      "otc": false,
+      "keywords": [
+        "simvastatin",
+        "zocor",
+        "simvor"
+      ]
+    },
+    "Warfarin": {
+      "inn": "Warfarin",
+      "brands": [
+        "Coumadin",
+        "Warfarin",
+        "Sintrom"
+      ],
+      "forms": [
+        "viên 1mg",
+        "viên 2mg",
+        "viên 5mg"
+      ],
+      "typical": "Theo INR (1-5mg/ngày)",
+      "category": "Chống đông máu",
+      "otc": false,
+      "keywords": [
+        "warfarin",
+        "coumadin",
+        "sintrom",
+        "chống đông"
+      ]
+    },
+    "Clopidogrel": {
+      "inn": "Clopidogrel",
+      "brands": [
+        "Plavix",
+        "Clopidogrel"
+      ],
+      "forms": [
+        "viên 75mg"
+      ],
+      "typical": "75mg x 1 lần/ngày",
+      "category": "Kháng tiểu cầu",
+      "otc": false,
+      "keywords": [
+        "clopidogrel",
+        "plavix",
+        "kháng tiểu cầu"
+      ]
+    },
+    "Isosorbide Dinitrate": {
+      "inn": "Isosorbide Dinitrate",
+      "brands": [
+        "Isoket",
+        "Isosorbide",
+        "Risordan"
+      ],
+      "forms": [
+        "viên dưới lưỡi 5mg",
+        "viên 10mg",
+        "viên 20mg",
+        "thuốc xịt"
+      ],
+      "typical": "5-10mg dưới lưỡi khi đau ngực",
+      "category": "Nitrate / Đau thắt ngực",
+      "otc": false,
+      "keywords": [
+        "isosorbide dinitrate",
+        "isoket",
+        "risordan",
+        "đau ngực",
+        "angina",
+        "dưới lưỡi"
+      ]
+    },
+    "Nitroglycerin": {
+      "inn": "Nitroglycerin",
+      "brands": [
+        "Nitromint",
+        "Nitrostat",
+        "Rectogesic"
+      ],
+      "forms": [
+        "viên dưới lưỡi 0.5mg",
+        "thuốc xịt",
+        "miếng dán"
+      ],
+      "typical": "0.5-1mg dưới lưỡi khi đau ngực",
+      "category": "Nitrate cấp",
+      "otc": false,
+      "keywords": [
+        "nitroglycerin",
+        "nitromint",
+        "nitrostat",
+        "đau ngực cấp",
+        "dưới lưỡi"
+      ]
+    },
+    "Metformin": {
+      "inn": "Metformin",
+      "brands": [
+        "Glucophage",
+        "Metformin",
+        "Siofor",
+        "Glucofor"
+      ],
+      "forms": [
+        "viên 500mg",
+        "viên 850mg",
+        "viên 1000mg",
+        "viên phóng thích chậm XR"
+      ],
+      "typical": "500-850mg x 2-3 lần/ngày trong bữa ăn",
+      "category": "Tiểu đường type 2 Biguanide",
+      "otc": false,
+      "keywords": [
+        "metformin",
+        "glucophage",
+        "siofor",
+        "glucofor",
+        "tiểu đường",
+        "đái tháo đường"
+      ]
+    },
+    "Glibenclamide": {
+      "inn": "Glibenclamide",
+      "brands": [
+        "Daonil",
+        "Glibenclamide",
+        "Maninil"
+      ],
+      "forms": [
+        "viên 1.25mg",
+        "viên 2.5mg",
+        "viên 5mg"
+      ],
+      "typical": "2.5-5mg x 1-2 lần/ngày trước ăn",
+      "category": "Tiểu đường type 2 Sulfonylurea",
+      "otc": false,
+      "keywords": [
+        "glibenclamide",
+        "daonil",
+        "maninil",
+        "tiểu đường"
+      ]
+    },
+    "Gliclazide": {
+      "inn": "Gliclazide",
+      "brands": [
+        "Diamicron",
+        "Gliclazide",
+        "Predian"
+      ],
+      "forms": [
+        "viên 80mg",
+        "viên MR 30mg",
+        "viên MR 60mg"
+      ],
+      "typical": "40-320mg/ngày (chia 2 lần) hoặc MR 30-120mg x 1 lần",
+      "category": "Tiểu đường type 2 Sulfonylurea",
+      "otc": false,
+      "keywords": [
+        "gliclazide",
+        "diamicron",
+        "predian",
+        "tiểu đường"
+      ]
+    },
+    "Glimepiride": {
+      "inn": "Glimepiride",
+      "brands": [
+        "Amaryl",
+        "Glimepiride",
+        "Gliamide"
+      ],
+      "forms": [
+        "viên 1mg",
+        "viên 2mg",
+        "viên 4mg"
+      ],
+      "typical": "1-4mg x 1 lần/ngày trước bữa ăn chính",
+      "category": "Tiểu đường type 2 Sulfonylurea",
+      "otc": false,
+      "keywords": [
+        "glimepiride",
+        "amaryl",
+        "gliamide"
+      ]
+    },
+    "Insulin Regular": {
+      "inn": "Insulin Regular",
+      "brands": [
+        "Actrapid",
+        "Humulin R",
+        "Novorapid"
+      ],
+      "forms": [
+        "lọ 100 IU/ml",
+        "bút tiêm"
+      ],
+      "typical": "Theo chỉ định BS",
+      "category": "Insulin tác dụng nhanh",
+      "otc": false,
+      "keywords": [
+        "insulin",
+        "actrapid",
+        "humulin",
+        "novorapid",
+        "tiêm insulin"
+      ]
+    },
+    "Sitagliptin": {
+      "inn": "Sitagliptin",
+      "brands": [
+        "Januvia",
+        "Sitagliptin"
+      ],
+      "forms": [
+        "viên 50mg",
+        "viên 100mg"
+      ],
+      "typical": "100mg x 1 lần/ngày",
+      "category": "Tiểu đường DPP-4 inhibitor",
+      "otc": false,
+      "keywords": [
+        "sitagliptin",
+        "januvia",
+        "tiểu đường"
+      ]
+    },
+    "Gabapentin": {
+      "inn": "Gabapentin",
+      "brands": [
+        "Neurontin",
+        "Gabapentin",
+        "Gabapen"
+      ],
+      "forms": [
+        "viên 100mg",
+        "viên 300mg",
+        "viên 400mg"
+      ],
+      "typical": "300mg x 3 lần/ngày",
+      "category": "Thần kinh / Đau thần kinh",
+      "otc": false,
+      "keywords": [
+        "gabapentin",
+        "neurontin",
+        "đau thần kinh",
+        "tê bì"
+      ]
+    },
+    "Pregabalin": {
+      "inn": "Pregabalin",
+      "brands": [
+        "Lyrica",
+        "Pregabalin"
+      ],
+      "forms": [
+        "viên 25mg",
+        "viên 50mg",
+        "viên 75mg",
+        "viên 150mg",
+        "viên 300mg"
+      ],
+      "typical": "75-300mg x 2 lần/ngày",
+      "category": "Thần kinh / Đau thần kinh",
+      "otc": false,
+      "keywords": [
+        "pregabalin",
+        "lyrica",
+        "đau thần kinh"
+      ]
+    },
+    "Amitriptyline": {
+      "inn": "Amitriptyline",
+      "brands": [
+        "Elavil",
+        "Amitriptyline",
+        "Tryptanol"
+      ],
+      "forms": [
+        "viên 10mg",
+        "viên 25mg"
+      ],
+      "typical": "25-75mg/ngày (thường buổi tối)",
+      "category": "Chống trầm cảm TCA / Đau mãn",
+      "otc": false,
+      "keywords": [
+        "amitriptyline",
+        "elavil",
+        "tryptanol",
+        "trầm cảm",
+        "đau mãn"
+      ]
+    },
+    "Diazepam": {
+      "inn": "Diazepam",
+      "brands": [
+        "Valium",
+        "Seduxen",
+        "Diazepam"
+      ],
+      "forms": [
+        "viên 2mg",
+        "viên 5mg",
+        "ống tiêm 10mg/2ml"
+      ],
+      "typical": "2-10mg x 2-4 lần/ngày",
+      "category": "Benzodiazepine / An thần",
+      "otc": false,
+      "keywords": [
+        "diazepam",
+        "valium",
+        "seduxen",
+        "an thần",
+        "lo âu",
+        "co giật"
+      ]
+    },
+    "Clonazepam": {
+      "inn": "Clonazepam",
+      "brands": [
+        "Rivotril",
+        "Clonazepam"
+      ],
+      "forms": [
+        "viên 0.5mg",
+        "viên 2mg"
+      ],
+      "typical": "0.5-2mg x 2-3 lần/ngày",
+      "category": "Benzodiazepine / Động kinh",
+      "otc": false,
+      "keywords": [
+        "clonazepam",
+        "rivotril",
+        "động kinh",
+        "co giật"
+      ]
+    },
+    "Sumatriptan": {
+      "inn": "Sumatriptan",
+      "brands": [
+        "Imigran",
+        "Sumatriptan"
+      ],
+      "forms": [
+        "viên 50mg",
+        "viên 100mg",
+        "thuốc xịt mũi",
+        "tiêm dưới da 6mg"
+      ],
+      "typical": "50-100mg khi có cơn đau đầu",
+      "category": "Điều trị migraine",
+      "otc": false,
+      "keywords": [
+        "sumatriptan",
+        "imigran",
+        "migraine",
+        "đau nửa đầu"
+      ]
+    },
+    "Cinnarizine": {
+      "inn": "Cinnarizine",
+      "brands": [
+        "Stugeron",
+        "Cinnarizine",
+        "Sibelium"
+      ],
+      "forms": [
+        "viên 25mg",
+        "viên 75mg"
+      ],
+      "typical": "25mg x 3 lần/ngày hoặc 75mg x 1 lần",
+      "category": "Chóng mặt / Rối loạn tiền đình",
+      "otc": false,
+      "keywords": [
+        "cinnarizine",
+        "stugeron",
+        "sibelium",
+        "chóng mặt",
+        "tiền đình"
+      ]
+    },
+    "Betahistine": {
+      "inn": "Betahistine",
+      "brands": [
+        "Serc",
+        "Betahistine",
+        "Merislon"
+      ],
+      "forms": [
+        "viên 8mg",
+        "viên 16mg",
+        "viên 24mg"
+      ],
+      "typical": "16mg x 3 lần/ngày hoặc 24mg x 2 lần",
+      "category": "Chóng mặt / Rối loạn tiền đình",
+      "otc": false,
+      "keywords": [
+        "betahistine",
+        "serc",
+        "merislon",
+        "chóng mặt",
+        "tiền đình",
+        "ù tai"
+      ]
+    },
+    "Glucosamine": {
+      "inn": "Glucosamine",
+      "brands": [
+        "Viartril-S",
+        "Glucosamine",
+        "Artrodar"
+      ],
+      "forms": [
+        "viên 250mg",
+        "viên 500mg",
+        "gói bột 1500mg"
+      ],
+      "typical": "1500mg x 1 lần/ngày hoặc 500mg x 3 lần/ngày",
+      "category": "Bổ sung khớp",
+      "otc": true,
+      "keywords": [
+        "glucosamine",
+        "viartril",
+        "artrodar",
+        "đau khớp",
+        "thoái hóa khớp"
+      ]
+    },
+    "Etoricoxib": {
+      "inn": "Etoricoxib",
+      "brands": [
+        "Arcoxia",
+        "Etoricoxib"
+      ],
+      "forms": [
+        "viên 60mg",
+        "viên 90mg",
+        "viên 120mg"
+      ],
+      "typical": "60-90mg x 1 lần/ngày",
+      "category": "Chống viêm COX-2",
+      "otc": false,
+      "keywords": [
+        "etoricoxib",
+        "arcoxia",
+        "đau khớp",
+        "viêm khớp"
+      ]
+    },
+    "Colchicine": {
+      "inn": "Colchicine",
+      "brands": [
+        "Colchicine",
+        "Colchimax"
+      ],
+      "forms": [
+        "viên 0.5mg",
+        "viên 1mg"
+      ],
+      "typical": "0.5-1mg x 2-3 lần/ngày",
+      "category": "Gout cấp",
+      "otc": false,
+      "keywords": [
+        "colchicine",
+        "colchimax",
+        "gout",
+        "gút",
+        "đau khớp ngón cái"
+      ]
+    },
+    "Allopurinol": {
+      "inn": "Allopurinol",
+      "brands": [
+        "Zyloric",
+        "Allopurinol",
+        "Zyloprim"
+      ],
+      "forms": [
+        "viên 100mg",
+        "viên 300mg"
+      ],
+      "typical": "100-300mg x 1 lần/ngày",
+      "category": "Hạ acid uric / Gout mãn",
+      "otc": false,
+      "keywords": [
+        "allopurinol",
+        "zyloric",
+        "zyloprim",
+        "gout",
+        "gút",
+        "acid uric"
+      ]
+    },
+    "Calcium + Vitamin D3": {
+      "inn": "Calcium + Vitamin D3",
+      "brands": [
+        "Calcimax",
+        "Calcium D3",
+        "Caltrate",
+        "Os-Cal"
+      ],
+      "forms": [
+        "viên 500mg Ca + 200IU D3",
+        "viên 1000mg Ca + 400IU D3"
+      ],
+      "typical": "500-1000mg Ca/ngày",
+      "category": "Bổ sung canxi",
+      "otc": true,
+      "keywords": [
+        "calcium",
+        "calci",
+        "vitamin d3",
+        "caltrate",
+        "calcimax",
+        "loãng xương",
+        "bổ xương"
+      ]
+    },
+    "Clotrimazole": {
+      "inn": "Clotrimazole",
+      "brands": [
+        "Canesten",
+        "Clotrimazole",
+        "Mycelex"
+      ],
+      "forms": [
+        "kem 1%",
+        "viên đặt âm đạo 100mg",
+        "viên đặt âm đạo 500mg"
+      ],
+      "typical": "Kem: bôi 2 lần/ngày. Viên đặt: 1 viên/ngày x 6 ngày",
+      "category": "Chống nấm Azole",
+      "otc": true,
+      "keywords": [
+        "clotrimazole",
+        "clotrimazol",
+        "canesten",
+        "mycelex",
+        "nấm âm đạo",
+        "hắc lào"
+      ]
+    },
+    "Fluconazole": {
+      "inn": "Fluconazole",
+      "brands": [
+        "Diflucan",
+        "Fluconazole",
+        "Flucomed"
+      ],
+      "forms": [
+        "viên 50mg",
+        "viên 100mg",
+        "viên 150mg",
+        "viên 200mg"
+      ],
+      "typical": "150mg x 1 liều (nấm âm đạo)",
+      "category": "Chống nấm toàn thân",
+      "otc": false,
+      "keywords": [
+        "fluconazole",
+        "fluconazol",
+        "diflucan",
+        "flucomed",
+        "nấm",
+        "candida"
+      ]
+    },
+    "Acyclovir": {
+      "inn": "Acyclovir",
+      "brands": [
+        "Zovirax",
+        "Acyclovir",
+        "Aciclovir"
+      ],
+      "forms": [
+        "viên 200mg",
+        "viên 400mg",
+        "viên 800mg",
+        "kem 5%"
+      ],
+      "typical": "200mg x 5 lần/ngày x 5 ngày (herpes labialis)",
+      "category": "Kháng virus Herpes",
+      "otc": true,
+      "keywords": [
+        "acyclovir",
+        "aciclovir",
+        "zovirax",
+        "herpes",
+        "zona",
+        "thủy đậu"
+      ]
+    },
+    "Mupirocin": {
+      "inn": "Mupirocin",
+      "brands": [
+        "Bactroban",
+        "Mupirocin"
+      ],
+      "forms": [
+        "kem 2%",
+        "mỡ 2%"
+      ],
+      "typical": "Bôi 3 lần/ngày x 5-10 ngày",
+      "category": "Kháng sinh tại chỗ",
+      "otc": true,
+      "keywords": [
+        "mupirocin",
+        "bactroban",
+        "nhiễm trùng da",
+        "lở loét"
+      ]
+    },
+    "Hydrocortisone cream": {
+      "inn": "Hydrocortisone cream",
+      "brands": [
+        "Hydrocortisone",
+        "HC cream",
+        "Cortaid"
+      ],
+      "forms": [
+        "kem 0.5%",
+        "kem 1%",
+        "mỡ 1%"
+      ],
+      "typical": "Bôi 2-3 lần/ngày",
+      "category": "Corticosteroid tại chỗ",
+      "otc": true,
+      "keywords": [
+        "hydrocortisone",
+        "cortaid",
+        "ngứa da",
+        "viêm da",
+        "eczema"
+      ]
+    },
+    "Tobramycin nhỏ mắt": {
+      "inn": "Tobramycin nhỏ mắt",
+      "brands": [
+        "Tobrex",
+        "Tobracin"
+      ],
+      "forms": [
+        "nhỏ mắt 0.3%",
+        "mỡ mắt 0.3%"
+      ],
+      "typical": "1-2 giọt x 4-6 lần/ngày",
+      "category": "Kháng sinh nhỏ mắt",
+      "otc": false,
+      "keywords": [
+        "tobramycin",
+        "tobrex",
+        "tobracin",
+        "đau mắt",
+        "viêm mắt",
+        "nhỏ mắt"
+      ]
+    },
+    "Ciprofloxacin nhỏ mắt/tai": {
+      "inn": "Ciprofloxacin nhỏ mắt/tai",
+      "brands": [
+        "Ciloxan",
+        "Ciprocin"
+      ],
+      "forms": [
+        "nhỏ mắt 0.3%",
+        "nhỏ tai 0.3%"
+      ],
+      "typical": "1-2 giọt x 4 lần/ngày",
+      "category": "Kháng sinh nhỏ mắt/tai",
+      "otc": false,
+      "keywords": [
+        "ciprofloxacin mắt",
+        "ciloxan",
+        "ciprocin",
+        "nhỏ mắt",
+        "nhỏ tai",
+        "đau mắt",
+        "đau tai"
+      ]
+    },
+    "Xylometazoline": {
+      "inn": "Xylometazoline",
+      "brands": [
+        "Otrivin",
+        "Xyloproct",
+        "Xylometazoline"
+      ],
+      "forms": [
+        "nhỏ mũi 0.05%",
+        "nhỏ mũi 0.1%",
+        "xịt mũi"
+      ],
+      "typical": "2-3 giọt mỗi bên x 2-3 lần/ngày, không quá 5-7 ngày",
+      "category": "Thông mũi",
+      "otc": true,
+      "keywords": [
+        "xylometazoline",
+        "xylometazolin",
+        "otrivin",
+        "ngạt mũi",
+        "nghẹt mũi",
+        "nhỏ mũi"
+      ]
+    },
+    "Vitamin C (Ascorbic acid)": {
+      "inn": "Vitamin C (Ascorbic acid)",
+      "brands": [
+        "Vitamin C",
+        "Cebion",
+        "Redoxon"
+      ],
+      "forms": [
+        "viên 100mg",
+        "viên 250mg",
+        "viên 500mg",
+        "viên 1000mg",
+        "sủi bọt"
+      ],
+      "typical": "500-1000mg/ngày",
+      "category": "Vitamin",
+      "otc": true,
+      "keywords": [
+        "vitamin c",
+        "ascorbic acid",
+        "cebion",
+        "redoxon",
+        "bổ sung"
+      ]
+    },
+    "Vitamin B1 (Thiamine)": {
+      "inn": "Vitamin B1 (Thiamine)",
+      "brands": [
+        "Vitamin B1",
+        "Thiamine",
+        "Benerva"
+      ],
+      "forms": [
+        "viên 10mg",
+        "viên 50mg",
+        "viên 100mg",
+        "ống tiêm 100mg"
+      ],
+      "typical": "10-100mg/ngày",
+      "category": "Vitamin nhóm B",
+      "otc": true,
+      "keywords": [
+        "vitamin b1",
+        "thiamine",
+        "benerva",
+        "tê bì",
+        "thần kinh"
+      ]
+    },
+    "Vitamin B6 (Pyridoxine)": {
+      "inn": "Vitamin B6 (Pyridoxine)",
+      "brands": [
+        "Vitamin B6",
+        "Pyridoxine"
+      ],
+      "forms": [
+        "viên 10mg",
+        "viên 25mg",
+        "viên 50mg",
+        "ống tiêm 100mg"
+      ],
+      "typical": "10-100mg/ngày",
+      "category": "Vitamin nhóm B",
+      "otc": true,
+      "keywords": [
+        "vitamin b6",
+        "pyridoxine",
+        "tê bì",
+        "buồn nôn thai kỳ"
+      ]
+    },
+    "Vitamin B12 (Cyanocobalamin)": {
+      "inn": "Vitamin B12 (Cyanocobalamin)",
+      "brands": [
+        "Vitamin B12",
+        "Methylcobalamin",
+        "Cobavital"
+      ],
+      "forms": [
+        "viên 500mcg",
+        "viên 1000mcg",
+        "ống tiêm 500mcg",
+        "ống tiêm 1mg"
+      ],
+      "typical": "500-1000mcg/ngày",
+      "category": "Vitamin nhóm B",
+      "otc": true,
+      "keywords": [
+        "vitamin b12",
+        "cyanocobalamin",
+        "methylcobalamin",
+        "cobavital",
+        "tê bì",
+        "thần kinh",
+        "thiếu máu"
+      ]
+    },
+    "Folic acid (Vitamin B9)": {
+      "inn": "Folic acid (Vitamin B9)",
+      "brands": [
+        "Folic acid",
+        "Acid folic",
+        "Folate"
+      ],
+      "forms": [
+        "viên 0.4mg",
+        "viên 1mg",
+        "viên 5mg"
+      ],
+      "typical": "0.4-1mg/ngày (phụ nữ mang thai)",
+      "category": "Vitamin nhóm B",
+      "otc": true,
+      "keywords": [
+        "folic acid",
+        "acid folic",
+        "folate",
+        "mang thai",
+        "thiếu máu",
+        "bổ sung"
+      ]
+    },
+    "Vitamin D3": {
+      "inn": "Vitamin D3",
+      "brands": [
+        "Vitamin D3",
+        "Cholecalciferol",
+        "Devit",
+        "Ostelin"
+      ],
+      "forms": [
+        "viên 400IU",
+        "viên 1000IU",
+        "viên 2000IU",
+        "viên 5000IU",
+        "giọt"
+      ],
+      "typical": "1000-2000IU/ngày",
+      "category": "Vitamin",
+      "otc": true,
+      "keywords": [
+        "vitamin d3",
+        "cholecalciferol",
+        "devit",
+        "ostelin",
+        "còi xương",
+        "loãng xương"
+      ]
+    },
+    "Zinc": {
+      "inn": "Zinc",
+      "brands": [
+        "Zinc",
+        "Zincofer",
+        "Zinccare",
+        "Vitazin"
+      ],
+      "forms": [
+        "viên 10mg",
+        "viên 20mg",
+        "viên 50mg",
+        "siro",
+        "gói bột"
+      ],
+      "typical": "10-25mg/ngày",
+      "category": "Khoáng chất",
+      "otc": true,
+      "keywords": [
+        "zinc",
+        "kẽm",
+        "zincofer",
+        "zinccare",
+        "bổ sung",
+        "tiêu chảy trẻ em"
+      ]
+    },
+    "Iron (Ferrous)": {
+      "inn": "Iron (Ferrous)",
+      "brands": [
+        "Tardyferon",
+        "Ferrous sulfate",
+        "Ferrograd",
+        "Sắt"
+      ],
+      "forms": [
+        "viên 80mg Fe2+",
+        "viên 100mg",
+        "siro"
+      ],
+      "typical": "100-200mg/ngày",
+      "category": "Khoáng chất",
+      "otc": true,
+      "keywords": [
+        "iron",
+        "sắt",
+        "ferrous",
+        "tardyferon",
+        "ferrograd",
+        "thiếu máu thiếu sắt"
+      ]
+    },
+    "Magnesium": {
+      "inn": "Magnesium",
+      "brands": [
+        "Magne B6",
+        "Magnesium",
+        "Magne Pharmaton"
+      ],
+      "forms": [
+        "viên 48mg Mg",
+        "ống uống",
+        "viên nhai"
+      ],
+      "typical": "200-400mg Mg/ngày",
+      "category": "Khoáng chất",
+      "otc": true,
+      "keywords": [
+        "magnesium",
+        "magie",
+        "magne b6",
+        "chuột rút",
+        "vọp bẻ",
+        "magne"
+      ]
+    },
+    "Albendazole": {
+      "inn": "Albendazole",
+      "brands": [
+        "Zentel",
+        "Albendazole",
+        "Alzental"
+      ],
+      "forms": [
+        "viên 200mg",
+        "viên 400mg",
+        "hỗn dịch 200mg/5ml"
+      ],
+      "typical": "400mg x 1 liều (giun đũa); 400mg x 2 lần/ngày x 3 ngày (sán)",
+      "category": "Tẩy giun",
+      "otc": true,
+      "keywords": [
+        "albendazole",
+        "albendazol",
+        "zentel",
+        "alzental",
+        "tẩy giun",
+        "giun",
+        "sán"
+      ]
+    },
+    "Mebendazole": {
+      "inn": "Mebendazole",
+      "brands": [
+        "Vermox",
+        "Mebendazole",
+        "Fugacar"
+      ],
+      "forms": [
+        "viên 100mg",
+        "viên nhai 100mg",
+        "hỗn dịch 100mg/5ml"
+      ],
+      "typical": "100mg x 2 lần/ngày x 3 ngày (giun tóc, giun kim)",
+      "category": "Tẩy giun",
+      "otc": true,
+      "keywords": [
+        "mebendazole",
+        "mebendazol",
+        "vermox",
+        "fugacar",
+        "tẩy giun"
+      ]
+    },
+    "Pyrantel": {
+      "inn": "Pyrantel",
+      "brands": [
+        "Combantrin",
+        "Pyrantel",
+        "Helmintox"
+      ],
+      "forms": [
+        "viên 125mg",
+        "hỗn dịch 250mg/5ml"
+      ],
+      "typical": "10mg/kg x 1 liều",
+      "category": "Tẩy giun",
+      "otc": true,
+      "keywords": [
+        "pyrantel",
+        "combantrin",
+        "helmintox",
+        "tẩy giun",
+        "giun kim"
+      ]
+    },
+    "Levothyroxine": {
+      "inn": "Levothyroxine",
+      "brands": [
+        "Euthyrox",
+        "Synthroid",
+        "Levothyroxine"
+      ],
+      "forms": [
+        "viên 25mcg",
+        "viên 50mcg",
+        "viên 75mcg",
+        "viên 100mcg",
+        "viên 125mcg",
+        "viên 150mcg"
+      ],
+      "typical": "50-150mcg x 1 lần/ngày sáng lúc đói",
+      "category": "Hormone tuyến giáp",
+      "otc": false,
+      "keywords": [
+        "levothyroxine",
+        "euthyrox",
+        "synthroid",
+        "tuyến giáp",
+        "hypothyroid",
+        "suy giáp"
+      ]
+    },
+    "Propylthiouracil (PTU)": {
+      "inn": "Propylthiouracil (PTU)",
+      "brands": [
+        "PTU",
+        "Propylthiouracil"
+      ],
+      "forms": [
+        "viên 50mg"
+      ],
+      "typical": "100-400mg/ngày (chia 3-4 lần)",
+      "category": "Chống cường giáp",
+      "otc": false,
+      "keywords": [
+        "propylthiouracil",
+        "ptu",
+        "cường giáp",
+        "hyperthyroid"
+      ]
+    },
+    "Tamsulosin": {
+      "inn": "Tamsulosin",
+      "brands": [
+        "Flomax",
+        "Harnal",
+        "Tamsulosin"
+      ],
+      "forms": [
+        "viên phóng thích chậm 0.4mg"
+      ],
+      "typical": "0.4mg x 1 lần/ngày sau ăn tối",
+      "category": "Alpha-blocker / Phì đại tiền liệt tuyến",
+      "otc": false,
+      "keywords": [
+        "tamsulosin",
+        "flomax",
+        "harnal",
+        "tiền liệt tuyến",
+        "tiểu khó"
+      ]
+    },
+    "Finasteride": {
+      "inn": "Finasteride",
+      "brands": [
+        "Proscar",
+        "Propecia",
+        "Finasteride"
+      ],
+      "forms": [
+        "viên 1mg",
+        "viên 5mg"
+      ],
+      "typical": "5mg x 1 lần/ngày (phì đại TLT); 1mg/ngày (rụng tóc)",
+      "category": "5-alpha reductase inhibitor",
+      "otc": false,
+      "keywords": [
+        "finasteride",
+        "proscar",
+        "propecia",
+        "tiền liệt tuyến",
+        "rụng tóc"
+      ]
+    },
+    "Dexamethasone injection": {
+      "inn": "Dexamethasone injection",
+      "brands": [
+        "Dexamethasone",
+        "Decadron tiêm",
+        "Fortecortin"
+      ],
+      "forms": [
+        "ống tiêm 4mg/1ml",
+        "ống tiêm 8mg/2ml"
+      ],
+      "typical": "4-8mg tiêm TM/TB tùy chỉ định",
+      "category": "Corticosteroid tiêm",
+      "otc": false,
+      "keywords": [
+        "dexamethasone tiêm",
+        "corticoid tiêm",
+        "chống phù nề",
+        "dị ứng nặng"
+      ]
+    },
+    "Diclofenac injection": {
+      "inn": "Diclofenac injection",
+      "brands": [
+        "Voltaren tiêm",
+        "Diclofenac tiêm"
+      ],
+      "forms": [
+        "ống tiêm 75mg/3ml"
+      ],
+      "typical": "75mg x 1-2 lần/ngày tiêm bắp",
+      "category": "NSAIDs tiêm",
+      "otc": false,
+      "keywords": [
+        "diclofenac tiêm",
+        "voltaren tiêm",
+        "đau lưng",
+        "đau khớp tiêm"
+      ]
+    },
+    "Ketorolac": {
+      "inn": "Ketorolac",
+      "brands": [
+        "Toradol",
+        "Ketolac",
+        "Ketorolac"
+      ],
+      "forms": [
+        "viên 10mg",
+        "ống tiêm 30mg/1ml"
+      ],
+      "typical": "10mg x 4 lần/ngày (uống); 30mg tiêm (cấp)",
+      "category": "NSAIDs mạnh",
+      "otc": false,
+      "keywords": [
+        "ketorolac",
+        "toradol",
+        "ketolac",
+        "đau cấp",
+        "giảm đau mạnh"
+      ]
+    },
+    "Tramadol": {
+      "inn": "Tramadol",
+      "brands": [
+        "Tramal",
+        "Ultram",
+        "Tramadol"
+      ],
+      "forms": [
+        "viên 50mg",
+        "viên phóng thích chậm 100mg",
+        "ống tiêm 100mg/2ml"
+      ],
+      "typical": "50-100mg x 4-6 giờ/lần",
+      "category": "Opioid nhẹ / Đau vừa-nặng",
+      "otc": false,
+      "keywords": [
+        "tramadol",
+        "tramal",
+        "ultram",
+        "đau nặng",
+        "đau sau mổ"
+      ]
+    }
+  },
+  "keyword_index": {
+    "para": [
+      "Paracetamol"
+    ],
+    "paracetamol": [
+      "Paracetamol"
+    ],
+    "hapacol": [
+      "Paracetamol"
+    ],
+    "panadol": [
+      "Paracetamol"
+    ],
+    "efferalgan": [
+      "Paracetamol"
+    ],
+    "hạ sốt": [
+      "Paracetamol"
+    ],
+    "giảm đau đầu": [
+      "Paracetamol"
+    ],
+    "tylenol": [
+      "Paracetamol"
+    ],
+    "doliprane": [
+      "Paracetamol"
+    ],
+    "ibuprofen": [
+      "Ibuprofen"
+    ],
+    "brufen": [
+      "Ibuprofen"
+    ],
+    "advil": [
+      "Ibuprofen"
+    ],
+    "nurofen": [
+      "Ibuprofen"
+    ],
+    "aspirin": [
+      "Aspirin (Acetylsalicylic acid)"
+    ],
+    "aspegic": [
+      "Aspirin (Acetylsalicylic acid)"
+    ],
+    "acetylsalicylic": [
+      "Aspirin (Acetylsalicylic acid)"
+    ],
+    "aspirin 81": [
+      "Aspirin (Acetylsalicylic acid)"
+    ],
+    "aspirin 100": [
+      "Aspirin (Acetylsalicylic acid)"
+    ],
+    "cardioaspirin": [
+      "Aspirin (Acetylsalicylic acid)"
+    ],
+    "diclofenac": [
+      "Diclofenac"
+    ],
+    "voltaren": [
+      "Diclofenac"
+    ],
+    "cataflam": [
+      "Diclofenac"
+    ],
+    "clofen": [
+      "Diclofenac"
+    ],
+    "meloxicam": [
+      "Meloxicam"
+    ],
+    "mobic": [
+      "Meloxicam"
+    ],
+    "7.5mg": [
+      "Meloxicam"
+    ],
+    "15mg": [
+      "Meloxicam"
+    ],
+    "loxitane": [
+      "Meloxicam"
+    ],
+    "naproxen": [
+      "Naproxen"
+    ],
+    "naprosyn": [
+      "Naproxen"
+    ],
+    "aleve": [
+      "Naproxen"
+    ],
+    "celecoxib": [
+      "Celecoxib"
+    ],
+    "celebrex": [
+      "Celecoxib"
+    ],
+    "piroxicam": [
+      "Piroxicam"
+    ],
+    "feldene": [
+      "Piroxicam"
+    ],
+    "amoxicillin": [
+      "Amoxicillin"
+    ],
+    "amoxil": [
+      "Amoxicillin"
+    ],
+    "amox": [
+      "Amoxicillin"
+    ],
+    "augmentin": [
+      "Amoxicillin",
+      "Amoxicillin/Clavulanate"
+    ],
+    "clamoxyl": [
+      "Amoxicillin"
+    ],
+    "penicillin": [
+      "Amoxicillin"
+    ],
+    "augmentin (+ clavulanate)": [
+      "Amoxicillin"
+    ],
+    "co-amoxiclav": [
+      "Amoxicillin/Clavulanate"
+    ],
+    "amoxicillin clavulanate": [
+      "Amoxicillin/Clavulanate"
+    ],
+    "curam": [
+      "Amoxicillin/Clavulanate"
+    ],
+    "azithromycin": [
+      "Azithromycin"
+    ],
+    "zithromax": [
+      "Azithromycin"
+    ],
+    "azicin": [
+      "Azithromycin"
+    ],
+    "azitro": [
+      "Azithromycin"
+    ],
+    "azithro": [
+      "Azithromycin"
+    ],
+    "clarithromycin": [
+      "Clarithromycin"
+    ],
+    "klacid": [
+      "Clarithromycin"
+    ],
+    "klaricid": [
+      "Clarithromycin"
+    ],
+    "cephalexin": [
+      "Cephalexin"
+    ],
+    "cefalexin": [
+      "Cephalexin"
+    ],
+    "keflex": [
+      "Cephalexin"
+    ],
+    "cephalosporin": [
+      "Cephalexin"
+    ],
+    "cefuroxime": [
+      "Cefuroxime"
+    ],
+    "zinnat": [
+      "Cefuroxime"
+    ],
+    "cefoxim": [
+      "Cefuroxime"
+    ],
+    "cefixime": [
+      "Cefixime"
+    ],
+    "suprax": [
+      "Cefixime"
+    ],
+    "cefix": [
+      "Cefixime"
+    ],
+    "cefspan": [
+      "Cefixime"
+    ],
+    "ciprofloxacin": [
+      "Ciprofloxacin"
+    ],
+    "cipro": [
+      "Ciprofloxacin"
+    ],
+    "cifran": [
+      "Ciprofloxacin"
+    ],
+    "quinolone": [
+      "Ciprofloxacin"
+    ],
+    "levofloxacin": [
+      "Levofloxacin"
+    ],
+    "tavanic": [
+      "Levofloxacin"
+    ],
+    "levaquin": [
+      "Levofloxacin"
+    ],
+    "doxycycline": [
+      "Doxycycline"
+    ],
+    "vibramycin": [
+      "Doxycycline"
+    ],
+    "doxymycin": [
+      "Doxycycline"
+    ],
+    "metronidazole": [
+      "Metronidazole"
+    ],
+    "flagyl": [
+      "Metronidazole"
+    ],
+    "klion": [
+      "Metronidazole"
+    ],
+    "metronidazol": [
+      "Metronidazole"
+    ],
+    "cotrimoxazole": [
+      "Trimethoprim/Sulfamethoxazole"
+    ],
+    "bactrim": [
+      "Trimethoprim/Sulfamethoxazole"
+    ],
+    "biseptol": [
+      "Trimethoprim/Sulfamethoxazole"
+    ],
+    "trimethoprim": [
+      "Trimethoprim/Sulfamethoxazole"
+    ],
+    "sulfamethoxazole": [
+      "Trimethoprim/Sulfamethoxazole"
+    ],
+    "tetracycline": [
+      "Tetracycline"
+    ],
+    "ambroxol": [
+      "Ambroxol"
+    ],
+    "mucosolvan": [
+      "Ambroxol"
+    ],
+    "mucosol": [
+      "Ambroxol"
+    ],
+    "tiêu đờm": [
+      "Ambroxol"
+    ],
+    "long đờm": [
+      "Ambroxol"
+    ],
+    "ambrobene": [
+      "Ambroxol"
+    ],
+    "bromhexine": [
+      "Bromhexine"
+    ],
+    "bromhexin": [
+      "Bromhexine"
+    ],
+    "bisolvon": [
+      "Bromhexine"
+    ],
+    "guaifenesin": [
+      "Guaifenesin"
+    ],
+    "guaiphenesin": [
+      "Guaifenesin"
+    ],
+    "robitussin": [
+      "Guaifenesin"
+    ],
+    "tussin": [
+      "Guaifenesin"
+    ],
+    "salbutamol": [
+      "Salbutamol"
+    ],
+    "ventolin": [
+      "Salbutamol"
+    ],
+    "albuterol": [
+      "Salbutamol"
+    ],
+    "giãn phế quản": [
+      "Salbutamol"
+    ],
+    "khó thở": [
+      "Salbutamol"
+    ],
+    "hen": [
+      "Salbutamol"
+    ],
+    "proventil": [
+      "Salbutamol"
+    ],
+    "theophylline": [
+      "Theophylline"
+    ],
+    "theostat": [
+      "Theophylline"
+    ],
+    "theodur": [
+      "Theophylline"
+    ],
+    "uniphylline": [
+      "Theophylline"
+    ],
+    "montelukast": [
+      "Montelukast"
+    ],
+    "singulair": [
+      "Montelukast"
+    ],
+    "cetirizine": [
+      "Cetirizine"
+    ],
+    "cetirizin": [
+      "Cetirizine"
+    ],
+    "zyrtec": [
+      "Cetirizine"
+    ],
+    "cetizin": [
+      "Cetirizine"
+    ],
+    "reactine": [
+      "Cetirizine"
+    ],
+    "dị ứng": [
+      "Cetirizine"
+    ],
+    "nổi mề đay": [
+      "Cetirizine"
+    ],
+    "loratadine": [
+      "Loratadine"
+    ],
+    "loratadin": [
+      "Loratadine"
+    ],
+    "claritin": [
+      "Loratadine"
+    ],
+    "clarityne": [
+      "Loratadine"
+    ],
+    "fexofenadine": [
+      "Fexofenadine"
+    ],
+    "fexofenadin": [
+      "Fexofenadine"
+    ],
+    "telfast": [
+      "Fexofenadine"
+    ],
+    "allegra": [
+      "Fexofenadine"
+    ],
+    "desloratadine": [
+      "Desloratadine"
+    ],
+    "desloratadin": [
+      "Desloratadine"
+    ],
+    "aerius": [
+      "Desloratadine"
+    ],
+    "prednisolone": [
+      "Prednisolone"
+    ],
+    "predsol": [
+      "Prednisolone"
+    ],
+    "corticoid": [
+      "Prednisolone",
+      "Dexamethasone"
+    ],
+    "cortison": [
+      "Prednisolone"
+    ],
+    "solone": [
+      "Prednisolone"
+    ],
+    "dexamethasone": [
+      "Dexamethasone",
+      "Dexamethasone injection"
+    ],
+    "dexamethason": [
+      "Dexamethasone"
+    ],
+    "decadron": [
+      "Dexamethasone"
+    ],
+    "dexa": [
+      "Dexamethasone"
+    ],
+    "omeprazole": [
+      "Omeprazole"
+    ],
+    "omeprazol": [
+      "Omeprazole"
+    ],
+    "losec": [
+      "Omeprazole"
+    ],
+    "prilosec": [
+      "Omeprazole"
+    ],
+    "lomac": [
+      "Omeprazole"
+    ],
+    "ppi": [
+      "Omeprazole"
+    ],
+    "dạ dày": [
+      "Omeprazole"
+    ],
+    "loét": [
+      "Omeprazole"
+    ],
+    "trào ngược": [
+      "Omeprazole"
+    ],
+    "esomeprazole": [
+      "Esomeprazole"
+    ],
+    "nexium": [
+      "Esomeprazole"
+    ],
+    "esomeprazol": [
+      "Esomeprazole"
+    ],
+    "pantoprazole": [
+      "Pantoprazole"
+    ],
+    "pantoprazol": [
+      "Pantoprazole"
+    ],
+    "pantoloc": [
+      "Pantoprazole"
+    ],
+    "protonix": [
+      "Pantoprazole"
+    ],
+    "famotidine": [
+      "Famotidine"
+    ],
+    "famotidin": [
+      "Famotidine"
+    ],
+    "pepcid": [
+      "Famotidine"
+    ],
+    "ranitidine": [
+      "Ranitidine"
+    ],
+    "ranitidin": [
+      "Ranitidine"
+    ],
+    "zantac": [
+      "Ranitidine"
+    ],
+    "domperidone": [
+      "Domperidone"
+    ],
+    "domperidon": [
+      "Domperidone"
+    ],
+    "motilium": [
+      "Domperidone"
+    ],
+    "dompan": [
+      "Domperidone"
+    ],
+    "buồn nôn": [
+      "Domperidone"
+    ],
+    "nôn": [
+      "Domperidone"
+    ],
+    "metoclopramide": [
+      "Metoclopramide"
+    ],
+    "metoclopramid": [
+      "Metoclopramide"
+    ],
+    "primperan": [
+      "Metoclopramide"
+    ],
+    "plasil": [
+      "Metoclopramide"
+    ],
+    "ondansetron": [
+      "Ondansetron"
+    ],
+    "zofran": [
+      "Ondansetron"
+    ],
+    "nôn sau hóa trị": [
+      "Ondansetron"
+    ],
+    "chống nôn": [
+      "Ondansetron"
+    ],
+    "zofran odt": [
+      "Ondansetron"
+    ],
+    "loperamide": [
+      "Loperamide"
+    ],
+    "loperamid": [
+      "Loperamide"
+    ],
+    "imodium": [
+      "Loperamide"
+    ],
+    "tiêu chảy": [
+      "Loperamide",
+      "Diosmectite"
+    ],
+    "smecta": [
+      "Diosmectite"
+    ],
+    "diosmectite": [
+      "Diosmectite"
+    ],
+    "diosmectit": [
+      "Diosmectite"
+    ],
+    "smetite": [
+      "Diosmectite"
+    ],
+    "lactulose": [
+      "Lactulose"
+    ],
+    "duphalac": [
+      "Lactulose"
+    ],
+    "laevolac": [
+      "Lactulose"
+    ],
+    "táo bón": [
+      "Lactulose",
+      "Bisacodyl"
+    ],
+    "bisacodyl": [
+      "Bisacodyl"
+    ],
+    "dulcolax": [
+      "Bisacodyl"
+    ],
+    "nhuận tràng": [
+      "Bisacodyl"
+    ],
+    "norgalax": [
+      "Bisacodyl"
+    ],
+    "alverin": [
+      "Alverin + Simethicone"
+    ],
+    "spasmaverine": [
+      "Alverin + Simethicone"
+    ],
+    "meteospasmyl": [
+      "Alverin + Simethicone"
+    ],
+    "đau bụng": [
+      "Alverin + Simethicone",
+      "Mebeverine"
+    ],
+    "ruột kích thích": [
+      "Alverin + Simethicone",
+      "Mebeverine"
+    ],
+    "mebeverine": [
+      "Mebeverine"
+    ],
+    "duspatalin": [
+      "Mebeverine"
+    ],
+    "duspatol": [
+      "Mebeverine"
+    ],
+    "amlodipine": [
+      "Amlodipine"
+    ],
+    "norvasc": [
+      "Amlodipine"
+    ],
+    "amlor": [
+      "Amlodipine"
+    ],
+    "amlodipin": [
+      "Amlodipine"
+    ],
+    "huyết áp": [
+      "Amlodipine",
+      "Losartan"
+    ],
+    "cao huyết áp": [
+      "Amlodipine"
+    ],
+    "losartan": [
+      "Losartan"
+    ],
+    "cozaar": [
+      "Losartan"
+    ],
+    "lozar": [
+      "Losartan"
+    ],
+    "arb": [
+      "Losartan"
+    ],
+    "valsartan": [
+      "Valsartan"
+    ],
+    "diovan": [
+      "Valsartan"
+    ],
+    "enalapril": [
+      "Enalapril"
+    ],
+    "vasotec": [
+      "Enalapril"
+    ],
+    "renitec": [
+      "Enalapril"
+    ],
+    "acei": [
+      "Enalapril"
+    ],
+    "ace inhibitor": [
+      "Enalapril"
+    ],
+    "perindopril": [
+      "Perindopril"
+    ],
+    "coversyl": [
+      "Perindopril"
+    ],
+    "prestalia": [
+      "Perindopril"
+    ],
+    "bisoprolol": [
+      "Bisoprolol"
+    ],
+    "concor": [
+      "Bisoprolol"
+    ],
+    "cardicor": [
+      "Bisoprolol"
+    ],
+    "beta blocker": [
+      "Bisoprolol"
+    ],
+    "atenolol": [
+      "Atenolol"
+    ],
+    "tenormin": [
+      "Atenolol"
+    ],
+    "furosemide": [
+      "Furosemide"
+    ],
+    "furosemid": [
+      "Furosemide"
+    ],
+    "lasix": [
+      "Furosemide"
+    ],
+    "lợi tiểu": [
+      "Furosemide",
+      "Hydrochlorothiazide"
+    ],
+    "frusemide": [
+      "Furosemide"
+    ],
+    "hydrochlorothiazide": [
+      "Hydrochlorothiazide"
+    ],
+    "hctz": [
+      "Hydrochlorothiazide"
+    ],
+    "esidrex": [
+      "Hydrochlorothiazide"
+    ],
+    "atorvastatin": [
+      "Atorvastatin"
+    ],
+    "lipitor": [
+      "Atorvastatin"
+    ],
+    "torvast": [
+      "Atorvastatin"
+    ],
+    "statin": [
+      "Atorvastatin",
+      "Rosuvastatin"
+    ],
+    "mỡ máu": [
+      "Atorvastatin",
+      "Rosuvastatin"
+    ],
+    "cholesterol": [
+      "Atorvastatin"
+    ],
+    "rosuvastatin": [
+      "Rosuvastatin"
+    ],
+    "crestor": [
+      "Rosuvastatin"
+    ],
+    "rosucard": [
+      "Rosuvastatin"
+    ],
+    "simvastatin": [
+      "Simvastatin"
+    ],
+    "zocor": [
+      "Simvastatin"
+    ],
+    "simvor": [
+      "Simvastatin"
+    ],
+    "warfarin": [
+      "Warfarin"
+    ],
+    "coumadin": [
+      "Warfarin"
+    ],
+    "sintrom": [
+      "Warfarin"
+    ],
+    "chống đông": [
+      "Warfarin"
+    ],
+    "clopidogrel": [
+      "Clopidogrel"
+    ],
+    "plavix": [
+      "Clopidogrel"
+    ],
+    "kháng tiểu cầu": [
+      "Clopidogrel"
+    ],
+    "isosorbide dinitrate": [
+      "Isosorbide Dinitrate"
+    ],
+    "isoket": [
+      "Isosorbide Dinitrate"
+    ],
+    "risordan": [
+      "Isosorbide Dinitrate"
+    ],
+    "đau ngực": [
+      "Isosorbide Dinitrate"
+    ],
+    "angina": [
+      "Isosorbide Dinitrate"
+    ],
+    "dưới lưỡi": [
+      "Isosorbide Dinitrate",
+      "Nitroglycerin"
+    ],
+    "isosorbide": [
+      "Isosorbide Dinitrate"
+    ],
+    "nitroglycerin": [
+      "Nitroglycerin"
+    ],
+    "nitromint": [
+      "Nitroglycerin"
+    ],
+    "nitrostat": [
+      "Nitroglycerin"
+    ],
+    "đau ngực cấp": [
+      "Nitroglycerin"
+    ],
+    "rectogesic": [
+      "Nitroglycerin"
+    ],
+    "metformin": [
+      "Metformin"
+    ],
+    "glucophage": [
+      "Metformin"
+    ],
+    "siofor": [
+      "Metformin"
+    ],
+    "glucofor": [
+      "Metformin"
+    ],
+    "tiểu đường": [
+      "Metformin",
+      "Glibenclamide",
+      "Gliclazide",
+      "Sitagliptin"
+    ],
+    "đái tháo đường": [
+      "Metformin"
+    ],
+    "glibenclamide": [
+      "Glibenclamide"
+    ],
+    "daonil": [
+      "Glibenclamide"
+    ],
+    "maninil": [
+      "Glibenclamide"
+    ],
+    "gliclazide": [
+      "Gliclazide"
+    ],
+    "diamicron": [
+      "Gliclazide"
+    ],
+    "predian": [
+      "Gliclazide"
+    ],
+    "glimepiride": [
+      "Glimepiride"
+    ],
+    "amaryl": [
+      "Glimepiride"
+    ],
+    "gliamide": [
+      "Glimepiride"
+    ],
+    "insulin": [
+      "Insulin Regular"
+    ],
+    "actrapid": [
+      "Insulin Regular"
+    ],
+    "humulin": [
+      "Insulin Regular"
+    ],
+    "novorapid": [
+      "Insulin Regular"
+    ],
+    "tiêm insulin": [
+      "Insulin Regular"
+    ],
+    "humulin r": [
+      "Insulin Regular"
+    ],
+    "sitagliptin": [
+      "Sitagliptin"
+    ],
+    "januvia": [
+      "Sitagliptin"
+    ],
+    "gabapentin": [
+      "Gabapentin"
+    ],
+    "neurontin": [
+      "Gabapentin"
+    ],
+    "đau thần kinh": [
+      "Gabapentin",
+      "Pregabalin"
+    ],
+    "tê bì": [
+      "Gabapentin",
+      "Vitamin B1 (Thiamine)",
+      "Vitamin B6 (Pyridoxine)",
+      "Vitamin B12 (Cyanocobalamin)"
+    ],
+    "gabapen": [
+      "Gabapentin"
+    ],
+    "pregabalin": [
+      "Pregabalin"
+    ],
+    "lyrica": [
+      "Pregabalin"
+    ],
+    "amitriptyline": [
+      "Amitriptyline"
+    ],
+    "elavil": [
+      "Amitriptyline"
+    ],
+    "tryptanol": [
+      "Amitriptyline"
+    ],
+    "trầm cảm": [
+      "Amitriptyline"
+    ],
+    "đau mãn": [
+      "Amitriptyline"
+    ],
+    "diazepam": [
+      "Diazepam"
+    ],
+    "valium": [
+      "Diazepam"
+    ],
+    "seduxen": [
+      "Diazepam"
+    ],
+    "an thần": [
+      "Diazepam"
+    ],
+    "lo âu": [
+      "Diazepam"
+    ],
+    "co giật": [
+      "Diazepam",
+      "Clonazepam"
+    ],
+    "clonazepam": [
+      "Clonazepam"
+    ],
+    "rivotril": [
+      "Clonazepam"
+    ],
+    "động kinh": [
+      "Clonazepam"
+    ],
+    "sumatriptan": [
+      "Sumatriptan"
+    ],
+    "imigran": [
+      "Sumatriptan"
+    ],
+    "migraine": [
+      "Sumatriptan"
+    ],
+    "đau nửa đầu": [
+      "Sumatriptan"
+    ],
+    "cinnarizine": [
+      "Cinnarizine"
+    ],
+    "stugeron": [
+      "Cinnarizine"
+    ],
+    "sibelium": [
+      "Cinnarizine"
+    ],
+    "chóng mặt": [
+      "Cinnarizine",
+      "Betahistine"
+    ],
+    "tiền đình": [
+      "Cinnarizine",
+      "Betahistine"
+    ],
+    "betahistine": [
+      "Betahistine"
+    ],
+    "serc": [
+      "Betahistine"
+    ],
+    "merislon": [
+      "Betahistine"
+    ],
+    "ù tai": [
+      "Betahistine"
+    ],
+    "glucosamine": [
+      "Glucosamine"
+    ],
+    "viartril": [
+      "Glucosamine"
+    ],
+    "artrodar": [
+      "Glucosamine"
+    ],
+    "đau khớp": [
+      "Glucosamine",
+      "Etoricoxib"
+    ],
+    "thoái hóa khớp": [
+      "Glucosamine"
+    ],
+    "viartril-s": [
+      "Glucosamine"
+    ],
+    "etoricoxib": [
+      "Etoricoxib"
+    ],
+    "arcoxia": [
+      "Etoricoxib"
+    ],
+    "viêm khớp": [
+      "Etoricoxib"
+    ],
+    "colchicine": [
+      "Colchicine"
+    ],
+    "colchimax": [
+      "Colchicine"
+    ],
+    "gout": [
+      "Colchicine",
+      "Allopurinol"
+    ],
+    "gút": [
+      "Colchicine",
+      "Allopurinol"
+    ],
+    "đau khớp ngón cái": [
+      "Colchicine"
+    ],
+    "allopurinol": [
+      "Allopurinol"
+    ],
+    "zyloric": [
+      "Allopurinol"
+    ],
+    "zyloprim": [
+      "Allopurinol"
+    ],
+    "acid uric": [
+      "Allopurinol"
+    ],
+    "calcium": [
+      "Calcium + Vitamin D3"
+    ],
+    "calci": [
+      "Calcium + Vitamin D3"
+    ],
+    "vitamin d3": [
+      "Calcium + Vitamin D3",
+      "Vitamin D3"
+    ],
+    "caltrate": [
+      "Calcium + Vitamin D3"
+    ],
+    "calcimax": [
+      "Calcium + Vitamin D3"
+    ],
+    "loãng xương": [
+      "Calcium + Vitamin D3",
+      "Vitamin D3"
+    ],
+    "bổ xương": [
+      "Calcium + Vitamin D3"
+    ],
+    "calcium d3": [
+      "Calcium + Vitamin D3"
+    ],
+    "os-cal": [
+      "Calcium + Vitamin D3"
+    ],
+    "clotrimazole": [
+      "Clotrimazole"
+    ],
+    "clotrimazol": [
+      "Clotrimazole"
+    ],
+    "canesten": [
+      "Clotrimazole"
+    ],
+    "mycelex": [
+      "Clotrimazole"
+    ],
+    "nấm âm đạo": [
+      "Clotrimazole"
+    ],
+    "hắc lào": [
+      "Clotrimazole"
+    ],
+    "fluconazole": [
+      "Fluconazole"
+    ],
+    "fluconazol": [
+      "Fluconazole"
+    ],
+    "diflucan": [
+      "Fluconazole"
+    ],
+    "flucomed": [
+      "Fluconazole"
+    ],
+    "nấm": [
+      "Fluconazole"
+    ],
+    "candida": [
+      "Fluconazole"
+    ],
+    "acyclovir": [
+      "Acyclovir"
+    ],
+    "aciclovir": [
+      "Acyclovir"
+    ],
+    "zovirax": [
+      "Acyclovir"
+    ],
+    "herpes": [
+      "Acyclovir"
+    ],
+    "zona": [
+      "Acyclovir"
+    ],
+    "thủy đậu": [
+      "Acyclovir"
+    ],
+    "mupirocin": [
+      "Mupirocin"
+    ],
+    "bactroban": [
+      "Mupirocin"
+    ],
+    "nhiễm trùng da": [
+      "Mupirocin"
+    ],
+    "lở loét": [
+      "Mupirocin"
+    ],
+    "hydrocortisone": [
+      "Hydrocortisone cream"
+    ],
+    "cortaid": [
+      "Hydrocortisone cream"
+    ],
+    "ngứa da": [
+      "Hydrocortisone cream"
+    ],
+    "viêm da": [
+      "Hydrocortisone cream"
+    ],
+    "eczema": [
+      "Hydrocortisone cream"
+    ],
+    "hc cream": [
+      "Hydrocortisone cream"
+    ],
+    "tobramycin": [
+      "Tobramycin nhỏ mắt"
+    ],
+    "tobrex": [
+      "Tobramycin nhỏ mắt"
+    ],
+    "tobracin": [
+      "Tobramycin nhỏ mắt"
+    ],
+    "đau mắt": [
+      "Tobramycin nhỏ mắt",
+      "Ciprofloxacin nhỏ mắt/tai"
+    ],
+    "viêm mắt": [
+      "Tobramycin nhỏ mắt"
+    ],
+    "nhỏ mắt": [
+      "Tobramycin nhỏ mắt",
+      "Ciprofloxacin nhỏ mắt/tai"
+    ],
+    "ciprofloxacin mắt": [
+      "Ciprofloxacin nhỏ mắt/tai"
+    ],
+    "ciloxan": [
+      "Ciprofloxacin nhỏ mắt/tai"
+    ],
+    "ciprocin": [
+      "Ciprofloxacin nhỏ mắt/tai"
+    ],
+    "nhỏ tai": [
+      "Ciprofloxacin nhỏ mắt/tai"
+    ],
+    "đau tai": [
+      "Ciprofloxacin nhỏ mắt/tai"
+    ],
+    "xylometazoline": [
+      "Xylometazoline"
+    ],
+    "xylometazolin": [
+      "Xylometazoline"
+    ],
+    "otrivin": [
+      "Xylometazoline"
+    ],
+    "ngạt mũi": [
+      "Xylometazoline"
+    ],
+    "nghẹt mũi": [
+      "Xylometazoline"
+    ],
+    "nhỏ mũi": [
+      "Xylometazoline"
+    ],
+    "xyloproct": [
+      "Xylometazoline"
+    ],
+    "vitamin c": [
+      "Vitamin C (Ascorbic acid)"
+    ],
+    "ascorbic acid": [
+      "Vitamin C (Ascorbic acid)"
+    ],
+    "cebion": [
+      "Vitamin C (Ascorbic acid)"
+    ],
+    "redoxon": [
+      "Vitamin C (Ascorbic acid)"
+    ],
+    "bổ sung": [
+      "Vitamin C (Ascorbic acid)",
+      "Folic acid (Vitamin B9)",
+      "Zinc"
+    ],
+    "vitamin b1": [
+      "Vitamin B1 (Thiamine)"
+    ],
+    "thiamine": [
+      "Vitamin B1 (Thiamine)"
+    ],
+    "benerva": [
+      "Vitamin B1 (Thiamine)"
+    ],
+    "thần kinh": [
+      "Vitamin B1 (Thiamine)",
+      "Vitamin B12 (Cyanocobalamin)"
+    ],
+    "vitamin b6": [
+      "Vitamin B6 (Pyridoxine)"
+    ],
+    "pyridoxine": [
+      "Vitamin B6 (Pyridoxine)"
+    ],
+    "buồn nôn thai kỳ": [
+      "Vitamin B6 (Pyridoxine)"
+    ],
+    "vitamin b12": [
+      "Vitamin B12 (Cyanocobalamin)"
+    ],
+    "cyanocobalamin": [
+      "Vitamin B12 (Cyanocobalamin)"
+    ],
+    "methylcobalamin": [
+      "Vitamin B12 (Cyanocobalamin)"
+    ],
+    "cobavital": [
+      "Vitamin B12 (Cyanocobalamin)"
+    ],
+    "thiếu máu": [
+      "Vitamin B12 (Cyanocobalamin)",
+      "Folic acid (Vitamin B9)"
+    ],
+    "folic acid": [
+      "Folic acid (Vitamin B9)"
+    ],
+    "acid folic": [
+      "Folic acid (Vitamin B9)"
+    ],
+    "folate": [
+      "Folic acid (Vitamin B9)"
+    ],
+    "mang thai": [
+      "Folic acid (Vitamin B9)"
+    ],
+    "cholecalciferol": [
+      "Vitamin D3"
+    ],
+    "devit": [
+      "Vitamin D3"
+    ],
+    "ostelin": [
+      "Vitamin D3"
+    ],
+    "còi xương": [
+      "Vitamin D3"
+    ],
+    "zinc": [
+      "Zinc"
+    ],
+    "kẽm": [
+      "Zinc"
+    ],
+    "zincofer": [
+      "Zinc"
+    ],
+    "zinccare": [
+      "Zinc"
+    ],
+    "tiêu chảy trẻ em": [
+      "Zinc"
+    ],
+    "vitazin": [
+      "Zinc"
+    ],
+    "iron": [
+      "Iron (Ferrous)"
+    ],
+    "sắt": [
+      "Iron (Ferrous)"
+    ],
+    "ferrous": [
+      "Iron (Ferrous)"
+    ],
+    "tardyferon": [
+      "Iron (Ferrous)"
+    ],
+    "ferrograd": [
+      "Iron (Ferrous)"
+    ],
+    "thiếu máu thiếu sắt": [
+      "Iron (Ferrous)"
+    ],
+    "ferrous sulfate": [
+      "Iron (Ferrous)"
+    ],
+    "magnesium": [
+      "Magnesium"
+    ],
+    "magie": [
+      "Magnesium"
+    ],
+    "magne b6": [
+      "Magnesium"
+    ],
+    "chuột rút": [
+      "Magnesium"
+    ],
+    "vọp bẻ": [
+      "Magnesium"
+    ],
+    "magne": [
+      "Magnesium"
+    ],
+    "magne pharmaton": [
+      "Magnesium"
+    ],
+    "albendazole": [
+      "Albendazole"
+    ],
+    "albendazol": [
+      "Albendazole"
+    ],
+    "zentel": [
+      "Albendazole"
+    ],
+    "alzental": [
+      "Albendazole"
+    ],
+    "tẩy giun": [
+      "Albendazole",
+      "Mebendazole",
+      "Pyrantel"
+    ],
+    "giun": [
+      "Albendazole"
+    ],
+    "sán": [
+      "Albendazole"
+    ],
+    "mebendazole": [
+      "Mebendazole"
+    ],
+    "mebendazol": [
+      "Mebendazole"
+    ],
+    "vermox": [
+      "Mebendazole"
+    ],
+    "fugacar": [
+      "Mebendazole"
+    ],
+    "pyrantel": [
+      "Pyrantel"
+    ],
+    "combantrin": [
+      "Pyrantel"
+    ],
+    "helmintox": [
+      "Pyrantel"
+    ],
+    "giun kim": [
+      "Pyrantel"
+    ],
+    "levothyroxine": [
+      "Levothyroxine"
+    ],
+    "euthyrox": [
+      "Levothyroxine"
+    ],
+    "synthroid": [
+      "Levothyroxine"
+    ],
+    "tuyến giáp": [
+      "Levothyroxine"
+    ],
+    "hypothyroid": [
+      "Levothyroxine"
+    ],
+    "suy giáp": [
+      "Levothyroxine"
+    ],
+    "propylthiouracil": [
+      "Propylthiouracil (PTU)"
+    ],
+    "ptu": [
+      "Propylthiouracil (PTU)"
+    ],
+    "cường giáp": [
+      "Propylthiouracil (PTU)"
+    ],
+    "hyperthyroid": [
+      "Propylthiouracil (PTU)"
+    ],
+    "tamsulosin": [
+      "Tamsulosin"
+    ],
+    "flomax": [
+      "Tamsulosin"
+    ],
+    "harnal": [
+      "Tamsulosin"
+    ],
+    "tiền liệt tuyến": [
+      "Tamsulosin",
+      "Finasteride"
+    ],
+    "tiểu khó": [
+      "Tamsulosin"
+    ],
+    "finasteride": [
+      "Finasteride"
+    ],
+    "proscar": [
+      "Finasteride"
+    ],
+    "propecia": [
+      "Finasteride"
+    ],
+    "rụng tóc": [
+      "Finasteride"
+    ],
+    "dexamethasone tiêm": [
+      "Dexamethasone injection"
+    ],
+    "corticoid tiêm": [
+      "Dexamethasone injection"
+    ],
+    "chống phù nề": [
+      "Dexamethasone injection"
+    ],
+    "dị ứng nặng": [
+      "Dexamethasone injection"
+    ],
+    "decadron tiêm": [
+      "Dexamethasone injection"
+    ],
+    "fortecortin": [
+      "Dexamethasone injection"
+    ],
+    "diclofenac tiêm": [
+      "Diclofenac injection"
+    ],
+    "voltaren tiêm": [
+      "Diclofenac injection"
+    ],
+    "đau lưng": [
+      "Diclofenac injection"
+    ],
+    "đau khớp tiêm": [
+      "Diclofenac injection"
+    ],
+    "ketorolac": [
+      "Ketorolac"
+    ],
+    "toradol": [
+      "Ketorolac"
+    ],
+    "ketolac": [
+      "Ketorolac"
+    ],
+    "đau cấp": [
+      "Ketorolac"
+    ],
+    "giảm đau mạnh": [
+      "Ketorolac"
+    ],
+    "tramadol": [
+      "Tramadol"
+    ],
+    "tramal": [
+      "Tramadol"
+    ],
+    "ultram": [
+      "Tramadol"
+    ],
+    "đau nặng": [
+      "Tramadol"
+    ],
+    "đau sau mổ": [
+      "Tramadol"
+    ]
+  }
+}

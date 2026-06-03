@@ -1,7 +1,7 @@
 # CLAUDE.md — MediVoice VN
-# ISO/IEC 42001:2023 | ISO_VN v1.0 | v1.1
+# ISO/IEC 42001:2023 | ISO_VN v1.0 | v0.2.0
 # Owner: Andy Phan (Viet) | Maple Leaf Group
-# Path: C:\Projects\MediVoice_VN | Forked from: MediVoice AI (CA) v2.61.3
+# GitHub: https://github.com/vietsharescom/MediVoice_VN
 
 ---
 
@@ -9,10 +9,12 @@
 
 | Field | Value |
 |---|---|
-| Project | MediVoice VN — Bác sĩ đọc → Bệnh án TT32/2023 tự động |
-| Market | Vietnam — phòng khám tư nhân, trung tâm CĐHA |
-| Stack | Python 3.10, FastAPI, PhoWhisper-small, PhoBERT+CRF, SQLite, Fernet |
-| Compliance | ISO_VN: NĐ13/2023 · TT32/2023 · TT13/2025 · Luật AI 134/2025 |
+| Project | MediVoice VN — Phần mềm quản lý phòng khám tư + AI Voice |
+| Positioning | **"Documentation Assistant"** — AI tạo nháp, BS chịu trách nhiệm |
+| Market | Phòng mạch tư nhân lâm sàng có đăng ký BYT — VN |
+| Stack | Python 3.10, FastAPI, PhoWhisper-small, PhoBERT+CRF, SQLite, Fernet, Tauri |
+| Compliance | NĐ13/2023 · TT32/2023 · TT13/2025 · Luật KCB 2023 · Luật AI 134/2025 |
+| Pilot | Phòng khám Đà Nẵng (Andy) + Phòng mạch Sài Gòn (BS partner) |
 | GitHub | https://github.com/vietsharescom/MediVoice_VN |
 
 ---
@@ -32,30 +34,113 @@
 
 | Field | Value |
 |---|---|
-| Version | v0.1.0 |
-| Status | Documentation phase — code chưa bắt đầu |
-| Tests | N/A |
-| Blocker | Andy ký PROJECT_KICKOFF Section 10 |
-| Next task | FID-VN-001: plugin_cdha.py (sau khi S10 approved) |
+| Version | v0.2.0 |
+| Status | **Design finalized — sẵn sàng code Phase 0** |
+| Tests | N/A (chưa có code) |
+| Blocker | Drug database strategy (cần giải quyết trước code) |
+| Next task | BENCH-001: Benchmark PhoWhisper trên audio thực tế |
 
 **Key files:**
-- [PROJECT_KICKOFF.md](docs/cl08_operation/PROJECT_KICKOFF.md) — S1–S9 done, **S10 chờ Andy ký**
 - [BACKLOG.md](docs/records/BACKLOG.md) — task tracker
-- [DECISIONS.md](docs/records/DECISIONS.md) — key decisions log
+- [DECISIONS.md](docs/records/DECISIONS.md) — all locked decisions
+- [VISION.md](docs/cl05_leadership/VISION.md) — product vision v0.2
+- [BRS.md](docs/cl08_operation/BRS.md) — business requirements v0.2
 - [CHANGELOG.md](CHANGELOG.md) — version history
+
+---
+
+## SẢN PHẨM — 2 LAYER + 3 GÓI
+
+### 2 Layers
+```
+LAYER 1: Patient Management
+  Hồ sơ bệnh nhân, lịch hẹn, thu chi, referral, storage
+
+LAYER 2: AI Voice Core
+  BS/nhân viên nói → PhoWhisper → điền form → BS approve → PDF
+```
+
+### 9 Modules (bật/tắt theo gói)
+```
+M1: Quản lý bệnh nhân    (hồ sơ, lịch sử, CCCD scan)
+M2: Đặt lịch hẹn         (BN tự book online, QR check-in)
+M3: Thu chi đơn giản     (voice log thu tiền, ghi chi phí)
+M4: Kết quả bên thứ 3   (upload PDF/ảnh → gắn hồ sơ BN)
+M5: Referral partner     (chỉ định đối tác, KHÔNG ghi tiền)
+M6: Zalo / Thông báo    (reminder tái khám, share PDF đơn thuốc)
+M7: VN Cloud sync        (VNG/FPT/VNPT Cloud, multi-device)
+M8: Plugin chuyên khoa  (CĐHA, nha khoa, tai mũi họng...)
+M9: HIS integration      (HL7 v2 export, BravoSoft, FPT)
+```
+
+### 3 Gói dịch vụ
+```
+GÓI 1 — AI Voice Only         ~500k–1M/tháng
+  Core AI + Mẫu 15/BV1 + PDF + SQLite local offline
+
+GÓI 2 — Phòng Mạch            ~2–3M/tháng
+  Gói 1 + M1 + M2 + M3 + M4 + M6 + M7
+  TT13/2025 compliant ready
+
+GÓI 3 — Phòng Khám Đầy Đủ    ~4–8M/tháng
+  Tất cả modules + M5 + M8 + M9
+```
 
 ---
 
 ## PIPELINE (FROZEN)
 
 ```
-L0 → L1 → L2 → L3 → L4 → L5 → L6[+PLUGIN] → L7 → L8 → L9 → L10
+Audio → [L0]  Normalize 16kHz mono
+      → [L1a] PhoWhisper chunk streaming (10s overlap)
+      → [L1b] Drug name correction (VN drug database)
+      → [L1c] Medical NER (PhoBERT + CRF)
+      → [L1d] ICD-10-VN auto-lookup (QĐ5837)
+      → [L2]  Schema + confidence validation
+      → [L3]  Route: lâm sàng / CĐHA plugin / nha khoa...
+      → [L4]  Human Gate — BS review + approve (KHÔNG BYPASS)
+      → [L5]  PII scan (NĐ13/2023)
+      → [L6]  Generate Mẫu 15/BV1 + plugin nếu có
+      → [L7]  SQLite + Fernet lưu trữ
+      → [L8]  Error handling + recovery
+      → [L9a] PDF export            ← Phase 0
+      → [L9b] HL7 v2 export         ← Phase 1
+      → [L9c] FHIR R4 export        ← Phase 2
+      → [L10] Immutable audit log (10+ năm, tamper-proof)
 ```
 
-**Plugins Phase 1:**
-1. `plugin_cdha.py` — báo cáo siêu âm/X-quang ← FID-VN-001
-2. `plugin_ngoai_tru.py` — Mẫu 15/BV1 ← FID-VN-002
-3. `plugin_nha_khoa.py` — Mẫu 16/BV1 ← FID-VN-003
+### 2 Voice Contexts
+```
+STAFF VOICE (tiếp nhận BN):
+  Hỏi: "Tên gì? Ở đâu? Bệnh gì?"
+  → AI điền form tiếp nhận (tên, tuổi, lý do đến)
+  → Phase 1 feature (sau khi core stable)
+
+DOCTOR VOICE (trong phòng khám):
+  Nói: triệu chứng, khám, chẩn đoán, thuốc, chỉ định
+  → AI điền Mẫu 15/BV1 + đơn thuốc
+  → Phase 0 core feature
+```
+
+---
+
+## FORM PRIORITY
+
+```
+CORE (Phase 0):
+  Mẫu 15/BV1 — Bệnh án ngoại trú lâm sàng
+  Dùng bởi 95% BS lâm sàng tư nhân
+
+PLUGINS (Phase 1+):
+  CĐHA        — báo cáo siêu âm/X-quang   (FID-VN-001)
+  Nha khoa    — Mẫu 16/BV1               (FID-VN-003)
+  Tai mũi họng, Tim mạch...              (Phase 2)
+
+LƯU Ý QUAN TRỌNG:
+  CĐHA và chuyên khoa dùng form riêng của ngành
+  KHÔNG dùng Mẫu 15/BV1
+  Chỉ là OPTION/PLUGIN — không phải Phase 0 target
+```
 
 ---
 
@@ -67,8 +152,7 @@ L0 → L1 → L2 → L3 → L4 → L5 → L6[+PLUGIN] → L7 → L8 → L9 → L
 2. Andy approve
 3. Implement + tests (100% PASS)
 4. CHANGELOG entry
-5. External review CHỈ KHI safety/security risk
-6. Commit: feat(VN-L{N}): description [FID-VN-NNN]
+5. Commit: feat(VN-L{N}): description [FID-VN-NNN]
 ```
 
 ### Tầng 2: Vừa (20–100 LOC)
@@ -83,7 +167,6 @@ L0 → L1 → L2 → L3 → L4 → L5 → L6[+PLUGIN] → L7 → L8 → L9 → L
 ```
 1. Implement + tests
 2. Commit với message rõ ràng
-(Không cần FID, không cần BACKLOG entry)
 ```
 
 ---
@@ -92,50 +175,79 @@ L0 → L1 → L2 → L3 → L4 → L5 → L6[+PLUGIN] → L7 → L8 → L9 → L
 
 1. Pipeline L0→L10 FROZEN — thay đổi chỉ qua FID
 2. 100% tests PASS trước mọi commit
-3. BS phải approve — AI chỉ tạo draft (Luật KCB 2023)
-4. Data on-premise — không cloud nước ngoài (NĐ13/2023)
-5. Output theo mẫu TT32/2023 — không tự do format
-6. ICD-10-VN trong phần Chẩn đoán (QĐ5837)
-7. STAY IN PROJECT DIRECTORY — C:\Projects\MediVoice_VN
+3. L4 Human Gate KHÔNG BYPASS — BS phải approve mọi record
+4. Data lưu tại VN — không AWS/GCP/Azure region ngoài VN
+5. Output theo mẫu TT32/2023
+6. ICD-10-VN bắt buộc trong Chẩn đoán (QĐ5837)
+7. Positioning = "Documentation Assistant" trong mọi UI/docs/marketing
+8. UI luôn hiển thị: "AI tạo nháp — Bác sĩ chịu trách nhiệm hoàn toàn"
+9. CCHN/GPHN thu thập khi đăng ký — platform không chịu TN nếu user khai sai
+10. Referral/commission: KHÔNG ghi tiền, KHÔNG ghi phần trăm
 
 ---
 
-## LEGAL CONSTRAINTS (HARD — không thể bỏ)
+## LEGAL CONSTRAINTS (HARD)
 
-| Luật | Yêu cầu | Kiến trúc |
+| Luật | Yêu cầu | Giải pháp |
 |---|---|---|
-| NĐ13/2023 | Data ở VN | On-premise / cloud VN |
-| TT32/2023 | Mẫu bệnh án chuẩn | Plugin outputs TT32 format |
-| Luật KCB 2023 | BS phải ký | Human gate L4 bắt buộc |
-| TT13/2025 | Chữ ký số + HL7 FHIR | Deadline 31/12/2026 |
-| Luật AI 134/2025 | Audit trail | L10 immutable log |
+| NĐ13/2023 | Data tại VN | SQLite local + VN Cloud (VNG/FPT/VNPT) |
+| TT32/2023 | Mẫu bệnh án chuẩn | Mẫu 15/BV1 core, TT32 plugins |
+| Luật KCB 2023 Đ.14 | BS hành nghề tại cơ sở đăng ký | Chỉ phục vụ cơ sở có đăng ký |
+| Luật KCB 2023 Đ.62 | BS ký bệnh án | L4 không bypass |
+| Luật KCB 2023 Đ.80 | Không hoa hồng | Referral tracking only, no financials |
+| TT13/2025 | EMR + chữ ký số + FHIR | Deadline 31/12/2026 |
+| Luật AI 134/2025 | Audit + human oversight | L4 + L10, conformity trước 09/2027 |
+| TT46/2017 | SaMD nếu chẩn đoán | NOT SaMD — chỉ transcription/form fill |
+
+---
+
+## TECH DECISIONS (LOCKED)
+
+| Component | Decision | Lý do |
+|---|---|---|
+| ASR | PhoWhisper-small (BSD-3-Clause) | Only VN medical ASR, offline |
+| Training data | VietMed dataset (MIT) | Commercial OK |
+| NLP/NER | PhoBERT + CRF (MIT) | Best VN NER |
+| Desktop | **Tauri** (Rust) | 10MB vs Electron 150MB |
+| Mobile | Web responsive (Phase 1) | Không build native app |
+| Database | SQLite + WAL + Fernet | Simple, offline, encrypted |
+| Cloud | VN only: VNG/FPT/VNPT | NĐ13/2023 compliant |
+| Export Ph0 | PDF | Universal, no integration needed |
+| Export Ph1 | HL7 v2 | Real standard in VN (not FHIR yet) |
+| Export Ph2 | FHIR R4 | When TT13/2025 enforced |
+| Zalo Ph0 | Manual share | No API risk |
+| Zalo Ph1 | Share SDK + OA (non-medical only) | Zalo bans medical content via OA |
+| Drug DB | TBD — blocker | Must resolve before L1b |
+
+---
+
+## PILOT PLAN
+
+```
+Pilot 1: Phòng khám Đà Nẵng (Andy trực tiếp)
+  Mục tiêu: cài đặt + quan sát + thu audio thực tế
+
+Pilot 2: Phòng mạch Sài Gòn (BS partner)
+  Mục tiêu: test cold onboarding không có Andy tại chỗ
+
+KPIs Pilot:
+  □ Thu 50–100h audio y tế thực tế
+  □ Đo CEER: tên thuốc, liều lượng, chẩn đoán
+  □ Xác nhận: BS dùng app thật, không bỏ giữa chừng
+  □ Xác nhận: WTP — trả tiền hay không
+```
 
 ---
 
 ## EXTERNAL REVIEW — CHỈ KHI CẦN
 
-**Cần review (ChatGPT + Grok):**
-- L4 human gate, L5 PII handling, L10 audit — safety critical
-- Encryption, data access control — security
-- Major architecture change
+**Đã review (ChatGPT + Grok + Copilot — 2026-06-03):**
+- Kết luận: Khả thi về kỹ thuật và pháp lý
+- Xem: [THIRD_PARTY_REVIEW_REQUEST.md](docs/records/THIRD_PARTY_REVIEW_REQUEST.md)
 
-**Không cần review:**
-- Plugin output formatting
-- ICD-10 mapping, vocab
-- Config, test files, docs
-
----
-
-## KEY DECISIONS (xem DECISIONS.md để đầy đủ)
-
-| Decision | Rationale |
-|---|---|
-| Option B: Local only | NĐ13/2023 + AI consistency |
-| Output: TT32/2023 (VI) | Pháp lý bắt buộc |
-| Plugin system | 29 forms = 1 core + N plugins |
-| Xóa MarianMT | Output VN — không cần dịch |
-| FID threshold: 100 LOC | Lean > paperwork |
-| Patient ID: flexible | VN law không bắt buộc CCCD |
+**Cần review thêm:**
+- Luật sư VN (healthtech + data + AI) — trước khi bán
+- Drug database licensing — trước khi build L1b
 
 ---
 
@@ -148,8 +260,6 @@ L0 → L1 → L2 → L3 → L4 → L5 → L6[+PLUGIN] → L7 → L8 → L9 → L
 4. Báo: "Done. Remaining: {task list}"
 ```
 
-*(Không cần tạo file session report riêng)*
-
 ---
 
-*MediVoice VN | ISO_VN v1.0 | Updated: 2026-06-03*
+*MediVoice VN | ISO_VN v1.0 | v0.2.0 | Updated: 2026-06-03*

@@ -17,3 +17,13 @@ models/
 hf_cache/
 .venv/
 venv/
+
+# Large reference files (tracked separately)
+data/reference/*_raw.json
+data/reference/*.xlsx
+data/reference/*.pdf
+data/reference/*.jpg
+data/reference/*.png
+
+# Exports (generated files)
+exports/

@@ -1,113 +1,138 @@
 # VISION.md | DS-VN-CL05-VIS | MediVoice VN Product Vision
-# ISO/IEC 42001:2023 Clause 5 | v1.0 | 2026-06-03
+# ISO/IEC 42001:2023 Clause 5 | v0.2.0 | 2026-06-03
 
 ---
 
-## 1. TẦMNHÌN
+## 1. TẦM NHÌN
 
-> **"Mọi bác sĩ Việt Nam có thể nói và bệnh án tự viết — chuẩn pháp lý, không cần thư ký."**
+> **"Bác sĩ nói — bệnh án tự viết. Phòng mạch tư hiện đại hoá trong 30 phút."**
 
-MediVoice VN là công cụ AI đầu tiên tại Việt Nam tự động hóa việc ghi chép hồ sơ
-bệnh án điện tử từ giọng nói bác sĩ, tuân thủ đầy đủ TT32/2023 và NĐ13/2023,
-chạy 100% offline trên thiết bị của phòng khám.
+MediVoice VN là **Documentation Assistant** đầu tiên tại Việt Nam dành riêng cho
+phòng mạch tư nhân — tự động hoá ghi chép hồ sơ bệnh án từ giọng nói bác sĩ,
+tuân thủ TT32/2023, chạy 100% offline, sẵn sàng cho TT13/2025.
 
----
-
-## 2. THỊ TRƯỜNG MỤC TIÊU
-
-### Đặc điểm hệ thống y tế VN
-
-Việt Nam **không có bác sĩ gia đình** và **không có gatekeeping**:
-- Bệnh nhân tự đến thẳng bệnh viện hoặc phòng khám chuyên khoa — không cần giới thiệu
-- Bệnh viện Bạch Mai: 3,000–3,600 ngoại trú/ngày
-- Phòng khám tư: ~37,000–40,000 đang hoạt động, ~1,000–2,000 trung tâm CĐHA tư
-
-### Target users (theo thứ tự ưu tiên)
-
-**Persona #1 — Bác sĩ CĐHA tư (siêu âm, X-quang, CT)**
-- Làm 30–50 ca/ngày, mỗi ca đọc 200–300 chữ kết quả
-- Hiện tại: thư ký gõ theo lời đọc, hoặc BS tự gõ
-- Pain: 6,000–15,000 chữ/ngày + không chuẩn hóa
-- MediVoice VN: BS đọc → báo cáo có cấu trúc trong < 5 giây → ký số
-
-**Persona #2 — BS chuyên khoa mở phòng mạch ngoài giờ**
-- BS bệnh viện công, sau giờ làm ở phòng khám riêng
-- Ít nhân viên, áp lực thời gian
-- Cần EMR trước 31/12/2026 (TT13/2025)
-- MediVoice VN: ghi bệnh án + compliance cùng lúc
-
-**Persona #3 — Chủ phòng khám đa khoa tư**
-- Quản lý 2–10 BS, cần chuẩn hóa hồ sơ
-- Deadline TT13/2025 đang đến gần
-- MediVoice VN: compliance + tiết kiệm nhân sự thư ký
+**Không phải Medical Device. Không tự chẩn đoán.**
+AI tạo nháp — Bác sĩ chịu trách nhiệm hoàn toàn.
 
 ---
 
-## 3. PHÂN TÍCH ĐỐI THỦ
+## 2. SẢN PHẨM — 2 LAYER + 3 GÓI
 
-| Đối thủ | Điểm yếu tạo lợi thế cho MediVoice VN |
-|---|---|
-| **VEM.AI** (BV E HN) | Cloud LLM → có thể vi phạm NĐ13/2023; không offline; không chuẩn TT32 |
-| **Dr.AI** (Đài Loan) | $149/tháng (~3.7M VNĐ); EN output only; cloud; chưa deploy VN |
-| **Heidi Health** (AU) | Chưa vào VN (12–18 tháng); tiếng Việt chưa được validate |
-| **FPT/Viettel** | HIS infrastructure — không có AI scribe → **đối tác, không đối thủ** |
-| **VinBrain/NVIDIA** | Imaging AI only — khác domain Phase 1 |
-
-**Cửa sổ cơ hội: 12–18 tháng** trước khi Heidi Health pivot vào VN.
-
----
-
-## 4. LUỒNG SẢN PHẨM
-
-### VN-FLOW-A: Báo cáo CĐHA ← PRIORITY #1
+### 2 Layers
 
 ```
-BS siêu âm/X-quang nhìn hình ảnh
-    ↓
-Đọc to (tiếng Việt, hoặc VI+EN code-switching):
-"Gan kích thước bình thường, nhu mô đồng nhất,
- không có khối u. Túi mật không sỏi..."
-    ↓
-[MediVoice VN — plugin_cdha.py]
-    ↓
-Báo cáo có cấu trúc:
-┌────────────────────────────────────────┐
-│ KỸ THUẬT:   Siêu âm ổ bụng tổng quát │
-│ MÔ TẢ:      Gan: bình thường...       │
-│             Túi mật: không sỏi...     │
-│ KẾT LUẬN:  Không phát hiện bất thường │
-│ BS ký số:   [chờ phê duyệt]          │
-└────────────────────────────────────────┘
-    ↓ BS review → Ký số → Lưu RIS/HIS
+LAYER 1: Patient Management (optional)
+  Hồ sơ bệnh nhân, lịch hẹn online, thu chi, referral
+
+LAYER 2: AI Voice Core (bắt buộc — core value)
+  BS nói → PhoWhisper → điền Mẫu 15/BV1 → BS approve → PDF
 ```
 
-### VN-FLOW-B: Bệnh án Ngoại trú Mẫu 15/BV1 ← PRIORITY #2
+### 3 Gói Dịch Vụ
+
+| Gói | Tên | Giá | Modules | Target |
+|---|---|---|---|---|
+| **Gói 1** | AI Voice Only | 500k–1M/tháng | Core AI + PDF | BS cần ghi chép nhanh |
+| **Gói 2** | Phòng Mạch | 2–3M/tháng | Gói 1 + M1+M2+M3+M4+M6+M7 | Phòng mạch tư có đăng ký |
+| **Gói 3** | Phòng Khám | 4–8M/tháng | Tất cả + M5+M8+M9 | Phòng khám đa khoa, có HIS |
+
+### 9 Modules
 
 ```
-BS lâm sàng sau khi có đủ kết quả XN + CĐHA
-    ↓
-Đọc to kết luận:
-"Bệnh nhân nữ 45 tuổi, đau bụng vùng hạ sườn phải.
- Siêu âm không sỏi. XN bình thường.
- Chẩn đoán: Hội chứng ruột kích thích.
- Điều trị: Mebeverine 135mg ngày 3 lần..."
-    ↓
-[MediVoice VN — plugin_ngoai_tru.py]
-    ↓
-Mẫu 15/BV1:
-┌────────────────────────────────────────┐
-│ Lý do vào viện:  Đau bụng HSD phải   │
-│ Bệnh sử:         3 ngày, tăng khi...  │
-│ Tiền sử:         Không đặc biệt       │
-│ Khám LS:         Bụng mềm, đau HSD P │
-│ CLS:             SA ổ bụng: bt        │
-│                  XN máu: trong GHBT   │
-│ Chẩn đoán:      Hội chứng ruột kích   │
-│                  ICD-10-VN: K58.9    │
-│ Hướng điều trị: Mebeverine 135mg...   │
-│ BS ký số:        [chờ phê duyệt]     │
-└────────────────────────────────────────┘
-    ↓ BS review → Ký số → Lưu EMR (HL7 FHIR)
+M1: Quản lý bệnh nhân    — hồ sơ, lịch sử, CCCD scan
+M2: Đặt lịch hẹn         — BN book online, QR check-in
+M3: Thu chi đơn giản     — voice log thu/chi, báo cáo ngày/tháng
+M4: Kết quả bên thứ 3   — upload PDF/ảnh từ XN/CĐHA vào hồ sơ
+M5: Referral partner     — chỉ định đối tác (KHÔNG ghi tiền)
+M6: Zalo / Thông báo    — reminder tái khám, share đơn thuốc
+M7: VN Cloud sync        — backup VNG/FPT/VNPT, multi-device
+M8: Plugin chuyên khoa  — CĐHA, nha khoa, tai mũi họng...
+M9: HIS integration      — HL7 v2, BravoSoft, FPT.eHospital
+```
+
+---
+
+## 3. THỊ TRƯỜNG MỤC TIÊU
+
+### Target Phase 0: Phòng Mạch Tư Lâm Sàng
+
+```
+Đặc điểm:
+  Đăng ký BYT, 1–3 BS, 10–30 BN/ngày
+  50% vẫn dùng sổ giấy hoặc Excel
+  TT13/2025 deadline 31/12/2026 — đang lo lắng
+  WTP: 1–3M VNĐ/tháng
+
+Pain point chính:
+  Ghi chép bằng tay chậm — mất 5–10 phút/BN
+  Không có lịch sử BN → hỏi lại từ đầu mỗi lần
+  Chưa comply TT13/2025 → nguy cơ bị phạt
+
+MediVoice VN giải quyết:
+  Ghi chép bằng giọng nói → 1–2 phút/BN
+  Lịch sử BN tự động → load ngay khi BN đến
+  TT13 compliance ready — không cần thêm tool
+```
+
+### Phân Khúc Thị Trường VN
+
+| Phân khúc | Số lượng ước tính | WTP | Priority |
+|---|---|---|---|
+| Phòng mạch tư lâm sàng (đăng ký) | ~15,000–20,000 | 1–3M/tháng | **Phase 0** |
+| Phòng khám đa khoa tư | ~5,000–8,000 | 3–8M/tháng | Phase 1 |
+| Trung tâm CĐHA tư | ~1,000–2,000 | 3–8M/tháng | Phase 1 plugin |
+| BS công + phòng mạch tư đăng ký | ~10,000–15,000 | 500k–2M/tháng | Phase 1 |
+
+### Personas Chính
+
+**Persona #1 — BS lâm sàng phòng mạch tư (TARGET PHASE 0)**
+- Mở phòng mạch sau giờ công, đã đăng ký BYT
+- 15–30 BN/ngày, không có hoặc có 1 trợ lý
+- Đang dùng sổ giấy hoặc BravoSoft cũ
+- Cần: TT13 compliance + ghi chép nhanh
+- Quyết định mua: 1–2 tuần, tự quyết
+
+**Persona #2 — BS CĐHA tư (CĐHA plugin Phase 1)**
+- 30–50 ca siêu âm/X-quang mỗi ngày
+- Tự gõ báo cáo hoặc có thư ký gõ = 3+ giờ/ngày
+- Pain rõ: voice → structured report
+- WTP cao, quyết định nhanh nếu demo tốt
+
+**Persona #3 — Chủ phòng khám đa khoa (Phase 1–2)**
+- 5–20 BS, cần chuẩn hoá hồ sơ toàn phòng
+- Deadline TT13/2025 đang gần
+- Cần: multi-user + HIS integration + compliance
+
+---
+
+## 4. QUYTRÌNH BỆNH NHÂN ĐẦY ĐỦ
+
+```
+[TRƯỚC KHI ĐẾN] — Gói 2+
+  BN book lịch qua Zalo/web → phòng mạch nhận lịch
+  Không cần gọi điện, không cần chờ lâu
+
+[ĐẾN PHÒNG MẠCH]
+  BN mới: nhập tay / voice / scan CCCD → tạo hồ sơ
+  BN cũ: scan QR → load hồ sơ + lịch sử tự động
+
+[TRONG PHÒNG KHÁM — CORE VALUE]
+  BS nói vào mic trong lúc khám:
+  "Đau khớp gối phải 2 tuần, sưng nhẹ...
+   Chẩn đoán thoái hoá khớp. Kê Meloxicam 7.5mg...
+   Chỉ định X-quang. Tái khám 2 tuần."
+       ↓ AI điền Mẫu 15/BV1 theo thời gian thực
+  BS đọc lại → chỉnh sửa → PHÊ DUYỆT (L4)
+
+[SAU KHÁM]
+  Đơn thuốc PDF → Zalo/in cho BN
+  Giấy chỉ định → in / gửi đối tác
+  Lịch tái khám tự động → Zalo reminder D-1
+  Revenue log: "Thu 200k BN Lan" → app ghi
+
+[KẾT QUẢ VỀ] — Gói 2+
+  Không integrate: BS/BN upload PDF/ảnh kết quả
+  Có integrate (Gói 3): thông báo tự động khi có kết quả
 ```
 
 ---
@@ -115,107 +140,114 @@ Mẫu 15/BV1:
 ## 5. KIẾN TRÚC PIPELINE
 
 ```
-Audio input (m4a/wav/mp3)
+Audio input (mic streaming)
     ↓
-[L0] Validate + normalize 16kHz mono
+[L0]  Validate + normalize 16kHz mono
     ↓
-[L1] PhoWhisper-small (VN ASR)
-     → Fine-tuned trên VietMed (WER 51.8%→29.6%)
-     → Handle code-switching VI+EN (ViMedCSS)
+[L1a] PhoWhisper-small chunk streaming (10s + 2s overlap)
+[L1b] Drug name correction (VN drug database)
+[L1c] Medical NER — PhoBERT + CRF
+[L1d] ICD-10-VN auto-lookup (QĐ5837)
     ↓
-[L2] Schema + confidence validation
+[L2]  Schema + confidence validation
     ↓
-[L3] Routing → detect mode (CĐHA / ngoại trú / nha khoa / ...)
+[L3]  Route → lâm sàng (default) / plugin chuyên khoa
     ↓
-[L4] Human gate — ALWAYS (Luật KCB 2023)
+[L4]  Human Gate — BS review + chỉnh sửa + APPROVE (BẮTBUỘC)
     ↓
-[L5] PII scan — CCCD/CMND/BHYT/SĐT (NĐ13/2023)
+[L5]  PII scan — CCCD/BHYT/SĐT (NĐ13/2023)
     ↓
-[L6] CORE GENERATOR + SPECIALTY PLUGIN
-     ├── plugin_cdha.py       ← VN-FLOW-A
-     ├── plugin_ngoai_tru.py  ← VN-FLOW-B (Mẫu 15/BV1)
-     ├── plugin_nha_khoa.py   ← VN-FLOW-C (Mẫu 16/BV1)
-     └── [Phase 2: san, nhi, nhan_khoa...]
-     → Output: Bệnh án TT32/2023 + ICD-10-VN
+[L6]  Generate Mẫu 15/BV1 + plugin nếu có
     ↓
-[L7] Memory — SQLite, Fernet, 10 năm (TT32/2023)
+[L7]  SQLite + Fernet lưu trữ (local)
     ↓
-[L8] Recovery — error handling
+[L8]  Recovery — error handling
     ↓
-[L9] Response — HL7 FHIR export (TT13/2025)
+[L9a] PDF export         ← Phase 0
+[L9b] HL7 v2 export      ← Phase 1
+[L9c] FHIR R4 export     ← Phase 2
     ↓
-[L10] Audit log — immutable (ISO 42001 + Luật AI 134)
-```
-
-**Không có L1b (MarianMT)** — không cần dịch VI→EN.
-
----
-
-## 6. PLUGIN SYSTEM — 29 FORM TEMPLATES
-
-TT32/2023 quy định 29 mẫu bệnh án nhưng tất cả chia sẻ 70% cấu trúc giống nhau.
-
-```
-COMMON CORE (70-80%):
-  Hành chính | Lý do vào viện | Bệnh sử | Tiền sử |
-  Khám LS | Cận LS | Chẩn đoán ICD-10-VN | Hướng điều trị
-
-SPECIALTY PLUGINS (20-30%):
-  CĐHA:     Kỹ thuật / Mô tả / Kết luận [không thuộc 29 mẫu BV1]
-  Ngoại trú: Standard Mẫu 15/BV1
-  Nha khoa:  Mẫu 16/BV1 + sơ đồ răng FDI
-  Sản khoa:  Mẫu 05/BV1 + tiền sử sản, tuổi thai, Apgar [Phase 2]
-  Nhi:       Mẫu 02/BV1 + cha mẹ, tiêm chủng, phát triển [Phase 2]
-  Nhãn khoa: Mẫu 21-26/BV1 (6 sub-forms) [Phase 2]
-
-Phase 1: 3 plugins → covers 85% thị trường private clinic VN
+[L10] Immutable audit log (ISO 42001 + Luật AI 134)
 ```
 
 ---
 
-## 7. ROADMAP
+## 6. PLUGIN SYSTEM — CHUYÊN KHOA LÀ OPTION
 
 ```
-PHASE 1 (NOW — Dec 2026):
-  ├── VN-FLOW-A: plugin_cdha (siêu âm/X-quang)       ← FID-VN-001
-  ├── VN-FLOW-B: plugin_ngoai_tru (Mẫu 15/BV1)       ← FID-VN-002
-  ├── VN-FLOW-C: plugin_nha_khoa (Mẫu 16/BV1)        ← FID-VN-003
-  ├── ICD-10-VN database (QĐ5837)
-  ├── HL7 FHIR export (TT13/2025 compliance)
-  ├── Digital signature support
-  └── Pilot: 3–5 phòng khám CĐHA + đa khoa tư
+CORE (tất cả):
+  Mẫu 15/BV1 — lâm sàng ngoại trú
 
-PHASE 2 (2027):
-  ├── Luật AI 134 conformity assessment
-  ├── FPT.eHospital plugin integration
-  ├── plugin_san_khoa (Mẫu 05/BV1)
-  ├── plugin_nhi (Mẫu 02/BV1)
-  └── VietMed fine-tuning v2 (improved WER)
+PLUGINS (bật theo nhu cầu):
+  CĐHA:       Báo cáo siêu âm/X-quang (FID-VN-001)
+              Structured: Kỹ thuật / Mô tả / Kết luận
+  Nha khoa:   Mẫu 16/BV1 + sơ đồ răng FDI (FID-VN-003)
+  Phase 2:    Tai mũi họng, Tim mạch, Sản khoa, Nhi...
 
-PHASE 3 (2027-2028):
-  ├── National health platform (VNeID) integration
-  ├── Multi-user (điều dưỡng + BS + thư ký roles)
-  └── Viettel HIS integration
+LƯU Ý: Mỗi chuyên khoa có form riêng —
+        KHÔNG dùng Mẫu 15/BV1 cho CĐHA hay TMH
 ```
 
 ---
 
-## 8. KEY DECISIONS (KHÔNG RE-DEBATE)
+## 7. PHÂN TÍCH CẠNH TRANH
+
+| Đối thủ | Điểm yếu → Lợi thế MediVoice VN |
+|---|---|
+| **BravoSoft** | Không có AI, không có voice, UI cũ, không FHIR |
+| **VEM.AI** | Cloud only (vi phạm NĐ13), chỉ BV công, chưa thương mại |
+| **Dr.AI (Taiwan)** | $149/tháng, tiếng Anh, cloud, không TT32 |
+| **Heidi Health (AU)** | Chưa vào VN, không offline, không TT32 |
+| **FPT/Viettel HIS** | Không có AI scribe → đối tác, không đối thủ |
+| **OneClinic** | Cloud-based, modern UI nhưng không có AI voice |
+
+**Không ai đang làm AI voice-to-EMR cho phòng mạch tư VN.**
+Cửa sổ cơ hội: 12–18 tháng trước khi đối thủ pivot vào.
+
+---
+
+## 8. ROADMAP
+
+```
+PHASE 0 (2–3 tháng) — VALIDATE & REVENUE:
+  Core AI Voice + Mẫu 15/BV1 + PDF + SQLite
+  Pilot: Đà Nẵng (Andy) + Sài Gòn (BS partner)
+  Mục tiêu: 5 BS trả tiền
+
+PHASE 1 (3–9 tháng) — COMPLETE PRODUCT:
+  Modules M1–M7 + Staff voice + HL7 v2
+  Plugin CĐHA (FID-VN-001) + Nha khoa (FID-VN-003)
+  Scale: 50–200 phòng mạch
+
+PHASE 2 (2027) — KHI BYT SIẾT:
+  FHIR R4 + Chữ ký số + BYT compliance
+  Luật AI 134 conformity assessment
+  Upsell từ Gói 1 → Gói 2/3
+
+PHASE 3 (2027–2028) — NỀN TẢNG:
+  VNeID real-time auth
+  BHYT eligibility check
+  BYT Central Registry sync
+  FPT/Viettel partnership (M9)
+```
+
+---
+
+## 9. KEY DECISIONS (KHÔNG RE-DEBATE)
 
 | Decision | Rationale |
 |---|---|
-| **Option B: Local only** | NĐ13/2023 blocks cloud. ISO consistency requires frozen models. |
-| **Output: TT32/2023, không SOAP** | Pháp lý VN bắt buộc |
-| **Xóa MarianMT** | Output VN — không cần dịch |
-| **Plugin system** | 1 core + N plugins — không phải 29 app riêng |
-| **On-premise deployment** | NĐ13/2023 data residency |
-| **Patient ID linh hoạt** | VN law: bệnh nhân không có CCCD vẫn được khám |
-| **Human approval gate** | Luật KCB 2023: BS phải ký — AI chỉ là draft |
-| **ICD-10-VN** | QĐ5837 bắt buộc — không ICD-10-CA |
-| **CĐHA là use case #1** | Khối lượng cao nhất, ROI rõ nhất, quyết định mua nhanh nhất |
-| **Target clinic tư** | Không đấu thầu, quyết định trong 1–4 tuần |
+| Offline-first | NĐ13/2023 + AI consistency + phòng mạch VN internet yếu |
+| Mẫu 15/BV1 là CORE | 95% BS lâm sàng tư dùng — không phải CĐHA |
+| CĐHA là Plugin | Form chuyên ngành riêng, Phase 1 revenue cao |
+| NOT SaMD | Chỉ transcription, không chẩn đoán (TT46/2017) |
+| Tauri (không Electron) | 10MB vs 150MB — máy VN cũ |
+| HL7 v2 trước FHIR | FHIR chưa production tại VN (2026) |
+| Referral: không ghi tiền | Luật KCB 2023 Điều 80 |
+| Target clinic tư | BV công = đấu thầu 6–18 tháng |
+| Pilot Đà Nẵng + SG | Andy có phòng khám + BS partner sẵn |
 
 ---
 
-*DS-VN-CL05-VIS | MediVoice VN VISION v1.0 | 2026-06-03*
+*DS-VN-CL05-VIS | MediVoice VN VISION v0.2.0 | 2026-06-03*
 *Owner: Andy Phan — Maple Leaf Group*
