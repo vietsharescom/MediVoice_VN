@@ -1,0 +1,157 @@
+{
+  "_comment": "MediVoice VN — Module Permission Contracts | ISO/IEC 42001:2023 Clause 8.5",
+  "_principle": "CONSTITUTION.md P4: Proportionality — control what matters, free the rest",
+  "version": "1.0",
+  "standard": "ISO/IEC 42001:2023 Clause 8.5",
+
+  "zones": {
+    "frozen": {
+      "description": "Pháp lý bắt buộc. Thay đổi cần FID + Andy approve + legal review.",
+      "layers": ["L4", "L10"]
+    },
+    "controlled": {
+      "description": "Quality gates. Thay đổi > 100 LOC cần FID approved.",
+      "layers": ["L0", "L1a", "L1b", "L1c", "L1d", "L2", "L3", "L5", "L7", "L8", "L9a"]
+    },
+    "open": {
+      "description": "AI tự do cải thiện. Không cần approval. Commit trực tiếp nếu tests pass.",
+      "areas": [
+        "ASR model tuning",
+        "NER implementation",
+        "Drug database curation",
+        "UI/UX design",
+        "Form templates",
+        "Docs, config, tests",
+        "Performance optimizations",
+        "External benchmarks"
+      ]
+    }
+  },
+
+  "contracts": {
+    "L0_NORMALIZE": {
+      "zone": "controlled",
+      "may_call_llm": false,
+      "may_call_asr_model": false,
+      "may_modify_audio": true,
+      "may_access_patient_data": false,
+      "purpose": "Normalize audio to 16kHz mono WAV",
+      "frozen": false
+    },
+    "L1a_ASR": {
+      "zone": "controlled",
+      "may_call_llm": false,
+      "may_call_asr_model": true,
+      "may_access_patient_data": false,
+      "purpose": "Transcribe audio using PhoWhisper",
+      "frozen": false,
+      "note": "ASR model selection is OPEN — AI free to benchmark alternatives"
+    },
+    "L1b_DRUG_CORRECT": {
+      "zone": "controlled",
+      "may_call_llm": false,
+      "may_call_asr_model": false,
+      "may_modify_drug_names": false,
+      "may_translate_drug_names": false,
+      "purpose": "Correct ASR errors in drug names",
+      "frozen_rule": "Drug names MUST NOT be translated — ever",
+      "source": "data/reference/drug_db.json"
+    },
+    "L1c_NER": {
+      "zone": "controlled",
+      "may_call_llm": false,
+      "may_call_nlp_model": true,
+      "purpose": "Extract medical entities: drugs, doses, diagnoses",
+      "note": "NER model/approach is OPEN — AI free to improve",
+      "frozen": false
+    },
+    "L1d_ICD_LOOKUP": {
+      "zone": "controlled",
+      "may_call_llm": false,
+      "may_call_external_api": false,
+      "source": "data/reference/icd10vn.json",
+      "purpose": "Map diagnosis text to ICD-10-VN code",
+      "frozen_rule": "Must use ICD-10-VN (QĐ5837) — not ICD-10-CA/US"
+    },
+    "L2_VALIDATE": {
+      "zone": "controlled",
+      "may_call_llm": false,
+      "may_reject_payload": true,
+      "purpose": "Schema + confidence validation",
+      "frozen": false
+    },
+    "L3_ROUTE": {
+      "zone": "controlled",
+      "may_call_llm": false,
+      "purpose": "Detect route: lam_sang / cdha / nha_khoa",
+      "frozen": false
+    },
+    "L4_HUMAN_GATE": {
+      "zone": "frozen",
+      "may_call_llm": false,
+      "may_be_bypassed": false,
+      "may_auto_approve": false,
+      "requires_human_action": true,
+      "human_role": "Licensed physician (có CCHN/GPHN)",
+      "purpose": "BS review + approve bệnh án draft",
+      "iso_clause": "ISO 42001 Cl.5.3 + Cl.8.2",
+      "legal_basis": "Luật KCB 2023 Điều 62 | Luật AI 134/2025 Điều 22",
+      "action_on_no_approval": "HALT — record not saved",
+      "frozen": true,
+      "frozen_reason": "Legal requirement — cannot be removed or bypassed"
+    },
+    "L5_PII_SCAN": {
+      "zone": "controlled",
+      "may_call_llm": false,
+      "may_block_pipeline": true,
+      "purpose": "Detect PII: CCCD, BHYT, SĐT (NĐ13/2023)",
+      "frozen": false
+    },
+    "L6_GENERATE_FORM": {
+      "zone": "controlled",
+      "may_call_llm": false,
+      "may_call_nlp_model": true,
+      "may_auto_diagnose": false,
+      "purpose": "Generate Mẫu 15/BV-01 from approved entities",
+      "frozen_rule": "AI ghi lại lời BS nói — KHÔNG tự chẩn đoán",
+      "note": "Form quality improvements are OPEN — AI free to improve templates",
+      "frozen": false
+    },
+    "L7_STORAGE": {
+      "zone": "controlled",
+      "may_call_llm": false,
+      "may_use_foreign_cloud": false,
+      "allowed_storage": ["localhost", "vngcloud.vn", "fptcloud.com", "vnpt-technology.vn"],
+      "purpose": "SQLite + Fernet encrypted storage",
+      "frozen_rule": "Data MUST stay in Vietnam — NĐ13/2023",
+      "frozen": false
+    },
+    "L8_ERROR_HANDLER": {
+      "zone": "controlled",
+      "may_call_llm": false,
+      "purpose": "Error handling + recovery",
+      "frozen": false
+    },
+    "L9a_PDF_EXPORT": {
+      "zone": "controlled",
+      "may_call_llm": false,
+      "purpose": "Generate PDF output (Phase 0)",
+      "note": "PDF template design is OPEN",
+      "frozen": false
+    },
+    "L10_AUDIT_LOG": {
+      "zone": "frozen",
+      "may_call_llm": false,
+      "may_delete_records": false,
+      "may_update_records": false,
+      "may_modify_records": false,
+      "requires_hash_chain": true,
+      "always_active": true,
+      "purpose": "Immutable audit trail for all events",
+      "iso_clause": "ISO 42001 Cl.9 | ISO 42001 Annex A",
+      "legal_basis": "Luật AI 134/2025 Điều 24",
+      "frozen": true,
+      "frozen_reason": "Immutability is the core property — cannot add delete/modify"
+    }
+  }
+}
