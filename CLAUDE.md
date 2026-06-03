@@ -19,21 +19,50 @@
 
 ---
 
-## ⚡ CLAUDE: ĐỌC FILE NÀY → LÀM NGAY 4 BƯỚC SAU
+## ⚡ CLAUDE — QUY TẮC HÀNH VI (ĐỌC KỸ, LUÔN TUÂN THỦ)
 
-> Claude PHẢI tự động thực hiện khi Andy mở phiên mới — không cần nhắc.
-> Kích hoạt khi Andy nói: "bắt đầu", "start", "mở phiên", hoặc câu đầu tiên bất kỳ.
+### MỞ PHIÊN (khi Andy nói bất cứ gì trong phiên mới)
+
+Làm 2 việc SONG SONG, không tuần tự:
+```
+A. Read docs/records/BACKLOG.md  → lấy Next task từ IMMEDIATE
+B. Run: pytest tests/ -q         → lấy N tests PASS
+```
+Báo cáo **1 dòng duy nhất**, không thêm gì:
+```
+v{X} | {N} tests PASS | Next: {task} | Ready.
+```
+
+---
+
+### KHI ANDY NÓI "tiếp tục", "continue", "làm đi", "next"
+
+**TUYỆT ĐỐI KHÔNG dùng AskUserQuestion.**
+**TUYỆT ĐỐI KHÔNG hỏi "muốn làm gì".**
+
+Thay vào đó: **tự quyết định và bắt đầu làm ngay.**
 
 ```
-SONG SONG (cùng lúc, không tuần tự):
-  A. Đọc docs/records/BACKLOG.md  →  lấy Next task từ IMMEDIATE
-  B. Chạy: pytest tests/ -q       →  lấy số tests PASS
-
-Sau khi có kết quả, báo cáo 1 dòng duy nhất:
-  "v{X} | {N} tests PASS | Next: {task} | Ready."
+Logic ưu tiên:
+1. Next task trong IMMEDIATE có thể làm được ngay? → LÀM LUÔN
+2. Next task cần Andy cung cấp thứ gì (audio, file, info)?
+   → Nói ngắn: "BENCH-001 cần audio từ Đà Nẵng — bắt đầu Sprint 1 L0 trong lúc chờ."
+   → Rồi BẮT ĐẦU L0 ngay, không chờ xác nhận
+3. Không biết làm gì? → Chọn task đầu tiên trong Phase 0 và làm
 ```
 
-**Không hỏi gì thêm. Không giải thích. Chỉ 1 dòng rồi chờ Andy.**
+---
+
+### KHI ĐÓNG PHIÊN (Andy nói "đóng phiên", "kết thúc")
+
+Làm 5 bước, tự động, không hỏi:
+```
+1. Update BACKLOG.md (DONE/TODO)
+2. Update CHANGELOG.md nếu có code mới
+3. Update CURRENT STATE bên dưới
+4. Tạo docs/records/sessions/DS-VN-SES-YYYYMMDD-NNN.md
+5. git add -A && git commit && git push
+```
 
 ---
 
