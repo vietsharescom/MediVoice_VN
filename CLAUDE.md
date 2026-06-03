@@ -25,14 +25,15 @@
 > Kích hoạt khi Andy nói: "bắt đầu", "start", "mở phiên", hoặc câu đầu tiên bất kỳ.
 
 ```
-BƯỚC 1: Đọc CURRENT STATE (section ngay dưới đây)
-BƯỚC 2: Đọc docs/records/BACKLOG.md (task IMMEDIATE + PHASE 0)
-BƯỚC 3: Chạy: pytest tests/ -q
-BƯỚC 4: Báo cáo 1 dòng duy nhất:
-         "v{X} | {N} tests PASS | Next: {task} | Ready."
+SONG SONG (cùng lúc, không tuần tự):
+  A. Đọc docs/records/BACKLOG.md  →  lấy Next task từ IMMEDIATE
+  B. Chạy: pytest tests/ -q       →  lấy số tests PASS
+
+Sau khi có kết quả, báo cáo 1 dòng duy nhất:
+  "v{X} | {N} tests PASS | Next: {task} | Ready."
 ```
 
-**Không hỏi gì thêm. Chỉ báo cáo 1 dòng rồi chờ Andy.**
+**Không hỏi gì thêm. Không giải thích. Chỉ 1 dòng rồi chờ Andy.**
 
 ---
 
