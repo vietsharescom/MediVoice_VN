@@ -1,0 +1,10 @@
+repos:
+  - repo: local
+    hooks:
+      - id: pipeline-integrity
+        name: MediVoice VN — Pipeline Integrity Tests
+        entry: venv/Scripts/pytest tests/test_pipeline_integrity.py --tb=short -q
+        language: system
+        pass_filenames: false
+        always_run: true
+        description: "Enforce ISO pipeline rules. 100% PASS required before commit."
