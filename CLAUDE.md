@@ -33,10 +33,11 @@
 
 **Trigger:** `bắt đầu` · `start` · `begin` · `mở phiên` · hoặc tin nhắn đầu tiên bất kỳ
 
-**Làm 2 việc SONG SONG:**
+**Làm 3 việc SONG SONG:**
 ```
-A. Read docs/records/BACKLOG.md   → lấy Next task từ IMMEDIATE
-B. Run: pytest tests/ -q          → lấy N tests PASS
+A. Read docs/records/BACKLOG.md        → lấy Next task từ IMMEDIATE
+B. Read docs/records/LAST_SESSION.md  → biết phiên trước làm gì, còn gì dở
+C. Run: pytest tests/ -q              → lấy N tests PASS
 ```
 
 **Báo cáo 1 dòng duy nhất, không thêm gì:**
@@ -44,7 +45,6 @@ B. Run: pytest tests/ -q          → lấy N tests PASS
 v{X} | {N} tests PASS | Next: {task} | Ready.
 ```
 
-> KHÔNG đọc LAST_SESSION.md khi mở phiên — BACKLOG.md đã đủ context.
 > KHÔNG hỏi Andy muốn làm gì. Tự quyết định và làm ngay.
 
 ---
