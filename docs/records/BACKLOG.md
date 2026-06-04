@@ -73,13 +73,25 @@
 - [ ] **ARCH-004:** StateMachine formal — replace RecordStatus enum
 - [ ] **ARCH-005:** MultiCritic + Simulator trong ValidationLayer (Phase 0 chỉ có Rule+Anomaly)
 
-### Features
+### Features — AI & Language
+- [ ] **LANG-001:** MarianMT VI→EN option — output EN cho BS nước ngoài (BO-VN-003)
+- [ ] **LANG-002:** Bilingual EN/VI output toggle — detect language, chọn template phù hợp
+- [ ] **NER-PHOBERT-001:** Nâng L1c lên PhoBERT + CRF (thay rule-based) — sau TRAIN-001
+- [ ] **KB-001:** FAISS KB y tế VN — ICD-10-VN terms, thuật ngữ siêu âm, tim mạch → hỗ trợ form mapping
+
+### Features — CĐHA & Chuyên khoa (VN-FLOW-CDHA)
+- [ ] **FID-VN-001:** Plugin CĐHA — báo cáo siêu âm (abdominal, thyroid, OB, vascular)
+- [ ] **FID-VN-001b:** Plugin CĐHA — báo cáo X-quang, CT, MRI
+- [ ] **FID-VN-001c:** Plugin CĐHA — báo cáo ECG/tim mạch
+- [ ] **FID-VN-002:** Plugin Nha khoa — Mẫu 16/BV1 + sơ đồ răng
+- [ ] **FID-VN-003:** Plugin Sản khoa — Mẫu 05/BV1
+
+### Features — Workflow
 - [ ] **STAFF-001:** Staff voice context (tiếp nhận BN — khác với doctor voice)
 - [ ] **REPEAT-001:** Tái kê đơn cũ (copy đơn + điều chỉnh nhỏ)
 - [ ] **DRUG-INTERACT-001:** Drug interaction check cơ bản
 - [ ] **HL7-001:** HL7 v2 export (ADT/ORU)
 - [ ] **SIGN-001:** Chữ ký số BS (TT13/2025)
-- [ ] **NER-PHOBERT-001:** Nâng L1c lên PhoBERT + CRF (thay rule-based)
 
 ### Training
 - [ ] **TRAIN-001:** Fine-tune PhoWhisper trên 50–100h audio thực tế từ pilot

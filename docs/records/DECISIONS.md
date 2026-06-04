@@ -42,6 +42,10 @@
 
 | Date | Decision | Why | Impact |
 |---|---|---|---|
+| 2026-06-04 | **"Documentation Assistant" = transcription + form mapping** (KHÔNG = no reasoning) | AI đọc lời BS → phân loại đúng vào field đúng (S/O/A/P hay Mẫu 15/BV1 section) — đây là mapping, không phải autonomous diagnosis. Không được tự ra chẩn đoán nếu BS chưa nói. | AI phải hiểu thuật ngữ chuyên khoa để map đúng. FAISS KB Phase 1 là mapping tool, không phải diagnosis engine. |
+| 2026-06-04 | **MarianMT VI→EN = Option Phase 1** (không phải exclude) | BS nước ngoài làm việc tại VN cần English output. CĐHA report thường bilingual. Code-switching VN+EN (BO-VN-003) cần xử lý tốt. | L1b Phase 1: thêm MarianMT option khi output language = EN. Default vẫn là VI. |
+| 2026-06-04 | **CĐHA forms = specialized per modality** (Phase 1) | Siêu âm ≠ X-quang ≠ ECG ≠ Tim mạch — mỗi loại có template riêng. Không dùng Mẫu 15/BV1. Persona #2 BS CĐHA: 30-50 ca/ngày, WTP cao. | FID-VN-001 CĐHA: cần template builder per specialty (echo, US, X-ray, CT, MRI...). |
+| 2026-06-04 | **Bilingual EN/VI output = option** cho foreign doctors | VN có BS nước ngoài (FDI hospitals, international clinics). Code-switching VN+EN phổ biến trong môi trường y tế. | L3 routing: detect ngôn ngữ → chọn output template phù hợp. Default: VI. |
 | 2026-06-03 | **PhoWhisper-small** là ASR chính | BSD-3-Clause (commercial OK), only offline VN medical ASR | Cần fine-tune + 4 sub-steps L1a-L1d |
 | 2026-06-03 | **VietMed dataset** cho fine-tuning | MIT license (commercial OK), 16h medical VN audio | WER thực tế ~30-40% không fine-tune |
 | 2026-06-03 | **Streaming chunk 10s** (không phải record toàn bộ) | Latency: 10s audio → 3-6s processing → perceived <5s | Cần overlap giữa chunks để tránh cắt giữa câu |

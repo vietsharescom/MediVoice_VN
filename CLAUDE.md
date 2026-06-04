@@ -18,7 +18,7 @@
 | Field | Value |
 |---|---|
 | Project | MediVoice VN — Phần mềm quản lý phòng khám tư + AI Voice |
-| Positioning | **"Documentation Assistant"** — AI tạo nháp, BS chịu trách nhiệm |
+| Positioning | **"Documentation Assistant"** — AI nghe BS nói, mapping vào đúng form, BS review + ký |
 | Market | Phòng mạch tư nhân lâm sàng có đăng ký BYT — VN |
 | Stack | Python 3.10, FastAPI, PhoWhisper-small, PhoBERT+CRF, SQLite, Fernet, PWA |
 | Compliance | NĐ13/2023 · TT32/2023 · TT13/2025 · Luật KCB 2023 · Luật AI 134/2025 |
@@ -270,7 +270,10 @@ Audio → [L0]  Normalize 16kHz mono
 4. Data lưu tại VN — không AWS/GCP/Azure region ngoài VN
 5. Output theo mẫu TT32/2023
 6. ICD-10-VN bắt buộc trong Chẩn đoán (QĐ5837)
-7. Positioning = "Documentation Assistant" trong mọi UI/docs/marketing
+7. Positioning = "Documentation Assistant": AI nghe BS nói → mapping vào đúng form field → BS approve
+   — AI KHÔNG tự ra chẩn đoán nếu BS chưa nói
+   — AI PHẢI hiểu thuật ngữ chuyên khoa để map đúng (không phải "no reasoning")
+   — Output VI (default) hoặc EN option (BS nước ngoài, CĐHA bilingual)
 8. UI luôn hiển thị: "AI tạo nháp — Bác sĩ chịu trách nhiệm hoàn toàn"
 9. CCHN/GPHN thu thập khi đăng ký — platform không chịu TN nếu user khai sai
 10. Referral/commission: KHÔNG ghi tiền, KHÔNG ghi phần trăm
