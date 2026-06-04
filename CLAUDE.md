@@ -36,16 +36,24 @@
 **Làm 3 việc SONG SONG:**
 ```
 A. Read docs/records/BACKLOG.md        → lấy Next task từ IMMEDIATE
-B. Read docs/records/LAST_SESSION.md  → biết phiên trước làm gì, còn gì dở
+B. Read docs/records/LAST_SESSION.md  → lấy toàn bộ nội dung phiên trước
 C. Run: pytest tests/ -q              → lấy N tests PASS
 ```
 
-**Báo cáo 1 dòng duy nhất, không thêm gì:**
+**Báo cáo theo thứ tự — KHÔNG bỏ bước nào:**
+
 ```
-v{X} | {N} tests PASS | Next: {task} | Ready.
+BƯỚC 1 — Dòng trạng thái:
+  v{X} | {N} tests PASS | Ready.
+
+BƯỚC 2 — Hiển thị toàn bộ LAST_SESSION.md:
+  (copy nguyên nội dung file ra — không tóm tắt, không bỏ)
+
+BƯỚC 3 — Dừng lại, chờ lệnh:
+  "Phiên trước kết thúc ở đây. Chờ lệnh Andy."
 ```
 
-> KHÔNG hỏi Andy muốn làm gì. Tự quyết định và làm ngay.
+> KHÔNG tự ý bắt đầu làm gì. Chỉ báo cáo xong rồi CHỜ.
 
 ---
 
