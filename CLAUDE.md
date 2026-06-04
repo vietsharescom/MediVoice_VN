@@ -64,8 +64,10 @@ Làm 5 bước, tự động, không hỏi:
 1. Update BACKLOG.md (DOING → DONE, thêm tasks mới nếu có)
 2. Update CHANGELOG.md nếu có code mới
 3. Update CURRENT STATE (bên dưới) — version, tests, blocker, next
-4. Tạo docs/records/sessions/DS-VN-SES-YYYYMMDD-NNN.md (xem template)
-5. git add -A && git commit -m "chore(session-end): close session YYYY-MM-DD" && git push
+4. Tạo session report: docs/records/sessions/DS-VN-SES-YYYYMMDD-HHMM.md
+   → HHMM = giờ phút thực tế lúc đóng phiên (VD: 2026-06-04-1435)
+   → Đây là báo cáo CHI TIẾT: đã làm gì + kết quả + kế hoạch tiếp theo
+5. git add -A && git commit -m "chore(session-end): close session YYYYMMDD-HHMM" && git push
 ```
 
 ---
@@ -293,7 +295,7 @@ KPIs Pilot:
 
 ## ⚡ CLAUDE: KẾT THÚC PHIÊN — LÀM NGAY 5 BƯỚC
 
-> Kích hoạt khi Andy nói: "đóng phiên", "kết thúc", "close session".
+> Trigger: `đóng phiên` · `kết thúc` · `end` · `done` · `had end` · `close` · `finish`
 
 ```
 BƯỚC 1: Update BACKLOG.md
@@ -306,32 +308,60 @@ BƯỚC 2: Update CHANGELOG.md
 BƯỚC 3: Update CURRENT STATE (section trên)
          - Version, Status, Tests, Blocker, Next task
 
-BƯỚC 4: Tạo session report
-         File: docs/records/sessions/DS-VN-SES-YYYYMMDD.md
-         (xem template bên dưới)
+BƯỚC 4: Tạo session report — CHI TIẾT
+         File: docs/records/sessions/DS-VN-SES-YYYYMMDD-HHMM.md
+         HHMM = giờ:phút lúc đóng phiên (VD: 20260604-1435)
+         Dùng template bên dưới — KHÔNG được bỏ qua mục nào
 
 BƯỚC 5: git add -A && git commit && git push
-         Message: "chore(session-end): close session YYYY-MM-DD"
+         Message: "chore(session-end): close session YYYYMMDD-HHMM"
 ```
 
-### Template session report (DS-VN-SES-YYYYMMDD.md)
+### Giải thích mã tên báo cáo
+
+```
+DS   = Document Standard (ISO 9001:2015 Cl.7.5)
+VN   = Việt Nam (project scope)
+SES  = Session report (loại: phiên làm việc)
+2026 = năm
+0604 = tháng + ngày
+1435 = giờ 14, phút 35 → biết báo cáo tạo lúc nào, sắp xếp cũ→mới
+
+Các loại khác (chỉ tham khảo, không tạo trong phiên thường):
+  EPR = External PR / review request
+  AUD = Audit / đánh giá
+  RDY = Readiness report
+  DEC = Decision record
+```
+
+### Template session report (DS-VN-SES-YYYYMMDD-HHMM.md)
 
 ```markdown
-# DS-VN-SES-YYYYMMDD
-# MediVoice VN | Session YYYY-MM-DD
+# DS-VN-SES-YYYYMMDD-HHMM
+# MediVoice VN | Session YYYY-MM-DD HH:MM
 # ISO/IEC 42001:2023 Cl.7.5 + Cl.9.1
 
 ## Trạng thái đầu → cuối
-v{X} | {N} tests → v{X} | {N} tests
+v{trước} | {N} tests → v{sau} | {N} tests
 
 ## Đã hoàn thành
-- task 1
-- task 2
+- [TASK-ID] mô tả ngắn kết quả cụ thể
+- [TASK-ID] ...
 
-## Phiên mới tiếp theo
-Next: {task}
+## Kết quả đo được (nếu có)
+- Tests: N/N PASS
+- Pipeline test: input → output
+- Lỗi đã fix: ...
+
+## Blocker / Phụ thuộc bên ngoài
+- BENCH-001: cần Andy lấy audio
+- ...
+
+## Phiên tiếp theo — làm ngay
+1. [TASK-ID] mô tả (ưu tiên cao nhất)
+2. [TASK-ID] ...
 ```
 
 ---
 
-*MediVoice VN | ISO_VN v1.0 | v0.2.0 | Updated: 2026-06-03*
+*MediVoice VN | ISO_VN v1.0 | v0.3.0 | Updated: 2026-06-04*
