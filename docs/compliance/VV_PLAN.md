@@ -57,7 +57,69 @@ Xác nhận rằng:
 
 ---
 
-## 3. VALIDATION — Xác nhận với người dùng thực
+## 3. AI MODEL CODE REVIEW — Quy trình Review Độc lập L1a/L1c
+
+> **ISO/IEC 42001:2023 Cl.8.6:** Kết quả V&V phải được review bởi người không tham gia phát triển.
+> Với 1 founder, "độc lập" = Claude `/code-review` + so sánh output trước/sau + BS pilot xác nhận.
+
+### Khi nào trigger?
+
+**Bắt buộc chạy V4 khi:**
+- Thay đổi `src/core/l1a_asr.py` (ASR model, chunking, confidence)
+- Thay đổi `src/core/l1c_ner.py` (NER patterns, regex, entity extraction)
+- Thay đổi `data/reference/drug_db.json` (drug aliases, INN names)
+- Nâng L1c từ rule-based → PhoBERT+CRF (Phase 1)
+
+### V4 — AI Model Code Review (3 bước bắt buộc)
+
+**Bước 1 — Regression Snapshot (tự động)**
+
+Chạy script `scripts/ai_model_review.py` TRƯỚC khi thay đổi:
+```bash
+python scripts/ai_model_review.py --save-baseline
+# Lưu: docs/records/AI_REVIEW_BASELINE.json
+```
+
+Sau khi thay đổi, chạy lại để so sánh:
+```bash
+python scripts/ai_model_review.py --compare-baseline
+# Output: diff report với PASS/FAIL mỗi test case
+```
+
+**Tiêu chí PASS:**
+| Metric | Threshold | Xử lý nếu fail |
+|---|---|---|
+| Tất cả 5 test cases giữ nguyên output | 5/5 PASS | Block merge |
+| Không có drug name nào bị mất | 100% | Block merge |
+| Confidence không giảm > 0.1 | Δ ≤ 0.10 | Review + Andy approve |
+| Không có ICD code sai | 0 regressions | Block merge |
+
+**Bước 2 — Independent Review (Claude /code-review)**
+
+Chạy `/code-review` trên diff của L1a hoặc L1c:
+```
+/code-review high
+```
+- CRITICAL hoặc HIGH findings → fix trước khi merge
+- Ghi kết quả vào commit message: `[V4-REVIEW: PASS/findings]`
+
+**Bước 3 — Clinical Validation (BS pilot)**
+
+Khi có BS pilot: gửi 5 câu mẫu trước/sau thay đổi, hỏi BS:
+> "Output nào chính xác hơn về thuốc, chẩn đoán, liều lượng?"
+
+Kết quả ghi vào `docs/records/DS-VN-TST-YYYYMMDD-V4.md`.
+
+### Output bắt buộc
+
+Mỗi lần thay đổi L1a/L1c phải có:
+- [ ] `docs/records/AI_REVIEW_YYYYMMDD.md` — kết quả V4
+- [ ] Commit message có `[V4-REVIEW: PASS]`
+- [ ] RTM.md cập nhật nếu có SRS thay đổi
+
+---
+
+## 4. VALIDATION — Xác nhận với người dùng thực
 
 ### Val-1 — Benchmark BENCH-001 (cần audio từ Đà Nẵng)
 **Mục tiêu:** Đo CEER thực tế trước khi pilot
@@ -91,25 +153,27 @@ Xác nhận rằng:
 
 ---
 
-## 4. V&V RECORDS
+## 5. V&V RECORDS
 
 Kết quả V&V lưu tại:
 - Test reports: `docs/records/DS-VN-TST-YYYYMMDD-NNN.md`
 - Benchmark results: `docs/records/BENCH-001-results.md` (sau khi có audio)
+- AI model review: `docs/records/AI_REVIEW_YYYYMMDD.md`
 
 ---
 
-## 5. TRẠNG THÁI HIỆN TẠI
+## 6. TRẠNG THÁI HIỆN TẠI
 
 | Hạng mục | Trạng thái |
 |---|---|
-| V1 Automated tests | ✅ 61/61 PASS |
-| V2 Pipeline E2E | ✅ Đã test với input mẫu (conf=0.81) |
-| V3 Security | ✅ Tests PASS |
+| V1 Automated tests | ✅ 165/165 PASS |
+| V2 Pipeline E2E | ✅ Đã test TC-001 (conf=0.81) |
+| V3 Security | ✅ bandit: 0 HIGH/MEDIUM |
+| **V4 AI Model Review** | ✅ Quy trình documented + script sẵn sàng |
 | Val-1 BENCH-001 | ⏳ Chờ audio Đà Nẵng |
 | Val-2 Usability | ⏳ Chờ pilot |
 | Val-3 Compliance | ⏳ Chờ pilot |
 
 ---
 
-*DS-VN-COM-004 | VV_PLAN v1.0 | ISO/IEC 42001:2023 Cl.8.6 | 2026-06-04*
+*DS-VN-COM-004 | VV_PLAN v1.1 | ISO/IEC 42001:2023 Cl.8.6 | 2026-06-04*

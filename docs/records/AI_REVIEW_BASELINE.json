@@ -1,0 +1,100 @@
+[
+  {
+    "id": "TC-001",
+    "desc": "Lâm sàng đầy đủ — cảm cúm",
+    "passed": true,
+    "failures": [],
+    "output": {
+      "nhiet_do": 38.5,
+      "huyet_ap_tam_thu": 120,
+      "huyet_ap_tam_truong": 80,
+      "mach": 80.0,
+      "chan_doan": "viêm họng cấp",
+      "icd_code": "J02",
+      "drug_inns": [
+        "Amoxicillin"
+      ],
+      "drug_count": 1,
+      "tai_kham": "Sau 5 ngày",
+      "confidence": 0.86
+    }
+  },
+  {
+    "id": "TC-002",
+    "desc": "Đơn thuốc phức tạp — nhiều thuốc",
+    "passed": true,
+    "failures": [],
+    "output": {
+      "nhiet_do": null,
+      "huyet_ap_tam_thu": null,
+      "huyet_ap_tam_truong": null,
+      "mach": null,
+      "chan_doan": "",
+      "icd_code": "",
+      "drug_inns": [
+        "Paracetamol",
+        "Amoxicillin"
+      ],
+      "drug_count": 2,
+      "tai_kham": "",
+      "confidence": 0.25
+    }
+  },
+  {
+    "id": "TC-003",
+    "desc": "Sinh hiệu đa dạng",
+    "passed": true,
+    "failures": [],
+    "output": {
+      "nhiet_do": 37.2,
+      "huyet_ap_tam_thu": 130,
+      "huyet_ap_tam_truong": 85,
+      "mach": 72.0,
+      "chan_doan": "",
+      "icd_code": "",
+      "drug_inns": [],
+      "drug_count": 0,
+      "tai_kham": "",
+      "confidence": 0.21
+    }
+  },
+  {
+    "id": "TC-004",
+    "desc": "Tái khám và chẩn đoán",
+    "passed": true,
+    "failures": [],
+    "output": {
+      "nhiet_do": null,
+      "huyet_ap_tam_thu": null,
+      "huyet_ap_tam_truong": null,
+      "mach": null,
+      "chan_doan": "tăng huyết áp nguyên phát",
+      "icd_code": "",
+      "drug_inns": [],
+      "drug_count": 0,
+      "tai_kham": "Sau 2 tuần",
+      "confidence": 0.4
+    }
+  },
+  {
+    "id": "TC-005",
+    "desc": "Drug INN không bị dịch",
+    "passed": true,
+    "failures": [],
+    "output": {
+      "nhiet_do": null,
+      "huyet_ap_tam_thu": null,
+      "huyet_ap_tam_truong": null,
+      "mach": null,
+      "chan_doan": "",
+      "icd_code": "",
+      "drug_inns": [
+        "Metformin",
+        "Omeprazole"
+      ],
+      "drug_count": 2,
+      "tai_kham": "",
+      "confidence": 0.25
+    }
+  }
+]

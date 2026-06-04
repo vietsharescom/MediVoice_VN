@@ -60,13 +60,31 @@ python -m pytest tests/ -v --cov=src --cov-report=term-missing --cov-fail-under=
 
 ---
 
-## 5. VALIDATION LAYER INTEGRATION
+## 5. V4 AI MODEL REVIEW — Bắt buộc khi thay đổi L1a/L1c
 
-Mỗi khi thay đổi L1a (ASR) hoặc L1c (NER):
-1. Chạy `pytest tests/validation/ -v`
-2. Chạy E2E test TC-001 với input chuẩn
-3. Verify output: CEER, confidence, ICD accuracy
-4. Ghi kết quả vào `docs/records/DS-VN-TST-YYYYMMDD-001.md`
+Mỗi khi thay đổi `src/core/l1a_asr.py`, `src/core/l1c_ner.py`, hoặc `drug_db.json`:
+
+```bash
+# Bước 1: Lưu baseline TRƯỚC khi thay đổi
+python scripts/ai_model_review.py --save-baseline
+
+# (thực hiện thay đổi code)
+
+# Bước 2: So sánh sau thay đổi
+python scripts/ai_model_review.py --compare-baseline
+# Exit 0 = safe to merge | Exit 1 = BLOCK
+
+# Bước 3: /code-review high trên diff
+# Bước 4: Ghi kết quả vào commit message: [V4-REVIEW: PASS]
+```
+
+**Định nghĩa PASS:**
+- 5/5 test cases PASS
+- Không có drug name bị mất
+- Confidence không giảm > 0.10
+- Không có regression từ baseline
+
+**Tài liệu:** `docs/compliance/VV_PLAN.md` Section 3 — V4
 
 ---
 
