@@ -2,71 +2,73 @@
 # Ghi đè mỗi phiên — git history lưu lịch sử cũ tự động
 # ISO/IEC 42001:2023 Cl.9.1 (Performance evaluation)
 
-## Mã phiên: SES-20260605
-## Thời gian: 2026-06-05
-## Version: v0.3.0 → v0.4.0
+## Mã phiên: SES-20260606
+## Thời gian: 2026-06-06
+## Version: v0.4.0 → v0.4.0 (không thay đổi code — phiên thiết kế)
 
 ---
 
 ## Trạng thái đầu → cuối
-v0.3.0 | 165 tests → v0.4.0 | 165 tests PASS | T-005 20/22 PASS (91%)
+v0.4.0 | 165 tests PASS → v0.4.0 | 165 tests PASS
+(Phiên này tập trung thiết kế, không thay đổi code)
 
 ---
 
 ## Đã hoàn thành
 
-### BENCH-001 — Hoàn tất
-- T-007: eval_phowhisper.py — 10/10 PASS | WER 36–52% | RTF ~0.5x
-- Partial CEER: 0% → phát hiện drug_db aliases rỗng + NER patterns quá cứng
-- Nguyên nhân CEER=0%: Canada dùng MarianMT nội bộ cho NER → VN đã xóa nhầm
+### Design Review toàn bộ hệ thống
+- Đọc lại toàn bộ tài liệu: VISION, BRS, PROJECT_KICKOFF, CLAUDE.md, CHANGELOG, DECISIONS, BACKLOG, LIFECYCLE_PLAN, VV_PLAN, FEEDBACK_PROCESS, SRS, ROLES, AI_POLICY, SCOPE, KPI, RISK_REGISTER, IMPACT_ASSESSMENT, SOFTWARE_ARCHITECTURE
+- Phát hiện mâu thuẫn giữa thiết kế gốc (PROJECT_KICKOFF: không SOAP, không MarianMT) và implementation hiện tại (Canada pipeline port có SOAP)
+- Xác nhận thiết kế đúng: L6 branch tại NER entities (không phải sau L9/SOAP)
 
-### Canada Pipeline Port (toàn bộ, không sửa)
-- src/pipeline/p0–p3: l0_input, l1_semantic, l1b_translation (MarianMT), l2_enforcer, l3_routing, l4_authority, l5_policy, l6_agent, l6_soap_generator, l7_memory, l8_recovery, l9_response, l10_observability
-- src/models/: phobert_ner, clinical_kb, qwen_reasoning, _phobert_crf
-- src/adapters/: llm_adapter
-- data/kb/: chunks.json + faiss_index.bin + guidelines.json (Clinical KB từ Canada)
-- tools/: eval_phowhisper.py, run_test_audio.py, record_test_audio.py (Canada, không sửa)
+### VN-ROUTER-001 — Thiết kế lại
+- Thiết kế cũ sai: SOAP → BenhAnNgoaiTru (convert ngược không cần thiết)
+- Thiết kế đúng: NER entities → L6 branch → lam_sang: BenhAnNgoaiTru trực tiếp | cdha: SOAP
+- MarianMT GIỮ (cho NER chất lượng) nhưng branch tại L6, không sau L9
+- Cần FID-VN-004 trước khi implement
 
-### T-005 — Canada Pipeline trên VN audio
-- 20/22 PASS (91%) | 20/20 VI detected | 20/20 SOAP S/O/A/P complete
-- 2 FAIL hợp lệ: test_dental_01 (silence >95%), test_dental_02 (too short 1s)
-- MarianMT active: translation VI→EN cho NER
-- SOAP-S extraction: age + chief complaint detected cho nhiều files
+### Master Design Document v1.1 (PHIÊN NÀY TẠO RA)
+File: docs/records/DESIGN_REPORT_v1.1_20260606.md
 
-### Architecture Decisions (ADR mới)
-- Canada pipeline = core pipeline VN (không rewrite)
-- MarianMT kích hoạt ngay (sửa quyết định sai 2026-06-04)
-- SOAP = output chuẩn cho CĐHA branch
-- FAISS KB kích hoạt
-
-### ISO Docs Updated
-- DECISIONS.md: 4 ADR mới
-- SOFTWARE_ARCHITECTURE.md: bảng so sánh CA/VN cập nhật
-- BACKLOG.md: BENCH-001 → DONE, thêm VN-ROUTER-001
-- CHANGELOG.md: v0.4.0 entry
+Bổ sung quan trọng so với thiết kế gốc:
+1. Queue Management System: số thứ tự số + TTS loa đọc tên
+2. 3 chế độ vận hành: Mode A (BS một mình) / B (có trợ lý) / C (có thu ngân riêng)
+3. 4 màn hình: Phòng chờ TV + Staff Screen + Doctor Screen + Zalo BN
+4. Doctor Pre-visit Briefing: tóm tắt hồ sơ BN trước khi gọi vào
+5. Staff Confirm Gate: checklist đóng ca BN (thu tiền + phát thuốc + lịch)
+6. Referral OUT 2 chiều + Retest flow (xét nghiệm lại nếu lần 1 không đạt)
+7. Referral IN từ đối tác với deal % (tham chiếu, không ghi tiền)
+8. M5 Commission Dashboard 2 chiều (OUT + IN, volume only)
+9. Partner comm: Email CHÍNH THỨC (bí mật), Zalo TÙY CHỌN
+10. Post-care CRM: D+2/D+4/D+5/D+7 with response branching
+11. Booking Engine chuẩn: 7 states + buffer + waitlist + D-1/H-2/H-15p reminder
+12. Email auto-processor với 3 điều kiện (chống xử lý dữ liệu không được yêu cầu)
+13. Data compliance: 3 lớp bảo vệ (Zalo block file, email điều kiện, quarantine)
+14. Integration Gateway: Plugin adapter pattern cho 17+ kết nối
+15. Kênh liên lạc: Zalo text (non-medical) | Email (file y tế) | SMS [Ph.2] | Phone [Ph.3]
+16. Website widget + REST API booking [Gói 2+]
+17. Kế toán API gateway [Gói 3]
+18. Quy trình lưu trữ theo pháp luật VN
 
 ---
 
 ## Kết quả đo được
 - Tests: 165/165 PASS (không thay đổi)
-- T-007: 10/10 PASS | WER avg 46% | RTF 0.5x
-- T-005: 20/22 PASS (91%) | SOAP 20/20
-- WER range: 0.29–0.52 (proxy, chưa fine-tune)
-- CEER: partial 0% (test audio) → cần pilot audio thực tế
+- File thiết kế mới: docs/records/DESIGN_REPORT_v1.1_20260606.md (~700 dòng)
+- Phát hiện và ghi nhận 15+ bổ sung thiết kế quan trọng so với bản gốc
 
 ---
 
 ## Blocker / Phụ thuộc bên ngoài
-- VN-ROUTER-001: cần implement trước khi output Mẫu 15/BV-01 hoạt động
-- BENCH-002 (CEER thật): cần pilot audio BS nói thật + ground truth
-- TRAIN-001: cần 50–100h audio từ pilot Đà Nẵng
+- VN-ROUTER-001: cần viết FID-VN-004 trước khi implement
+- BENCH-002: cần audio pilot thực tế từ Đà Nẵng
 - LEGAL-001: luật sư VN — trước launch thương mại
-- Qwen reasoner: template DDx fallback OK cho Phase 0, Qwen = Phase 2
+- DEPLOY-001: Windows installer — cần sau VN-ROUTER-001
 
 ---
 
 ## Phiên tiếp theo — làm ngay theo thứ tự
-1. **VN-ROUTER-001** — l9_vn_router.py: SOAP→Mẫu 15/BV-01 (lam_sang) | SOAP giữ (cdha)
-2. **DEPLOY-001** — Windows installer cho BS Đà Nẵng (Python venv + models cached)
-3. **CONFIG-001** — Facility config UI (tên phòng khám, CCHN, khoa)
-4. **DRUG-ALIAS-001** — Thêm aliases drug_db.json (ammosiline→Amoxicillin etc.)
+1. **FID-VN-004** — Viết Feature Intent Document cho VN-ROUTER-001 (L6 branch: NER→Mẫu15/BV-01)
+2. **VN-ROUTER-001** — Implement sau khi FID được Andy approve
+3. **DEPLOY-001** — Windows installer cho BS Đà Nẵng
+4. **BENCH-002** — CEER thực tế (cần audio từ pilot)

@@ -1,5 +1,5 @@
 # BACKLOG.md — MediVoice VN
-# v0.4.0 — Updated 2026-06-05
+# v0.4.1 — Updated 2026-06-06
 # Single source of truth cho tasks.
 
 ---
@@ -9,11 +9,12 @@
 - [ ] **LEGAL-001** 🔴 Thuê luật sư VN (healthtech + data + AI) — trước khi launch
 - [x] **BENCH-001** ✅ Benchmark PhoWhisper trên 22 audio — WER 36–52%, T-005 20/22 PASS (2026-06-05)
 - [ ] **BENCH-002** 🟡 Đo CEER thật: audio pilot thực tế BS nói + ground truth labels
-- [ ] **VN-ROUTER-001** 🔴 VN Routing Layer: l9_vn_router.py — SOAP→Mẫu 15/BV-01 (lam_sang) | SOAP giữ (cdha)
+- [ ] **FID-VN-004** 🔴 Viết Feature Intent Document cho VN-ROUTER-001 (L6 branch) — Andy approve trước
+- [ ] **VN-ROUTER-001** 🔴 VN Routing Layer: L6 branch — NER entities → Mẫu 15/BV-01 (lam_sang) | SOAP (cdha)
 
 ---
 
-## PHASE 0 — MVP ✅ PIPELINE DONE — Còn lại: test thực tế + deploy
+## PHASE 0 — MVP ✅ PIPELINE DONE — Còn lại: FID + VN-Router + Deploy
 
 **Mục tiêu:** BS nói → Mẫu 15/BV-01 → PDF → local save → BS approve
 **Target user:** 5–10 BS phòng mạch tư Đà Nẵng + Sài Gòn
@@ -41,7 +42,7 @@
 - [x] **DATA-003:** Audit log schema (hash chain, BYT-sync-ready)
 - [x] **DATA-004:** Facility schema (byt_registration_number, province_code)
 
-### App Shell ✅ DONE 2026-06-04 (FastAPI PWA thay Tauri)
+### App Shell ✅ DONE 2026-06-04 (FastAPI PWA)
 - [x] **APP-001:** FastAPI app — /api/transcribe + approve + reject + pdf
 - [x] **APP-002:** SQLite offline-first architecture
 - [x] **APP-003:** CCHN input + disclaimer bắt buộc
@@ -51,7 +52,8 @@
 
 ### Phase 0 Còn Lại
 - [x] **BENCH-001** ✅ T-005 20/22 PASS | T-007 10/10 PASS | WER 29–52% | SOAP 20/20 (2026-06-05)
-- [ ] **VN-ROUTER-001** 🔴 VN Routing Layer — l9_vn_router.py: SOAP→Mẫu 15/BV-01 cho lam_sang
+- [ ] **FID-VN-004** 🔴 Feature Intent Document cho VN-ROUTER-001 (L6 branch design)
+- [ ] **VN-ROUTER-001** 🔴 L6 branch: NER entities → BenhAnNgoaiTru (lam_sang, không qua SOAP)
 - [ ] **TEST-E2E-001** 🟡 End-to-end test full pipeline với audio thực tế (sau VN-ROUTER-001)
 - [ ] **DEPLOY-001** 🟡 Package app để BS Đà Nẵng install (Windows + Python venv installer)
 - [ ] **CONFIG-001** 🟢 Facility config UI (tên phòng khám, CCHN, khoa — file JSON)
@@ -62,39 +64,37 @@
 ## PHASE 1 — COMPLETE PRODUCT (3–6 tháng sau Phase 0)
 
 ### Modules
-- [ ] **M1:** Patient management (hồ sơ, lịch sử, CCCD camera scan)
-- [ ] **M2:** Appointment booking (BN book online, QR check-in)
-- [ ] **M3:** Thu chi đơn giản (voice log thu tiền, ghi chi phí, báo cáo)
-- [ ] **M4:** Kết quả bên thứ 3 (BS upload PDF/ảnh kết quả XN/CĐHA)
-- [ ] **M6:** Zalo Share SDK + OA API reminder (non-medical content)
+- [ ] **M1:** Patient management đầy đủ (hồ sơ, lịch sử, CCCD scan, QR thẻ BN)
+- [ ] **M2:** Booking engine (7 states + buffer + waitlist + D-1/H-2/H-15p reminder)
+- [ ] **M3:** Thu chi đầy đủ (voice log, báo cáo, xuất Excel)
+- [ ] **M4:** Email auto-processor (3 điều kiện + quarantine) + kết quả XN
+- [ ] **M5:** Referral 2 chiều + deal % + commission dashboard (Gói 3)
+- [ ] **M6:** Zalo OA (text non-medical) + Email routing (file y tế) + Post-care CRM
 - [ ] **M7:** VN Cloud sync (VNG/FPT/VNPT)
 
-### Architecture (học từ MediVoice_AI)
-- [ ] **ARCH-001:** Cross-visit memory (SQLite last 5 visits per patient) — M1 prerequisite
-- [ ] **ARCH-002:** AccountabilityTracker — AI vs Human decision log (Luật AI 134/2025)
-- [ ] **ARCH-003:** RTM Engine live (rtm_engine.py) — replace static RTM.md
-- [ ] **ARCH-004:** StateMachine formal — replace RecordStatus enum
-- [ ] **ARCH-005:** MultiCritic + Simulator trong ValidationLayer (Phase 0 chỉ có Rule+Anomaly)
+### Architecture
+- [ ] **QUEUE-001:** Queue Management System + TTS loa đọc tên
+- [ ] **SCREEN-001:** Staff Screen riêng (Mode B) — tiếp nhận + thu ngân gộp
+- [ ] **DOCTOR-001:** Doctor Pre-visit Briefing (tóm tắt BN trước ca)
+- [ ] **STAFF-GATE-001:** Staff Confirm Gate (checklist đóng ca BN)
+- [ ] **PARTNER-001:** Partner comm channel (Email CHÍNH THỨC + Zalo optional)
+- [ ] **WEBSITE-001:** Website widget embed + REST API booking (Gói 2+)
+- [ ] **BOOKING-001:** Booking engine chuẩn (7 states + reminder flow)
+- [ ] **AFTERCARE-001:** Post-care CRM D+2/D+4/D+5/D+7
+- [ ] **STAFF-001:** Staff voice context (tiếp nhận BN — khác với doctor voice)
 
-### Features — AI & Language
-- [ ] **LANG-001:** MarianMT VI→EN option — output EN cho BS nước ngoài (BO-VN-003)
-- [ ] **LANG-002:** Bilingual EN/VI output toggle — detect language, chọn template phù hợp
-- [ ] **NER-PHOBERT-001:** Nâng L1c lên PhoBERT + CRF (thay rule-based) — sau TRAIN-001
-- [ ] **KB-001:** FAISS KB y tế VN — ICD-10-VN terms, thuật ngữ siêu âm, tim mạch → hỗ trợ form mapping
-
-### Features — CĐHA & Chuyên khoa (VN-FLOW-CDHA)
+### Plugins
 - [ ] **FID-VN-001:** Plugin CĐHA — báo cáo siêu âm (abdominal, thyroid, OB, vascular)
-- [ ] **FID-VN-001b:** Plugin CĐHA — báo cáo X-quang, CT, MRI
-- [ ] **FID-VN-001c:** Plugin CĐHA — báo cáo ECG/tim mạch
+- [ ] **FID-VN-001b:** Plugin CĐHA — X-quang, CT, MRI
 - [ ] **FID-VN-002:** Plugin Nha khoa — Mẫu 16/BV1 + sơ đồ răng
 - [ ] **FID-VN-003:** Plugin Sản khoa — Mẫu 05/BV1
 
-### Features — Workflow
-- [ ] **STAFF-001:** Staff voice context (tiếp nhận BN — khác với doctor voice)
+### Features
 - [ ] **REPEAT-001:** Tái kê đơn cũ (copy đơn + điều chỉnh nhỏ)
 - [ ] **DRUG-INTERACT-001:** Drug interaction check cơ bản
-- [ ] **HL7-001:** HL7 v2 export (ADT/ORU)
-- [ ] **SIGN-001:** Chữ ký số BS (TT13/2025)
+- [ ] **EMAIL-PROC-001:** Email auto-processor inbound (M4)
+- [ ] **REFERRAL-RETEST-001:** Referral retest flow (kết quả lần 1 không đạt)
+- [ ] **ACCOUNT-API-001:** Kế toán export API (MISA/Fast CSV + REST)
 
 ### Training
 - [ ] **TRAIN-001:** Fine-tune PhoWhisper trên 50–100h audio thực tế từ pilot
@@ -112,14 +112,25 @@
 
 ## PHASE 2 — KHI CÓ REVENUE (2027+)
 
+- [ ] **TT13-001:** Chữ ký số bác sĩ (TT13/2025 deadline 31/12/2026)
+- [ ] **HL7-001:** HL7 v2 export (ADT/ORU)
 - [ ] **FHIR-001:** FHIR R4 export (khi TT13/2025 thực sự enforce)
-- [ ] **M5:** Referral partner management (chỉ track, không ghi tiền)
-- [ ] **M8:** Plugin mở rộng (Tai mũi họng, Tim mạch, Sản khoa...)
 - [ ] **M9:** HIS integration (BravoSoft, FPT.eHospital API)
+- [ ] **AUDIT-EXPORT-001:** Audit log export chuẩn cho BYT thanh tra
 - [ ] **CONFORM-001:** Conformity assessment (Luật AI 134/2025) — trước 01/09/2027
+- [ ] **M5:** Referral partner management đầy đủ (Gói 3)
+- [ ] **M8:** Plugin mở rộng (Tai mũi họng, Tim mạch, Sản khoa...)
 - [ ] **VNEID-001:** VNeID API integration (khi BYT có API)
 - [ ] **BHYT-001:** BHYT eligibility check
 - [ ] **BYT-SYNC-001:** BYT Central Registry sync
+
+---
+
+## DESIGN DOCS (Phiên 2026-06-06)
+- [x] **DESIGN-001** ✅ Master Design Report v1.1 (2026-06-06) — docs/records/DESIGN_REPORT_v1.1_20260606.md
+  Bao gồm: Queue QMS, Mode A/B/C, 4 màn hình, Doctor Briefing, Staff Gate,
+  Referral 2 chiều + Retest, M5 Commission, Post-care CRM, Booking Engine chuẩn,
+  Email auto-processor, Data compliance 3 lớp, Integration Gateway, 17+ kết nối
 
 ---
 
@@ -142,7 +153,9 @@
 - [x] **Data models** — Patient, ClinicalRecord, Facility, AuditEntry (Pydantic v2) (2026-06-04)
 - [x] **FastAPI PWA** — voice recording + draft review + approve/reject + PDF (2026-06-04)
 - [x] **CHANGELOG v0.3.0** — 16 feat entries (2026-06-04)
-- [x] **CLAUDE.md** — thêm trigger words end/done/start/begin (2026-06-04)
+- [x] **Canada pipeline port** — L0→L9, MarianMT, FAISS KB (2026-06-05)
+- [x] **BENCH-001** — T-005 20/22 PASS, T-007 10/10 PASS (2026-06-05)
+- [x] **DESIGN_REPORT v1.1** — Master design document 21 sections (2026-06-06)
 
 ---
 
@@ -153,7 +166,9 @@
 - [ ] Luật AI 134 conformity assessment detail — sau khi có revenue
 - [ ] FPT/Viettel partnership — sau khi có 100+ users
 - [ ] VNeID health platform integration — chờ BYT API public
+- [ ] IVR Phone booking — Phase 3
+- [ ] WhatsApp/Facebook channel — Phase 3
 
 ---
 
-*Updated: 2026-06-04 | v0.3.0*
+*Updated: 2026-06-06 | v0.4.1*

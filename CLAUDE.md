@@ -1,7 +1,8 @@
 # CLAUDE.md — MediVoice VN
-# ISO/IEC 42001:2023 | ISO_VN v1.0 | v0.3.0
+# ISO/IEC 42001:2023 | ISO_VN v1.0 | v0.4.1
 # Owner: Andy Phan (Viet) | Maple Leaf Group
 # GitHub: https://github.com/vietsharescom/MediVoice_VN
+# DESIGN REF: docs/records/DESIGN_REPORT_v1.1_20260606.md (nguồn thiết kế đầy đủ nhất)
 
 ---
 
@@ -38,6 +39,13 @@
 A. Read docs/records/BACKLOG.md        → lấy Next task từ IMMEDIATE
 B. Read docs/records/LAST_SESSION.md  → lấy toàn bộ nội dung phiên trước
 C. Run: pytest tests/ -q              → lấy N tests PASS
+```
+
+**Nếu phiên có thiết kế / viết FID / implement module mới:**
+```
+D. Read docs/records/DESIGN_REPORT_v1.1_20260606.md
+   → đọc section liên quan đến task (không cần đọc toàn bộ 700 dòng)
+   → DESIGN_REPORT là nguồn chi tiết nhất cho product/UX/flow decisions
 ```
 
 **Báo cáo theo thứ tự — KHÔNG bỏ bước nào:**
@@ -164,8 +172,10 @@ v{trước} | {N} tests → v{sau} | {N} tests
 | `FEEDBACK_PROCESS.md` | `docs/compliance/` | Andy | ISO 42001 A.6.2 — feedback BS |
 | `NAMING_CONVENTION.md` | `docs/dev/` | Claude | ISO 9001 Cl.7.5 — đặt tên |
 | `KPI_METRICS.md` | `docs/dev/` | Andy | ISO 42001 Cl.9.1 — đo lường |
+| `DESIGN_REPORT_v1.1_20260606.md` | `docs/records/` | Claude + Andy | **Master design — đọc khi FID/implement module** |
 
 > `docs/archive/` — files cũ/done, không đọc trong workflow thường ngày.
+> `DESIGN_REPORT` — đọc theo section khi cần, không cần đọc toàn bộ mỗi phiên.
 
 ---
 
@@ -173,11 +183,12 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.4.0 |
-| Status | **Canada pipeline ported + BENCH-001 DONE — T-005 20/22 PASS (91%) · T-007 10/10** |
+| Version | v0.4.1 |
+| Status | **Design Review hoàn tất 2026-06-06 — DESIGN_REPORT v1.1 đã tạo — FID-VN-004 cần viết** |
 | Tests | **165/165 PASS** · bandit 0 HIGH/MEDIUM · Coverage 88% |
 | Audio | **22 WAV files** tại `data/audio/` + `data/kb/` Clinical KB active |
-| Next task | VN-ROUTER-001: l9_vn_router.py (SOAP→Mẫu 15/BV-01) · DEPLOY-001: Windows installer |
+| Next task | **FID-VN-004** (L6 branch design) → VN-ROUTER-001 (NER→Mẫu15) → DEPLOY-001 |
+| Design | Xem chi tiết: `docs/records/DESIGN_REPORT_v1.1_20260606.md` |
 
 ---
 
@@ -187,9 +198,12 @@ v{trước} | {N} tests → v{sau} | {N} tests
 ```
 LAYER 1: Patient Management
   Hồ sơ bệnh nhân, lịch hẹn, thu chi, referral, storage
+  + Queue Management (số thứ tự + TTS loa)
+  + 3 operating modes: A (BS alone) | B (BS + Staff) | C (BS + Staff + Cashier)
+  + 4 screens: Phòng chờ TV | Staff Screen | Doctor Screen | Zalo BN
 
 LAYER 2: AI Voice Core
-  BS/nhân viên nói → PhoWhisper → điền form → BS approve → PDF
+  BS nói → PhoWhisper → NER VN → L6 branch → Mẫu 15/BV1 → BS approve → PDF
 ```
 
 ### 9 Modules (bật/tắt theo gói)
@@ -223,22 +237,30 @@ GÓI 3 — Phòng Khám Đầy Đủ    ~4–8M/tháng
 ## PIPELINE (FROZEN)
 
 ```
-Audio → [L0]  Normalize 16kHz mono
-      → [L1a] PhoWhisper chunk streaming (10s overlap)
-      → [L1b] Drug name correction (VN drug database)
-      → [L1c] Medical NER (PhoBERT + CRF)
-      → [L1d] ICD-10-VN auto-lookup (QĐ5837)
-      → [L2]  Schema + confidence validation
-      → [L3]  Route: lâm sàng / CĐHA plugin / nha khoa...
-      → [L4]  Human Gate — BS review + approve (KHÔNG BYPASS)
-      → [L5]  PII scan (NĐ13/2023)
-      → [L6]  Generate Mẫu 15/BV1 + plugin nếu có
-      → [L7]  SQLite + Fernet lưu trữ
+Audio → [L0]  Normalize 16kHz mono, VAD, hash, purge (Privacy by Design)
+      → [L1a] PhoWhisper chunk streaming (10s overlap) — offline
+      → [L1b] Drug name correction (VN drug database, INN chuẩn)
+      → [L1c] Medical NER VN (VITAL/SYMPTOM/MEDICATION/HISTORY/FOLLOWUP)
+      → [L1d] ICD-10-VN auto-lookup (QĐ5837 — 15,026 mã)
+      → [L2]  Schema + confidence validation (weighted score)
+      → [L3]  Route: lam_sang(default) / cdha / nha_khoa
+               + session context: clinical / intake / admin
+      → [L4]  Human Gate — BS review + approve (KHÔNG BYPASS — Luật KCB Đ.62)
+      → [L5]  PII scan (CCCD/SĐT/BHYT — NĐ13/2023)
+      → [L6]  BRANCH tại NER entities (KHÔNG qua SOAP cho lam_sang):
+               lam_sang  → NER→BenhAnNgoaiTru (Mẫu 15/BV1 trực tiếp)
+               cdha      → SOAP → báo cáo CĐHA [Phase 1, M8]
+               nha_khoa  → Mẫu 16/BV1 [Phase 1, M8]
+      → [L7]  SQLite + WAL + Fernet lưu trữ (local, encrypted)
       → [L8]  Error handling + recovery
-      → [L9a] PDF export            ← Phase 0
-      → [L9b] HL7 v2 export         ← Phase 1
-      → [L9c] FHIR R4 export        ← Phase 2
-      → [L10] Immutable audit log (10+ năm, tamper-proof)
+      → [L9a] PDF export Mẫu 15/BV1    ← Phase 0
+      → [L9b] HL7 v2 export             ← Phase 1
+      → [L9c] FHIR R4 export            ← Phase 2
+      → [L10] Immutable audit log (SHA-256 hash chain, 10+ năm)
+
+STAFF CONFIRM GATE (sau L10 — admin side):
+  Staff xác nhận: đã thu tiền + đã phát thuốc + đã lên lịch
+  → M3 ghi doanh thu + L10 audit "ADMIN_CONFIRMED"
 ```
 
 ---
@@ -284,7 +306,18 @@ Audio → [L0]  Normalize 16kHz mono
    — Output VI (default) hoặc EN option (BS nước ngoài, CĐHA bilingual)
 8. UI luôn hiển thị: "AI tạo nháp — Bác sĩ chịu trách nhiệm hoàn toàn"
 9. CCHN/GPHN thu thập khi đăng ký — platform không chịu TN nếu user khai sai
-10. Referral/commission: KHÔNG ghi tiền, KHÔNG ghi phần trăm
+10. Referral/commission: KHÔNG ghi tiền trong giao dịch cụ thể
+    — M5 CÓ THỂ setup deal % khi cấu hình đối tác (tham chiếu nội bộ, không public)
+    — Thanh toán thực ngoài hệ thống — app không xử lý tiền commission
+11. Kênh liên lạc: Zalo OA = text non-medical ONLY | Email = file y tế + nội dung nhạy cảm
+    — KHÔNG gửi file y tế qua Zalo OA (vi phạm Zalo policy)
+    — Partner comm bí mật (commission) → Email, KHÔNG qua Zalo
+12. Email auto-processor: CHỈ xử lý khi đủ 3 điều kiện:
+    ① BN đã đăng ký M1 ② Có referral ACTIVE ③ BN đã ký consent
+    — Thiếu 1 trong 3 → QUARANTINE → Staff xem xét thủ công
+13. Booking Engine: 7 states (SUGGESTED→PENDING→CONFIRMED→COMPLETED/CANCELLED/NO_SHOW/RESCHEDULED)
+    + Buffer sau mỗi 4 ca + Waitlist cho slot cancel
+    + Reminder: D-1 (9h) → H-2 → H-0:15 (chuẩn Canada)
 
 ---
 
@@ -318,7 +351,10 @@ Audio → [L0]  Normalize 16kHz mono
 | Export Ph1 | HL7 v2 | Real standard in VN (not FHIR yet) |
 | Export Ph2 | FHIR R4 | When TT13/2025 enforced |
 | Zalo Ph0 | Manual share | No API risk |
-| Zalo Ph1 | Share SDK + OA (non-medical only) | Zalo bans medical content via OA |
+| Zalo Ph1 | OA text non-medical (reminder, booking) | Zalo policy: NO medical file via OA |
+| Email Ph1 | SMTP gửi + IMAP nhận auto-process | File y tế, kết quả XN, bệnh án PDF |
+| Partner comm | Email PRIMARY (bí mật/formal) + Zalo optional | Commission info bí mật → không qua Zalo |
+| Queue | Số thứ tự + TTS loa (gTTS/VinAI offline) | Thay thế số giấy + loa thủ công |
 | Drug DB | drug_db.json (110 thuốc) | Phase 0 curated, expand từ pilot |
 
 ---
@@ -341,4 +377,50 @@ KPIs Pilot:
 
 ---
 
-*MediVoice VN | ISO_VN v1.0 | v0.3.0 | Updated: 2026-06-04*
+---
+
+## DESIGN DECISIONS (2026-06-06) — ĐỌC KHI IMPLEMENT
+
+> Chi tiết đầy đủ: `docs/records/DESIGN_REPORT_v1.1_20260606.md`
+> Đây là tóm tắt compact — Claude đọc khi làm việc liên quan.
+
+```
+PATIENT JOURNEY — 7 giai đoạn:
+  0. Nguồn BN: Walk-in | Zalo OA | Referral IN | Tái khám | Website widget
+  1. Tiếp nhận: QR scan (cũ) | voice/gõ (mới) → M1 → Queue → số thứ tự
+  2. Chờ: Doctor Pre-visit Briefing (tóm tắt hồ sơ + cảnh báo dị ứng)
+  3. Khám: AI Pipeline L0→L10 → draft → BS approve → PDF
+  4. Phân nhánh:
+     A. Kết thúc tại PK → Staff Confirm Gate → M3 → Zalo text + Email PDF
+     B. Referral OUT → email/Zalo đối tác → RETEST nếu cần → kết quả email về → booking
+     C. Bán thuốc tại phòng → gộp với A
+  5. Booking: 7 states + D-1/H-2/H-15p + buffer + waitlist
+  6. After-care CRM: D+2/D+4/D+5/D+7 với response branching
+  7. Tái khám: QR scan → lặp lại vòng
+
+SCREENS: Phòng chờ TV | Staff Screen | Doctor Screen | Zalo BN (S4)
+MODES:   A = BS alone (1 screen, 4 tabs) | B = BS + Staff | C = BS + Staff + Cashier
+QUEUE:   Số thứ tự + TTS loa VN (gTTS offline) + Zalo notify vị trí chờ
+
+REFERRAL (M5):
+  OUT: BS chỉ định → email/Zalo đối tác → OK/DONE/REDO reply → commission event
+  IN:  Staff ghi "từ [đối tác]" tại INTAKE → M5 track
+  Deal: % setup per partner (tham chiếu) — thanh toán ngoài hệ thống
+
+M1 PATIENT: QR code + consent form + dị ứng ⚠️ + lịch sử 5 lần + tags
+M2 BOOKING: 7 states + buffer + waitlist + D-1/H-2/H-15p (chuẩn Canada)
+M3 THU CHI: voice log → SQLite → báo cáo → Excel export / kế toán API
+M4 KẾT QUẢ: email auto (3 điều kiện) + staff upload thủ công
+M5 REFERRAL: 2 chiều + deal % + dashboard volume (not money)
+M6 ZALO/EMAIL: text→Zalo | file y tế→Email | partner sensitive→Email only
+M7 CLOUD: VNG/FPT/VNPT only | M8 PLUGIN: CĐHA/Nha/TMH | M9 HIS: HL7/FHIR
+
+INTEGRATION GATEWAY: Plugin adapter pattern
+  Adapters: Zalo | Email | SMS | TTS | Print | Website Widget | REST API
+  Thiết bị: USB mic | BT mic | TV LAN (browser) | Loa USB/BT | Máy in USB
+```
+
+---
+
+*MediVoice VN | ISO_VN v1.0 | v0.4.1 | Updated: 2026-06-06*
+*Design ref: docs/records/DESIGN_REPORT_v1.1_20260606.md*

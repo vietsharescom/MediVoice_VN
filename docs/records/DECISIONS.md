@@ -1,7 +1,7 @@
 # DECISIONS.md — MediVoice VN
 # Architecture Decision Records (ADR)
 # Format: Date | Decision | Why | Impact
-# v0.2.0 — Updated after 3-party review (ChatGPT + Grok + Copilot)
+# v0.3.0 — Updated 2026-06-06 (Design Review session + DESIGN_REPORT_v1.1)
 
 ---
 
@@ -93,4 +93,28 @@
 | YYYY-MM-DD | **Tên decision** | Lý do ngắn | Tác động |
 ```
 
-*DECISIONS.md | MediVoice VN | v0.2.0 | Updated: 2026-06-03*
+---
+
+## PRODUCT & SYSTEM DESIGN (2026-06-06 — Design Review Session)
+
+| Date | Decision | Why | Impact |
+|---|---|---|---|
+| 2026-06-06 | **L6 branch tại NER entities** (KHÔNG qua SOAP cho lam_sang) | SOAP = intermediate format Canada, VN cần Mẫu 15/BV1 trực tiếp. Parse SOAP ngược lại là thừa. | L6_AGENT: lam_sang→NER→BenhAnNgoaiTru | cdha→SOAP. MarianMT giữ cho NER quality. |
+| 2026-06-06 | **Queue Management System** (số thứ tự + TTS loa) | Thay thế số giấy + loa thủ công. BS không bị gián đoạn. TV/tablet phòng chờ qua LAN browser. | Thêm queue_state machine + TTS adapter (gTTS/VinAI offline). |
+| 2026-06-06 | **3 Operating Modes** (A/B/C) | Phòng nhỏ: BS làm hết 1 màn hình. Phòng lớn: tách staff + cashier. Linh hoạt, không cần đổi app. | Mode A = 4 tabs Doctor Screen. Mode B = Staff+Doctor split. Mode C = 3 roles. |
+| 2026-06-06 | **Staff Confirm Gate** (admin side) | Đảm bảo: thu tiền + phát thuốc + lịch tái khám hoàn tất trước khi đóng ca BN. L10 audit "ADMIN_CONFIRMED". | Checklist bắt buộc staff xác nhận. Tách biệt với Clinical Gate (L4). |
+| 2026-06-06 | **Zalo text only / Email file y tế** (tách rõ ràng) | Zalo OA cấm file y tế. Email không bị hạn chế. Tránh vi phạm Zalo policy. | M6: Zalo = reminder+booking text | Email = PDF, kết quả XN, bệnh án. |
+| 2026-06-06 | **Partner comm = Email PRIMARY, Zalo optional** | Commission info bí mật → không qua Zalo. Email formal + bảo mật. Partner confirm "OK/DONE REF-xxx" qua email reply. | Không cần partner đăng nhập web app. Email parser tự động xử lý reply. |
+| 2026-06-06 | **Referral 2 chiều + Retest flow** | Thực tế: kết quả lần 1 có thể không đạt → cần xét nghiệm lại. Commission chỉ tính khi COMPLETED lần cuối. | M5: SENT→ACKNOWLEDGED→COMPLETED hoặc RETEST_REQUIRED→REF-R2→COMPLETED. |
+| 2026-06-06 | **M5 deal % là tham chiếu nội bộ** (không public) | Luật KCB Đ.80 cấm hoa hồng per-transaction. Deal % setup khi config partner, không ghi vào từng giao dịch. | Andy cấu hình % per partner. Dashboard chỉ show volume. Thanh toán thực ngoài app. |
+| 2026-06-06 | **Email auto-processor có 3 điều kiện** | Tránh xử lý dữ liệu y tế không được yêu cầu → vi phạm NĐ13/2023. Chỉ auto khi consent + referral active. | Thiếu 1 trong 3 → QUARANTINE. Staff xem xét thủ công. Không auto-process unknown. |
+| 2026-06-06 | **Booking Engine 7 states + buffer** (chuẩn Canada) | Bảo vệ BS: slot cancel không làm BS chờ. Waitlist fill gap ngay. D-1/H-2/H-0:15 reminder. | SUGGESTED→PENDING→CONFIRMED + CANCELLED/NO_SHOW/RESCHEDULED. Buffer 15ph/4 ca. |
+| 2026-06-06 | **Post-care CRM D+2/D+4/D+7** (after-service) | BS không theo dõi BN sau khám → BN không quay lại. Auto-message tăng retention. Alert nếu nặng hơn. | Zalo text D+2/D+4. Response branching: tốt/khó chịu/nặng hơn. Alert staff nếu 😰. |
+| 2026-06-06 | **Doctor Pre-visit Briefing** (chuẩn EMR) | BS cần review hồ sơ trước khi gọi BN vào. Dị ứng, lịch sử, kết quả chờ hiện ngay. Không mất thời gian trong lúc khám. | Doctor Screen tab [HÔM NAY]: list BN + tóm tắt + cảnh báo. Ghi chú trước khám (không vào bệnh án). |
+| 2026-06-06 | **Integration Gateway = Plugin Adapter Pattern** | Thêm kênh mới (WhatsApp, IVR, SMS) không cần sửa core. Mỗi adapter implement interface chuẩn. | 17+ adapters: Zalo/Email/SMS/TTS/Print/Website/Kế toán/HL7/FHIR/... |
+| 2026-06-06 | **Website Booking Widget** (Gói 2+, Phase 1) | Phòng khám có website riêng → muốn tích hợp lịch khám. Không muốn xây thêm. | Option A: JS snippet embed. Option B: REST API cho developer. |
+| 2026-06-06 | **DESIGN_REPORT là nguồn thiết kế chi tiết nhất** | CLAUDE.md quá compact để chứa 700 dòng design. DESIGN_REPORT = deep reference. | Claude đọc DESIGN_REPORT khi làm FID/implement module mới. CLAUDE.md = compact summary. |
+
+---
+
+*DECISIONS.md | MediVoice VN | v0.3.0 | Updated: 2026-06-06*

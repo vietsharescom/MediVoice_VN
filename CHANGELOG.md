@@ -1,6 +1,28 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.4.1] — 2026-06-06 — Master Design Review + DESIGN_REPORT v1.1
+
+### Design (no code change)
+- docs: DESIGN_REPORT_v1.1_20260606.md — Master design document 21 sections, 700+ dòng
+  Bao gồm: Queue QMS, Mode A/B/C, 4 screens, Doctor Pre-visit Briefing, Staff Confirm Gate,
+  Referral 2 chiều + Retest, M5 Commission 2 chiều, Post-care CRM D+2/D+4/D+7,
+  Booking Engine 7 states + buffer + waitlist, Email auto-processor 3 điều kiện,
+  Data compliance 3 lớp, Integration Gateway adapter pattern, 17+ kết nối thiết bị
+
+### Docs updated (consistency với DESIGN_REPORT)
+- docs: CLAUDE.md v0.4.1 — pipeline L6 branch đúng, design decisions compact, DESIGN_REPORT ref
+- docs: DECISIONS.md v0.3.0 — 15 ADR mới từ design review session 2026-06-06
+- docs: BACKLOG.md v0.4.1 — FID-VN-004 thêm vào IMMEDIATE, DESIGN-001 done
+- docs: LAST_SESSION.md — session 2026-06-06 ghi nhận
+
+### Architecture decisions (no code change)
+- decision: L6 branch tại NER entities, không qua SOAP cho lam_sang
+- decision: Queue Management System + TTS loa
+- decision: 3 operating modes (A/B/C) + 4 screens
+- decision: Email = file y tế | Zalo = text non-medical (bắt buộc)
+- decision: Partner comm = Email primary (bí mật), Zalo optional
+
 ## [v0.4.0] — 2026-06-05 — Canada pipeline port + BENCH-001 complete
 
 ### Pipeline (Canada port — không sửa)
