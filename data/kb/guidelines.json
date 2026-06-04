@@ -1,0 +1,140 @@
+[
+  {
+    "id": "KB-001",
+    "title": "Viêm màng não vi khuẩn — Chẩn đoán và điều trị",
+    "tags": ["meningitis", "seizure", "fever", "altered consciousness", "neck stiffness", "viêm màng não", "co giật", "sốt", "cổ gượng"],
+    "content": "Viêm màng não vi khuẩn: sốt cao, đau đầu dữ dội, cổ gượng, buồn nôn/nôn, rối loạn ý thức, co giật. Ở trẻ em: thóp phồng, quấy khóc, bú kém. Dấu Kernig và Brudzinski dương tính. Chẩn đoán xác định bằng chọc dò dịch não tủy. Điều trị: kháng sinh kinh nghiệm ngay (cefotaxime hoặc ceftriaxone IV), dexamethasone IV để giảm viêm. CT não trước LP nếu có dấu hiệu tăng áp lực nội sọ, phù gai mắt, liệt thần kinh khu trú, hoặc rối loạn ý thức nặng. Chuyển ICU nhi nếu nặng. DDx: viêm não, áp xe não, viêm màng não vô khuẩn, sốt cao co giật đơn giản."
+  },
+  {
+    "id": "KB-002",
+    "title": "Viêm não — Encephalitis",
+    "tags": ["encephalitis", "seizure", "fever", "altered consciousness", "viêm não", "co giật", "sốt", "lơ mơ"],
+    "content": "Viêm não: sốt, rối loạn ý thức, co giật, thay đổi hành vi, liệt khu trú. Nguyên nhân thường gặp: Herpes simplex virus (HSV), Japanese encephalitis (viêm não Nhật Bản), enterovirus. MRI não có giá trị chẩn đoán. Điều trị: acyclovir IV sớm nếu nghi HSV, hỗ trợ hô hấp, kiểm soát co giật (diazepam IV, phenobarbital), điều chỉnh điện giải. Chuyển ICU. DDx: viêm màng não, áp xe não, đột quỵ, u não."
+  },
+  {
+    "id": "KB-003",
+    "title": "Co giật do sốt — Febrile Seizure",
+    "tags": ["febrile seizure", "seizure", "fever", "child", "pediatric", "co giật do sốt", "co giật", "sốt", "trẻ em"],
+    "content": "Co giật do sốt: co giật xảy ra khi sốt ở trẻ 6 tháng – 5 tuổi, không có bằng chứng nhiễm trùng hệ thần kinh. Co giật đơn giản: <15 phút, toàn thân, tự hết. Co giật phức tạp: >15 phút, khu trú, tái phát trong 24h, sau co giật lơ mơ kéo dài. Cần phân biệt với viêm màng não: cổ gượng, thóp phồng, ban xuất huyết. Xử trí: hạ sốt, diazepam trực tràng nếu co giật >5 phút. LP chỉ định nếu nghi viêm màng não. DDx: viêm màng não, viêm não, động kinh, hạ đường huyết, hạ natri máu."
+  },
+  {
+    "id": "KB-004",
+    "title": "Nhiễm khuẩn huyết / Sepsis — Phác đồ xử trí",
+    "tags": ["sepsis", "fever", "tachycardia", "hypotension", "nhiễm khuẩn huyết", "sốt", "nhịp tim nhanh", "hạ huyết áp"],
+    "content": "Sepsis: nhiễm trùng + rối loạn chức năng cơ quan (qSOFA ≥2: thở nhanh >22, rối loạn ý thức, HA tâm thu <100). Septic shock: sepsis + cần vasopressor + lactate >2 mmol/L. Xử trí trong 1 giờ đầu (bundle): cấy máu x2, kháng sinh phổ rộng IV (piperacillin-tazobactam hoặc meropenem), truyền dịch 30ml/kg NaCl 0.9%, lactate, SpO2 monitoring. Nếu không đáp ứng dịch: norepinephrine. ICU review ngay. Nguồn gốc thường gặp: phổi, tiết niệu, ổ bụng, da. DDx: sốc tim, sốc phân bố, sốc giảm thể tích."
+  },
+  {
+    "id": "KB-005",
+    "title": "Viêm phổi nặng — Severe Community-Acquired Pneumonia",
+    "tags": ["severe pneumonia", "tachypnea", "fever", "cough", "SpO2", "viêm phổi nặng", "thở nhanh", "sốt", "ho", "khó thở"],
+    "content": "Viêm phổi nặng: thở nhanh >30/phút, SpO2 <90%, HA tâm thu <90mmHg, tần số tim >125, rối loạn ý thức, tổn thương đa thùy. Xử trí: kháng sinh phổ rộng IV (beta-lactam + macrolide hoặc fluoroquinolone), O2 liều cao, HFNC nếu cần, cân nhắc đặt nội khí quản nếu SpO2 <88%. Cấy đàm + cấy máu trước kháng sinh. CXR + CT nếu cần. ICU nếu CURB-65 ≥3. Theo dõi lactate, khí máu động mạch. DDx: COVID-19, lao phổi, suy tim cấp, ARDS."
+  },
+  {
+    "id": "KB-006",
+    "title": "Chấn thương đa tạng — Polytrauma / Major Trauma",
+    "tags": ["trauma", "hemorrhage", "rib fracture", "liver laceration", "altered consciousness", "chấn thương", "xuất huyết", "gãy xương sườn", "tổn thương gan"],
+    "content": "Chấn thương đa tạng: kích hoạt đội chấn thương. ABCDE: Airway, Breathing, Circulation, Disability, Exposure. Xuất huyết: kiểm soát ngay, truyền máu group O nếu khẩn. FAST siêu âm cấp cứu. CT toàn thân nếu ổn định. Gãy nhiều xương sườn: nguy cơ tràn khí, tràn máu màng phổi → CXR + CT ngực. Chấn thương bụng kín: nghi vỡ lách, vỡ gan → FAST, CT bụng, hội chẩn ngoại khoa khẩn. Chấn thương sọ não: GCS, CT não, hội chẩn thần kinh phẫu thuật. DDx: xuất huyết nội, sốc chấn thương, chấn thương tủy sống."
+  },
+  {
+    "id": "KB-007",
+    "title": "Nhồi máu cơ tim cấp — Acute MI / ACS",
+    "tags": ["myocardial infarction", "chest pain", "STEMI", "NSTEMI", "ECG", "nhồi máu cơ tim", "đau ngực"],
+    "content": "Nhồi máu cơ tim cấp: đau ngực điển hình (nặng ép, lan vai/cánh tay trái, >20 phút), vã mồ hôi, khó thở. ECG: ST chênh lên (STEMI) hoặc không chênh (NSTEMI/UA). Xử trí STEMI: aspirin 300mg + clopidogrel/ticagrelor, heparin, chụp mạch vành + can thiệp ngay (PCI <90 phút). NSTEMI: aspirin + kháng đông, nguy cơ cao → PCI trong 24h. Troponin, CK-MB. Theo dõi nhịp tim liên tục. Chuyển CCU. DDx: viêm màng ngoài tim, phình tách động mạch chủ, thuyên tắc phổi, viêm cơ tim."
+  },
+  {
+    "id": "KB-008",
+    "title": "Đột quỵ não cấp — Acute Stroke",
+    "tags": ["stroke", "altered consciousness", "weakness", "facial droop", "đột quỵ", "liệt", "rối loạn ý thức"],
+    "content": "Đột quỵ cấp: FAST (Face-Arm-Speech-Time), liệt nửa người đột ngột, nói khó, mất thị lực, đau đầu dữ dội. CT não không cản quang ngay (loại trừ xuất huyết). Đột quỵ thiếu máu: rt-PA (alteplase) nếu trong 4.5 giờ, không có chống chỉ định. Đột quỵ xuất huyết: kiểm soát HA, hội chẩn phẫu thuật thần kinh. Đặt đường truyền, monitor liên tục, không hạ đường huyết, giữ SpO2 ≥94%. Chuyển đơn vị đột quỵ. DDx: TIA, hạ đường huyết, migraine có aura, viêm não, u não."
+  },
+  {
+    "id": "KB-009",
+    "title": "Đau ngực — Chest Pain Evaluation",
+    "tags": ["chest pain", "hypertension", "shortness of breath", "ECG", "đau ngực", "tăng huyết áp", "khó thở"],
+    "content": "Đau ngực cấp: loại trừ ACS, PE, phình tách ĐMC. ECG 12 chuyển đạo ngay. Troponin, D-dimer nếu nghi PE. CXR. HA hai tay. Đặc điểm nguy hiểm: đau xé toạc lan ra sau lưng (phình tách ĐMC), đau kèm khó thở + HA tụt + nhịp nhanh (PE, STEMI). ACS: xem KB-007. PE: anticoagulation, CT angiography. Phình tách ĐMC: kiểm soát HA, hội chẩn tim mạch phẫu thuật khẩn. DDx: viêm màng ngoài tim, viêm cơ tim, GERD, đau cơ xương."
+  },
+  {
+    "id": "KB-010",
+    "title": "Tiêu chảy mất nước — Diarrhea with Dehydration",
+    "tags": ["diarrhea", "dehydration", "vomiting", "pediatric", "tiêu chảy", "mất nước", "nôn", "trẻ em"],
+    "content": "Tiêu chảy mất nước: đánh giá mức độ mất nước (nhẹ/trung bình/nặng). Nặng: lơ mơ, mắt trũng sâu, môi khô, da mất đàn hồi, không tiểu. Bù dịch: ORS uống nếu nhẹ-trung bình; NaCl 0.9% hoặc Ringer lactate IV nếu nặng (20ml/kg bolus). Kháng sinh nếu phân có máu/mủ (ceftriaxone, ciprofloxacin). Cấy phân. Điện giải: điều chỉnh Na, K. Theo dõi nước tiểu, cân nặng. DDx: lồng ruột (trẻ em), viêm ruột thừa, ngộ độc thực phẩm, bệnh viêm ruột."
+  },
+  {
+    "id": "KB-011",
+    "title": "Tăng huyết áp cấp cứu — Hypertensive Emergency",
+    "tags": ["hypertension", "headache", "chest pain", "altered consciousness", "tăng huyết áp", "đau đầu", "đau ngực", "rối loạn ý thức"],
+    "content": "Tăng HA cấp cứu: HA tâm thu >180 hoặc tâm trương >120 kèm tổn thương cơ quan đích (não, tim, thận, mắt). Biểu hiện: đau đầu dữ dội, rối loạn thị giác, đau ngực, khó thở, rối loạn ý thức. Xử trí: hạ HA từ từ (không quá 25% trong 1-2h đầu), labetalol IV hoặc nicardipine IV. ECG, troponin, creatinine, tổng phân tích nước tiểu, soi đáy mắt. CT não nếu nghi não cấp cứu tăng HA. DDx: đột quỵ, ACS, suy thận cấp, tiền sản giật."
+  },
+  {
+    "id": "KB-012",
+    "title": "Nhiễm toan ceton đái tháo đường — DKA",
+    "tags": ["DKA", "diabetes", "polyuria", "vomiting", "altered consciousness", "DKA", "đái tháo đường", "tiểu nhiều", "nôn", "lơ mơ"],
+    "content": "DKA: đường huyết >250mg/dL, pH <7.3, bicarbonate <15, ceton dương tính. Biểu hiện: khát nhiều, tiểu nhiều, nôn, đau bụng, thở Kussmaul, rối loạn ý thức. Xử trí: dịch (NaCl 0.9% 1L/h đầu), insulin (0.1 UI/kg/h sau khi bù dịch), kali (nếu K <5.5), theo dõi đường huyết mỗi giờ, điện giải 2-4h. Điều chỉnh khi đường huyết <200: chuyển dextrose 5% + insulin. Tìm yếu tố thúc đẩy (nhiễm trùng, bỏ insulin). DDx: nhiễm toan lactic, tăng áp lực thẩm thấu, ngộ độc."
+  },
+  {
+    "id": "KB-013",
+    "title": "Sốc phản vệ — Anaphylaxis",
+    "tags": ["anaphylaxis", "hypotension", "tachycardia", "shortness of breath", "sốc phản vệ", "hạ huyết áp", "khó thở", "phù"],
+    "content": "Sốc phản vệ: phản ứng dị ứng toàn thân cấp tính đe dọa tính mạng. Tiêu chuẩn: khởi phát nhanh kèm da/niêm mạc + hô hấp hoặc HA tụt sau tiếp xúc dị nguyên. Xử trí: adrenaline 0.5mg IM (đùi trước bên) ngay, gọi cấp cứu, nằm đầu thấp chân cao. Oxy lưu lượng cao, lập đường truyền tĩnh mạch, NaCl 0.9% bolus, antihistamine (diphenhydramine), methylprednisolone IV. Theo dõi tối thiểu 6h sau ổn định. DDx: sốc phân bố khác, ngất phế vị, hoảng loạn, hạ đường huyết."
+  },
+  {
+    "id": "KB-014",
+    "title": "Hạ đường huyết — Hypoglycemia",
+    "tags": ["hypoglycemia", "altered consciousness", "seizure", "diabetes", "hạ đường huyết", "lơ mơ", "co giật", "đái tháo đường"],
+    "content": "Hạ đường huyết: đường huyết <70mg/dL (3.9mmol/L). Biểu hiện: run, vã mồ hôi, tim đập nhanh (nhẹ); đau đầu, nhìn mờ, nhầm lẫn (trung bình); co giật, hôn mê (nặng). Xử trí: tỉnh táo → uống đường/nước ngọt 15-20g; hôn mê → dextrose 50% 50mL IV hoặc glucagon 1mg IM/SC. Kiểm tra đường huyết sau 15 phút. Tìm nguyên nhân: quá liều insulin/sulfonylurea, bỏ bữa, uống rượu. Theo dõi sau điều trị. DDx: đột quỵ, viêm não, ngộ độc, rối loạn điện giải."
+  },
+  {
+    "id": "KB-015",
+    "title": "Đau bụng cấp — Acute Abdomen",
+    "tags": ["abdominal pain", "abdominal distension", "vomiting", "fever", "đau bụng", "bụng chướng", "nôn", "sốt"],
+    "content": "Đau bụng cấp: cần loại trừ cấp cứu ngoại khoa. Dấu hiệu nguy hiểm: bụng cứng như gỗ (thủng tạng), phản ứng thành bụng lan tỏa (viêm phúc mạc), đau dữ dội đột ngột (vỡ phình ĐMC, thủng dạ dày). Khám: Rovsing (viêm ruột thừa), Murphy (viêm túi mật), McBurney. XQ bụng, siêu âm bụng, CT bụng nếu cần. Viêm ruột thừa: bạch cầu tăng, đau hố chậu phải → hội chẩn ngoại khoa. Tắc ruột: bụng chướng, nôn, không trung tiện → XQ bụng đứng. Hội chẩn ngoại nếu nghi cấp cứu. DDx: viêm tụy cấp, viêm túi mật, xoắn buồng trứng, sỏi niệu quản."
+  },
+  {
+    "id": "KB-016",
+    "title": "Đột quỵ thiếu máu cục bộ — Ischemic Stroke (Chống chỉ định tPA)",
+    "tags": ["ischemic stroke", "hemiparesis", "dysarthria", "facial droop", "atrial fibrillation", "anticoagulant", "apixaban", "warfarin", "tPA", "thrombectomy", "nhồi máu não", "yếu nửa người", "kháng đông"],
+    "content": "Đột quỵ thiếu máu cục bộ trên bệnh nhân dùng kháng đông: KHÔNG dùng tPA (alteplase) nếu: đang dùng NOAC (apixaban, rivaroxaban, dabigatran) trong 48h, INR > 1.7, đã dùng heparin, tiểu cầu < 100k. Xử trí: CT não không cản quang NGAY để loại trừ xuất huyết. Nếu CT không có xuất huyết → đánh giá can thiệp mạch não lấy huyết khối (thrombectomy) nếu trong 24h và có tắc mạch lớn. Kiểm soát huyết áp: mục tiêu < 185/110 mmHg trước can thiệp, < 180/105 sau can thiệp. Glucose: duy trì 7-10 mmol/L. Nhập đơn vị đột quỵ. Kháng đông KHÔNG dừng đột ngột ở bệnh nhân rung nhĩ — hội chẩn tim mạch về bridging. DDx: đột quỵ xuất huyết (cần CT loại trừ), TIA (< 24h tự hồi phục), hạ đường huyết (kiểm tra BGL ngay), Todd's paresis (sau co giật)."
+  },
+  {
+    "id": "KB-017",
+    "title": "Rung nhĩ — Atrial Fibrillation và nguy cơ đột quỵ",
+    "tags": ["atrial fibrillation", "stroke", "anticoagulant", "apixaban", "warfarin", "CHA2DS2", "rung nhĩ", "kháng đông", "đột quỵ"],
+    "content": "Rung nhĩ là nguyên nhân hàng đầu gây đột quỵ thuyên tắc. CHA2DS2-VASc ≥ 2 (nam) hoặc ≥ 3 (nữ): chỉ định kháng đông. Apixaban, rivaroxaban, dabigatran (NOAC) được ưa dùng hơn warfarin. Trong đột quỵ cấp tính trên bệnh nhân rung nhĩ đang dùng kháng đông: KHÔNG dùng tPA, đánh giá thrombectomy. Sau đột quỵ: tái khởi động kháng đông sau 1-2 tuần (TIA: 1 ngày, đột quỵ nhỏ: 3 ngày, đột quỵ lớn: 2 tuần). Hội chẩn thần kinh + tim mạch."
+  },
+  {
+    "id": "KB-018",
+    "title": "Tăng huyết áp trong đột quỵ cấp — BP Management in Acute Stroke",
+    "tags": ["stroke", "hypertension", "blood pressure", "ischemic stroke", "hemorrhagic stroke", "đột quỵ", "huyết áp cao", "tăng huyết áp"],
+    "content": "Quản lý huyết áp trong đột quỵ cấp: Đột quỵ thiếu máu KHÔNG dùng tPA: KHÔNG hạ HA trừ khi > 220/120 mmHg. Đột quỵ thiếu máu CÓ tPA: mục tiêu < 185/110 trước tPA, < 180/105 trong 24h sau tPA. Đột quỵ xuất huyết: mục tiêu < 140 mmHg trong 1h. Thuốc: labetalol IV, nicardipine IV. Tránh hạ HA quá nhanh (làm nặng thiếu máu vùng penumbra). Kiểm tra đường huyết: hạ đường huyết (<4 mmol/L) gây triệu chứng giả đột quỵ — điều trị ngay."
+  },
+  {
+    "id": "KB-019",
+    "title": "Đột quỵ ổ khuyết — Lacunar Stroke (Small Vessel Disease)",
+    "tags": ["lacunar stroke", "small vessel", "pure motor", "pure sensory", "hemiparesis", "dysarthria", "đột quỵ ổ khuyết", "bệnh mạch nhỏ", "yếu nửa người"],
+    "content": "Đột quỵ ổ khuyết (lacunar): do bệnh lý mạch máu nhỏ xuyên, thường gặp ở bệnh nhân tăng huyết áp và đái tháo đường. Vị trí: bao trong, cầu não, đồi thị, nhân nền. Hội chứng điển hình: Pure Motor Hemiplegia (liệt nửa người đơn thuần), Pure Sensory Stroke (mất cảm giác nửa người), Ataxic Hemiparesis (yếu + mất phối hợp cùng bên), Dysarthria-Clumsy Hand. Đặc điểm: KHÔNG có rối loạn ý thức, KHÔNG có tổn thương vỏ não (ngôn ngữ, thị trường). CT não đầu: thường âm tính trong 24-48h đầu. MRI DWI: nhạy hơn CT, phát hiện ổ nhồi máu <15mm. tPA: có thể dùng nếu trong 4.5h và đủ tiêu chuẩn (NIHSS thấp không loại trừ). Thrombectomy: KHÔNG chỉ định (mạch nhỏ, không tiếp cận được). Điều trị: kiểm soát yếu tố nguy cơ (HA, đường huyết, lipid), kháng tiểu cầu (aspirin + clopidogrel ngắn hạn). DDx: đột quỵ xuất huyết ổ nhỏ, TIA, MS, khối u nhỏ."
+  },
+  {
+    "id": "KB-020",
+    "title": "Tắc mạch lớn — Large Vessel Occlusion (LVO) và Thrombectomy",
+    "tags": ["LVO", "large vessel occlusion", "thrombectomy", "MCA", "ICA", "basilar", "NIHSS", "ASPECTS", "tắc mạch lớn", "lấy huyết khối", "đột quỵ nặng"],
+    "content": "LVO (Large Vessel Occlusion): tắc ICA, MCA đoạn M1/M2, basilar artery. Biểu hiện: NIHSS cao (≥6), liệt nửa người nặng, rối loạn ngôn ngữ nặng (aphasia), lệch mắt, rối loạn ý thức. Tiêu chuẩn thrombectomy (cơ học lấy huyết khối): (1) NIHSS ≥ 6. (2) ASPECTS ≥ 6 trên CT không cản quang. (3) Thời gian từ khởi phát ≤ 24h (mạch đoạn lớn có thể kéo dài 24h nếu còn mô não có thể cứu). (4) Không có xuất huyết. (5) LVO xác nhận trên CTA hoặc MRA. Không cần tPA trước thrombectomy nếu: đang kháng đông, tiểu cầu thấp, xuất huyết. Workflow: CT không cản quang → CTA ngực + đầu → quyết định tPA → chuyển can thiệp mạch. Mục tiêu: door-to-puncture <60 phút. Stroke unit admission sau thủ thuật. DDx: đột quỵ xuất huyết (loại trừ bằng CT), giả đột quỵ (hạ đường huyết, Todd's paresis, PRES)."
+  },
+  {
+    "id": "KB-021",
+    "title": "Chỉ định và Chống chỉ định tPA — Alteplase in Ischemic Stroke",
+    "tags": ["tPA", "alteplase", "thrombolysis", "ischemic stroke", "inclusion criteria", "exclusion criteria", "chỉ định", "chống chỉ định", "tiêu sợi huyết", "nhồi máu não"],
+    "content": "tPA (alteplase 0.9mg/kg, tối đa 90mg): CHỈ ĐỊNH khi: (1) Đột quỵ thiếu máu xác nhận. (2) Khởi phát < 4.5 giờ (hoặc thức giấc thấy đột quỵ và MRI DWI/FLAIR mismatch). (3) NIHSS ≥ 4 (hoặc thấp hơn nhưng gây tàn phế). CHỐNG CHỈ ĐỊNH TUYỆT ĐỐI: (1) Xuất huyết não trên CT. (2) Đang dùng NOAC (apixaban, rivaroxaban, dabigatran) trong 48h — KHÔNG dùng tPA. (3) INR > 1.7 hoặc đang heparin (aPTT kéo dài). (4) Tiểu cầu < 100,000. (5) Phẫu thuật lớn trong 14 ngày. (6) Đột quỵ hoặc chấn thương đầu trong 3 tháng. (7) Xuất huyết tiêu hóa trong 21 ngày. (8) HA > 185/110 không kiểm soát được. CHỐNG CHỈ ĐỊNH TƯƠNG ĐỐI: (1) Đột quỵ nhẹ (NIHSS 0-3) hoặc cải thiện nhanh. (2) Đường huyết < 2.8 hoặc > 22 mmol/L. (3) Co giật lúc khởi phát. Liều: 10% bolus IV trong 1 phút, 90% còn lại truyền trong 60 phút. Theo dõi ICU 24h sau tPA."
+  },
+  {
+    "id": "KB-022",
+    "title": "Đột quỵ xuất huyết não — Hemorrhagic Stroke / ICH",
+    "tags": ["hemorrhagic stroke", "ICH", "intracerebral hemorrhage", "xuất huyết não", "đột quỵ xuất huyết", "hematoma", "GCS"],
+    "content": "Xuất huyết não (ICH): đột quỵ nặng, tỷ lệ tử vong cao. Nguyên nhân: tăng huyết áp (thường gặp nhất — nhân nền, đồi thị, cầu não, tiểu não), amyloid angiopathy (vỏ não, người cao tuổi), AVM, dùng kháng đông. Chẩn đoán: CT não không cản quang → hình ảnh tăng tỷ trọng. KHÔNG dùng tPA. Xử trí khẩn: Kiểm soát HA ngay (mục tiêu < 140 mmHg trong 1h, dùng labetalol hoặc nicardipine IV). Đảo ngược kháng đông: warfarin → vitamin K + PCC; NOAC → andexanet alfa (apixaban/rivaroxaban) hoặc idarucizumab (dabigatran). Phẫu thuật: hội chẩn PTTK nếu GCS giảm nhanh, xuất huyết tiểu não > 3cm, hoặc não thất. Monitor ICP nếu GCS ≤ 8. Đặt nội khí quản nếu mất phản xạ bảo vệ đường thở. DDx: SAH (đau đầu sấm sét, máu quanh não), nhồi máu não chuyển dạng xuất huyết, u não chảy máu."
+  },
+  {
+    "id": "KB-023",
+    "title": "TIA — Transient Ischemic Attack và nguy cơ đột quỵ",
+    "tags": ["TIA", "transient ischemic attack", "ABCD2", "stroke risk", "cơn thiếu máu não thoáng qua", "nguy cơ đột quỵ"],
+    "content": "TIA: triệu chứng thần kinh khu trú hồi phục hoàn toàn trong < 24h (thường < 1h), không có nhồi máu trên MRI DWI. Nguy cơ đột quỵ sớm cao: 10-15% trong 90 ngày, cao nhất trong 48h đầu. ABCD2 score (nguy cơ): Tuổi ≥60 (1đ) + HA ≥140/90 (1đ) + Triệu chứng (yếu 2đ, ngôn ngữ 1đ) + Thời gian ≥60 phút (2đ), 10-59 phút (1đ) + Đường huyết ≥7 (1đ). ABCD2 ≥4: nguy cơ cao → nhập viện ngay. Xử trí khẩn (trong 24h): Aspirin 325mg ngay + CT/MRI não + CTA/MRA mạch não cổ + ECG + Holter tim. Nếu rung nhĩ: kháng đông. Nếu hẹp động mạch cảnh ≥70%: hội chẩn mạch máu. KHÔNG dùng tPA (không có nhồi máu). DDx: đột quỵ thực sự (MRI DWI dương tính), hạ đường huyết, đau nửa đầu có aura, co giật khu trú."
+  }
+]

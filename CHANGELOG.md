@@ -1,6 +1,35 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.4.0] — 2026-06-05 — Canada pipeline port + BENCH-001 complete
+
+### Pipeline (Canada port — không sửa)
+- feat(pipeline): copy Canada handlers L0→L9 vào src/pipeline/ (l1_semantic, l2_enforcer, l3_routing, l4_authority, l5_policy, l6_agent, l6_soap_generator, l7_memory, l8_recovery, l9_response, l10_observability)
+- feat(pipeline): l1b_translation.py (MarianMT VI→EN) — kích hoạt nội bộ cho NER
+- feat(models): phobert_ner.py, clinical_kb.py, qwen_reasoning.py, _phobert_crf.py từ Canada
+- feat(models): llm_adapter.py, state_machine.py, stage_result.py, exceptions.py từ Canada
+- feat(data): data/kb/ — chunks.json + faiss_index.bin + guidelines.json (Clinical KB)
+- feat(data): data/audio/ — 22 WAV test files (path chuẩn theo Canada)
+
+### Tools
+- feat(tools): tools/eval_phowhisper.py — T-007 benchmark (Canada, không sửa)
+- feat(tools): tools/run_test_audio.py — T-005 pipeline test (Canada, không sửa)
+- feat(tools): tools/record_test_audio.py — interactive recording
+- feat(tools): tools/partial_ceer.py — partial CEER measurement
+
+### Benchmark Results (BENCH-001)
+- T-007: 10/10 PASS | WER 36–52% | RTF ~0.5x (3s/file)
+- T-005: 20/22 PASS (91%) | 20/20 VI detected | 20/20 SOAP S/O/A/P
+- Partial CEER: 0% → revealed drug_db aliases missing + NER patterns rigid
+- CEER fixed via Canada pipeline (MarianMT + l6_soap_generator)
+
+### ISO Docs
+- docs: DECISIONS.md — 4 ADR mới (Canada pipeline, MarianMT, SOAP/CĐHA, FAISS KB)
+- docs: SOFTWARE_ARCHITECTURE.md — update bảng so sánh CA/VN
+
+### Deps
+- feat(deps): torch==2.3.0+cpu, transformers==4.41.2, faiss-cpu, sentencepiece, sacremoses, sentence-transformers, numpy==1.26.4
+
 ## [v0.3.1] — 2026-06-04 — Architecture upgrade + QA hardening + Design corrections
 
 ### Architecture (port từ MediVoice_AI Canada)

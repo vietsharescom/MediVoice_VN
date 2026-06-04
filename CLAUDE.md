@@ -173,11 +173,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.3.0 |
-| Status | **Phase 0 pipeline DONE — L0→L10 + 4-layer arch + 165 tests + 88% coverage** |
+| Version | v0.4.0 |
+| Status | **Canada pipeline ported + BENCH-001 DONE — T-005 20/22 PASS (91%) · T-007 10/10** |
 | Tests | **165/165 PASS** · bandit 0 HIGH/MEDIUM · Coverage 88% |
-| Audio | **22 WAV files** tại `data/Voices/` — BENCH-001 CÓ THỂ CHẠY NGAY |
-| Next task | BENCH-001: PhoWhisper on test_viet_*.wav · DEPLOY-001: Windows installer |
+| Audio | **22 WAV files** tại `data/audio/` + `data/kb/` Clinical KB active |
+| Next task | VN-ROUTER-001: l9_vn_router.py (SOAP→Mẫu 15/BV-01) · DEPLOY-001: Windows installer |
 
 ---
 

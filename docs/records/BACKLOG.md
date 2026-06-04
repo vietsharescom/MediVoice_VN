@@ -1,5 +1,5 @@
 # BACKLOG.md — MediVoice VN
-# v0.3.0 — Updated 2026-06-04
+# v0.4.0 — Updated 2026-06-05
 # Single source of truth cho tasks.
 
 ---
@@ -7,8 +7,9 @@
 ## IMMEDIATE — TRƯỚC KHI LAUNCH
 
 - [ ] **LEGAL-001** 🔴 Thuê luật sư VN (healthtech + data + AI) — trước khi launch
-- [ ] **BENCH-001** 🟡 Benchmark PhoWhisper-small vs medium trên 10–20 audio thực tế từ Đà Nẵng
-- [ ] **BENCH-002** 🟡 Đo CEER (Clinical Entity Error Rate): tên thuốc VN + liều + chẩn đoán
+- [x] **BENCH-001** ✅ Benchmark PhoWhisper trên 22 audio — WER 36–52%, T-005 20/22 PASS (2026-06-05)
+- [ ] **BENCH-002** 🟡 Đo CEER thật: audio pilot thực tế BS nói + ground truth labels
+- [ ] **VN-ROUTER-001** 🔴 VN Routing Layer: l9_vn_router.py — SOAP→Mẫu 15/BV-01 (lam_sang) | SOAP giữ (cdha)
 
 ---
 
@@ -49,8 +50,9 @@
 - [x] **APP-006:** PDF download Mẫu 15/BV-01
 
 ### Phase 0 Còn Lại
-- [ ] **BENCH-001** 🔴 Chạy PhoWhisper trên `data/Voices/test_viet_*.wav` — đo WER/CEER — **CÓ THỂ LÀM NGAY** (22 audio files sẵn)
-- [ ] **TEST-E2E-001** 🟡 End-to-end test full pipeline với audio thực tế (sau BENCH-001)
+- [x] **BENCH-001** ✅ T-005 20/22 PASS | T-007 10/10 PASS | WER 29–52% | SOAP 20/20 (2026-06-05)
+- [ ] **VN-ROUTER-001** 🔴 VN Routing Layer — l9_vn_router.py: SOAP→Mẫu 15/BV-01 cho lam_sang
+- [ ] **TEST-E2E-001** 🟡 End-to-end test full pipeline với audio thực tế (sau VN-ROUTER-001)
 - [ ] **DEPLOY-001** 🟡 Package app để BS Đà Nẵng install (Windows + Python venv installer)
 - [ ] **CONFIG-001** 🟢 Facility config UI (tên phòng khám, CCHN, khoa — file JSON)
 - [ ] **DRUG-ALIAS-001** 🟢 Mở rộng alias map trong drug_db.json (thêm typo VN phổ biến)

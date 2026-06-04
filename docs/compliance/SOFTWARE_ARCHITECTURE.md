@@ -148,12 +148,16 @@ Audio (mic/upload)
 
 | Aspect | MediVoice_AI (CA) | MediVoice_VN |
 |---|---|---|
-| Output format | SOAP note (EN) | Mẫu 15/BV-01 (VI, TT32/2023) |
+| Core pipeline | Canada pipeline L0→L9 | **Canada pipeline GIỮ NGUYÊN** (2026-06-05) |
+| Output lâm sàng | SOAP note (EN) | SOAP → VN router → **Mẫu 15/BV-01 (VI)** |
+| Output CĐHA | SOAP note (EN) | **SOAP giữ nguyên** (S/O/A/P phù hợp imaging) |
 | Privacy law | PIPEDA | NĐ13/2023 |
 | Patient ID | SHA-256(OHIP) | CCCD nullable, VNeID-ready |
-| AI model | Whisper-small + PhoWhisper + MarianMT | PhoWhisper-small only |
-| NER | PhoBERT+CRF trained | Rule-based (Phase 0) → PhoBERT Phase 1 |
-| Memory | FAISS KB + SQLite | SQLite only |
+| ASR | PhoWhisper-small + Whisper-small | **PhoWhisper-small** (Whisper optional) |
+| Translation | MarianMT VI→EN (output) | **MarianMT VI→EN (NER nội bộ)** — output vẫn VI |
+| NER | l6_soap_generator (regex + PhoBERT) | **l6_soap_generator từ Canada** (2026-06-05) |
+| KB | FAISS Clinical KB | **FAISS KB từ Canada** active (2026-06-05) |
+| Qwen DDx | Qwen reasoner | Template DDx fallback (Qwen Phase 2) |
 | Deploy | HF Spaces + Docker | Local + VN Cloud |
 | Compliance | PIPEDA + ISO_CA | NĐ13 + TT32 + Luật KCB + Luật AI 134 |
 
