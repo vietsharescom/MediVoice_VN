@@ -1,6 +1,29 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.4.5] — 2026-06-06 — PENDING_REQUESTS system + GAP-002/005 closed + ISO compliance docs
+
+### Tests (165 → 210 PASS)
+- feat(test): tests/unit/test_pii_scan.py — 27 tests, GAP-002 CLOSED
+  Covers: CCCD/CMND/SDT/BHYT/EMAIL detection, mask_pii, scan_form_data edge cases
+- feat(test): tests/integration/test_api.py — 18 tests, GAP-005 CLOSED
+  Covers: health endpoint, transcribe, approve/reject, PDF, feedback, L4 protection
+
+### PENDING_REQUESTS tracking system
+- feat(process): docs/records/PENDING_REQUESTS.md — tracks Andy actions + Claude todos
+  iso_audit.py now shows pending items at session start with full detail
+- feat(ci): iso_audit.py — check_pending_requests() added to doc sync check
+- docs: CLAUDE.md — Step C added (read PENDING_REQUESTS), BƯỚC 2 added to report
+
+### ISO Compliance docs (3 new)
+- feat(docs): DPA_TEMPLATE.md (DS-VN-COM-014) — NĐ13/2023 data processing agreement
+- feat(docs): INCIDENT_RESPONSE_PLAN.md (DS-VN-COM-015) — ISO 42001 Cl.8.5 + 72h breach
+- feat(docs): BS_ONBOARDING_CHECKLIST.md (DS-VN-COM-016) — ISO 9001 Cl.7.2 training record
+
+### Other
+- docs: RTM.md — GAP-002 + GAP-005 marked CLOSED
+- docs: BACKLOG.md — DPA-SIGN-001, ONBOARD-001, BENCH-002 added to IMMEDIATE
+
 ## [v0.4.4] — 2026-06-06 — Automated ISO audit cadence + RAG memory timing
 
 ### Process automation

@@ -181,6 +181,55 @@ def check_design_report() -> dict:
     }
 
 
+def check_pending_requests() -> dict:
+    """Read PENDING_REQUESTS.md and count open items."""
+    content = _read(ROOT / "docs/records/PENDING_REQUESTS.md")
+    if not content:
+        return {"ok": True, "andy": [], "claude": [], "detail": "No pending requests file"}
+
+    andy_pending, claude_pending = [], []
+
+    in_andy = in_claude = False
+    for line in content.splitlines():
+        if "## ANDY_ACTION" in line:
+            in_andy, in_claude = True, False
+        elif "## CLAUDE_TODO" in line:
+            in_andy, in_claude = False, True
+        elif line.startswith("## "):
+            in_andy = in_claude = False
+
+        if "| PENDING |" in line or "| IN_PROGRESS |" in line:
+            m = re.search(r"\|\s*(PA-\d+|CT-\d+)\s*\|", line)
+            if not m:
+                continue
+            req_id = m.group(1)
+            # Extract description (2nd column)
+            parts = [p.strip() for p in line.split("|")]
+            desc = parts[2][:50] if len(parts) > 2 else req_id
+            # Strip markdown bold
+            desc = re.sub(r"\*\*(.+?)\*\*", r"\1", desc)
+
+            if in_andy:
+                andy_pending.append(f"{req_id}: {desc}")
+            elif in_claude:
+                claude_pending.append(f"{req_id}: {desc}")
+
+    total = len(andy_pending) + len(claude_pending)
+    ok = total == 0
+    detail_parts = []
+    if andy_pending:
+        detail_parts.append(f"Andy: {len(andy_pending)} pending")
+    if claude_pending:
+        detail_parts.append(f"Claude: {len(claude_pending)} pending")
+
+    return {
+        "ok": ok,
+        "andy": andy_pending,
+        "claude": claude_pending,
+        "detail": " | ".join(detail_parts) if detail_parts else "No pending requests",
+    }
+
+
 def check_weekly_due() -> dict:
     sched = _load_schedule()
     sessions = sched.get("sessions_since_full_audit", 0)
@@ -380,6 +429,7 @@ def _line(icon: str, label: str, detail: str) -> None:
 def run_doc_audit(as_json: bool = False) -> bool:
     """Tier 1: Document sync — every session."""
     checks = {
+        "pending_requests":  check_pending_requests(),
         "tests":             check_tests(),
         "rtm_gaps":          check_rtm_gaps(),
         "backlog_critical":  check_backlog_critical(),
@@ -395,6 +445,7 @@ def run_doc_audit(as_json: bool = False) -> bool:
         return all(c["ok"] for c in checks.values())
 
     LABELS = {
+        "pending_requests": "Pending requests",
         "tests": "Tests PASS",
         "rtm_gaps": "RTM CRITICAL gaps",
         "backlog_critical": "BACKLOG IMMEDIATE 🔴",
@@ -454,11 +505,24 @@ def run_doc_audit(as_json: bool = False) -> bool:
             for w in warnings:
                 print(f"     → {w}")
 
+    # Show pending requests detail
+    pr = checks.get("pending_requests", {})
+    if pr.get("andy") or pr.get("claude"):
+        print()
+        if pr.get("andy"):
+            print(f"  📋 ANDY ACTION REQUIRED ({len(pr['andy'])} items):")
+            for item in pr["andy"]:
+                print(f"     → {item}")
+        if pr.get("claude"):
+            print(f"  🔧 CLAUDE TODO ({len(pr['claude'])} items):")
+            for item in pr["claude"]:
+                print(f"     → {item}")
+
     if issues:
         print()
         print("  ACTIONS:")
         for key, result in checks.items():
-            if not result["ok"] and key not in ("last_session", "weekly_due"):
+            if not result["ok"] and key not in ("last_session", "weekly_due", "pending_requests"):
                 if key == "rtm_gaps":
                     print(f"  → Write tests: {', '.join(result.get('gaps', []))}")
                 elif key == "backlog_critical":

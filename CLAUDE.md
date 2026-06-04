@@ -34,12 +34,13 @@
 
 **Trigger:** `bắt đầu` · `start` · `begin` · `mở phiên` · hoặc tin nhắn đầu tiên bất kỳ
 
-**Làm 4 việc SONG SONG:**
+**Làm 5 việc SONG SONG:**
 ```
-A. Read docs/records/BACKLOG.md        → lấy Next task từ IMMEDIATE
-B. Read docs/records/LAST_SESSION.md  → lấy toàn bộ nội dung phiên trước
-C. Run: pytest tests/ -q              → lấy N tests PASS
-D. Run: python scripts/iso_audit.py   → ISO health check tự động
+A. Read docs/records/BACKLOG.md              → Next task từ IMMEDIATE
+B. Read docs/records/LAST_SESSION.md        → context phiên trước
+C. Read docs/records/PENDING_REQUESTS.md   → requests chưa xử lý
+D. Run: pytest tests/ -q                    → N tests PASS
+E. Run: python scripts/iso_audit.py         → ISO health + pending alerts
 ```
 
 **Nếu phiên có thiết kế / viết FID / implement module mới — đọc thêm:**
@@ -89,12 +90,17 @@ TỔNG TẤT CẢ: ~5-6 phút nếu đọc hết — KHÔNG nên, chỉ đọc k
 
 ```
 BƯỚC 1 — Dòng trạng thái:
-  v{X} | {N} tests PASS | Ready.
+  v{X} | {N} tests PASS | ISO: OK/⚠️/🔴 | Ready.
 
-BƯỚC 2 — Hiển thị toàn bộ LAST_SESSION.md:
-  (copy nguyên nội dung file ra — không tóm tắt, không bỏ)
+BƯỚC 2 — PENDING REQUESTS (nếu có):
+  📋 Andy cần làm: PA-001, PA-002 ...
+  🔧 Claude còn làm: CT-001, CT-002 ...
+  (Báo trước khi làm bất cứ việc gì khác)
 
-BƯỚC 3 — Dừng lại, chờ lệnh:
+BƯỚC 3 — Hiển thị toàn bộ LAST_SESSION.md:
+  (copy nguyên nội dung — không tóm tắt, không bỏ)
+
+BƯỚC 4 — Dừng lại, chờ lệnh:
   "Phiên trước kết thúc ở đây. Chờ lệnh Andy."
 ```
 
@@ -227,12 +233,12 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.4.1 |
-| Status | **Design Review hoàn tất 2026-06-06 — DESIGN_REPORT v1.1 đã tạo — FID-VN-004 cần viết** |
-| Tests | **165/165 PASS** · bandit 0 HIGH/MEDIUM · Coverage 88% |
-| Audio | **22 WAV files** tại `data/audio/` + `data/kb/` Clinical KB active |
-| Next task | **FID-VN-004** (L6 branch design) → VN-ROUTER-001 (NER→Mẫu15) → DEPLOY-001 |
-| Design | Xem chi tiết: `docs/records/DESIGN_REPORT_v1.1_20260606.md` |
+| Version | v0.4.5 |
+| Status | **210/210 tests PASS · GAP-002+005 CLOSED · ISO audit system complete · DPA+IRP+Onboarding done** |
+| Tests | **210/210 PASS** · bandit 0 HIGH/MEDIUM · Coverage 88% |
+| Pending | **5 Andy actions** (PA-001..005) · **4 Claude todos** (CT-001..002, CT-005..006) |
+| Next task | **FID-VN-004** → VN-ROUTER-001 → DEPLOY-001 |
+| Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` |
 
 ---
 
@@ -438,6 +444,18 @@ KHI CONFUSED HOẶC CÓ MULTIPLE OPTIONS:
      docs/records/consultations/CONS-YYYYMMDD-NNN.md
   → Dùng template: docs/dev/CONSULTATION_TEMPLATE.md
   → KHÔNG tự quyết khi < 70% confident về decisions quan trọng
+
+KHI CÓ REQUEST MỚI CHƯA XỬ LÝ ĐƯỢC NGAY:
+  → Thêm vào PENDING_REQUESTS.md NGAY (đừng để mất):
+     Andy cần làm gì → PA-xxx
+     Claude còn làm → CT-xxx
+     Cần hỏi AI khác → TP-xxx
+  → iso_audit.py sẽ nhắc mỗi phiên
+
+KHI CLAUDE ĐỀ XUẤT LIST ITEMS (5 việc, 3 bước...):
+  → KHÔNG để items trôi mất khi màn hình scroll
+  → Dùng TodoWrite để track trong phiên
+  → Items chưa xong khi đóng phiên → ghi vào CT-xxx trong PENDING_REQUESTS
 
 KHI TEST FAIL / SECURITY ISSUE:
   → Fix NGAY trong phiên đó — không commit khi còn lỗi

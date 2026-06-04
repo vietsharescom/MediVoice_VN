@@ -52,10 +52,10 @@
 | Gap ID | SRS ID | Mô tả | Priority | Trạng thái |
 |---|---|---|---|---|
 | GAP-001 | SRS-L0-002 | Silence validation chưa có test | Medium | OPEN |
-| **GAP-002** | **SRS-L5-001/002** | **Unit tests cho PII scan chưa viết** | **🔴 CRITICAL** | **OPEN — viết trước pilot** |
+| **GAP-002** | **SRS-L5-001/002** | **Unit tests cho PII scan** | **✅ CLOSED** | **tests/unit/test_pii_scan.py — 2026-06-06** |
 | GAP-003 | SRS-L8-001 | Unit tests cho error handler chưa viết | Medium | OPEN |
 | GAP-004 | SRS-L9a-001 | Unit tests cho PDF export chưa viết | Medium | OPEN |
-| **GAP-005** | **SRS-API-*** | **API integration tests chưa viết** | **🔴 CRITICAL** | **OPEN — viết trước pilot** |
+| **GAP-005** | **SRS-API-*** | **API integration tests** | **✅ CLOSED** | **tests/integration/test_api.py — 2026-06-06** |
 
 **Lý do GAP-002 CRITICAL:** PII scan bảo vệ NĐ13/2023 — không có unit test = không có automated compliance verification.
 **Lý do GAP-005 CRITICAL:** API là interface chính với PWA — không có integration test = regression risk cao khi thêm tính năng mới.
