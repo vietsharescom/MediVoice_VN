@@ -1,0 +1,14 @@
+[run]
+source = src
+omit =
+    src/api/*
+    src/core/l9a_pdf_export.py
+    src/core/l1a_asr.py
+    src/risk/risk_engine.py
+    src/reporting/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if __name__ == .__main__.:
+    raise NotImplementedError

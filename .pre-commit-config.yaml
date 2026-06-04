@@ -1,10 +1,27 @@
+# .pre-commit-config.yaml - MediVoice VN
+# Hoc tu MediVoice_AI QA_PLAN v1.2
+# 3 gates: tests + security (bandit) + coverage (>=80%)
+
 repos:
   - repo: local
     hooks:
       - id: pipeline-integrity
-        name: MediVoice VN — Pipeline Integrity Tests
-        entry: venv/Scripts/pytest tests/test_pipeline_integrity.py --tb=short -q
+        name: "[VN] Gate 1 - Tests 100% PASS"
+        entry: venv/Scripts/pytest tests/ --tb=short -q
         language: system
         pass_filenames: false
         always_run: true
-        description: "Enforce ISO pipeline rules. 100% PASS required before commit."
+
+      - id: security-scan
+        name: "[VN] Gate 2 - Security bandit"
+        entry: venv/Scripts/bandit -r src/ -ll -q
+        language: system
+        pass_filenames: false
+        always_run: true
+
+      - id: coverage-gate
+        name: "[VN] Gate 3 - Coverage >= 80%"
+        entry: venv/Scripts/pytest tests/ --cov=src --cov-fail-under=80 -q --tb=no
+        language: system
+        pass_filenames: false
+        always_run: true
