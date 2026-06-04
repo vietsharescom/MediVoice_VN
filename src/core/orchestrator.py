@@ -128,9 +128,12 @@ class Orchestrator:
                 form_data["icd_code"] = icd_code
                 form_data["icd_display"] = icd_display
 
+            # Pass transcript as fallback — catches CDHA/nha_khoa keywords
+            # even when NER didn't extract them into form_data fields
+            _transcript_for_route = transcript_corrected or transcript_raw or ""
             route = self._run_stage(
                 "L3_ROUTE",
-                lambda: l3_route.detect_route(form_data or {})
+                lambda: l3_route.detect_route(form_data or {}, _transcript_for_route)
             ) or "lam_sang"
 
             # ── p2: PII scan (trước khi tạo record) ───────────────────

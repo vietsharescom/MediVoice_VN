@@ -90,8 +90,12 @@ async def transcribe_audio(
         form_data["icd_code"] = icd_code
         form_data["icd_display"] = icd_display
 
-        # L3: Route
-        route = l3_route.detect_route(form_data)
+        # Thêm patient_name vào form_data nếu được cung cấp
+        if patient_name:
+            form_data["ho_va_ten"] = patient_name
+
+        # L3: Route — pass transcript làm fallback khi NER không đủ
+        route = l3_route.detect_route(form_data, transcript_corrected or transcript_raw or "")
 
         # L5: PII scan
         pii_detected = l5_pii_scan.scan_form_data(form_data)
@@ -255,10 +259,16 @@ async def export_pdf(record_id: str):
         raise HTTPException(404, "Record không tìm thấy")
 
     # Tạo BenhAnNgoaiTru từ form_data
+    # patient_data: lấy từ form_data nếu có (Phase 0 không có M1 riêng)
+    stored_form = data.get("form_data", {})
+    _patient_data = None
+    if stored_form.get("ho_va_ten"):
+        _patient_data = {"ho_va_ten": stored_form.get("ho_va_ten", "")}
     benh_an = l6_generate_form.generate_benh_an(
-        form_data=data.get("form_data", {}),
+        form_data=stored_form,
         doctor_cchn=data.get("doctor_cchn", ""),
         facility_id=data.get("facility_id", ""),
+        patient_data=_patient_data,
     )
     benh_an.record_id = record_id
     benh_an.approved_by = data.get("approved_by", "")

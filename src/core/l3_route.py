@@ -19,17 +19,24 @@ _NHA_KHOA_KEYWORDS = [
 ]
 
 
-def detect_route(form_data: dict) -> str:
+def detect_route(form_data: dict, transcript: str = "") -> str:
     """
-    Xác định route từ form_data.
+    Xác định route từ form_data + transcript (fallback).
     Phase 0: chỉ lam_sang và plugin stubs (CDHA, nha khoa).
+
+    transcript: VI transcript gốc — dùng khi NER không extract được keywords
+                (ví dụ: BS nói "siêu âm" nhưng NER không classify vào chan_doan)
     """
-    # Lấy text để phân tích
+    # Lấy text từ form_data (NER output)
     text = " ".join([
         str(form_data.get("chan_doan", "")),
         str(form_data.get("ly_do", "")),
         " ".join(str(c) for c in form_data.get("chi_dinh", [])),
     ]).lower()
+
+    # Fallback: thêm transcript gốc nếu form_data không đủ thông tin
+    if transcript:
+        text = text + " " + transcript.lower()
 
     for kw in _NHA_KHOA_KEYWORDS:
         if kw in text:

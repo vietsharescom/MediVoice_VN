@@ -38,9 +38,16 @@ Canada pipeline hiện sinh SOAP {S,O,A,P} cho MỌI route. Với `lam_sang`, SO
 
 **Files thay đổi:**
 ```
-src/pipeline/p1_processing/l3_routing.py  — thêm detect_vn_route() (~20 LOC)
-src/pipeline/p2_decision/l6_agent.py       — thêm dispatch lam_sang/cdha (~25 LOC)
-src/pipeline/p3_output/l9_vn_router.py    — file mới: generate_mau15() (~85 LOC)
+src/pipeline/p1_processing/l3_routing.py    — thêm vn_route detection (~20 LOC)
+src/pipeline/p2_decision/l6_agent.py         — thêm dispatch lam_sang/cdha (~25 LOC)
+src/pipeline/p2_decision/l6_mau15_generator.py — file mới: generate_mau15() (~85 LOC)
+  Tái sử dụng: src/core/l6_generate_form.generate_benh_an() (đã có sẵn)
+  generate_mau15() chỉ làm: Canada NER entities → form_data format → gọi generate_benh_an()
+
+Lưu ý: src/core/l6_generate_form.py đã được fix trước khi FID implement:
+  - Bug: qua_trinh_benh_ly dùng nhầm ly_do → đã fix (dùng trieu_chung list)
+  - Bug: patient_name từ transcribe request bị mất → đã fix (lưu vào form_data)
+  - Bug: l3_route detect từ form_data only → đã fix (thêm transcript fallback)
 ```
 
 **Mapping NER entities → Mẫu 15/BV-01:**

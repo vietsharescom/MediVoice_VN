@@ -57,10 +57,16 @@ def generate_benh_an(
     hc.gio_den_kham = datetime.now()
 
     # Lý do
-    record.ly_do.ly_do = form_data.get("ly_do", "")
+    ly_do_text = form_data.get("ly_do", "")
+    record.ly_do.ly_do = ly_do_text
 
-    # Hỏi bệnh
-    record.hoi_benh.qua_trinh_benh_ly = form_data.get("ly_do", "")
+    # Hỏi bệnh — qua_trinh_benh_ly = ly_do + trieu_chung (nếu có)
+    trieu_chung = form_data.get("trieu_chung", [])
+    if trieu_chung:
+        qua_trinh = ly_do_text + (". " if ly_do_text else "") + "; ".join(str(t) for t in trieu_chung)
+    else:
+        qua_trinh = ly_do_text
+    record.hoi_benh.qua_trinh_benh_ly = qua_trinh
 
     # Sinh hiệu
     sh_data = form_data.get("sinh_hieu", {})
@@ -72,6 +78,10 @@ def generate_benh_an(
     sh.nhip_tho = sh_data.get("nhip_tho")
     sh.can_nang = sh_data.get("can_nang")
     sh.spo2 = sh_data.get("spo2")
+
+    # Hành chính từ patient_data hoặc form_data (patient_name nếu có)
+    if not patient_data and form_data.get("ho_va_ten"):
+        record.hanh_chinh.ho_va_ten = form_data.get("ho_va_ten", "")
 
     # Khám bệnh
     record.kham_benh.toan_than = form_data.get("toan_than", "")
