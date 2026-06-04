@@ -183,3 +183,4 @@ Ví dụ: R-P01, R-A03, R-O02
 ---
 
 *DS-VN-DEV-001 | NAMING_CONVENTION v1.1 | Updated: 2026-06-04*
+hc

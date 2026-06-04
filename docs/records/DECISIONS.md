@@ -13,8 +13,8 @@
 | 2026-06-03 | **3 Gói dịch vụ** + 9 modules bật/tắt | Nhu cầu khác nhau: BS tại nhà vs phòng mạch vs phòng khám | Gói 1/2/3 bundle + module pricing |
 | 2026-06-03 | **Mẫu 15/BV1 là form CORE** (Phase 0) | 95% BS lâm sàng tư dùng — phổ biến nhất | CĐHA và chuyên khoa là plugin, không phải core |
 | 2026-06-03 | **CĐHA = Plugin/Option** (không phải Phase 0) | CĐHA dùng form chuyên ngành riêng, không dùng Mẫu 15 | FID-VN-001 lùi sang Phase 1 |
-| 2026-06-03 | **Desktop: Tauri** (không phải Electron) | Tauri ~10MB vs Electron ~150MB — phù hợp máy VN cũ | Cần Rust knowledge hoặc Python subprocess |
-| 2026-06-03 | **Web responsive** cho mobile (Phase 1) | Không build native iOS/Android — quá tốn | Phase 0 desktop only |
+| 2026-06-03 | ~~Desktop: Tauri~~ → **PWA: FastAPI + HTML/JS** | Tauri cần Rust, phức tạp — FastAPI PWA đủ dùng Phase 0, BS dùng phone | Mobile-first ngay Phase 0, không cần install |
+| 2026-06-04 | **Mobile-first Phase 0** (không phải desktop only) | BS dùng điện thoại trong phòng khám — PWA responsive là đủ | Không build native iOS/Android |
 | 2026-06-03 | **Staff voice + Doctor voice** = 2 contexts riêng | Staff hỏi tiếp nhận, BS khám — 2 luồng khác nhau | Staff voice = Phase 1 feature |
 | 2026-06-03 | **Module M3: Thu chi đơn giản** thêm vào | BS tư không biết thu bao nhiêu — voice log giải quyết | Voice: "Thu 200k BN Lan" → app ghi |
 | 2026-06-03 | **Appointment booking** (M2) = Gói 2 feature | Giảm chờ đợi, tiết kiệm nhân viên phòng mạch | BN book online, QR check-in |

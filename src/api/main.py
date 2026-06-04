@@ -269,6 +269,53 @@ async def export_pdf(record_id: str):
     )
 
 
+@app.post("/api/feedback")
+async def submit_feedback(
+    record_id: str = Form(...),
+    doctor_cchn: str = Form(...),
+    feedback_type: str = Form(...),   # drug_error|ner_error|icd_error|latency|other
+    field_affected: str = Form(default=""),
+    correct_value: str = Form(default=""),
+    severity: str = Form(default="medium"),  # critical|high|medium|low
+    comment: str = Form(default=""),
+):
+    """
+    BS báo lỗi AI sau khi review bản nháp.
+    ISO/IEC 42001:2023 Annex A.6.2 — Feedback mechanism bắt buộc.
+    """
+    conn = _get_conn()
+    try:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS feedback (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                record_id TEXT, doctor_cchn TEXT,
+                feedback_type TEXT, field_affected TEXT,
+                correct_value TEXT, severity TEXT,
+                comment TEXT, created_at TEXT,
+                resolved INTEGER DEFAULT 0
+            )
+        """)
+        from datetime import datetime
+        conn.execute("""
+            INSERT INTO feedback
+            (record_id, doctor_cchn, feedback_type, field_affected,
+             correct_value, severity, comment, created_at)
+            VALUES (?,?,?,?,?,?,?,?)
+        """, (record_id, doctor_cchn, feedback_type, field_affected,
+              correct_value, severity, comment, datetime.now().isoformat()))
+        conn.commit()
+
+        l10_audit_log.log_event(
+            conn, record_id, doctor_cchn, "FEEDBACK",
+            f"{feedback_type}/{severity}: {field_affected}"
+        )
+    finally:
+        conn.close()
+
+    return {"status": "received", "severity": severity,
+            "message": "Cảm ơn phản hồi — chúng tôi sẽ cải thiện AI."}
+
+
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "version": "0.2.0"}
+    return {"status": "ok", "version": "0.3.0"}

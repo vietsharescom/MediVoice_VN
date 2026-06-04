@@ -145,11 +145,17 @@ v{trước} | {N} tests → v{sau} | {N} tests
 | `DECISIONS.md` | `docs/records/` | Claude + Andy | Architecture decisions (ADR) |
 | `VISION.md` | `docs/product/` | Andy | Product direction |
 | `BRS.md` | `docs/product/` | Andy | Business requirements |
-| `AI_POLICY.md` | `docs/compliance/` | Audit | ISO 42001 Cl.5.2 bắt buộc |
-| `RISK_REGISTER.md` | `docs/compliance/` | Andy | Legal/technical risks |
-| `IMPACT_ASSESSMENT.md` | `docs/compliance/` | Audit | Luật AI 134/2025 bắt buộc |
-| `NAMING_CONVENTION.md` | `docs/dev/` | Claude | Git commit, code naming |
-| `KPI_METRICS.md` | `docs/dev/` | Andy | Ngưỡng chất lượng pilot |
+| `AI_POLICY.md` | `docs/compliance/` | Audit | ISO 42001 Cl.5.2 — chính sách AI |
+| `SCOPE.md` | `docs/compliance/` | Audit | ISO 9001+42001 Cl.4.3 — phạm vi |
+| `RISK_REGISTER.md` | `docs/compliance/` | Andy | ISO 42001 Cl.6.1 — rủi ro |
+| `IMPACT_ASSESSMENT.md` | `docs/compliance/` | Audit | ISO 42001 Cl.8.2 — tác động AI |
+| `COMPETENCE.md` | `docs/compliance/` | Andy | ISO 9001 Cl.7.2 — năng lực |
+| `NONCONFORMING.md` | `docs/compliance/` | Andy | ISO 9001 Cl.8.7 — lỗi/NC |
+| `VV_PLAN.md` | `docs/compliance/` | Andy | ISO 42001 Cl.8.6 — V&V |
+| `MANAGEMENT_REVIEW.md` | `docs/compliance/` | Andy | ISO 9001 Cl.9.3 — review định kỳ |
+| `FEEDBACK_PROCESS.md` | `docs/compliance/` | Andy | ISO 42001 A.6.2 — feedback BS |
+| `NAMING_CONVENTION.md` | `docs/dev/` | Claude | ISO 9001 Cl.7.5 — đặt tên |
+| `KPI_METRICS.md` | `docs/dev/` | Andy | ISO 42001 Cl.9.1 — đo lường |
 
 > `docs/archive/` — files cũ/done, không đọc trong workflow thường ngày.
 
