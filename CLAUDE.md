@@ -34,18 +34,26 @@
 
 **Trigger:** `bắt đầu` · `start` · `begin` · `mở phiên` · hoặc tin nhắn đầu tiên bất kỳ
 
-**Làm 3 việc SONG SONG:**
+**Làm 4 việc SONG SONG:**
 ```
 A. Read docs/records/BACKLOG.md        → lấy Next task từ IMMEDIATE
 B. Read docs/records/LAST_SESSION.md  → lấy toàn bộ nội dung phiên trước
 C. Run: pytest tests/ -q              → lấy N tests PASS
+D. Run: python scripts/iso_audit.py   → ISO health check tự động
 ```
 
-**Nếu phiên có thiết kế / viết FID / implement module mới:**
+**Nếu phiên có thiết kế / viết FID / implement module mới — đọc thêm:**
 ```
-D. Read docs/records/DESIGN_REPORT_v1.1_20260606.md
-   → đọc section liên quan đến task (không cần đọc toàn bộ 700 dòng)
-   → DESIGN_REPORT là nguồn chi tiết nhất cho product/UX/flow decisions
+E. Read docs/records/DESIGN_REPORT_v1.1_20260606.md
+   → đọc section liên quan (không cần toàn bộ 700 dòng)
+   → nguồn chi tiết nhất cho product/UX/flow decisions
+```
+
+**Khi iso_audit.py báo 🔴 ISSUE:**
+```
+→ Flag ngay trong báo cáo đầu phiên trước khi làm bất cứ điều gì
+→ Hỏi Andy: xử lý issue ngay hay tiếp tục task khác trước?
+→ KHÔNG bỏ qua ISO issue mà không thông báo
 ```
 
 **Báo cáo theo thứ tự — KHÔNG bỏ bước nào:**
@@ -173,9 +181,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 | `NAMING_CONVENTION.md` | `docs/dev/` | Claude | ISO 9001 Cl.7.5 — đặt tên |
 | `KPI_METRICS.md` | `docs/dev/` | Andy | ISO 42001 Cl.9.1 — đo lường |
 | `DESIGN_REPORT_v1.1_20260606.md` | `docs/records/` | Claude + Andy | **Master design — đọc khi FID/implement module** |
+| `IMPROVEMENT_PROCESS.md` | `docs/compliance/` | Claude + Andy | ISO Cl.10.3 — quy trình cải tiến liên tục |
 
 > `docs/archive/` — files cũ/done, không đọc trong workflow thường ngày.
 > `DESIGN_REPORT` — đọc theo section khi cần, không cần đọc toàn bộ mỗi phiên.
+> `scripts/iso_audit.py` — chạy mỗi phiên (Step D), output: ✅/⚠️/🔴.
 
 ---
 
@@ -376,6 +386,40 @@ KPIs Pilot:
 ```
 
 ---
+
+---
+
+## CONTINUOUS IMPROVEMENT — QUY TẮC KHÔNG QUÊN
+
+> Chi tiết đầy đủ: `docs/compliance/IMPROVEMENT_PROCESS.md`
+
+```
+KHI PHÁT HIỆN CẢI TIẾN (bất kỳ lúc nào trong phiên):
+  → Ghi vào BACKLOG.md NGAY — không chờ, không để trong chat
+  → Tag: 💡 IMPROVEMENT / 🔴 CRITICAL / 🟡 MEDIUM / 🟢 LOW
+
+KHI TEST FAIL / SECURITY ISSUE:
+  → Fix NGAY trong phiên đó — không commit khi còn lỗi
+  → NONCONFORMING.md nếu là nonconformity
+
+KHI DESIGN THAY ĐỔI LỚN (>100 LOC / API mới / flow mới):
+  → FID → Andy approve → DESIGN_REPORT new version → DECISIONS.md ADR
+
+SAU MỖI FID IMPLEMENTATION:
+  → RTM.md update → CHANGELOG entry → iso_audit.py re-run
+
+CADENCE TỐI THIỂU:
+  Mỗi phiên:   iso_audit.py + BACKLOG update
+  Mỗi commit:  100% tests PASS + bandit 0 HIGH
+  Mỗi tháng:   MANAGEMENT_REVIEW entry (Andy)
+  Mỗi quý:     Full ISO audit (như SES-20260606)
+
+ZERO-TOLERANCE:
+  ❌ Tests fail → không commit
+  ❌ L4 bypass → revert immediately
+  ❌ Data ngoài VN → revert immediately
+  ❌ Ý tưởng chỉ trong chat → phải ghi vào BACKLOG
+```
 
 ---
 

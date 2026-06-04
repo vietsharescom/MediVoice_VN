@@ -1,6 +1,17 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.4.2] — 2026-06-06 — ISO Continuous Improvement System
+
+### Process (no code change to pipeline)
+- feat(ci): scripts/iso_audit.py — auto ISO health check, runs every session Step D
+  Checks: tests, RTM CRITICAL gaps, BACKLOG IMMEDIATE, last session, doc consistency, NCs, DESIGN_REPORT
+- feat(docs): IMPROVEMENT_PROCESS.md (DS-VN-COM-013) — quy trình cải tiến liên tục ISO 9001 Cl.10.3
+  Covers: where rules live, how to record ideas, update cadence, auto-audit setup, zero-tolerance list
+- feat(docs): CLAUDE.md — add Step D (iso_audit.py) to SESSION PROTOCOL
+  Add CONTINUOUS IMPROVEMENT compact summary section
+  Add IMPROVEMENT_PROCESS.md to document table
+
 ## [v0.4.1] — 2026-06-06 — Master Design Review + DESIGN_REPORT v1.1
 
 ### Design (no code change)
