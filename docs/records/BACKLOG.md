@@ -11,8 +11,8 @@
 - [ ] **BENCH-002** 🟡 Đo CEER thật: audio pilot thực tế BS nói + ground truth labels
 - [x] **GAP-002** ✅ Unit tests PII scan — tests/unit/test_pii_scan.py 27 tests PASS (2026-06-06)
 - [x] **GAP-005** ✅ API integration tests — tests/integration/test_api.py 18 tests PASS (2026-06-06)
-- [ ] **FID-VN-004** 🔴 Viết Feature Intent Document cho VN-ROUTER-001 (L6 branch) — Andy approve trước
-- [ ] **VN-ROUTER-001** 🔴 VN Routing Layer: L6 branch — NER entities → Mẫu 15/BV-01 (lam_sang) | SOAP (cdha)
+- [x] **FID-VN-004** ✅ Feature Intent Document VN-ROUTER-001 — Andy approved 2026-06-06
+- [x] **VN-ROUTER-001** ✅ L6 branch: lam_sang→Mẫu15/BV-01 | cdha→SOAP — 232 tests PASS (2026-06-06)
 
 - [ ] **DPA-SIGN-001** 🔴 Andy ký DPA_TEMPLATE với BS pilot Đà Nẵng trước ngày dùng app đầu tiên
 - [ ] **ONBOARD-001** 🔴 Andy ký BS_ONBOARDING_CHECKLIST với từng BS pilot
