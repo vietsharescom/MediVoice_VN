@@ -61,13 +61,12 @@ Logic ưu tiên:
 
 Làm 5 bước, tự động, không hỏi:
 ```
-1. Update BACKLOG.md (DOING → DONE, thêm tasks mới nếu có)
+1. Update docs/records/BACKLOG.md (DOING → DONE, thêm tasks mới nếu có)
 2. Update CHANGELOG.md nếu có code mới
 3. Update CURRENT STATE (bên dưới) — version, tests, blocker, next
-4. Tạo session report: docs/records/sessions/DS-VN-SES-YYYYMMDD-HHMM.md
-   → HHMM = giờ phút thực tế lúc đóng phiên (VD: 2026-06-04-1435)
-   → Đây là báo cáo CHI TIẾT: đã làm gì + kết quả + kế hoạch tiếp theo
-5. git add -A && git commit -m "chore(session-end): close session YYYYMMDD-HHMM" && git push
+4. Ghi đè docs/records/LAST_SESSION.md (template bên dưới)
+   → 1 file duy nhất, git history lưu lịch sử — không tạo file mới mỗi phiên
+5. git add -A && git commit -m "chore(session-end): close session YYYY-MM-DD" && git push
 ```
 
 ---
@@ -84,10 +83,13 @@ Làm 5 bước, tự động, không hỏi:
 
 **Key files:**
 - [BACKLOG.md](docs/records/BACKLOG.md) — task tracker
-- [DECISIONS.md](docs/records/DECISIONS.md) — all locked decisions
-- [VISION.md](docs/cl05_leadership/VISION.md) — product vision v0.2
-- [BRS.md](docs/cl08_operation/BRS.md) — business requirements v0.2
+- [LAST_SESSION.md](docs/records/LAST_SESSION.md) — phiên gần nhất
+- [DECISIONS.md](docs/records/DECISIONS.md) — architecture decisions
 - [CHANGELOG.md](CHANGELOG.md) — version history
+- [VISION.md](docs/product/VISION.md) — product vision
+- [BRS.md](docs/product/BRS.md) — business requirements
+- [AI_POLICY.md](docs/compliance/AI_POLICY.md) — AI policy (ISO 42001)
+- [RISK_REGISTER.md](docs/compliance/RISK_REGISTER.md) — risk register
 
 ---
 
@@ -298,66 +300,40 @@ KPIs Pilot:
 > Trigger: `đóng phiên` · `kết thúc` · `end` · `done` · `had end` · `close` · `finish`
 
 ```
-BƯỚC 1: Update BACKLOG.md
+BƯỚC 1: Update docs/records/BACKLOG.md
          - DOING → DONE cho tasks đã hoàn thành
          - Thêm tasks mới nếu phát sinh
 
-BƯỚC 2: Update CHANGELOG.md
-         - Thêm entry nếu có code thay đổi
+BƯỚC 2: Update CHANGELOG.md nếu có code thay đổi
 
 BƯỚC 3: Update CURRENT STATE (section trên)
          - Version, Status, Tests, Blocker, Next task
 
-BƯỚC 4: Tạo session report — CHI TIẾT
-         File: docs/records/sessions/DS-VN-SES-YYYYMMDD-HHMM.md
-         HHMM = giờ:phút lúc đóng phiên (VD: 20260604-1435)
-         Dùng template bên dưới — KHÔNG được bỏ qua mục nào
+BƯỚC 4: Ghi đè docs/records/LAST_SESSION.md (template bên dưới)
+         → 1 file duy nhất, git history giữ lịch sử cũ
 
 BƯỚC 5: git add -A && git commit && git push
-         Message: "chore(session-end): close session YYYYMMDD-HHMM"
+         Message: "chore(session-end): close session YYYY-MM-DD"
 ```
 
-### Giải thích mã tên báo cáo
-
-```
-DS   = Document Standard (ISO 9001:2015 Cl.7.5)
-VN   = Việt Nam (project scope)
-SES  = Session report (loại: phiên làm việc)
-2026 = năm
-0604 = tháng + ngày
-1435 = giờ 14, phút 35 → biết báo cáo tạo lúc nào, sắp xếp cũ→mới
-
-Các loại khác (chỉ tham khảo, không tạo trong phiên thường):
-  EPR = External PR / review request
-  AUD = Audit / đánh giá
-  RDY = Readiness report
-  DEC = Decision record
-```
-
-### Template session report (DS-VN-SES-YYYYMMDD-HHMM.md)
+### Template LAST_SESSION.md
 
 ```markdown
-# DS-VN-SES-YYYYMMDD-HHMM
-# MediVoice VN | Session YYYY-MM-DD HH:MM
-# ISO/IEC 42001:2023 Cl.7.5 + Cl.9.1
+# LAST_SESSION.md — MediVoice VN
+# Ghi đè mỗi phiên. Git history lưu toàn bộ nội dung cũ.
+
+## Phiên: YYYY-MM-DD
 
 ## Trạng thái đầu → cuối
 v{trước} | {N} tests → v{sau} | {N} tests
 
 ## Đã hoàn thành
-- [TASK-ID] mô tả ngắn kết quả cụ thể
-- [TASK-ID] ...
+- [TASK-ID] kết quả cụ thể
 
-## Kết quả đo được (nếu có)
-- Tests: N/N PASS
-- Pipeline test: input → output
-- Lỗi đã fix: ...
-
-## Blocker / Phụ thuộc bên ngoài
-- BENCH-001: cần Andy lấy audio
+## Blocker
 - ...
 
-## Phiên tiếp theo — làm ngay
+## Phiên tiếp theo
 1. [TASK-ID] mô tả (ưu tiên cao nhất)
 2. [TASK-ID] ...
 ```
