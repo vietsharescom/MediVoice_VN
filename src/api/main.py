@@ -103,7 +103,14 @@ async def transcribe_audio(
             audio_path=tmp.name,
             transcript_raw=transcript_raw,
             transcript_corrected=transcript_corrected,
-            ner_entities={"entities": str(entities)},
+            ner_entities={
+                "chan_doan": entities.chan_doan,
+                "don_thuoc": entities.don_thuoc,
+                "nhiet_do": entities.nhiet_do,
+                "huyet_ap": [entities.huyet_ap_tam_thu, entities.huyet_ap_tam_truong],
+                "mach": entities.mach,
+                "tai_kham": entities.tai_kham,
+            },
             icd_code=icd_code,
             icd_display=icd_display,
             form_data=form_data,
@@ -190,16 +197,15 @@ async def approve_record(
     except l4_human_gate.HumanGateError as e:
         raise HTTPException(400, str(e))
 
-    # L7: Lưu vào DB
-    try:
-        l7_storage.store_record(record)
-    except Exception as e:
-        raise HTTPException(500, f"Lưu DB thất bại: {e}")
-
-    # L10: Audit log
+    # L7 + L10: dùng cùng connection để đảm bảo atomicity
     conn = _get_conn()
     try:
+        l7_storage.store_record(record, conn=conn)
         l10_audit_log.log_event(conn, record_id, doctor_cchn, "APPROVED", "BS approved")
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(500, f"Lưu thất bại: {e}")
     finally:
         conn.close()
 

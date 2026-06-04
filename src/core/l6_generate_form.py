@@ -5,16 +5,13 @@
 # FROZEN PIPELINE LAYER
 
 from __future__ import annotations
-import sys
 import uuid
+import importlib.util as _ilu
 from datetime import datetime
 from pathlib import Path
 
-# Import BenhAnNgoaiTru từ data model
+# Import BenhAnNgoaiTru từ data model (file nằm ngoài src package)
 _DATA_REF = Path(__file__).parent.parent.parent / "data" / "reference"
-sys.path.insert(0, str(_DATA_REF.parent))
-
-import importlib.util as _ilu
 _spec = _ilu.spec_from_file_location("mau15bv01", _DATA_REF / "MAU_15BV01_fields.py")
 _mod = _ilu.module_from_spec(_spec)
 _spec.loader.exec_module(_mod)

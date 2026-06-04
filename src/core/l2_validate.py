@@ -3,7 +3,6 @@
 # FROZEN PIPELINE LAYER
 
 from __future__ import annotations
-from dataclasses import asdict
 from .l1c_ner import MedicalEntities
 
 

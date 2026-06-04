@@ -85,10 +85,16 @@ def init_db(db_path: Path | None = None) -> None:
     conn.close()
 
 
-def store_record(record: ClinicalRecord, db_path: Path | None = None) -> str:
+def store_record(
+    record: ClinicalRecord,
+    db_path: Path | None = None,
+    conn: sqlite3.Connection | None = None,
+) -> str:
     """
     Lưu ClinicalRecord vào SQLite (chỉ sau khi L4 approved).
-    form_data và patient PII được encrypt bằng Fernet.
+    form_data được encrypt bằng Fernet.
+    conn: nếu truyền vào, dùng connection đó (caller commit/close).
+          Nếu None, tự tạo và commit.
     Returns: record_id
     """
     assert_approved(record)    # L4 guard — không bỏ qua
@@ -98,7 +104,10 @@ def store_record(record: ClinicalRecord, db_path: Path | None = None) -> str:
         json.dumps(record.form_data, ensure_ascii=False).encode()
     )
 
-    conn = _get_conn(db_path)
+    owns_conn = conn is None
+    if owns_conn:
+        conn = _get_conn(db_path)
+
     conn.execute("""
         INSERT OR REPLACE INTO clinical_records
         (record_id, facility_id, patient_id, doctor_cchn, status,
@@ -120,8 +129,10 @@ def store_record(record: ClinicalRecord, db_path: Path | None = None) -> str:
         record.byt_sync_status,
         record.pdf_path,
     ))
-    conn.commit()
-    conn.close()
+
+    if owns_conn:
+        conn.commit()
+        conn.close()
 
     return record.record_id
 
