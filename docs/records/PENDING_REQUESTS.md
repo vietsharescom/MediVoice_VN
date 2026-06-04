@@ -29,7 +29,7 @@ Nếu Andy trả lời/làm xong → Claude cập nhật status → DONE.
 | PA-002 | **Luật sư VN** — đã gửi email. Chờ phản hồi + lên lịch review DPA_TEMPLATE.md. | 🔴 HIGH | IN_PROGRESS | 2026-06-06 | 1 |
 | PA-003 | **Ký DPA template** với BS pilot Đà Nẵng (docs/compliance/DPA_TEMPLATE.md). Cần luật sư review xong (PA-002) rồi mới ký chính thức. | 🔴 HIGH | PENDING | 2026-06-06 | 1 |
 | PA-004 | **BS Onboarding Checklist** — đã ký với BS pilot. | 🟡 MEDIUM | ✅ DONE | 2026-06-06 | 1 |
-| PA-005 | **Approve FID-VN-004** — Claude vừa viết xong. File: `docs/dev/fids/FID-VN-004.md`. Andy đọc + gõ "approve" hoặc sửa status trong file. | 🔴 HIGH | PENDING | 2026-06-06 | 1 |
+| PA-005 | **Approve FID-VN-004** — File: `fids/FID-VN-004.md`. Andy đọc + gõ "approve" trong chat hoặc sửa Approved by/date trong file. | 🔴 HIGH | PENDING | 2026-06-06 | 1 |
 
 ---
 
@@ -37,7 +37,7 @@ Nếu Andy trả lời/làm xong → Claude cập nhật status → DONE.
 
 | ID | Mô tả | Priority | Status | Created |
 |---|---|---|---|---|
-| CT-001 | Viết FID-VN-004 | 🔴 HIGH | ✅ DONE — docs/dev/fids/FID-VN-004.md | 2026-06-06 |
+| CT-001 | Viết FID-VN-004 | 🔴 HIGH | ✅ DONE — fids/FID-VN-004.md | 2026-06-06 |
 | CT-002 | Implement VN-ROUTER-001 sau khi FID-VN-004 được Andy approve | 🔴 HIGH | PENDING | 2026-06-06 |
 | CT-003 | Viết tests GAP-002 (PII scan unit tests) | 🔴 HIGH | ✅ DONE | 2026-06-06 |
 | CT-004 | Viết tests GAP-005 (API integration tests) | 🔴 HIGH | ✅ DONE | 2026-06-06 |
