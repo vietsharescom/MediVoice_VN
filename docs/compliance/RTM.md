@@ -49,14 +49,19 @@
 
 ## OPEN GAPS
 
-| Gap ID | SRS ID | Mô tả | Priority |
-|---|---|---|---|
-| GAP-001 | SRS-L0-002 | Silence validation chưa có test | Medium |
-| GAP-002 | SRS-L5-001/002 | Unit tests cho PII scan chưa viết | High |
-| GAP-003 | SRS-L8-001 | Unit tests cho error handler chưa viết | Medium |
-| GAP-004 | SRS-L9a-001 | Unit tests cho PDF export chưa viết | Medium |
-| GAP-005 | SRS-API-* | API integration tests chưa viết | High |
+| Gap ID | SRS ID | Mô tả | Priority | Trạng thái |
+|---|---|---|---|---|
+| GAP-001 | SRS-L0-002 | Silence validation chưa có test | Medium | OPEN |
+| **GAP-002** | **SRS-L5-001/002** | **Unit tests cho PII scan chưa viết** | **🔴 CRITICAL** | **OPEN — viết trước pilot** |
+| GAP-003 | SRS-L8-001 | Unit tests cho error handler chưa viết | Medium | OPEN |
+| GAP-004 | SRS-L9a-001 | Unit tests cho PDF export chưa viết | Medium | OPEN |
+| **GAP-005** | **SRS-API-*** | **API integration tests chưa viết** | **🔴 CRITICAL** | **OPEN — viết trước pilot** |
+
+**Lý do GAP-002 CRITICAL:** PII scan bảo vệ NĐ13/2023 — không có unit test = không có automated compliance verification.
+**Lý do GAP-005 CRITICAL:** API là interface chính với PWA — không có integration test = regression risk cao khi thêm tính năng mới.
+
+**Quyết định (MANAGEMENT_REVIEW 1 — 2026-06-06):** GAP-002 và GAP-005 phải được viết trong sprint VN-ROUTER-001, không để sang Phase 1.
 
 ---
 
-*DS-VN-COM-008 | RTM v1.0 | ISO/IEC/IEEE 29148:2018 | 2026-06-04*
+*DS-VN-COM-008 | RTM v1.1 | ISO/IEC/IEEE 29148:2018 | 2026-06-06*

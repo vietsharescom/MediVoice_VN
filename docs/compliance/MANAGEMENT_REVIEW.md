@@ -43,6 +43,28 @@ Sau mỗi review phải quyết định về:
 
 ## 4. LỊCH SỬ REVIEW
 
+### REVIEW 1 — Design Review Milestone (2026-06-06)
+**Người review:** Andy Phan
+**Phạm vi:** Design review toàn hệ thống — xác nhận trước khi implement Phase 0 còn lại
+
+| Hạng mục | Kết quả | Quyết định |
+|---|---|---|
+| Tests | 165/165 PASS (tăng từ 61→165) | ✅ Tiếp tục |
+| BENCH-001 | ✅ DONE: T-005 20/22 PASS, T-007 10/10, WER 36–52% | ✅ Đạt ngưỡng tối thiểu |
+| Design Review | DESIGN_REPORT_v1.1_20260606.md hoàn tất (21 sections) | ✅ Confirmed |
+| ISO gaps | 6 gaps phát hiện từ audit → đang xử lý hôm nay | ✅ Đang đóng |
+| LEGAL-001 | Chưa có luật sư VN | 🔴 Blocker launch thương mại |
+| VN-ROUTER-001 | Cần FID-VN-004 → implement | 🟠 Blocker pilot |
+| DEPLOY-001 | Chờ sau VN-ROUTER-001 | 🟠 Blocker pilot |
+
+**Quyết định từ review này:**
+1. FID-VN-004 là next action ngay
+2. GAP-002 (PII tests) + GAP-005 (API tests) cần viết song song với VN-ROUTER-001
+3. LEGAL-001 là blocker cứng trước khi charge tiền — Andy cần tìm luật sư
+4. DESIGN_REPORT_v1.1 là nguồn tham chiếu cho tất cả FID Phase 1
+
+---
+
 ### Q1 2026 — Review Trước Pilot (dự kiến)
 **Ngày:** 2026-07-01 (ước tính)
 **Trạng thái:** ⏳ Chưa thực hiện — chờ pilot data

@@ -1,7 +1,7 @@
 # RISK_REGISTER.md | DS-VN-CL06-001
-# ISO/IEC 42001:2023 Clause 6 | ISO_VN v1.0 | v1.0
+# ISO/IEC 42001:2023 Clause 6 | ISO_VN v1.0 | v1.1
 # MediVoice VN — Risk Register
-# Updated: 2026-06-03
+# Updated: 2026-06-06 (Design Review — DESIGN_REPORT_v1.1)
 
 Format: R-[PREFIX][NN] | Severity | Probability | Control
 
@@ -12,7 +12,7 @@ Format: R-[PREFIX][NN] | Severity | Probability | Control
 | ID | Rủi ro | Mức độ | Khả năng | Kiểm soát hiện tại |
 |---|---|---|---|---|
 | R-P01 | BS khám tại nhà không đăng ký dùng app | HIGH | HIGH | Self-attestation CCHN; disclaimer rõ; platform không chịu TN |
-| R-P02 | Referral commission tracker vi phạm Luật KCB Đ.80 | HIGH | MEDIUM | Chỉ track chỉ định, không ghi tiền/% |
+| R-P02 | Referral commission tracker vi phạm Luật KCB Đ.80 | HIGH | MEDIUM | M5 chỉ track volume + deal% trong config partner (không ghi tiền trong giao dịch). Thanh toán thực ngoài app. |
 | R-P03 | Data vi phạm NĐ13/2023 (lưu ngoài VN) | CRITICAL | LOW | SQLite local; VN Cloud only; no AWS/GCP |
 | R-P04 | Không có conformity assessment trước 01/09/2027 | HIGH | MEDIUM | Budget 80-200M VND; track trong BACKLOG |
 | R-P05 | Bị xếp SaMD → cần đăng ký BYT | MEDIUM | LOW | Positioning "Documentation Assistant"; không tự chẩn đoán |
@@ -48,4 +48,17 @@ Format: R-[PREFIX][NN] | Severity | Probability | Control
 
 ---
 
-*DS-VN-CL06-001 | RISK_REGISTER v1.0 | ISO/IEC 42001:2023 Clause 6 | 2026-06-03*
+---
+
+## DATA & TÍCH HỢP (R-D) — Thêm từ Design Review 2026-06-06
+
+| ID | Rủi ro | Mức độ | Khả năng | Kiểm soát hiện tại |
+|---|---|---|---|---|
+| R-D01 | BN gửi file y tế không được yêu cầu qua email → vi phạm NĐ13/2023 nếu auto-process | HIGH | MEDIUM | Email auto-processor có 3 điều kiện bắt buộc: ① BN đã đăng ký M1 ② Có referral ACTIVE ③ BN đã ký consent. Thiếu 1 → QUARANTINE. Staff xem xét thủ công. |
+| R-D02 | Zalo OA gửi file y tế → vi phạm Zalo policy → account bị khoá | HIGH | LOW | Design: Zalo OA = text non-medical ONLY. File y tế (kết quả XN, bệnh án) → Email only. Enforced qua M6 adapter tách kênh. |
+| R-D03 | Thông tin commission bí mật bị lộ qua Zalo OA | MEDIUM | LOW | Partner comm = Email PRIMARY (chính thức, bảo mật). Zalo chỉ optional cho text không nhạy cảm. Commission info KHÔNG qua Zalo. |
+| R-O06 | BN no-show không báo → BS mất giờ chờ (30–60 phút/ca) | MEDIUM | HIGH | Reminder H-2 + H-0:15. Waitlist fill slot cancel ngay. Buffer 15ph sau mỗi 4 ca hấp thụ trễ. Staff alert khi BN không confirm đến H-1. |
+
+---
+
+*DS-VN-CL06-001 | RISK_REGISTER v1.1 | ISO/IEC 42001:2023 Clause 6 | 2026-06-06*

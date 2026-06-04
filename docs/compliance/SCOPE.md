@@ -1,7 +1,8 @@
 # SCOPE.md | DS-VN-COM-001
 # ISO 9001:2015 Clause 4.3 + ISO/IEC 42001:2023 Clause 4.3
 # MediVoice VN — Phạm vi Hệ thống Quản lý Chất lượng + AI
-# v1.0 | 2026-06-04 | Owner: Andy Phan | Maple Leaf Group
+# v1.1 | 2026-06-06 | Owner: Andy Phan | Maple Leaf Group
+# Updated: Design Review — DESIGN_REPORT_v1.1_20260606.md
 
 ---
 
@@ -54,19 +55,37 @@
 ## 3. RANH GIỚI HỆ THỐNG (System Boundary)
 
 ```
-IN SCOPE:
-  ├── Audio capture (L0)
-  ├── AI pipeline L1a → L6
-  ├── Human Gate L4
-  ├── Storage L7 (local SQLite)
-  ├── Audit log L10
-  └── FastAPI PWA (web interface)
+IN SCOPE — PHASE 0 (hiện tại):
+  ├── Audio capture + normalize (L0)
+  ├── AI pipeline L1a → L6 (ASR, NER, ICD, form generation)
+  ├── Human Gate L4 (BS approve bắt buộc)
+  ├── Staff Confirm Gate (admin side)
+  ├── Storage L7 (local SQLite + Fernet)
+  ├── Audit log L10 (immutable hash chain)
+  ├── FastAPI PWA (web interface — Doctor + Staff screens)
+  ├── Queue Management System (số thứ tự + TTS loa)
+  ├── Email SMTP (gửi PDF, kết quả XN)
+  ├── M1 Patient Management (cơ bản)
+  └── M3 Thu chi đơn giản
 
-OUT OF SCOPE:
-  ├── Hạ tầng thiết bị của phòng khám (máy tính, mic)
-  ├── Kết nối internet / VN Cloud (Phase 1)
-  ├── HIS/EMR của bên thứ 3
-  └── Quyết định lâm sàng của BS
+IN SCOPE — PHASE 1 (sắp tới):
+  ├── M2 Booking engine (7 states + buffer + waitlist)
+  ├── M4 Email auto-processor (kết quả XN từ bên ngoài)
+  ├── M5 Referral partner 2 chiều
+  ├── M6 Zalo OA + Email routing
+  ├── M7 VN Cloud sync
+  └── Integration Gateway (Zalo/Email/SMS adapters)
+
+IN SCOPE — PHASE 2:
+  ├── M8 Plugin chuyên khoa (CĐHA, Nha khoa)
+  ├── M9 HIS integration (HL7 v2 / FHIR R4)
+  └── Chữ ký số (TT13/2025)
+
+OUT OF SCOPE (vĩnh viễn):
+  ├── Hạ tầng thiết bị phòng khám (máy tính, mic, loa — do cơ sở KCB)
+  ├── Cloud nước ngoài (AWS/GCP/Azure)
+  ├── Quyết định lâm sàng của BS
+  └── Xử lý thanh toán commission (ngoài hệ thống)
 ```
 
 ---
@@ -82,4 +101,4 @@ OUT OF SCOPE:
 
 ---
 
-*DS-VN-COM-001 | SCOPE v1.0 | ISO 9001:2015 Cl.4.3 + ISO/IEC 42001:2023 Cl.4.3 | 2026-06-04*
+*DS-VN-COM-001 | SCOPE v1.1 | ISO 9001:2015 Cl.4.3 + ISO/IEC 42001:2023 Cl.4.3 | 2026-06-06*

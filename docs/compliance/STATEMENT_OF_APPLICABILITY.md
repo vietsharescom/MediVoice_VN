@@ -26,7 +26,7 @@
 | A.6.3 | Trustworthy AI principles | ✅ | CONSTITUTION.md (archived) → AI_POLICY.md |
 | A.7.1 | AI system documentation | ✅ | Toàn bộ docs/compliance/ |
 | A.7.2 | AI system logging | ✅ | L10 audit log (immutable hash chain) |
-| A.7.3 | AI system testing | ✅ | VV_PLAN.md + 61 tests |
+| A.7.3 | AI system testing | ✅ | VV_PLAN.md + 165 tests PASS (v0.4.1) |
 | A.8.1 | Incident reporting | ✅ | AI_POLICY.md Cl.8 |
 | A.8.2 | Corrective action | ✅ | NONCONFORMING.md |
 | A.8.3 | Continual improvement | ✅ | MANAGEMENT_REVIEW.md |
@@ -34,4 +34,4 @@
 
 ---
 
-*DS-VN-COM-011 | SoA v1.0 | ISO/IEC 42001:2023 Cl.6.1.3 | 2026-06-04*
+*DS-VN-COM-011 | SoA v1.1 | ISO/IEC 42001:2023 Cl.6.1.3 | 2026-06-06*
