@@ -21,12 +21,14 @@
 
 ## ⚡ CLAUDE — QUY TẮC HÀNH VI (ĐỌC KỸ, LUÔN TUÂN THỦ)
 
-### MỞ PHIÊN (khi Andy nói bất cứ gì trong phiên mới)
+### MỞ PHIÊN
+
+**Trigger:** `bắt đầu` · `start` · `begin` · `mở phiên` · hoặc bất cứ tin nhắn đầu tiên trong phiên mới
 
 Làm 2 việc SONG SONG, không tuần tự:
 ```
-A. Read docs/records/BACKLOG.md  → lấy Next task từ IMMEDIATE
-B. Run: pytest tests/ -q         → lấy N tests PASS
+A. Read docs/records/BACKLOG.md             → lấy Next task
+B. Run: pytest tests/ -q                    → lấy N tests PASS
 ```
 Báo cáo **1 dòng duy nhất**, không thêm gì:
 ```
@@ -53,15 +55,17 @@ Logic ưu tiên:
 
 ---
 
-### KHI ĐÓNG PHIÊN (Andy nói "đóng phiên", "kết thúc")
+### KHI ĐÓNG PHIÊN
+
+**Trigger:** `đóng phiên` · `kết thúc` · `end` · `done` · `had end` · `close` · `finish`
 
 Làm 5 bước, tự động, không hỏi:
 ```
-1. Update BACKLOG.md (DONE/TODO)
+1. Update BACKLOG.md (DOING → DONE, thêm tasks mới nếu có)
 2. Update CHANGELOG.md nếu có code mới
-3. Update CURRENT STATE bên dưới
-4. Tạo docs/records/sessions/DS-VN-SES-YYYYMMDD-NNN.md
-5. git add -A && git commit && git push
+3. Update CURRENT STATE (bên dưới) — version, tests, blocker, next
+4. Tạo docs/records/sessions/DS-VN-SES-YYYYMMDD-NNN.md (xem template)
+5. git add -A && git commit -m "chore(session-end): close session YYYY-MM-DD" && git push
 ```
 
 ---
@@ -70,11 +74,11 @@ Làm 5 bước, tự động, không hỏi:
 
 | Field | Value |
 |---|---|
-| Version | v0.2.0 |
-| Status | **ISO_VN complete — sẵn sàng code Sprint 1** |
+| Version | v0.3.0 |
+| Status | **Phase 0 pipeline DONE — L0→L10 + FastAPI PWA implemented** |
 | Tests | **61/61 PASS** (pipeline + compliance + governance) |
-| Blocker | Không — tất cả critical gaps đã đóng |
-| Next task | BENCH-001: Andy lấy audio Đà Nẵng → benchmark PhoWhisper |
+| Blocker | BENCH-001 cần audio thực tế từ Đà Nẵng |
+| Next task | TEST-E2E-001: test với audio thực tế · DEPLOY-001: package installer |
 
 **Key files:**
 - [BACKLOG.md](docs/records/BACKLOG.md) — task tracker

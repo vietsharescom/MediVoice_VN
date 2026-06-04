@@ -11,7 +11,8 @@ build/
 *.db
 data/memory/
 data/audio/
-models/
+# ML model weights (top-level only — NOT src/models/ Python package)
+/models/
 *.pt
 *.bin
 hf_cache/

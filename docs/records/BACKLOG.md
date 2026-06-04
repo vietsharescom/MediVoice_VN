@@ -1,10 +1,10 @@
 # BACKLOG.md — MediVoice VN
-# v0.2.0 — Updated after design finalization
+# v0.3.0 — Updated 2026-06-04
 # Single source of truth cho tasks.
 
 ---
 
-## IMMEDIATE — TRƯỚC KHI CODE
+## IMMEDIATE — TRƯỚC KHI LAUNCH
 
 - [ ] **LEGAL-001** 🔴 Thuê luật sư VN (healthtech + data + AI) — trước khi launch
 - [ ] **BENCH-001** 🟡 Benchmark PhoWhisper-small vs medium trên 10–20 audio thực tế từ Đà Nẵng
@@ -12,41 +12,47 @@
 
 ---
 
-## PHASE 0 — MVP (6–8 tuần) — Sau khi IMMEDIATE xong
+## PHASE 0 — MVP ✅ PIPELINE DONE — Còn lại: test thực tế + deploy
 
-**Mục tiêu:** BS nói → Mẫu 15/BV1 → PDF → local save → BS approve
+**Mục tiêu:** BS nói → Mẫu 15/BV-01 → PDF → local save → BS approve
 **Target user:** 5–10 BS phòng mạch tư Đà Nẵng + Sài Gòn
-**Success:** 5 BS trả tiền trong tháng 3
+**Success:** 5 BS trả tiền
 
-### Core Pipeline
-- [ ] **L0:** Audio normalize (16kHz mono, VAD)
-- [ ] **L1a:** PhoWhisper streaming chunk 10s (với overlap 2s)
-- [ ] **L1b:** Drug name correction engine (sau khi DRUG-DB-001 xong)
-- [ ] **L1c:** Medical NER — PhoBERT + CRF (tên thuốc, liều, chẩn đoán)
-- [ ] **L1d:** ICD-10-VN auto-lookup
-- [ ] **L2:** Schema validation + confidence scoring
-- [ ] **L3:** Route detection (lâm sàng là default Phase 0)
-- [ ] **L4:** Human Gate UI (BS review + chỉnh sửa + approve)
-- [ ] **L5:** PII scan (CCCD, SĐT, BHYT)
-- [ ] **L6:** Generate Mẫu 15/BV1 (TT32/2023)
-- [ ] **L7:** SQLite + WAL + Fernet encryption
-- [ ] **L8:** Error handling + recovery
-- [ ] **L9a:** PDF export (đơn thuốc + bệnh án)
-- [ ] **L10:** Immutable audit log (timestamp + BS_ID + hash)
+### Core Pipeline ✅ DONE 2026-06-04
+- [x] **L0:** Audio normalize (16kHz mono, VAD) — librosa + soundfile
+- [x] **L1a:** PhoWhisper streaming chunk 10s (lazy-load, graceful degradation)
+- [x] **L1b:** Drug name correction engine — alias map, n-gram matching
+- [x] **L1c:** Medical NER rule-based — regex sinh hiệu, chẩn đoán, đơn thuốc
+- [x] **L1d:** ICD-10-VN auto-lookup — substring search 15,026 mã
+- [x] **L2:** Schema validation + confidence scoring — weighted fields
+- [x] **L3:** Route detection — lam_sang default, CDHA/nha_khoa keywords
+- [x] **L4:** Human Gate — state machine PENDING_REVIEW→APPROVED/REJECTED
+- [x] **L5:** PII scan — CCCD, SĐT, BHYT, email regex (NĐ13/2023)
+- [x] **L6:** Generate Mẫu 15/BV-01 (TT32/2023)
+- [x] **L7:** SQLite + WAL + Fernet encryption
+- [x] **L8:** Error handling + recovery — @with_recovery, @safe_log
+- [x] **L9a:** PDF export (Mẫu 15/BV-01 ReportLab, disclaimer bắt buộc)
+- [x] **L10:** Immutable audit log (SHA-256 hash chain, append-only)
 
-### App Shell (Tauri)
-- [ ] **APP-001:** Tauri project setup (Windows + macOS)
-- [ ] **APP-002:** Offline-first architecture
-- [ ] **APP-003:** CCHN/GPHN input khi đăng ký + disclaimer
-- [ ] **APP-004:** Doctor voice recording UI (bấm giữ để nói)
-- [ ] **APP-005:** Draft review UI (L4 — BS chỉnh sửa trước khi approve)
-- [ ] **APP-006:** PDF preview + print + manual Zalo share
+### Data Models ✅ DONE 2026-06-04
+- [x] **DATA-001:** Patient schema (Pydantic v2, VNeID-ready)
+- [x] **DATA-002:** Clinical record schema + RecordStatus enum
+- [x] **DATA-003:** Audit log schema (hash chain, BYT-sync-ready)
+- [x] **DATA-004:** Facility schema (byt_registration_number, province_code)
 
-### Data Model (VNeID-ready từ đầu)
-- [ ] **DATA-001:** Patient schema (vneid_number nullable, bhyt_code nullable, legacy_id)
-- [ ] **DATA-002:** Clinical record schema (Mẫu 15/BV1 fields)
-- [ ] **DATA-003:** Audit log schema (BYT-sync-ready)
-- [ ] **DATA-004:** Facility schema (byt_registration_number, province_code)
+### App Shell ✅ DONE 2026-06-04 (FastAPI PWA thay Tauri)
+- [x] **APP-001:** FastAPI app — /api/transcribe + approve + reject + pdf
+- [x] **APP-002:** SQLite offline-first architecture
+- [x] **APP-003:** CCHN input + disclaimer bắt buộc
+- [x] **APP-004:** Doctor voice recording UI (MediaRecorder, hold to record)
+- [x] **APP-005:** Draft review form (edit fields + approve/reject)
+- [x] **APP-006:** PDF download Mẫu 15/BV-01
+
+### Phase 0 Còn Lại
+- [ ] **TEST-E2E-001** 🟡 End-to-end test với audio thực tế (cần BENCH-001 audio từ Đà Nẵng)
+- [ ] **DEPLOY-001** 🟡 Package app để BS Đà Nẵng install (Windows + Python venv installer)
+- [ ] **CONFIG-001** 🟢 Facility config UI (tên phòng khám, CCHN, khoa — file JSON)
+- [ ] **DRUG-ALIAS-001** 🟢 Mở rộng alias map trong drug_db.json (thêm typo VN phổ biến)
 
 ---
 
@@ -66,6 +72,7 @@
 - [ ] **DRUG-INTERACT-001:** Drug interaction check cơ bản
 - [ ] **HL7-001:** HL7 v2 export (ADT/ORU)
 - [ ] **SIGN-001:** Chữ ký số BS (TT13/2025)
+- [ ] **NER-PHOBERT-001:** Nâng L1c lên PhoBERT + CRF (thay rule-based)
 
 ### Training
 - [ ] **TRAIN-001:** Fine-tune PhoWhisper trên 50–100h audio thực tế từ pilot
@@ -76,7 +83,7 @@
 ## PHASE 1B — PLUGINS CHUYÊN KHOA
 
 - [ ] **FID-VN-001:** `plugin_cdha.py` — báo cáo siêu âm/X-quang
-- [ ] **FID-VN-002:** `plugin_ngoai_tru_full.py` — Mẫu 15/BV1 đầy đủ (upgrade từ Phase 0 basic)
+- [ ] **FID-VN-002:** `plugin_ngoai_tru_full.py` — Mẫu 15/BV1 đầy đủ (upgrade Phase 0 basic)
 - [ ] **FID-VN-003:** `plugin_nha_khoa.py` — Mẫu 16/BV1
 
 ---
@@ -109,6 +116,11 @@
 - [x] ICD-001: icd10vn.json 15,026 mã (HL7 Vietnam) ✅
 - [x] PROJECT_KICKOFF S1–S9 done (S10 Andy ký sau)
 - [x] Git init + 6 commits + pushed to GitHub
+- [x] **Phase 0 pipeline L0→L10** — toàn bộ implement (2026-06-04)
+- [x] **Data models** — Patient, ClinicalRecord, Facility, AuditEntry (Pydantic v2) (2026-06-04)
+- [x] **FastAPI PWA** — voice recording + draft review + approve/reject + PDF (2026-06-04)
+- [x] **CHANGELOG v0.3.0** — 16 feat entries (2026-06-04)
+- [x] **CLAUDE.md** — thêm trigger words end/done/start/begin (2026-06-04)
 
 ---
 
@@ -122,4 +134,4 @@
 
 ---
 
-*Updated: 2026-06-03 | v0.2.0*
+*Updated: 2026-06-04 | v0.3.0*

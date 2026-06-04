@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>MediVoice VN</title>
+<style>
+  :root {
+    --primary: #1565c0;
+    --primary-light: #1976d2;
+    --danger: #c62828;
+    --success: #2e7d32;
+    --warn: #e65100;
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --text: #212121;
+    --text-secondary: #757575;
+    --border: #e0e0e0;
+    --record-red: #e53935;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 2rem;
+  }
+  .header {
+    background: var(--primary);
+    color: white;
+    padding: 1rem 1.25rem;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .header h1 { font-size: 1.2rem; font-weight: 700; }
+  .header .sub { font-size: 0.75rem; opacity: 0.85; margin-top: 2px; }
+  .disclaimer {
+    background: #fff3e0; border-left: 4px solid var(--warn);
+    padding: 0.6rem 1rem; font-size: 0.78rem;
+    color: var(--warn); font-weight: 500;
+  }
+  .container { padding: 1rem; max-width: 640px; margin: 0 auto; }
+  .card {
+    background: var(--card); border-radius: var(--radius);
+    padding: 1.25rem; margin-bottom: 1rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .card h2 { font-size: 0.95rem; color: var(--primary); margin-bottom: 0.75rem; font-weight: 600; }
+  .form-row { margin-bottom: 0.75rem; }
+  .form-row label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; }
+  .form-row input, .form-row textarea, .form-row select {
+    width: 100%; padding: 0.55rem 0.75rem;
+    border: 1px solid var(--border); border-radius: 8px;
+    font-size: 0.9rem; background: var(--bg);
+    transition: border-color 0.2s;
+  }
+  .form-row input:focus, .form-row textarea:focus {
+    outline: none; border-color: var(--primary);
+  }
+  .form-row textarea { min-height: 3rem; resize: vertical; }
+
+  /* Record button */
+  .record-btn {
+    width: 100%; padding: 1.1rem;
+    border: none; border-radius: var(--radius);
+    font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+    background: var(--record-red); color: white;
+    box-shadow: 0 2px 8px rgba(229,57,53,0.35);
+  }
+  .record-btn.recording {
+    background: #b71c1c;
+    animation: pulse 1.2s infinite;
+  }
+  .record-btn.processing {
+    background: var(--primary); cursor: not-allowed;
+    animation: none;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 2px 8px rgba(229,57,53,0.35); }
+    50% { box-shadow: 0 2px 20px rgba(229,57,53,0.7); }
+  }
+  .record-icon { font-size: 1.4rem; }
+
+  /* Transcript */
+  .transcript-box {
+    background: #e8f0fe; border-radius: 8px;
+    padding: 0.75rem; font-size: 0.85rem;
+    color: var(--text); white-space: pre-wrap;
+    max-height: 6rem; overflow-y: auto;
+    border: 1px solid #c5cae9;
+  }
+  .transcript-box.empty { color: var(--text-secondary); font-style: italic; }
+
+  /* Confidence bar */
+  .conf-bar-wrap { margin-top: 0.5rem; }
+  .conf-label { font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 0.3rem; }
+  .conf-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .conf-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+  .conf-high { background: var(--success); }
+  .conf-mid  { background: #f9a825; }
+  .conf-low  { background: var(--danger); }
+
+  /* Fields */
+  .field-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
+  }
+  .field-item { font-size: 0.82rem; }
+  .field-item .lbl { color: var(--text-secondary); font-size: 0.75rem; }
+  .field-item .val { font-weight: 500; }
+
+  /* Drug table */
+  .drug-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .drug-table th { background: #e3f2fd; padding: 0.4rem 0.5rem; text-align: left; font-weight: 600; }
+  .drug-table td { padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--border); }
+
+  /* Action buttons */
+  .btn { padding: 0.7rem 1.2rem; border: none; border-radius: 8px; font-size: 0.9rem;
+         font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+  .btn:hover { opacity: 0.88; }
+  .btn-approve { background: var(--success); color: white; width: 100%; }
+  .btn-reject  { background: var(--danger); color: white; width: 100%; }
+  .btn-pdf     { background: var(--primary-light); color: white; width: 100%; }
+  .btn-row     { display: flex; gap: 0.5rem; }
+  .btn-row .btn { flex: 1; }
+
+  /* Status badges */
+  .badge {
+    display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 600;
+  }
+  .badge-pending { background: #fff9c4; color: #f57f17; }
+  .badge-approved { background: #e8f5e9; color: var(--success); }
+  .badge-rejected { background: #ffebee; color: var(--danger); }
+
+  /* PII warning */
+  .pii-warn {
+    background: #ffebee; border-left: 3px solid var(--danger);
+    padding: 0.5rem 0.75rem; border-radius: 4px;
+    font-size: 0.78rem; color: var(--danger);
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    background: #323232; color: white; padding: 0.7rem 1.2rem;
+    border-radius: 8px; font-size: 0.85rem; z-index: 999;
+    animation: fadein 0.3s; white-space: nowrap;
+  }
+  @keyframes fadein { from { opacity: 0; bottom: 1rem; } to { opacity: 1; bottom: 1.5rem; } }
+
+  .hidden { display: none !important; }
+  .section-title {
+    font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--text-secondary); margin-bottom: 0.4rem;
+  }
+  .timer { font-size: 1rem; font-variant-numeric: tabular-nums; color: white; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🎙️ MediVoice VN</h1>
+  <div class="sub">Phiên bản 0.2.0 — Phòng mạch ngoại trú</div>
+</div>
+<div class="disclaimer">
+  ⚠️ AI tạo nháp — Bác sĩ chịu trách nhiệm hoàn toàn về nội dung bệnh án
+</div>
+
+<div class="container">
+
+  <!-- Setup card -->
+  <div class="card" id="card-setup">
+    <h2>Thông tin phiên khám</h2>
+    <div class="form-row">
+      <label>Mã CCHN Bác sĩ *</label>
+      <input type="text" id="doctor-cchn" placeholder="VD: CCHN-012345" autocomplete="off">
+    </div>
+    <div class="form-row">
+      <label>Tên bệnh nhân</label>
+      <input type="text" id="patient-name" placeholder="Họ và tên">
+    </div>
+  </div>
+
+  <!-- Record card -->
+  <div class="card">
+    <h2>Ghi âm</h2>
+    <button class="record-btn" id="record-btn" onclick="toggleRecord()">
+      <span class="record-icon">🎤</span>
+      <span id="record-label">Nhấn để ghi âm</span>
+      <span class="timer hidden" id="timer">00:00</span>
+    </button>
+    <div class="form-row" style="margin-top:0.75rem">
+      <div class="section-title">Transcript</div>
+      <div class="transcript-box empty" id="transcript-box">
+        Transcript sẽ hiện ở đây sau khi ghi âm...
+      </div>
+    </div>
+    <div class="conf-bar-wrap hidden" id="conf-wrap">
+      <div class="conf-label">Độ tin cậy: <span id="conf-pct">0</span>%</div>
+      <div class="conf-bar"><div class="conf-bar-fill" id="conf-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- Draft review card -->
+  <div class="card hidden" id="card-draft">
+    <h2>Xem xét nháp bệnh án</h2>
+    <div id="pii-warn" class="pii-warn hidden"></div>
+
+    <div class="form-row">
+      <label>Lý do khám</label>
+      <textarea id="f-ly-do" rows="2"></textarea>
+    </div>
+    <div class="field-grid" style="margin-bottom:0.75rem">
+      <div class="form-row">
+        <label>Nhiệt độ (°C)</label>
+        <input type="number" id="f-nhiet-do" step="0.1" placeholder="37.0">
+      </div>
+      <div class="form-row">
+        <label>Huyết áp (mmHg)</label>
+        <input type="text" id="f-huyet-ap" placeholder="120/80">
+      </div>
+      <div class="form-row">
+        <label>Mạch (lần/ph)</label>
+        <input type="number" id="f-mach" placeholder="80">
+      </div>
+      <div class="form-row">
+        <label>Cân nặng (kg)</label>
+        <input type="number" id="f-can-nang" step="0.1" placeholder="60">
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Chẩn đoán</label>
+      <input type="text" id="f-chan-doan" placeholder="VD: Viêm họng cấp">
+    </div>
+    <div class="form-row">
+      <label>Mã ICD-10-VN</label>
+      <input type="text" id="f-icd" placeholder="VD: J02.9" style="text-transform:uppercase">
+    </div>
+    <div class="form-row">
+      <label>Tái khám</label>
+      <input type="text" id="f-tai-kham" placeholder="VD: Sau 5 ngày">
+    </div>
+
+    <!-- Thuốc -->
+    <div class="section-title" style="margin-top:0.5rem">Đơn thuốc</div>
+    <div id="drug-list"></div>
+
+    <div class="badge badge-pending" id="status-badge" style="margin:0.5rem 0">
+      ⏳ Chờ bác sĩ xét duyệt
+    </div>
+  </div>
+
+  <!-- Action card -->
+  <div class="card hidden" id="card-actions">
+    <h2>Xét duyệt</h2>
+    <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:0.75rem">
+      Sau khi kiểm tra nháp bệnh án, Bác sĩ xác nhận hoặc từ chối lưu hồ sơ.
+    </p>
+    <div class="btn-row" style="margin-bottom:0.5rem">
+      <button class="btn btn-approve" onclick="approveRecord()">✅ Xác nhận & Lưu</button>
+      <button class="btn btn-reject" onclick="showRejectModal()">❌ Từ chối</button>
+    </div>
+    <button class="btn btn-pdf hidden" id="btn-pdf" onclick="downloadPDF()" style="margin-top:0.5rem">
+      📄 Tải PDF Mẫu 15/BV-01
+    </button>
+  </div>
+
+</div>
+
+<!-- Reject modal -->
+<div id="reject-modal" class="hidden" style="
+  position:fixed;inset:0;background:rgba(0,0,0,0.5);
+  display:flex;align-items:center;justify-content:center;z-index:200;padding:1rem;
+">
+  <div style="background:white;border-radius:12px;padding:1.25rem;width:100%;max-width:400px">
+    <h3 style="font-size:1rem;margin-bottom:0.75rem">Lý do từ chối</h3>
+    <textarea id="reject-reason" rows="3" style="width:100%;padding:0.5rem;border:1px solid var(--border);border-radius:8px;font-size:0.9rem" placeholder="Ghi rõ lý do từ chối..."></textarea>
+    <div class="btn-row" style="margin-top:0.75rem">
+      <button class="btn btn-reject" onclick="confirmReject()">Xác nhận từ chối</button>
+      <button class="btn" style="background:var(--border);color:var(--text)" onclick="closeRejectModal()">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let mediaRecorder = null;
+let audioChunks = [];
+let isRecording = false;
+let timerInterval = null;
+let seconds = 0;
+let currentRecordId = null;
+let currentFormData = null;
+
+async function toggleRecord() {
+  if (isRecording) {
+    stopRecording();
+  } else {
+    await startRecording();
+  }
+}
+
+async function startRecording() {
+  const cchn = document.getElementById('doctor-cchn').value.trim();
+  if (!cchn) {
+    showToast('Vui lòng nhập Mã CCHN Bác sĩ trước khi ghi âm');
+    document.getElementById('doctor-cchn').focus();
+    return;
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+    audioChunks = [];
+
+    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+    mediaRecorder.onstop = processRecording;
+    mediaRecorder.start(100);
+
+    isRecording = true;
+    const btn = document.getElementById('record-btn');
+    btn.classList.add('recording');
+    document.getElementById('record-label').textContent = 'Đang ghi... (nhấn để dừng)';
+    document.getElementById('timer').classList.remove('hidden');
+
+    seconds = 0;
+    timerInterval = setInterval(() => {
+      seconds++;
+      const m = String(Math.floor(seconds/60)).padStart(2,'0');
+      const s = String(seconds%60).padStart(2,'0');
+      document.getElementById('timer').textContent = `${m}:${s}`;
+    }, 1000);
+
+    // Reset transcript
+    const tb = document.getElementById('transcript-box');
+    tb.textContent = 'Đang ghi âm...';
+    tb.classList.remove('empty');
+
+  } catch (e) {
+    showToast('Không thể truy cập microphone: ' + e.message);
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+    mediaRecorder.stream.getTracks().forEach(t => t.stop());
+  }
+  clearInterval(timerInterval);
+  isRecording = false;
+
+  const btn = document.getElementById('record-btn');
+  btn.classList.remove('recording');
+  btn.classList.add('processing');
+  document.getElementById('record-label').textContent = 'Đang xử lý...';
+  document.getElementById('timer').classList.add('hidden');
+}
+
+async function processRecording() {
+  const blob = new Blob(audioChunks, { type: 'audio/webm' });
+  const formData = new FormData();
+  formData.append('audio', blob, 'recording.webm');
+  formData.append('doctor_cchn', document.getElementById('doctor-cchn').value.trim());
+  formData.append('patient_name', document.getElementById('patient-name').value.trim());
+  formData.append('facility_id', 'FAC-DEFAULT');
+
+  try {
+    const resp = await fetch('/api/transcribe', { method: 'POST', body: formData });
+    if (!resp.ok) {
+      const err = await resp.json();
+      throw new Error(err.detail || 'Server error');
+    }
+    const data = await resp.json();
+    displayDraft(data);
+  } catch (e) {
+    showToast('Lỗi xử lý: ' + e.message);
+    resetRecordBtn();
+  }
+}
+
+function displayDraft(data) {
+  currentRecordId = data.record_id;
+  currentFormData = data.form_data;
+
+  // Transcript
+  const tb = document.getElementById('transcript-box');
+  tb.textContent = data.transcript || '(Không nhận được transcript)';
+  tb.classList.toggle('empty', !data.transcript);
+
+  // Confidence
+  const conf = Math.round((data.confidence || 0) * 100);
+  document.getElementById('conf-pct').textContent = conf;
+  const fill = document.getElementById('conf-fill');
+  fill.style.width = conf + '%';
+  fill.className = 'conf-bar-fill ' + (conf >= 70 ? 'conf-high' : conf >= 40 ? 'conf-mid' : 'conf-low');
+  document.getElementById('conf-wrap').classList.remove('hidden');
+
+  // Fill form fields
+  const fd = data.form_data || {};
+  document.getElementById('f-ly-do').value = fd.ly_do || '';
+  const sh = fd.sinh_hieu || {};
+  document.getElementById('f-nhiet-do').value = sh.nhiet_do || '';
+  if (sh.huyet_ap_tam_thu && sh.huyet_ap_tam_truong) {
+    document.getElementById('f-huyet-ap').value = `${sh.huyet_ap_tam_thu}/${sh.huyet_ap_tam_truong}`;
+  }
+  document.getElementById('f-mach').value = sh.mach || '';
+  document.getElementById('f-can-nang').value = sh.can_nang || '';
+  document.getElementById('f-chan-doan').value = fd.chan_doan || '';
+  document.getElementById('f-icd').value = fd.icd_code || '';
+  document.getElementById('f-tai-kham').value = fd.tai_kham || '';
+
+  // Drug list
+  const drugList = document.getElementById('drug-list');
+  const drugs = fd.don_thuoc || [];
+  if (drugs.length > 0) {
+    let html = '<table class="drug-table"><thead><tr><th>Thuốc</th><th>Hàm lượng</th><th>Liều</th><th>Ngày</th></tr></thead><tbody>';
+    drugs.forEach(d => {
+      html += `<tr><td>${d.inn||'---'}</td><td>${d.ham_luong||'---'}</td><td>${d.so_lan_ngay||'---'}</td><td>${d.so_ngay||'---'}</td></tr>`;
+    });
+    html += '</tbody></table>';
+    drugList.innerHTML = html;
+  } else {
+    drugList.innerHTML = '<p style="font-size:0.82rem;color:var(--text-secondary)">(Không có thuốc được kê)</p>';
+  }
+
+  // PII warning
+  if (data.pii_detected && data.pii_detected.length > 0) {
+    const piiWarn = document.getElementById('pii-warn');
+    piiWarn.textContent = '⚠️ Phát hiện PII trong transcript: ' + data.pii_detected.join(', ') + ' — Kiểm tra trước khi lưu';
+    piiWarn.classList.remove('hidden');
+  }
+
+  // Show cards
+  document.getElementById('card-draft').classList.remove('hidden');
+  document.getElementById('card-actions').classList.remove('hidden');
+
+  resetRecordBtn();
+  showToast('Đã xử lý xong — Bác sĩ vui lòng kiểm tra nháp');
+}
+
+function buildEditedFormData() {
+  const fd = Object.assign({}, currentFormData || {});
+  fd.ly_do = document.getElementById('f-ly-do').value;
+  fd.chan_doan = document.getElementById('f-chan-doan').value;
+  fd.icd_code = document.getElementById('f-icd').value.toUpperCase();
+  fd.tai_kham = document.getElementById('f-tai-kham').value;
+
+  // sinh_hieu
+  const haStr = document.getElementById('f-huyet-ap').value;
+  let tam_thu = null, tam_truong = null;
+  if (haStr.includes('/')) {
+    const parts = haStr.split('/');
+    tam_thu = parseInt(parts[0]) || null;
+    tam_truong = parseInt(parts[1]) || null;
+  }
+  fd.sinh_hieu = {
+    nhiet_do: parseFloat(document.getElementById('f-nhiet-do').value) || null,
+    huyet_ap_tam_thu: tam_thu,
+    huyet_ap_tam_truong: tam_truong,
+    mach: parseFloat(document.getElementById('f-mach').value) || null,
+    can_nang: parseFloat(document.getElementById('f-can-nang').value) || null,
+    nhip_tho: fd.sinh_hieu ? fd.sinh_hieu.nhip_tho : null,
+    spo2: fd.sinh_hieu ? fd.sinh_hieu.spo2 : null,
+  };
+  return fd;
+}
+
+async function approveRecord() {
+  if (!currentRecordId) return;
+  const cchn = document.getElementById('doctor-cchn').value.trim();
+  if (!cchn) { showToast('Cần nhập CCHN để xác nhận'); return; }
+
+  const editedForm = buildEditedFormData();
+  const form = new FormData();
+  form.append('doctor_cchn', cchn);
+  form.append('edited_form', JSON.stringify(editedForm));
+
+  try {
+    const resp = await fetch(`/api/records/${currentRecordId}/approve`, { method: 'POST', body: form });
+    if (!resp.ok) throw new Error((await resp.json()).detail);
+    document.getElementById('status-badge').className = 'badge badge-approved';
+    document.getElementById('status-badge').textContent = '✅ Đã xác nhận & lưu';
+    document.getElementById('btn-pdf').classList.remove('hidden');
+    showToast('Bệnh án đã được lưu thành công');
+  } catch (e) {
+    showToast('Lỗi: ' + e.message);
+  }
+}
+
+function showRejectModal() {
+  document.getElementById('reject-modal').classList.remove('hidden');
+}
+function closeRejectModal() {
+  document.getElementById('reject-modal').classList.add('hidden');
+}
+
+async function confirmReject() {
+  if (!currentRecordId) return;
+  const cchn = document.getElementById('doctor-cchn').value.trim();
+  const reason = document.getElementById('reject-reason').value.trim();
+
+  const form = new FormData();
+  form.append('doctor_cchn', cchn);
+  form.append('reason', reason || 'Bác sĩ từ chối');
+
+  try {
+    const resp = await fetch(`/api/records/${currentRecordId}/reject`, { method: 'POST', body: form });
+    if (!resp.ok) throw new Error((await resp.json()).detail);
+    document.getElementById('status-badge').className = 'badge badge-rejected';
+    document.getElementById('status-badge').textContent = '❌ Đã từ chối';
+    closeRejectModal();
+    showToast('Đã từ chối bệnh án — không lưu');
+  } catch (e) {
+    showToast('Lỗi: ' + e.message);
+  }
+}
+
+async function downloadPDF() {
+  if (!currentRecordId) return;
+  window.open(`/api/records/${currentRecordId}/pdf`, '_blank');
+}
+
+function resetRecordBtn() {
+  const btn = document.getElementById('record-btn');
+  btn.classList.remove('recording', 'processing');
+  document.getElementById('record-label').textContent = 'Ghi âm lượt tiếp theo';
+}
+
+let toastTimeout = null;
+function showToast(msg) {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  clearTimeout(toastTimeout);
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  toastTimeout = setTimeout(() => el.remove(), 3500);
+}
+</script>
+</body>
+</html>
