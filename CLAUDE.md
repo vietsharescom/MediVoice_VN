@@ -218,6 +218,7 @@ v{trước} | {N} tests → v{sau} | {N} tests
 | `NAMING_CONVENTION.md` | `docs/dev/` | Claude | ISO 9001 Cl.7.5 — đặt tên |
 | `KPI_METRICS.md` | `docs/dev/` | Andy | ISO 42001 Cl.9.1 — đo lường |
 | `DESIGN_REPORT_v1.1_20260606.md` | `docs/records/` | Claude + Andy | **Master design — đọc khi FID/implement module** |
+| `PROJECT_PROGRESS.md` | `docs/records/` | Claude + Andy | **Tiến độ toàn dự án — lưu đồ + bảng màu** |
 | `IMPROVEMENT_PROCESS.md` | `docs/compliance/` | Claude + Andy | ISO Cl.10.3 — quy trình cải tiến liên tục |
 | `CONFUSION_PATTERNS.md` | `docs/dev/` | **Claude** | Tầng 4 Memory — đọc khi confused/FID |
 | `CONSULTATION_TEMPLATE.md` | `docs/dev/` | Claude + Andy | Multi-AI consultation workflow |
