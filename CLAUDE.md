@@ -58,11 +58,31 @@ E. Read docs/records/DESIGN_REPORT_v1.1_20260606.md
 
 **5 TẦNG MEMORY — Claude đọc theo từng loại task:**
 ```
-TẦNG 1 (Mọi phiên):   CLAUDE.md + BACKLOG.md + LAST_SESSION.md
-TẦNG 2 (Design/FID):  DECISIONS.md + DESIGN_REPORT (section liên quan)
-TẦNG 3 (Implement):   SRS.md (requirements) + RTM.md (traceability)
-TẦNG 4 (Confused):    docs/dev/CONFUSION_PATTERNS.md (pre-emptive answers)
-TẦNG 5 (Multi-AI):    docs/dev/CONSULTATION_TEMPLATE.md + consultations/
+TẦNG 1 (MỌI PHIÊN — bắt buộc):
+  CLAUDE.md + BACKLOG.md + LAST_SESSION.md + iso_audit.py output
+  Ước tính: ~600 lines, ~30-45 giây đọc, ~32K tokens
+  → Context window: ~16% — KHÔNG ảnh hưởng đáng kể
+
+TẦNG 2 (Design/FID — khi có task liên quan):
+  DECISIONS.md + DESIGN_REPORT (chỉ section liên quan, ~50 lines)
+  Ước tính: +~170 lines, +~10 giây
+  KHÔNG đọc toàn bộ 700 dòng DESIGN_REPORT mỗi phiên
+
+TẦNG 3 (Implement specific module):
+  SRS.md (requirements) + RTM.md (traceability)
+  Ước tính: +~120 lines, +~5 giây
+
+TẦNG 4 (Khi confused hoặc bắt đầu FID — on-demand):
+  docs/dev/CONFUSION_PATTERNS.md
+  Đọc HEADER (top 30 lines) tại session start = ~1 giây
+  Full read chỉ khi Claude cần = ~1-2 phút
+
+TẦNG 5 (Multi-AI consultation — khi trigger):
+  docs/dev/CONSULTATION_TEMPLATE.md
+  Đọc khi generate consultation request = ~30 giây
+
+TỔNG TẦNG 1 ONLY: ~30-45 giây, 16% context window — OK cho mọi phiên
+TỔNG TẤT CẢ: ~5-6 phút nếu đọc hết — KHÔNG nên, chỉ đọc khi cần
 ```
 
 **Báo cáo theo thứ tự — KHÔNG bỏ bước nào:**
@@ -124,7 +144,9 @@ BƯỚC 4 — Ghi đè LAST_SESSION.md
   Dùng template bên dưới — đủ 5 mục, không bỏ qua
   1 file duy nhất, git history tự lưu các phiên cũ
 
-BƯỚC 5 — Commit & Push
+BƯỚC 5 — Increment session counter + Commit & Push
+  python scripts/iso_audit.py --increment-session
+  (nếu báo "WEEKLY AUDIT DUE" → chạy thêm: python scripts/iso_audit.py --weekly)
   git add -A
   git commit -m "chore(session-end): close session YYYY-MM-DD"
   git push

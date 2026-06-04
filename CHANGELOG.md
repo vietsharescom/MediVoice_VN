@@ -1,6 +1,19 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.4.4] — 2026-06-06 — Automated ISO audit cadence + RAG memory timing
+
+### Process automation
+- feat(ci): docs/records/audit_schedule.json — session counter (auto-managed)
+- feat(ci): scripts/iso_audit.py v2.0 — full rewrite with:
+    --weekly: ISO 9001:2015 Cl.9.1.1 + 42001:2023 Cl.9.1 + Cl.6.1.2 specific checks
+    --quality: ISO/IEC 25010 product quality checks
+    --increment-session: session close counter → triggers weekly at session 7
+    session 7 popup: automatic banner + weekly audit reminder
+- docs: CLAUDE.md — close protocol: python iso_audit.py --increment-session added
+- docs: CLAUDE.md — 5-tier memory with timing estimates (Tier 1: ~30-45s, 16% context)
+- docs: QUALITY_AUDIT_TEMPLATE.md — explicit ISO clause mapping per section
+
 ## [v0.4.3] — 2026-06-06 — AI Memory + Multi-AI Consultation System
 
 ### Process & Templates (no code change to pipeline)

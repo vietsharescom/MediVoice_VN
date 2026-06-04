@@ -8,9 +8,24 @@
 
 ## MỤC ĐÍCH
 
-Template đánh giá chất lượng sản phẩm theo chuẩn ISO/IEC 25010.
-KHÁC với ISO framework audit (document consistency).
-Đây là đánh giá "dây chuyền sản xuất" — product đang ra đúng spec không?
+Template đánh giá chất lượng sản phẩm. KHÁC với ISO framework audit.
+Đây là đánh giá "dây chuyền sản xuất Audi Q3" — product ra đúng spec không?
+
+**3 tiêu chuẩn áp dụng đồng thời:**
+
+| Chuẩn | Áp dụng cho MediVoice | File implement |
+|---|---|---|
+| ISO 9001:2015 Cl.9.1.1 | QMS process effectiveness, test pass rate, BS feedback | scripts/iso_audit.py `--weekly` |
+| ISO/IEC 42001:2023 Cl.9.1 | AI accuracy (CEER/WER), L4 bypass=0, transparency | scripts/iso_audit.py `--weekly` |
+| ISO/IEC 25010:2023 | Software quality: reliability, security, usability | Template này + scripts/iso_audit.py `--quality` |
+
+**PHÂN BIỆT AUDIT LEVELS:**
+```
+scripts/iso_audit.py          → Tier 1 doc sync (mỗi phiên, nhanh)
+scripts/iso_audit.py --quality → ISO/IEC 25010 code quality (sau FID)
+scripts/iso_audit.py --weekly  → ISO 9001 + 42001 full review (mỗi 7 session)
+Template này (manual)          → Đầy đủ nhất, cần pilot data cho UX metrics
+```
 
 ---
 
@@ -31,13 +46,16 @@ KHÁC với ISO framework audit (document consistency).
 ```
 QUALITY AUDIT — MediVoice VN
 Audit ID: QA-AUDIT-YYYYMMDD
+ISO refs: 9001:2015 Cl.9.1.1 + 42001:2023 Cl.9.1 + 25010:2023
 Auditor: [Claude / Andy / Cả hai]
 Phase: [Phase 0 pilot / Phase 1 launch / etc.]
 Date: YYYY-MM-DD
 Ref: docs/dev/QUALITY_AUDIT_TEMPLATE.md
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION 1 — AI ACCURACY (Core — AI specific, ISO 42001 Cl.9.1)
+SECTION 1 — AI ACCURACY
+ISO/IEC 42001:2023 Cl.9.1 — AI system performance evaluation
+ISO/IEC 42001:2023 Cl.8.5 — Response to AI system incidents
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 KPI-001 CEER (Clinical Entity Error Rate):
@@ -71,7 +89,9 @@ AI Transparency (ISO 42001 A.6.3):
   □ Disclaimer "AI tạo nháp" present:      YES/NO
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION 2 — RELIABILITY (ISO/IEC 25010 Cl.4.5)
+SECTION 2 — RELIABILITY + PROCESS EFFECTIVENESS
+ISO/IEC 25010:2023 Cl.4.5 — Reliability quality characteristic
+ISO 9001:2015 Cl.9.1.1 — Monitoring and measurement of QMS processes
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 KPI-012 Test coverage:
@@ -96,7 +116,10 @@ Open RTM CRITICAL gaps:
   GAP-005 (API integration):    OPEN/CLOSED
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION 3 — SECURITY (ISO/IEC 25010 Cl.4.6 + NĐ13/2023)
+SECTION 3 — SECURITY + HUMAN OVERSIGHT
+ISO/IEC 25010:2023 Cl.4.6 — Security quality characteristic
+ISO/IEC 42001:2023 Cl.6.1.2 — Human oversight control points
+NĐ13/2023 — Data residency + privacy enforcement
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 bandit scan:
@@ -121,6 +144,9 @@ L4 Human Gate integrity:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 SECTION 4 — UX QUALITY (khi có pilot data)
+ISO 9001:2015 Cl.9.1.2 — Customer satisfaction monitoring
+ISO/IEC 42001:2023 Annex A.6.2 — Feedback mechanisms
+ISO/IEC 25010:2023 Cl.4.4 — Usability quality characteristic
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 KPI-004 BS Approve Rate:
@@ -146,7 +172,9 @@ KPI-007 Onboarding Time:
   Source: Pilot observation
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION 5 — DESIGN ADHERENCE
+SECTION 5 — DESIGN ADHERENCE + CONTINUAL IMPROVEMENT
+ISO 9001:2015 Cl.10.3 — Continual improvement
+ISO/IEC 25010:2023 Cl.4.7 — Maintainability quality characteristic
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 BACKLOG status:
@@ -168,7 +196,11 @@ DESIGN_REPORT adherence:
   [List any intentional deviations + reason + ADR if needed]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SECTION 6 — COMPLIANCE CHECK
+SECTION 6 — LEGAL + AUDIT COMPLIANCE
+TT32/2023 — Mẫu bệnh án chuẩn
+Luật KCB 2023 Điều 62 — BS ký bắt buộc
+NĐ13/2023 — Data residency + retention
+ISO/IEC 42001:2023 Cl.7.2 — AI system logging
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 L10 audit log integrity:
