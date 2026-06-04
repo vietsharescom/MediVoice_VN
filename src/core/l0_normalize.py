@@ -56,3 +56,16 @@ def has_speech(audio: np.ndarray, threshold: float = 0.01) -> bool:
     """VAD đơn giản: kiểm tra RMS energy."""
     rms = np.sqrt(np.mean(audio ** 2))
     return float(rms) > threshold
+
+
+def purge_audio(wav_path: str | None) -> None:
+    """
+    Xóa audio khỏi disk sau khi transcription hoàn tất.
+    SRS-L0-003: bắt buộc xóa để tuân thủ NĐ13/2023 data minimization.
+    Gọi trong finally block — không được để audio lại sau khi xử lý xong.
+    """
+    if wav_path and os.path.exists(wav_path):
+        try:
+            os.unlink(wav_path)
+        except OSError:
+            pass  # best-effort — không crash pipeline nếu file đã bị xóa

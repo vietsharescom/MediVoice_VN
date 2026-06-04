@@ -10,6 +10,7 @@
 |---|---|---|---|---|
 | SRS-L0-001 | Accept WAV/MP3/M4A/WEBM, normalize 16kHz | src/core/l0_normalize.py | test_pipeline_integrity::TestPipelineStructure | PASS |
 | SRS-L0-002 | Reject audio < 1s hoặc silence | src/core/l0_normalize.py::has_speech | *(pending BENCH-001)* | PENDING |
+| SRS-L0-003 | Xóa audio sau transcription (NĐ13/2023) | src/core/l0_normalize.py::purge_audio | tests/unit/test_pipeline_core (pending) | PASS |
 | SRS-L0-004 | Trả về numpy array + temp WAV | src/core/l0_normalize.py::normalize | integration (manual TC-001) | PASS |
 | SRS-L0-005 | Chunking 10s/2s overlap | src/core/l0_normalize.py::chunk_audio | integration (manual) | PASS |
 | SRS-L1a-001 | PhoWhisper-small offline | src/core/l1a_asr.py | test_pipeline_integrity::TestPipelineStructure | PASS |

@@ -138,10 +138,10 @@ async def transcribe_audio(
         }
 
     finally:
-        try:
-            os.unlink(tmp.name)
-        except Exception:
-            pass
+        # SRS-L0-003: xóa audio sau transcription — NĐ13/2023 data minimization
+        l0_normalize.purge_audio(tmp.name)
+        if 'wav_path' in locals():
+            l0_normalize.purge_audio(wav_path)
 
 
 # Pending records store (Phase 0: in-memory; Phase 1: Redis)

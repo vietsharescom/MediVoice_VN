@@ -66,6 +66,13 @@
 - [ ] **M6:** Zalo Share SDK + OA API reminder (non-medical content)
 - [ ] **M7:** VN Cloud sync (VNG/FPT/VNPT)
 
+### Architecture (học từ MediVoice_AI)
+- [ ] **ARCH-001:** Cross-visit memory (SQLite last 5 visits per patient) — M1 prerequisite
+- [ ] **ARCH-002:** AccountabilityTracker — AI vs Human decision log (Luật AI 134/2025)
+- [ ] **ARCH-003:** RTM Engine live (rtm_engine.py) — replace static RTM.md
+- [ ] **ARCH-004:** StateMachine formal — replace RecordStatus enum
+- [ ] **ARCH-005:** MultiCritic + Simulator trong ValidationLayer (Phase 0 chỉ có Rule+Anomaly)
+
 ### Features
 - [ ] **STAFF-001:** Staff voice context (tiếp nhận BN — khác với doctor voice)
 - [ ] **REPEAT-001:** Tái kê đơn cũ (copy đơn + điều chỉnh nhỏ)
