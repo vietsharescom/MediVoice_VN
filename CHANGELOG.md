@@ -1,6 +1,17 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.4.3] — 2026-06-06 — AI Memory + Multi-AI Consultation System
+
+### Process & Templates (no code change to pipeline)
+- feat(memory): docs/dev/CONFUSION_PATTERNS.md — 25 patterns Claude hay nhầm, Tầng 4 memory
+- feat(ci): docs/dev/CONSULTATION_TEMPLATE.md — multi-AI consultation workflow + synthesis template
+- feat(ci): docs/dev/QUALITY_AUDIT_TEMPLATE.md — ISO/IEC 25010 product quality audit template
+- feat(ci): docs/records/consultations/ folder — lưu consultation history
+- feat(ci): scripts/iso_audit.py --quality flag — product quality audit tách riêng khỏi doc sync
+- docs: CLAUDE.md — 5-tier memory architecture + consultation trigger rules
+- docs: IMPROVEMENT_PROCESS.md v1.1 — consultation workflow + ISO audit cadence chuẩn
+
 ## [v0.4.2] — 2026-06-06 — ISO Continuous Improvement System
 
 ### Process (no code change to pipeline)

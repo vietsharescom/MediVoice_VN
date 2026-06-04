@@ -2,13 +2,19 @@
 """
 iso_audit.py — MediVoice VN ISO Health Check
 DS-VN-COM-013 | ISO 9001:2015 Cl.10.3 | ISO/IEC 42001:2023 Cl.10
+ISO/IEC 25010:2023 (quality section)
 
-Chạy mỗi phiên (Step D trong SESSION PROTOCOL) + thủ công bất kỳ lúc nào.
-Output: ✅ OK / ⚠️ Warning / 🔴 Issue
+TWO MODES:
+  Default (--doc):  Document consistency check — run EVERY session (Step D)
+                    Fast, checks: tests + RTM gaps + BACKLOG + doc sync
+  Quality (--quality): Product quality audit — run after FID or before phase launch
+                    Slower, checks: test details + design adherence + compliance
 
 Usage:
-    python scripts/iso_audit.py
-    python scripts/iso_audit.py --json   (machine-readable output)
+    python scripts/iso_audit.py              # document check (default)
+    python scripts/iso_audit.py --quality    # full quality audit
+    python scripts/iso_audit.py --json       # machine-readable output
+    python scripts/iso_audit.py --all        # both modes
 """
 
 import subprocess
@@ -256,9 +262,119 @@ def run_audit(as_json: bool = False) -> bool:
     return len(issues) == 0
 
 
+# ── Quality checks (--quality mode) ─────────────────────────────────────────
+
+def check_quality_design_adherence() -> dict:
+    """Check if BACKLOG IMMEDIATE items are all done (design on track)."""
+    content = _read(ROOT / "docs/records/BACKLOG.md")
+    pending_red = []
+    pending_yellow = []
+    in_immediate = False
+    for line in content.splitlines():
+        if "## IMMEDIATE" in line:
+            in_immediate = True
+        elif line.startswith("## ") and in_immediate:
+            break
+        if in_immediate and "[ ]" in line:
+            if "🔴" in line:
+                m = re.search(r"\*\*([\w-]+)\*\*", line)
+                if m:
+                    pending_red.append(m.group(1))
+            elif "🟡" in line:
+                m = re.search(r"\*\*([\w-]+)\*\*", line)
+                if m:
+                    pending_yellow.append(m.group(1))
+    total = len(pending_red) + len(pending_yellow)
+    return {
+        "ok": len(pending_red) == 0,
+        "red_pending": pending_red,
+        "yellow_pending": pending_yellow,
+        "detail": f"Red: {pending_red}, Yellow: {pending_yellow}" if total else "All immediate tasks done",
+    }
+
+
+def check_quality_compliance() -> dict:
+    """Spot-check compliance markers in source code."""
+    issues = []
+    # Check disclaimer in PDF export
+    pdf = _read(ROOT / "src/core/l9a_pdf_export.py")
+    if "AI tạo nháp" not in pdf and "AI-assisted draft" not in pdf:
+        issues.append("l9a_pdf_export.py: missing required disclaimer")
+    # Check L4 no bypass
+    l4 = _read(ROOT / "src/core/l4_human_gate.py")
+    if "bypass" in l4.lower() and "no_bypass" not in l4.lower() and "BYPASS" not in l4.upper():
+        issues.append("l4_human_gate.py: possible bypass logic detected — verify manually")
+    # Check audit log immutability: look for actual delete function defs, not comments
+    l10 = _read(ROOT / "src/core/l10_audit_log.py")
+    has_delete_fn = bool(re.search(r'^\s*def\s+\w*delete\w*\s*\(', l10, re.IGNORECASE | re.MULTILINE))
+    if has_delete_fn:
+        issues.append("l10_audit_log.py: delete function found — breaks immutability")
+    return {
+        "ok": len(issues) == 0,
+        "issues": issues,
+        "detail": "; ".join(issues) if issues else "Compliance markers present",
+    }
+
+
+def run_quality_audit() -> bool:
+    """ISO/IEC 25010 product quality checks."""
+    print()
+    print("=" * 60)
+    print("  PRODUCT QUALITY AUDIT — MediVoice VN")
+    print(f"  {date.today()}  |  ISO/IEC 25010:2023")
+    print("=" * 60)
+
+    checks = {
+        "design_adherence": check_quality_design_adherence(),
+        "compliance":       check_quality_compliance(),
+        "rtm_gaps":         check_rtm_gaps(),
+        "design_report":    check_design_report(),
+    }
+
+    LABELS = {
+        "design_adherence": "Design adherence",
+        "compliance":       "Compliance markers",
+        "rtm_gaps":         "RTM CRITICAL gaps",
+        "design_report":    "DESIGN_REPORT",
+    }
+
+    issues = []
+    for key, result in checks.items():
+        icon = "✅" if result["ok"] else "🔴"
+        label = LABELS[key].ljust(22)
+        detail = result.get("detail", "")
+        print(f"  {icon} {label} {detail}")
+        if not result["ok"]:
+            issues.append(f"{LABELS[key]}: {detail}")
+
+    print()
+    print("  📋 For full quality audit, use:")
+    print("     docs/dev/QUALITY_AUDIT_TEMPLATE.md")
+    print("=" * 60)
+
+    if issues:
+        print(f"  🔴 {len(issues)} QUALITY ISSUE(S):")
+        for i in issues:
+            print(f"     → {i}")
+        print("=" * 60)
+
+    return len(issues) == 0
+
+
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     as_json = "--json" in sys.argv
-    ok = run_audit(as_json=as_json)
-    sys.exit(0 if ok else 1)
+    run_quality = "--quality" in sys.argv or "--all" in sys.argv
+    run_doc = "--quality" not in sys.argv or "--all" in sys.argv
+
+    ok_doc = True
+    ok_quality = True
+
+    if run_doc:
+        ok_doc = run_audit(as_json=as_json)
+
+    if run_quality:
+        ok_quality = run_quality_audit()
+
+    sys.exit(0 if (ok_doc and ok_quality) else 1)

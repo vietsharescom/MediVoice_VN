@@ -56,6 +56,15 @@ E. Read docs/records/DESIGN_REPORT_v1.1_20260606.md
 → KHÔNG bỏ qua ISO issue mà không thông báo
 ```
 
+**5 TẦNG MEMORY — Claude đọc theo từng loại task:**
+```
+TẦNG 1 (Mọi phiên):   CLAUDE.md + BACKLOG.md + LAST_SESSION.md
+TẦNG 2 (Design/FID):  DECISIONS.md + DESIGN_REPORT (section liên quan)
+TẦNG 3 (Implement):   SRS.md (requirements) + RTM.md (traceability)
+TẦNG 4 (Confused):    docs/dev/CONFUSION_PATTERNS.md (pre-emptive answers)
+TẦNG 5 (Multi-AI):    docs/dev/CONSULTATION_TEMPLATE.md + consultations/
+```
+
 **Báo cáo theo thứ tự — KHÔNG bỏ bước nào:**
 
 ```
@@ -182,6 +191,9 @@ v{trước} | {N} tests → v{sau} | {N} tests
 | `KPI_METRICS.md` | `docs/dev/` | Andy | ISO 42001 Cl.9.1 — đo lường |
 | `DESIGN_REPORT_v1.1_20260606.md` | `docs/records/` | Claude + Andy | **Master design — đọc khi FID/implement module** |
 | `IMPROVEMENT_PROCESS.md` | `docs/compliance/` | Claude + Andy | ISO Cl.10.3 — quy trình cải tiến liên tục |
+| `CONFUSION_PATTERNS.md` | `docs/dev/` | **Claude** | Tầng 4 Memory — đọc khi confused/FID |
+| `CONSULTATION_TEMPLATE.md` | `docs/dev/` | Claude + Andy | Multi-AI consultation workflow |
+| `QUALITY_AUDIT_TEMPLATE.md` | `docs/dev/` | Claude + Andy | ISO/IEC 25010 product quality audit |
 
 > `docs/archive/` — files cũ/done, không đọc trong workflow thường ngày.
 > `DESIGN_REPORT` — đọc theo section khi cần, không cần đọc toàn bộ mỗi phiên.
@@ -397,6 +409,13 @@ KPIs Pilot:
 KHI PHÁT HIỆN CẢI TIẾN (bất kỳ lúc nào trong phiên):
   → Ghi vào BACKLOG.md NGAY — không chờ, không để trong chat
   → Tag: 💡 IMPROVEMENT / 🔴 CRITICAL / 🟡 MEDIUM / 🟢 LOW
+
+KHI CONFUSED HOẶC CÓ MULTIPLE OPTIONS:
+  → Đọc CONFUSION_PATTERNS.md trước (Tầng 4)
+  → Nếu vẫn không rõ → generate CONSULTATION request:
+     docs/records/consultations/CONS-YYYYMMDD-NNN.md
+  → Dùng template: docs/dev/CONSULTATION_TEMPLATE.md
+  → KHÔNG tự quyết khi < 70% confident về decisions quan trọng
 
 KHI TEST FAIL / SECURITY ISSUE:
   → Fix NGAY trong phiên đó — không commit khi còn lỗi
