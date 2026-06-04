@@ -25,11 +25,11 @@ Nếu Andy trả lời/làm xong → Claude cập nhật status → DONE.
 
 | ID | Mô tả | Priority | Status | Created | Nhắc #|
 |---|---|---|---|---|---|
-| PA-001 | **Record 30-50 audio consultations tại phòng khám Đà Nẵng** (BENCH-002). Thiết bị: điện thoại đặt gần BS. BS viết ground truth sau mỗi ca (drug name, dose, diagnosis). Kết quả xác định CEER thật trước pilot. | 🔴 HIGH | PENDING | 2026-06-06 | 1 |
-| PA-002 | **Tìm luật sư VN** (LEGAL-001) chuyên về healthtech + data + AI. Cần review DPA template trước khi ký với phòng khám. Budget: 10-20M VND. | 🔴 HIGH | PENDING | 2026-06-06 | 1 |
-| PA-003 | **Review và ký DPA template** với BS pilot Đà Nẵng trước ngày đầu tiên họ dùng app (docs/compliance/DPA_TEMPLATE.md). | 🔴 HIGH | PENDING | 2026-06-06 | 1 |
-| PA-004 | **Review và ký BS Onboarding Checklist** với mỗi BS pilot (docs/compliance/BS_ONBOARDING_CHECKLIST.md). | 🟡 MEDIUM | PENDING | 2026-06-06 | 1 |
-| PA-005 | **Approve FID-VN-004** khi Claude viết xong (VN-ROUTER-001 L6 branch design). Cần Andy approve trước khi implement. | 🔴 HIGH | PENDING | 2026-06-06 | 1 |
+| PA-001 | **Record pilot audio** — path xác nhận: `data/audio/pilot/`. Chưa có file mới (vẫn 22 file BENCH-001). Khi có audio pilot → chạy `python tools/run_test_audio.py` | 🔴 HIGH | IN_PROGRESS | 2026-06-06 | 1 |
+| PA-002 | **Luật sư VN** — đã gửi email. Chờ phản hồi + lên lịch review DPA_TEMPLATE.md. | 🔴 HIGH | IN_PROGRESS | 2026-06-06 | 1 |
+| PA-003 | **Ký DPA template** với BS pilot Đà Nẵng (docs/compliance/DPA_TEMPLATE.md). Cần luật sư review xong (PA-002) rồi mới ký chính thức. | 🔴 HIGH | PENDING | 2026-06-06 | 1 |
+| PA-004 | **BS Onboarding Checklist** — đã ký với BS pilot. | 🟡 MEDIUM | ✅ DONE | 2026-06-06 | 1 |
+| PA-005 | **Approve FID-VN-004** — Claude vừa viết xong. File: `docs/dev/fids/FID-VN-004.md`. Andy đọc + gõ "approve" hoặc sửa status trong file. | 🔴 HIGH | PENDING | 2026-06-06 | 1 |
 
 ---
 
@@ -37,7 +37,7 @@ Nếu Andy trả lời/làm xong → Claude cập nhật status → DONE.
 
 | ID | Mô tả | Priority | Status | Created |
 |---|---|---|---|---|
-| CT-001 | Viết FID-VN-004 (Feature Intent Document cho VN-ROUTER-001) | 🔴 HIGH | PENDING | 2026-06-06 |
+| CT-001 | Viết FID-VN-004 | 🔴 HIGH | ✅ DONE — docs/dev/fids/FID-VN-004.md | 2026-06-06 |
 | CT-002 | Implement VN-ROUTER-001 sau khi FID-VN-004 được Andy approve | 🔴 HIGH | PENDING | 2026-06-06 |
 | CT-003 | Viết tests GAP-002 (PII scan unit tests) | 🔴 HIGH | ✅ DONE | 2026-06-06 |
 | CT-004 | Viết tests GAP-005 (API integration tests) | 🔴 HIGH | ✅ DONE | 2026-06-06 |
@@ -70,6 +70,8 @@ Nếu Andy trả lời/làm xong → Claude cập nhật status → DONE.
 |---|---|---|---|
 | CT-003 | tests/unit/test_pii_scan.py — 27 tests PASS | 2026-06-06 | Claude |
 | CT-004 | tests/integration/test_api.py — 18 tests PASS | 2026-06-06 | Claude |
+| CT-001 | FID-VN-004.md viết xong tại docs/dev/fids/ | 2026-06-06 | Claude |
+| PA-004 | BS Onboarding Checklist ký với BS pilot | 2026-06-06 | Andy ✅ |
 
 ---
 
