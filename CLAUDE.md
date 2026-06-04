@@ -1,7 +1,15 @@
 # CLAUDE.md — MediVoice VN
-# ISO/IEC 42001:2023 | ISO_VN v1.0 | v0.2.0
+# ISO/IEC 42001:2023 | ISO_VN v1.0 | v0.3.0
 # Owner: Andy Phan (Viet) | Maple Leaf Group
 # GitHub: https://github.com/vietsharescom/MediVoice_VN
+
+---
+
+## ⚡ QUY TẮC SỐ 0 — BẮT BUỘC TUYỆT ĐỐI
+
+> **CLAUDE PHẢI ĐỌC TOÀN BỘ FILE NÀY TRƯỚC KHI LÀM BẤT CỨ ĐIỀU GÌ.**
+> Không trả lời, không code, không đề xuất — cho đến khi đọc xong.
+> File này là nguồn sự thật duy nhất (single source of truth) cho dự án.
 
 ---
 
@@ -19,55 +27,131 @@
 
 ---
 
-## ⚡ CLAUDE — QUY TẮC HÀNH VI (ĐỌC KỸ, LUÔN TUÂN THỦ)
+## ⚡ SESSION PROTOCOL — ĐỌC KỸ, LUÔN TUÂN THỦ
 
-### MỞ PHIÊN
+### 1. MỞ PHIÊN
 
-**Trigger:** `bắt đầu` · `start` · `begin` · `mở phiên` · hoặc bất cứ tin nhắn đầu tiên trong phiên mới
+**Trigger:** `bắt đầu` · `start` · `begin` · `mở phiên` · hoặc tin nhắn đầu tiên bất kỳ
 
-Làm 2 việc SONG SONG, không tuần tự:
+**Làm 2 việc SONG SONG:**
 ```
-A. Read docs/records/BACKLOG.md             → lấy Next task
-B. Run: pytest tests/ -q                    → lấy N tests PASS
+A. Read docs/records/BACKLOG.md   → lấy Next task từ IMMEDIATE
+B. Run: pytest tests/ -q          → lấy N tests PASS
 ```
-Báo cáo **1 dòng duy nhất**, không thêm gì:
+
+**Báo cáo 1 dòng duy nhất, không thêm gì:**
 ```
 v{X} | {N} tests PASS | Next: {task} | Ready.
 ```
 
+> KHÔNG đọc LAST_SESSION.md khi mở phiên — BACKLOG.md đã đủ context.
+> KHÔNG hỏi Andy muốn làm gì. Tự quyết định và làm ngay.
+
 ---
 
-### KHI ANDY NÓI "tiếp tục", "continue", "làm đi", "next"
+### 2. TRONG PHIÊN
 
-**TUYỆT ĐỐI KHÔNG dùng AskUserQuestion.**
-**TUYỆT ĐỐI KHÔNG hỏi "muốn làm gì".**
-
-Thay vào đó: **tự quyết định và bắt đầu làm ngay.**
+**Khi Andy nói:** `tiếp tục` · `continue` · `làm đi` · `next`
 
 ```
 Logic ưu tiên:
-1. Next task trong IMMEDIATE có thể làm được ngay? → LÀM LUÔN
-2. Next task cần Andy cung cấp thứ gì (audio, file, info)?
-   → Nói ngắn: "BENCH-001 cần audio từ Đà Nẵng — bắt đầu Sprint 1 L0 trong lúc chờ."
-   → Rồi BẮT ĐẦU L0 ngay, không chờ xác nhận
-3. Không biết làm gì? → Chọn task đầu tiên trong Phase 0 và làm
+1. Next task trong IMMEDIATE làm được ngay? → LÀM LUÔN
+2. Next task cần Andy cung cấp gì?
+   → Nói 1 câu: "BENCH-001 cần audio — bắt đầu DEPLOY-001 trong lúc chờ."
+   → Rồi BẮT ĐẦU ngay, không chờ xác nhận
+3. Không biết làm gì? → Chọn task đầu tiên trong BACKLOG Phase 0
+```
+
+**TUYỆT ĐỐI KHÔNG dùng AskUserQuestion khi Andy nói tiếp tục.**
+
+---
+
+### 3. ĐÓNG PHIÊN
+
+**Trigger:** `đóng phiên` · `kết thúc` · `end` · `done` · `had end` · `close` · `finish`
+
+**Làm 5 bước, tự động, không hỏi:**
+
+```
+BƯỚC 1 — Update BACKLOG.md
+  docs/records/BACKLOG.md
+  DOING → DONE cho tasks hoàn thành
+  Thêm tasks mới nếu phát sinh
+
+BƯỚC 2 — Update CHANGELOG.md
+  Thêm entry nếu có code thay đổi
+  Format: ## [vX.Y.Z] — YYYY-MM-DD — mô tả ngắn
+
+BƯỚC 3 — Update CURRENT STATE
+  Section bên dưới trong file này
+  Cập nhật: Version, Status, Tests, Blocker, Next task
+
+BƯỚC 4 — Ghi đè LAST_SESSION.md
+  File: docs/records/LAST_SESSION.md
+  Dùng template bên dưới — đủ 5 mục, không bỏ qua
+  1 file duy nhất, git history tự lưu các phiên cũ
+
+BƯỚC 5 — Commit & Push
+  git add -A
+  git commit -m "chore(session-end): close session YYYY-MM-DD"
+  git push
 ```
 
 ---
 
-### KHI ĐÓNG PHIÊN
+### 4. TEMPLATE LAST_SESSION.md
 
-**Trigger:** `đóng phiên` · `kết thúc` · `end` · `done` · `had end` · `close` · `finish`
+```markdown
+# LAST_SESSION.md — MediVoice VN
+# Ghi đè mỗi phiên — git history lưu lịch sử cũ tự động
+# ISO/IEC 42001:2023 Cl.9.1 (Performance evaluation)
 
-Làm 5 bước, tự động, không hỏi:
+## Mã phiên: SES-YYYYMMDD
+## Thời gian: YYYY-MM-DD (giờ đóng phiên nếu biết)
+## Version: v{trước} → v{sau}
+
+---
+
+## Trạng thái đầu → cuối
+v{trước} | {N} tests → v{sau} | {N} tests
+
+## Đã hoàn thành
+- [TASK-ID] mô tả kết quả cụ thể, đo được
+- [TASK-ID] ...
+
+## Kết quả đo được
+- Tests: N/N PASS
+- Pipeline: input mẫu → output mẫu (nếu có)
+
+## Blocker / Phụ thuộc bên ngoài
+- [TASK-ID] lý do bị block
+
+## Phiên tiếp theo — làm ngay theo thứ tự
+1. [TASK-ID] mô tả (ưu tiên cao nhất)
+2. [TASK-ID] ...
+3. [TASK-ID] ...
 ```
-1. Update docs/records/BACKLOG.md (DOING → DONE, thêm tasks mới nếu có)
-2. Update CHANGELOG.md nếu có code mới
-3. Update CURRENT STATE (bên dưới) — version, tests, blocker, next
-4. Ghi đè docs/records/LAST_SESSION.md (template bên dưới)
-   → 1 file duy nhất, git history lưu lịch sử — không tạo file mới mỗi phiên
-5. git add -A && git commit -m "chore(session-end): close session YYYY-MM-DD" && git push
-```
+
+---
+
+### 5. TÀI LIỆU HỆ THỐNG — VỊ TRÍ CHUẨN
+
+| File | Vị trí | Ai đọc | Mục đích |
+|---|---|---|---|
+| `CLAUDE.md` | `/` | **Claude** | Rules, context, session protocol |
+| `CHANGELOG.md` | `/` | Andy | Lịch sử code theo version |
+| `BACKLOG.md` | `docs/records/` | Claude + Andy | Task tracker — nguồn Next task |
+| `LAST_SESSION.md` | `docs/records/` | Claude + Andy | Phiên gần nhất — resume context |
+| `DECISIONS.md` | `docs/records/` | Claude + Andy | Architecture decisions (ADR) |
+| `VISION.md` | `docs/product/` | Andy | Product direction |
+| `BRS.md` | `docs/product/` | Andy | Business requirements |
+| `AI_POLICY.md` | `docs/compliance/` | Audit | ISO 42001 Cl.5.2 bắt buộc |
+| `RISK_REGISTER.md` | `docs/compliance/` | Andy | Legal/technical risks |
+| `IMPACT_ASSESSMENT.md` | `docs/compliance/` | Audit | Luật AI 134/2025 bắt buộc |
+| `NAMING_CONVENTION.md` | `docs/dev/` | Claude | Git commit, code naming |
+| `KPI_METRICS.md` | `docs/dev/` | Andy | Ngưỡng chất lượng pilot |
+
+> `docs/archive/` — files cũ/done, không đọc trong workflow thường ngày.
 
 ---
 
@@ -80,16 +164,6 @@ Làm 5 bước, tự động, không hỏi:
 | Tests | **61/61 PASS** (pipeline + compliance + governance) |
 | Blocker | BENCH-001 cần audio thực tế từ Đà Nẵng |
 | Next task | TEST-E2E-001: test với audio thực tế · DEPLOY-001: package installer |
-
-**Key files:**
-- [BACKLOG.md](docs/records/BACKLOG.md) — task tracker
-- [LAST_SESSION.md](docs/records/LAST_SESSION.md) — phiên gần nhất
-- [DECISIONS.md](docs/records/DECISIONS.md) — architecture decisions
-- [CHANGELOG.md](CHANGELOG.md) — version history
-- [VISION.md](docs/product/VISION.md) — product vision
-- [BRS.md](docs/product/BRS.md) — business requirements
-- [AI_POLICY.md](docs/compliance/AI_POLICY.md) — AI policy (ISO 42001)
-- [RISK_REGISTER.md](docs/compliance/RISK_REGISTER.md) — risk register
 
 ---
 
@@ -153,39 +227,6 @@ Audio → [L0]  Normalize 16kHz mono
       → [L10] Immutable audit log (10+ năm, tamper-proof)
 ```
 
-### 2 Voice Contexts
-```
-STAFF VOICE (tiếp nhận BN):
-  Hỏi: "Tên gì? Ở đâu? Bệnh gì?"
-  → AI điền form tiếp nhận (tên, tuổi, lý do đến)
-  → Phase 1 feature (sau khi core stable)
-
-DOCTOR VOICE (trong phòng khám):
-  Nói: triệu chứng, khám, chẩn đoán, thuốc, chỉ định
-  → AI điền Mẫu 15/BV1 + đơn thuốc
-  → Phase 0 core feature
-```
-
----
-
-## FORM PRIORITY
-
-```
-CORE (Phase 0):
-  Mẫu 15/BV1 — Bệnh án ngoại trú lâm sàng
-  Dùng bởi 95% BS lâm sàng tư nhân
-
-PLUGINS (Phase 1+):
-  CĐHA        — báo cáo siêu âm/X-quang   (FID-VN-001)
-  Nha khoa    — Mẫu 16/BV1               (FID-VN-003)
-  Tai mũi họng, Tim mạch...              (Phase 2)
-
-LƯU Ý QUAN TRỌNG:
-  CĐHA và chuyên khoa dùng form riêng của ngành
-  KHÔNG dùng Mẫu 15/BV1
-  Chỉ là OPTION/PLUGIN — không phải Phase 0 target
-```
-
 ---
 
 ## FEATURE WORKFLOW — 3 TẦNG
@@ -219,7 +260,7 @@ LƯU Ý QUAN TRỌNG:
 
 1. Pipeline L0→L10 FROZEN — thay đổi chỉ qua FID
 2. 100% tests PASS trước mọi commit
-3. L4 Human Gate KHÔNG BYPASS — BS phải approve mọi record
+3. L4 Human Gate — BS phải approve mọi record (Luật KCB 2023 Đ.62)
 4. Data lưu tại VN — không AWS/GCP/Azure region ngoài VN
 5. Output theo mẫu TT32/2023
 6. ICD-10-VN bắt buộc trong Chẩn đoán (QĐ5837)
@@ -279,63 +320,6 @@ KPIs Pilot:
   □ Đo CEER: tên thuốc, liều lượng, chẩn đoán
   □ Xác nhận: BS dùng app thật, không bỏ giữa chừng
   □ Xác nhận: WTP — trả tiền hay không
-```
-
----
-
-## EXTERNAL REVIEW — CHỈ KHI CẦN
-
-**Đã review (ChatGPT + Grok + Copilot — 2026-06-03):**
-- Kết luận: Khả thi về kỹ thuật và pháp lý
-- Xem: [THIRD_PARTY_REVIEW_REQUEST.md](docs/records/THIRD_PARTY_REVIEW_REQUEST.md)
-
-**Cần review thêm:**
-- Luật sư VN (healthtech + data + AI) — trước khi bán
-- Drug database licensing — trước khi build L1b
-
----
-
-## ⚡ CLAUDE: KẾT THÚC PHIÊN — LÀM NGAY 5 BƯỚC
-
-> Trigger: `đóng phiên` · `kết thúc` · `end` · `done` · `had end` · `close` · `finish`
-
-```
-BƯỚC 1: Update docs/records/BACKLOG.md
-         - DOING → DONE cho tasks đã hoàn thành
-         - Thêm tasks mới nếu phát sinh
-
-BƯỚC 2: Update CHANGELOG.md nếu có code thay đổi
-
-BƯỚC 3: Update CURRENT STATE (section trên)
-         - Version, Status, Tests, Blocker, Next task
-
-BƯỚC 4: Ghi đè docs/records/LAST_SESSION.md (template bên dưới)
-         → 1 file duy nhất, git history giữ lịch sử cũ
-
-BƯỚC 5: git add -A && git commit && git push
-         Message: "chore(session-end): close session YYYY-MM-DD"
-```
-
-### Template LAST_SESSION.md
-
-```markdown
-# LAST_SESSION.md — MediVoice VN
-# Ghi đè mỗi phiên. Git history lưu toàn bộ nội dung cũ.
-
-## Phiên: YYYY-MM-DD
-
-## Trạng thái đầu → cuối
-v{trước} | {N} tests → v{sau} | {N} tests
-
-## Đã hoàn thành
-- [TASK-ID] kết quả cụ thể
-
-## Blocker
-- ...
-
-## Phiên tiếp theo
-1. [TASK-ID] mô tả (ưu tiên cao nhất)
-2. [TASK-ID] ...
 ```
 
 ---
