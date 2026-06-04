@@ -1,6 +1,37 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.3.1] — 2026-06-04 — Architecture upgrade + QA hardening + Design corrections
+
+### Architecture (port từ MediVoice_AI Canada)
+- feat(arch): src/pipeline/p0-p3 staging — pipeline grouped by function
+- feat(arch): src/core/orchestrator.py — central execution controller
+- feat(arch): src/validation/ — ValidationLayer VN (RuleEngine + AnomalyDetector)
+- feat(arch): 4-layer control model documented in SOFTWARE_ARCHITECTURE.md
+
+### ISO Docs (new)
+- docs: SRS.md (35 requirements SRS-L{N}-NNN)
+- docs: RTM.md (33 rows traced SRS→code→test)
+- docs: SOFTWARE_ARCHITECTURE.md (4-layer diagram)
+- docs: GLOSSARY.md, REFERENCED_STANDARDS.md, SoA, LIFECYCLE_PLAN, COMMUNICATION_PLAN
+- docs: QA_PLAN.md v1.1 (V4 AI model review), TEST_PLAN.md
+
+### QA
+- feat(qa): .github/workflows/ci.yml (GitHub Actions)
+- feat(qa): .pre-commit-config.yaml 3 gates (tests+bandit+coverage)
+- feat(qa): scripts/ai_model_review.py (V4 — 5/5 PASS baseline)
+- feat(qa): .coveragerc, 88% coverage
+
+### Tests (new — 165 total from 61)
+- test: tests/unit/test_models.py, test_pipeline_core.py, test_pipeline_staging.py
+- test: tests/unit/test_l6_l7_orchestrator.py
+- test: tests/validation/test_validation_layer.py
+
+### Fixes
+- fix(l0): purge_audio() — NĐ13/2023 data minimization (SRS-L0-003)
+- fix(design): correct 4 wrong assumptions (Documentation Assistant, MarianMT, CĐHA, KB)
+- fix(pipeline): 4 code issues (unused imports, sys.path, L7+L10 atomicity)
+
 ## [v0.3.0] — 2026-06-04 — Phase 0 pipeline implementation (L0→L10 + FastAPI PWA)
 
 ### Core Pipeline (new — all FROZEN layers now implemented)

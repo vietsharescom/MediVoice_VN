@@ -166,10 +166,10 @@ v{trước} | {N} tests → v{sau} | {N} tests
 | Field | Value |
 |---|---|
 | Version | v0.3.0 |
-| Status | **Phase 0 pipeline DONE — L0→L10 + FastAPI PWA implemented** |
-| Tests | **61/61 PASS** (pipeline + compliance + governance) |
-| Blocker | BENCH-001 cần audio thực tế từ Đà Nẵng |
-| Next task | TEST-E2E-001: test với audio thực tế · DEPLOY-001: package installer |
+| Status | **Phase 0 pipeline DONE — L0→L10 + 4-layer arch + 165 tests + 88% coverage** |
+| Tests | **165/165 PASS** · bandit 0 HIGH/MEDIUM · Coverage 88% |
+| Audio | **22 WAV files** tại `data/Voices/` — BENCH-001 CÓ THỂ CHẠY NGAY |
+| Next task | BENCH-001: PhoWhisper on test_viet_*.wav · DEPLOY-001: Windows installer |
 
 ---
 

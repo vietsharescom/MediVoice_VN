@@ -49,7 +49,8 @@
 - [x] **APP-006:** PDF download Mẫu 15/BV-01
 
 ### Phase 0 Còn Lại
-- [ ] **TEST-E2E-001** 🟡 End-to-end test với audio thực tế (cần BENCH-001 audio từ Đà Nẵng)
+- [ ] **BENCH-001** 🔴 Chạy PhoWhisper trên `data/Voices/test_viet_*.wav` — đo WER/CEER — **CÓ THỂ LÀM NGAY** (22 audio files sẵn)
+- [ ] **TEST-E2E-001** 🟡 End-to-end test full pipeline với audio thực tế (sau BENCH-001)
 - [ ] **DEPLOY-001** 🟡 Package app để BS Đà Nẵng install (Windows + Python venv installer)
 - [ ] **CONFIG-001** 🟢 Facility config UI (tên phòng khám, CCHN, khoa — file JSON)
 - [ ] **DRUG-ALIAS-001** 🟢 Mở rộng alias map trong drug_db.json (thêm typo VN phổ biến)
