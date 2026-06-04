@@ -1,6 +1,6 @@
 # FID-VN-004 — VN-ROUTER-001: L6 branch NER→Mẫu 15/BV-01
 # Feature Intent Document | ISO_VN v1.0
-# Status: DRAFT → **AWAITING APPROVAL** → APPROVED → DONE
+# Status: DRAFT → AWAITING APPROVAL → APPROVED → **DONE**
 
 | Field | Value |
 |---|---|
@@ -9,8 +9,8 @@
 | LOC estimate | ~130 LOC |
 | Risk level | HIGH (thay đổi L6 — frozen layer — FID bắt buộc) |
 | Created | 2026-06-06 |
-| Approved by | *(chờ Andy Phan)* |
-| Approved date | *(chờ)* |
+| Approved by | Andy Phan |
+| Approved date | 2026-06-06 |
 
 ---
 

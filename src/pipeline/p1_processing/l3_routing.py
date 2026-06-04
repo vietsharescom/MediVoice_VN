@@ -4,12 +4,45 @@
 #           L3_ROUTING is the critical branching module — VISION.md Part 2.
 # Req:      SRS-L3-001 -- see docs/cl08_operation/SRS.md
 # FID:      DS-FID-001 | v1.0 — classifies FLOW_A (doctor dictation)
+#           FID-VN-004 | v1.0 — adds vn_route detection (lam_sang/cdha/nha_khoa)
 # Standard: ISO/IEC 42001:2023 Clause 8.5
-# Version:  v1.2 -- CA-010 (NC-001..NC-006 + routing_basis)
+# Version:  v1.3 -- FID-VN-004: vn_route detection from VI original_text
 
 from typing import Any, Dict, Tuple
 
-# Flow identifiers (frozen — see VISION.md Part 2)
+# ── VN Route identifiers (FID-VN-004) ────────────────────────────────────────
+VN_LAM_SANG  = "lam_sang"   # General clinical → Mẫu 15/BV-01
+VN_CDHA      = "cdha"       # Imaging/radiology → SOAP (plugin Phase 1)
+VN_NHA_KHOA  = "nha_khoa"   # Dental → Mẫu 16/BV-01 (plugin Phase 1)
+
+_CDHA_KW = frozenset([
+    "siêu âm", "x-quang", "xquang", "ct scan", "mri", "chụp",
+    "cđha", "chẩn đoán hình ảnh", "điện tim", "ecg",
+])
+_NHA_KW = frozenset([
+    "răng", "nha", "nhổ răng", "trám", "nướu", "lợi", "nha khoa",
+])
+
+
+def detect_vn_route(original_text: str) -> str:
+    """
+    FID-VN-004: Detect VN-specific route from VI original transcript.
+    Called at L3 so downstream stages (L6) can branch without re-classifying.
+
+    nha_khoa checked first (more specific keywords, subset of clinical).
+    Default: lam_sang (general clinical outpatient).
+    """
+    text = (original_text or "").lower()
+    for kw in _NHA_KW:
+        if kw in text:
+            return VN_NHA_KHOA
+    for kw in _CDHA_KW:
+        if kw in text:
+            return VN_CDHA
+    return VN_LAM_SANG
+
+
+# ── Flow identifiers (frozen — see VISION.md Part 2) ─────────────────────────
 FLOW_A = "FLOW_A"        # Doctor dictation -> SOAP note
 FLOW_B = "FLOW_B"        # Patient triage (DS-FID-004)
 FLOW_C = "FLOW_C"        # Emergency handoff (DS-FID-015)
@@ -46,14 +79,19 @@ def handle(payload: Any) -> Dict[str, Any]:
             "data": {"flow": flow},
         }
 
+    # FID-VN-004: detect VN-specific route from VI original_text
+    vn_route = detect_vn_route(payload.get("original_text", ""))
+
     return {
         "ok": True,
         "stage": "L3_ROUTING",
         "data": {
             **payload,
             "flow": flow,
+            "vn_route": vn_route,
             "routing_decision": {
                 "flow": flow,
+                "vn_route": vn_route,
                 "routing_basis": routing_basis,
                 "rationale": _routing_rationale(flow),
             },

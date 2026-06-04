@@ -234,11 +234,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.4.5 |
-| Status | **210/210 tests PASS · GAP-002+005 CLOSED · ISO audit system complete · DPA+IRP+Onboarding done** |
-| Tests | **210/210 PASS** · bandit 0 HIGH/MEDIUM · Coverage 88% |
-| Pending | **5 Andy actions** (PA-001..005) · **4 Claude todos** (CT-001..002, CT-005..006) |
-| Next task | **FID-VN-004** → VN-ROUTER-001 → DEPLOY-001 |
+| Version | v0.5.0 |
+| Status | **VN-ROUTER-001 DONE ✅ — 232/232 PASS — lam_sang → Mẫu 15/BV-01 trực tiếp** |
+| Tests | **232/232 PASS** · bandit 0 HIGH/MEDIUM · Coverage 88% |
+| Pending | **4 Andy actions** (PA-001..004) · **2 Claude todos** (CT-005, CT-006) |
+| Next task | **DEPLOY-001** (Windows installer) · BENCH-002 (audio Đà Nẵng) |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` |
 
 ---

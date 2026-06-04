@@ -65,11 +65,11 @@
 | P0.4f | │  ├─ ISO Docs Mới | DPA, INCIDENT_PLAN, BS_ONBOARDING | 🟢 | SES-20260606 | |
 | P0.4g | │  └─ Bug Fixes (4) | trieu_chung, patient_name, l3 transcript, qua_trinh | 🟢 | SES-20260606 | 210 tests PASS |
 | | │ | | | | |
-| **P0.5** | **├─ 🔴 VN-ROUTER-001** | **L6 branch: NER → Mẫu 15/BV-01 trực tiếp** | **🔴** | — | **BLOCKED: chờ Andy approve FID** |
-| P0.5a | │  ├─ FID-VN-004 | Feature Intent Document — đã viết xong | 🟡 | SES-20260606 | fids/FID-VN-004.md — PA-005 |
-| P0.5b | │  ├─ l3_routing vn_route | detect_vn_route() trong Canada L3 | ⏳ | — | Sau FID approve |
-| P0.5c | │  ├─ l6_agent dispatch | if vn_route=="lam_sang" → branch | ⏳ | — | Sau FID approve |
-| P0.5d | │  └─ l6_mau15_generator | generate_mau15(): NER entities → form_data → generate_benh_an() | ⏳ | — | Tái dùng l6_generate_form.py |
+| **P0.5** | **├─ 🟢 VN-ROUTER-001** | **L6 branch: NER → Mẫu 15/BV-01 trực tiếp** | **🟢** | SES-20260606 | **232 tests PASS** |
+| P0.5a | │  ├─ FID-VN-004 | Feature Intent Document | 🟢 | SES-20260606 | fids/FID-VN-004.md DONE |
+| P0.5b | │  ├─ l3_routing vn_route | detect_vn_route() trong Canada L3 | 🟢 | SES-20260606 | 14 tests PASS |
+| P0.5c | │  ├─ l6_agent dispatch | lam_sang → benh_an / cdha → SOAP | 🟢 | SES-20260606 | AC-001 AC-002 PASS |
+| P0.5d | │  └─ l6_mau15_generator | generate_mau15(): NER → form_data → generate_benh_an() | 🟢 | SES-20260606 | 22 new tests PASS |
 | | │ | | | | |
 | **P0.6** | **├─ ⏳ DEPLOY-001** | **Windows installer cho BS Đà Nẵng** | **⏳** | — | Sau P0.5 |
 | P0.6a | │  ├─ Python venv bundle | PyInstaller hoặc NSIS installer | ⏳ | — | |

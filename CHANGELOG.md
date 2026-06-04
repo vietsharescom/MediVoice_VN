@@ -1,6 +1,18 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.5.0] — 2026-06-06 — VN-ROUTER-001 DONE [FID-VN-004]
+
+### Core feature (Phase 0 complete)
+- feat(L6): VN-ROUTER-001 — L6 branch NER→Mẫu15/BV-01 [FID-VN-004]
+  lam_sang route: NER entities → Mẫu 15/BV-01 directly (no SOAP)
+  cdha/nha_khoa: preserved Canada SOAP path
+- feat(L3): detect_vn_route() in l3_routing.py — lam_sang/cdha/nha_khoa from VI text
+- feat(L6): l6_mau15_generator.py — generate_mau15() reusing l6_generate_form
+- test: tests/unit/test_vn_router.py — 22 tests (AC-001..006 + 14 route detection tests)
+
+### Stats: 210 → 232 tests (+22 new)
+
 ## [v0.4.5] — 2026-06-06 — PENDING_REQUESTS system + GAP-002/005 closed + ISO compliance docs
 
 ### Tests (165 → 210 PASS)

@@ -75,7 +75,28 @@ def handle(payload: Any) -> Dict[str, Any]:
     vi_text = original if hint_language == "vi" and original != text else ""
     entities = _generator.extract_entities(text, vi_text=vi_text)
 
-    # Generate SOAP note — VI or EN based on hint_language (@req SRS-L6-007)
+    # FID-VN-004: VN branch — lam_sang → Mẫu 15/BV-01 directly (no SOAP)
+    vn_route = payload.get("vn_route", "lam_sang")
+    if vn_route == "lam_sang":
+        from src.pipeline.p2_decision.l6_mau15_generator import generate_mau15
+        elapsed_ms = (time.perf_counter() - t0) * 1000
+        benh_an_dict = generate_mau15(entities, payload)
+        return {
+            "ok": True,
+            "stage": "L6_AGENT",
+            "data": {
+                **payload,
+                "benh_an": benh_an_dict,
+                "vn_route": vn_route,
+                "ner_entities": [e.to_dict() for e in entities if not e.negated],
+                "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "l6_generation_ms": round(elapsed_ms, 1),
+                "approval_status": payload.get("approval_status", "PENDING_APPROVAL"),
+                "disclaimer": "AI tạo nháp — Bác sĩ chịu trách nhiệm hoàn toàn.",
+            },
+        }
+
+    # cdha / nha_khoa — existing Canada SOAP path
     if hint_language == "vi":
         soap = _generator.generate_soap_vi(entities, text)
     else:
