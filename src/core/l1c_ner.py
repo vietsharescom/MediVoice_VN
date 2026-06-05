@@ -50,7 +50,7 @@ _RE_NHIET_DO = re.compile(
     re.IGNORECASE
 )
 _RE_HA_SYSTOLIC = re.compile(
-    r"(?:huyết\s*áp|HA|BP)\s*[:\s]?\s*(\d{2,3})\s*/\s*(\d{2,3})",
+    r"(?:huyết\s*áp|HA|BP)\b[^/\d]{0,40}?(\d{2,3})\s*/\s*(\d{2,3})",
     re.IGNORECASE
 )
 _RE_MACH = re.compile(
@@ -95,6 +95,7 @@ _RE_LY_DO = re.compile(
 )
 _RE_LY_DO_FALLBACK = re.compile(
     r"\b\d+\s*tuổi[\s,.]+"
+    r"(?:nghề\s*nghiệp\s+[^,;.]{1,30}[,;.]?\s*)?"  # skip "nghề nghiệp X"
     r"([^.!?\n]{5,}?)(?=\s*(?:tiền\s*sử|huyết\s*áp|nhiệt\s*độ|mạch\s+\d|$))",
     re.IGNORECASE,
 )
@@ -159,7 +160,7 @@ _WH  = (r"(?:một|hai|ba|bốn|tư|năm|sáu|bảy|bẩy|tám|chín)\s+trăm"
         r"(?:\s+(?:" + _WTG + r"|" + _W10 + r"|" + _W1 + r"))?")
 _WN  = r"(?:" + _WH + r"|" + _WTG + r"|" + _W10 + r"|" + _WSH + r")"
 
-_RE_BP_WORDS  = re.compile(r"\b(" + _WN + r")\s+trên\s+(" + _WN + r")\b", re.I | re.U)
+_RE_BP_WORDS  = re.compile(r"\b(" + _WN + r")\s+(?:trên|tri)\s+(" + _WN + r")\b", re.I | re.U)
 _RE_DEC_WORDS = re.compile(r"\b(" + _WN + r"|" + _WO + r")\s+phẩy\s+(" + _WO + r")\b", re.I | re.U)
 _RE_RUOI      = re.compile(r"\b(" + _WN + r"|" + _WO + r")\s+(?:độ\s+)?rưỡi\b", re.I | re.U)
 _RE_WINT      = re.compile(r"\b" + _WN + r"\b", re.I | re.U)
@@ -289,7 +290,15 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
     else:
         m = _RE_LY_DO_FALLBACK.search(t)
         if m:
-            ent.ly_do = m.group(1).strip()[:80]
+            captured = m.group(1).strip()[:80]
+            # Only accept fallback if it contains at least one symptom keyword
+            # (avoids extracting occupation/admin text like "nghề nghiệp lái xe tái khám")
+            _symptom_kw = re.compile(
+                r"\b(đau|sốt|ho\b|khó|mệt|chóng|buồn|nôn|tiểu|khát|ngứa|phù|tê|sưng|rát|chảy|nuốt|ợ)\b",
+                re.IGNORECASE,
+            )
+            if _symptom_kw.search(captured):
+                ent.ly_do = captured
 
     # Chẩn đoán
     m = _RE_CHAN_DOAN.search(t)
@@ -301,6 +310,11 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
     if m:
         base = f"{m.group(1)} {m.group(2)}"
         extra = m.group(3).strip() if m.group(3) else ""
+        # Only keep short qualifiers starting with "hoặc"/"nếu" — strip carry/admin instructions
+        if extra and re.match(r"^(hoặc|nếu|sớm\s*hơn)", extra, re.IGNORECASE):
+            extra = extra[:40]
+        else:
+            extra = ""
         ent.tai_kham = f"{base} {extra}".strip() if extra else base
 
     # Chi định
@@ -311,16 +325,28 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
 
     # Đơn thuốc — word positions from L1b are based on original transcript;
     # normalize only the extracted context window to avoid position shifts.
+    # Drugs requiring explicit clinical context to avoid false positives
+    _CONTEXT_REQUIRED = {
+        "Iron (Ferrous)": re.compile(
+            r"\b(thiếu\s*máu|thiếu\s*sắt|anemia|hemoglobin|huyết\s*sắc\s*tố|ferritin)\b",
+            re.IGNORECASE,
+        ),
+    }
+
     if drug_candidates:
         words_orig = transcript.split()
         for dc in drug_candidates:
             pos = dc.get("word_position", 0)
-            # Filter: drug mentioned in patient self-medication context (tiền sử), not prescription
-            # Also filter discontinuation instructions ("ngưng X", "ngừng X")
+            inn = dc.get("inn", "")
+            # Filter: patient self-medication context → not a prescription
             pre = " ".join(words_orig[max(0, pos - 5): pos])
             if _RE_PATIENT_MED.search(pre):
                 continue
+            # Filter: discontinuation instruction ("ngưng X") → not a new prescription
             if re.search(r"\bng[ưừ]ng\b", pre, re.IGNORECASE):
+                continue
+            # Filter: drugs requiring anemia/iron context — avoid phonetic false positives
+            if inn in _CONTEXT_REQUIRED and not _CONTEXT_REQUIRED[inn].search(transcript):
                 continue
             drug_entry = _extract_drug_context(transcript, dc)
             ent.don_thuoc.append(drug_entry)
