@@ -43,7 +43,10 @@ class MedicalEntities:
 # ─── Sinh hiệu patterns ────────────────────────────────────────────────────
 
 _RE_NHIET_DO = re.compile(
-    r"(?:sốt|nhiệt độ|temp(?:erature)?)\s*[:\s]?\s*(\d{2}(?:[.,]\d)?)\s*°?(?:c|celsius)?",
+    r"(?:sốt|nhiệt độ|temp(?:erature)?)\s*[:\s]?\s*"
+    r"(\d{2}(?:[.,]\d)?)"
+    r"(?:\s+(một|hai|ba|bốn|năm|sáu|bảy|bẩy|tám|chín))?"
+    r"\s*°?(?:c|celsius|độ)?",
     re.IGNORECASE
 )
 _RE_HA_SYSTOLIC = re.compile(
@@ -94,7 +97,18 @@ _RE_TAI_KHAM = re.compile(
 # ─── Chẩn đoán patterns ─────────────────────────────────────────────────────
 
 _RE_CHAN_DOAN = re.compile(
-    r"(?:chẩn\s*đoán|diagnos\w*)[:\s]+([^.,;,\n]+?)(?=\s*(?:kê|cho\s*uống|cho\s*dùng|đơn\s*thuốc|tái\s*khám|$))",
+    r"(?:chẩn\s*đoán|diagnos\w*)[:\s]+([^.,;,\n]+?)"
+    r"(?=\s*(?:điều\s*trị|kê\s*(?:đơn|thuốc)?|cho\s*(?:uống|dùng)|"
+    r"đơn\s*thuốc|tái\s*khám|hẹn|$))",
+    re.IGNORECASE
+)
+
+# ─── Patient self-medication context (exclude from prescription) ────────────
+# Matches "bệnh nhân tự uống X" → drug X is patient history, NOT prescription
+
+_RE_PATIENT_MED = re.compile(
+    r"(?:bệnh\s*nh[aâ]n|người\s*bệnh|bn|b[aâ]́ch\s*nh[aâ]n)\s+"
+    r"(?:tự\s+)?(?:đã\s+|đang\s+)?(?:uống|dùng|sử\s*dụng)\s*$",
     re.IGNORECASE
 )
 
@@ -227,7 +241,12 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
     # Sinh hiệu
     m = _RE_NHIET_DO.search(t)
     if m:
-        ent.nhiet_do = float(m.group(1).replace(",", "."))
+        val = m.group(1).replace(",", ".")
+        # PhoWhisper often drops "phẩy" → decimal digit follows as bare VN word (e.g., "37 tám")
+        if "." not in val and m.group(2):
+            dec = _VN_ONES.get(m.group(2).lower().strip(), 0)
+            val = f"{val}.{dec}"
+        ent.nhiet_do = float(val)
 
     m = _RE_HA_SYSTOLIC.search(t)
     if m:
@@ -271,7 +290,13 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
     # Đơn thuốc — word positions from L1b are based on original transcript;
     # normalize only the extracted context window to avoid position shifts.
     if drug_candidates:
+        words_orig = transcript.split()
         for dc in drug_candidates:
+            pos = dc.get("word_position", 0)
+            # Filter: drug mentioned in patient self-medication context (tiền sử), not prescription
+            pre = " ".join(words_orig[max(0, pos - 5): pos])
+            if _RE_PATIENT_MED.search(pre):
+                continue
             drug_entry = _extract_drug_context(transcript, dc)
             ent.don_thuoc.append(drug_entry)
 
@@ -310,6 +335,10 @@ def _extract_drug_context(transcript: str, drug_candidate: dict) -> dict:
     m = _RE_ROUTE.search(context)
     if m:
         duong_dung = m.group(1).lower().strip()
+
+    # PhoWhisper commonly mishears "miligam/mg" as "ml" for oral tablets
+    if duong_dung == "uống" and ham_luong.endswith("ml"):
+        ham_luong = ham_luong[:-2] + "mg"
 
     return {
         "inn": inn,
