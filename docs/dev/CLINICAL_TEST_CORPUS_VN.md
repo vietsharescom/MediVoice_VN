@@ -1,6 +1,8 @@
 # CLINICAL_TEST_CORPUS_VN.md
 # Bộ kịch bản kiểm thử ASR/NER y tế — MediVoice VN
-# v1.0 | 2026-06-08 | Andy Phan (Maple Leaf Group)
+# v2.0 | 2026-06-08 | Andy Phan (Maple Leaf Group)
+# Synthesis: Claude (pipeline) + ChatGPT (structure) + Grok (VN terminology)
+# ⚠️ CHƯA QUA BS REVIEW — không dùng làm tài liệu y tế thật
 #
 # Tiêu chuẩn tham chiếu:
 #   i2b2/n2c2 Medication Extraction (2009–2022)
@@ -24,16 +26,21 @@ y tế tiếng Việt thực tế, bao gồm:
 - Độ bền vững qua điều kiện âm thanh khó (noise robustness)
 - Độ bền vững qua phong cách ngôn ngữ y tế VN (terminology)
 
-### 1.2 Cấu trúc corpus — 21 kịch bản
+### 1.2 Cấu trúc corpus — 41 kịch bản (v2.0)
 
-| Nhóm | Mô tả | Số kịch bản | Điều kiện chuẩn |
+| Nhóm | Mô tả | Số kịch bản | Mục tiêu test |
 |---|---|---|---|
-| A | Lâm sàng cơ bản | 5 | Yên tĩnh, chuẩn Hà Nội/Đà Nẵng |
-| B | Giọng vùng miền | 4 | Yên tĩnh, accent biến thể |
-| C | Ngôn ngữ khó | 5 | Yên tĩnh, thuật ngữ phức tạp |
-| D | Điều kiện âm thanh | 4 | Nhiễu/tiếng động |
-| E | Ca lâm sàng phức tạp | 3 | Hỗn hợp |
-| **Tổng** | | **21** | ~210 câu, ~25–40 phút audio |
+| A | Lâm sàng cơ bản | 5 | ASR + NER baseline |
+| B | Giọng vùng miền | 4 | Accent robustness |
+| C | Ngôn ngữ khó | 5 | Brand/abbrev/disfluency |
+| D | Điều kiện âm thanh | 4 | Noise robustness |
+| E | Ca lâm sàng phức tạp | 3 | Multi-disease, emergency |
+| F | NER Stress Tests | 10 | Negation + attribution ← MỚI |
+| G | Intent & Context | 5 | Temporal: current/history/family ← MỚI |
+| H | Nha khoa | 5 | Phase 1 dental domain ← MỚI |
+| **Tổng** | | **41** | Full pipeline: Audio→ASR→NER→Chart |
+
+> Groups F, G, H: placeholder — cần generate từ CHATGPT_CORPUS_PROMPT.md v2.0 + BS review
 
 ### 1.3 Thang điểm PASS/FAIL
 
@@ -104,10 +111,10 @@ TRÁNH:
 
 ```
 Bệnh nhân nam, bốn mươi hai tuổi, nghề nghiệp kế toán. [DỪNG 1.5s]
-Lý do vào khám: đau họng ba ngày nay, đau tăng khi nuốt. [DỪNG 1s]
+Lý do vào khám: đau họng ba ngày nay, nuốt khó. [DỪNG 1s]
 Bệnh nhân tự uống Paracetamol nhưng không đỡ. [DỪNG 1.5s]
 
-Khám: tổng trạng tỉnh táo, tiếp xúc tốt. [DỪNG 0.5s]
+Khám: tình trạng tỉnh táo, tiếp xúc tốt. [DỪNG 0.5s]
 Huyết áp một trăm hai mươi trên tám mươi. [DỪNG 0.5s]
 Mạch tám mươi lần mỗi phút. [DỪNG 0.5s]
 Nhiệt độ ba mươi bảy phẩy tám độ. [DỪNG 0.5s]
@@ -1141,5 +1148,63 @@ data/audio/corpus/
 
 ---
 
-*CLINICAL_TEST_CORPUS_VN v1.0 | 2026-06-08 | MediVoice VN*
+---
+
+## VIII-F. NHÓM F — NER STRESS TESTS (TODO — cần generate)
+
+> **Mục tiêu:** ASR đúng nhưng NER sai. Test negation và attribution.
+> **Trạng thái:** PLACEHOLDER — generate từ docs/dev/CHATGPT_CORPUS_PROMPT.md v2.0
+
+| ID | Input ngắn | NER đúng phải ra |
+|---|---|---|
+| F-01 | "Bệnh nhân dị ứng Penicillin" | `{allergy: "Penicillin"}` |
+| F-02 | "Không dị ứng thuốc" | `{allergy: null}` |
+| F-03 | "Cha bị tăng huyết áp, bệnh nhân không bị" | `{family_hx: "THA", patient_hx: null}` |
+| F-04 | "Không sốt, không ho, không khó thở" | `{fever: null, cough: null, dyspnea: null}` |
+| F-05 | "Đã hết đau đầu sau uống thuốc" | `{headache: "resolved"}` |
+| F-06 | "Tiền sử từng bị viêm phổi năm ngoái" | `{history: "viêm phổi", current: null}` |
+| F-07 | "Em đau họng, không đau tai" | `{throat_pain: true, ear_pain: false}` |
+| F-08 | "Ngưng Metformin do suy thận, thay Glipizide" | `{stopped: "Metformin", added: "Glipizide"}` |
+| F-09 | "Chưa có biến chứng thần kinh" | `{complication_neuro: null}` |
+| F-10 | "Bệnh nhân phủ nhận uống rượu" | `{alcohol: false}` |
+
+---
+
+## VIII-G. NHÓM G — INTENT & CONTEXT (TODO — cần generate)
+
+> **Mục tiêu:** Phân biệt temporal context: current / historical / family / resolved / conditional
+> **Trạng thái:** PLACEHOLDER
+
+| ID | Input | Intent đúng |
+|---|---|---|
+| G-01 | "Tôi đau họng" | CURRENT symptom |
+| G-02 | "Bệnh nhân hết đau họng" | RESOLVED — không active |
+| G-03 | "Tiền sử từng đau họng" | HISTORY — không current |
+| G-04 | "Đau họng nếu uống lạnh" | CONDITIONAL — không active hiện tại |
+| G-05 | "Mẹ bệnh nhân hay bị đau họng" | FAMILY — không phải bệnh nhân |
+
+---
+
+## VIII-H. NHÓM H — NHA KHOA (TODO — cần generate)
+
+> **Mục tiêu:** Domain nha khoa — Phase 1 target của MediVoice (M8 Plugin, Mẫu 16/BV-01)
+> **Trạng thái:** PLACEHOLDER — cần BS nha khoa review
+
+| ID | Ca | ICD-10-VN | Thuật ngữ key |
+|---|---|---|---|
+| H-01 | Khám răng định kỳ, không bệnh | Z01.2 | "kiểm tra định kỳ", "không sâu" |
+| H-02 | Viêm tủy răng 46 không hồi phục | K04.0 | "điều trị tủy", không "chữa ống tủy" |
+| H-03 | Nhổ răng khôn 48 biến chứng | K01.1 | "nhổ răng", không "rút răng" |
+| H-04 | Cạo vôi và đánh bóng | Z29.8 | "cạo vôi", "đánh bóng", "hướng dẫn vệ sinh răng" |
+| H-05 | Phục hình mão sứ zirconia răng 21 | K08.3 | "mão sứ zirconia", "lấy dấu", "gắn tạm" |
+
+> Tên răng: "răng bốn mươi sáu" (46), "răng hai mươi mốt" (21)
+> Vật liệu: "zirconia", "composite", "amalgam" — đọc theo cách BS nha khoa VN thực nói
+
+---
+
+*CLINICAL_TEST_CORPUS_VN v2.0 | 2026-06-08 | MediVoice VN*
+*Synthesis: Claude v1 + ChatGPT analysis + Grok VN terminology*
 *Tham chiếu: i2b2/n2c2 | VLSP 2018 | ITU-T P.800 | ICD-10-VN QĐ5837 | TT32/2023*
+*Prompt để regenerate đầy đủ: docs/dev/CHATGPT_CORPUS_PROMPT.md v2.0*
+*⚠️ Cần BS review trước khi dùng cho thu âm thật*

@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-08 | v0.5.3
+# Cập nhật: 2026-06-08 | v0.6.3
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -37,7 +37,7 @@
 | P0.2.L0 | │  ├─ L0 Normalize | 16kHz mono, VAD, hash, purge audio | 🟢 | — | SES-20260604 | NĐ13/2023 |
 | P0.2.L1a | │  ├─ L1a PhoWhisper ASR | Nhận dạng giọng nói VN, offline, chunk 10s | 🟢 | — | SES-20260604 | WER 36-52% chưa fine-tune |
 | P0.2.L1b | │  ├─ L1b Drug Correct | Sửa tên thuốc về INN, alias map 110+ thuốc | 🟢 | — | SES-20260604 | |
-| P0.2.L1c | │  ├─ L1c NER VN | Rule-based: vitals, drugs, diagnosis, follow-up | 🟢 | FID-VN-005 | SES-20260607 | VN word-form numbers fixed |
+| P0.2.L1c | │  ├─ L1c NER VN | Rule-based: vitals, drugs, diagnosis, follow-up | 🟢 | FID-VN-005 | SES-20260608e | 11 bugs fixed A-01/A-02/A-03 — real-world testing |
 | P0.2.L1d | │  ├─ L1d ICD-10-VN | Auto-lookup 15,026 mã (QĐ5837/BYT) | 🟢 | — | SES-20260604 | |
 | P0.2.L2 | │  ├─ L2 Validate | Confidence scoring, weighted fields | 🟢 | — | SES-20260604 | |
 | P0.2.L3 | │  ├─ L3 Route | lam_sang/cdha/nha_khoa + transcript fallback | 🟢 | — | SES-20260606 | Bug fix: transcript fallback |
@@ -153,8 +153,9 @@
 | # | Task | Điều kiện | File |
 |---|---|---|---|
 | 1 | **PILOT Đà Nẵng** Cài install.bat, BS dùng thật | DEPLOY-001 DONE ✅ | Andy |
-| 2 | **BENCH-002** Record 30-50 audio thật → CEER thật | Sau pilot | PA-001 |
-| 3 | **TEST-E2E-001** End-to-end với audio thật | Sau pilot | CT |
+| 2 | **BENCH-002** Record 30-50 audio thật → CEER thật | Sau pilot | PA-006 |
+| 3 | **CHATGPT-CORPUS-001** Andy paste prompt → ChatGPT → 41 scripts → BS review | `docs/dev/CHATGPT_CORPUS_PROMPT.md` v2.0 | PA-007 |
+| 4 | **TEST-E2E-001** End-to-end với audio thật | Sau pilot | CT |
 
 ### 🟡 SONG SONG (Andy làm)
 
@@ -180,7 +181,7 @@
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | 322/322 | 🟢 |
+| Tests PASS | 100% | 352/352 | 🟢 |
 | bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
 | Vital extraction (TC audio) | >0% | bench tc_001/tc_002: vital=True | 🟢 fixed FID-VN-005 |
 | WER | <30% | 36-52% | 🔴 cần fine-tune |
@@ -210,6 +211,7 @@
 | SES-20260608b | 2026-06-08 | v0.5.2→v0.5.3 | CT-007 DONE — Followup CEER 0.7→0.1 (tai_kham regex extended) + Naming Convention v1.2 |
 | SES-20260608c | 2026-06-08 | v0.5.3→v0.6.0 | CT-005 DEPLOY-001 DONE — install.bat + start.bat + check_env + setup_facility (287 tests) |
 | SES-20260608d | 2026-06-08 | v0.6.0→v0.6.1 | GAP-003 ✅ GAP-004 ✅ — 35 unit tests L8+L9a (322 tests total) |
+| SES-20260608e | 2026-06-08 | v0.6.1→v0.6.3 | Real-world test A-01/A-02/A-03 — 11 NER+ICD bugs fixed — 352 tests — Adaptive Learning arch doc |
 
 ---
 

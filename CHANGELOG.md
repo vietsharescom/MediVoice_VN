@@ -1,6 +1,46 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.6.3] — 2026-06-08 — Real-world NER+ICD fix A-03 (352 tests total)
+
+### NER Fixes (A-03 Tăng huyết áp)
+- fix(l1c_ner): `_RE_HA_SYSTOLIC` — allow up to 40 chars between "huyết áp" and digits (fixes "hôm nay là 170/100")
+- fix(l1c_ner): `_RE_BP_WORDS` — add "tri" as alias for "trên" (PhoWhisper phonetic confusion)
+- fix(l1c_ner): `ly_do` fallback — skip "nghề nghiệp X" prefix pattern
+- fix(l1c_ner): `ly_do` — require symptom keyword in fallback capture (filters admin text)
+- fix(l1c_ner): `tai_kham` — strip trailing admin instructions, only keep "hoặc/nếu/sớm hơn" clauses
+- fix(l1c_ner): Iron (Ferrous) context guard — require anemia context (thiếu máu/ferritin etc.) to prevent false positive from Losartan phonetic explosion
+
+### Stats: **352/352 tests PASS** (+5 from A-03 NER regression tests) | bandit 0 HIGH/MEDIUM
+
+---
+
+## [v0.6.2] — 2026-06-08 — Real-world NER+ICD fix A-01/A-02 (347 tests total)
+
+### NER Fixes (A-01 Viêm họng cấp)
+- fix(l1c_ner): `chan_doan` boundary overflow — stop capture at "điều trị/kê đơn/tái khám" keywords
+- fix(l1c_ner): Temperature decimal without "phẩy" — "ba mươi bảy tám" → 37.8 (not 37.0)
+- fix(l1c_ner): Patient self-medication filter — "bệnh nhân tự uống X" → excluded from don_thuoc
+- fix(l1c_ner): Drug unit ml→mg correction for oral route (PhoWhisper: "miligam"→"ml")
+
+### ICD-10 Fix (A-02 Viêm loét dạ dày)
+- fix(l1d_icd_lookup): `auto_lookup()` progressive prefix matching — drop up to 3 trailing ASR noise words and retry search
+
+### Tests
+- test(ner_bugs): `tests/unit/test_l1c_ner_bugs.py` expanded to 30 tests
+  - TestChanDoanBoundary (5), TestTemperatureDecimalWithoutPhay (6), TestPatientSelfMedicationFilter (5)
+  - TestDrugUnitMlToMg (3), TestLyDoExtraction (4), TestNgungFilter (3), TestICD10AutoLookup (4)
+
+### Docs
+- docs: `docs/records/ADAPTIVE_LEARNING_ARCHITECTURE.md` — 3-tier adaptive learning design
+  (TIER 1: PhoWhisper-medium upgrade, TIER 2: L4 Correction Capture, TIER 3: LoRA fine-tune)
+- docs: `docs/dev/CHATGPT_CORPUS_PROMPT.md` v2.0 — 41-case corpus prompt (Groups A-H) for ChatGPT/Grok regeneration
+- docs: `docs/dev/CLINICAL_TEST_CORPUS_VN.md` v2.0 — VN terminology corrections ("tình trạng" not "tổng trạng", "đau khi nuốt" not "đau tăng khi nuốt")
+
+### Stats: **347/347 tests PASS** (+25 new NER regression tests) | bandit 0 HIGH/MEDIUM
+
+---
+
 ## [v0.6.1] — 2026-06-08 — GAP-003 + GAP-004: Unit tests L8 + L9a (322 tests total)
 
 ### Tests
