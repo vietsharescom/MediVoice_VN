@@ -44,7 +44,7 @@ Nếu Andy trả lời/làm xong → Claude cập nhật status → DONE.
 | CT-004 | Viết tests GAP-005 (API integration tests) | 🔴 HIGH | ✅ DONE | 2026-06-06 |
 | CT-006 | **Drug CEER fix** — DEFERRED. Blocked by TRAIN-001 (cần audio thật). Andy approved defer 2026-06-08. \| P0.5.2d | 🟡 LOW | DEFERRED | 2026-06-08 |
 | CT-007 | **Followup CEER fix** — Cải thiện tai_kham regex `src/core/l1c_ner.py` → Followup CEER **0.7→0.1** ✅ \| P0.5.2e | 🟡 MEDIUM | ✅ DONE | 2026-06-08 |
-| CT-005 | **DEPLOY-001** Windows installer PyInstaller — mở khóa sau CT-007 done ✅ \| P0.6 | 🟡 MEDIUM | PENDING | 2026-06-06 |
+| CT-005 | **DEPLOY-001** Windows installer (venv approach) — install.bat + start.bat + check_env + setup_facility \| P0.6 | 🟡 MEDIUM | ✅ DONE — 287/287 PASS | 2026-06-06 |
 
 ---
 

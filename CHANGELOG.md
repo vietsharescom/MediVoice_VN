@@ -1,6 +1,30 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.6.0] — 2026-06-08 — CT-005 DEPLOY-001: Windows venv installer cho BS Đà Nẵng
+
+### Deploy
+- feat(deploy): `install.bat` — 6-step Windows installer (Python check → venv → pip → data → config → pre-flight)
+- feat(deploy): `start.bat` — daily launcher (auto-detect port → open browser → run app)
+- feat(deploy): `scripts/check_env.py` — pre-flight checks: Python version, disk space, packages, model cache, reference data, port availability
+- feat(deploy): `scripts/setup_facility.py` — interactive facility config wizard (tên PK, địa chỉ, BS, CCHN, port)
+- feat(deploy): `config/facility_config.json` — facility config template (province_code, byt_registration_number, host, port)
+- feat(deploy): `requirements-prod.txt` — production deps only (no pytest/dev tools)
+
+### Tests
+- test(deploy): `tests/unit/test_check_env.py` — 15 tests covering all check_env functions
+  - TestCheckPython: version detection + MIN_PYTHON threshold
+  - TestCheckDisk: disk usage mock (patch check_env.shutil.disk_usage as tuple)
+  - TestCheckPackages: import mock
+  - TestCheckReferenceData: tmp_path with REQUIRED_DATA override
+  - TestCheckPort: real socket binding
+  - TestCheckFacilityConfig: JSON valid/missing/malformed
+  - TestRunAll: all-pass + one-fail
+
+### Stats: **287/287 tests PASS** (+15 new) | bandit 0 HIGH/MEDIUM
+
+---
+
 ## [v0.5.3] — 2026-06-08 — CT-007: Followup CEER 0.7→0.1 (tai_kham regex extended)
 
 ### NER Fix

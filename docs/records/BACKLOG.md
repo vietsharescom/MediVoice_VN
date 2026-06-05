@@ -78,8 +78,15 @@
   - `bench_ceer.py --gt` flag — whitelist filtering
   - `data/audio/dental/` — dental audio tách riêng
 - [ ] **TEST-E2E-001** 🟡 End-to-end test full pipeline với audio thực tế (sau DEPLOY-001)
-- [ ] **DEPLOY-001** 🟡 Package app để BS Đà Nẵng install (Windows + Python venv installer)
-- [ ] **CONFIG-001** 🟢 Facility config UI (tên phòng khám, CCHN, khoa — file JSON)
+- [x] **DEPLOY-001** ✅ Windows venv installer cho BS Đà Nẵng (2026-06-08)
+  - `install.bat` — one-click installer (Python check + venv + pip + config)
+  - `start.bat` — daily launcher (auto-open browser)
+  - `scripts/check_env.py` — pre-flight checks (Python, disk, packages, port)
+  - `scripts/setup_facility.py` — interactive facility config wizard
+  - `config/facility_config.json` — facility config template
+  - `requirements-prod.txt` — production deps (no dev tools)
+  - `tests/unit/test_check_env.py` — 15 tests PASS | Total: 287/287
+- [x] **CONFIG-001** ✅ Facility config JSON (config/facility_config.json + setup_facility.py) (2026-06-08)
 - [ ] **DRUG-ALIAS-001** 🟢 Mở rộng alias map trong drug_db.json (thêm typo VN phổ biến)
 
 ---

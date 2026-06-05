@@ -249,11 +249,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.5.3 |
-| Status | **CT-007 DONE ✅ — Followup CEER 0.7→0.1 — 272/272 PASS** |
-| Tests | **272/272 PASS** · bandit 0 HIGH/MEDIUM |
-| Pending | **1 Andy action** (PA-006) · **1 Claude todo** (CT-005) · CT-006 DEFERRED |
-| Next task | **DEPLOY-001** (CT-005, Windows installer) · BENCH-002 real audio (PA-006) |
+| Version | v0.6.0 |
+| Status | **CT-005 DEPLOY-001 DONE ✅ — install.bat + venv installer — 287/287 PASS** |
+| Tests | **287/287 PASS** · bandit 0 HIGH/MEDIUM |
+| Pending | **1 Andy action** (PA-006: BENCH-002 real audio) · GAP-003 + GAP-004 unit tests |
+| Next task | **GAP-003** (test_l8_error_handler) · **GAP-004** (test_l9a_pdf_export) · **PILOT Đà Nẵng** |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` |
 
 ---

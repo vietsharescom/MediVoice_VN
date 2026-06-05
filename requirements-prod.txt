@@ -1,0 +1,33 @@
+# MediVoice VN — Production dependencies (no dev tools)
+# Python 3.10
+# Install: pip install -r requirements-prod.txt
+
+# ── API Backend ──────────────────────────────────────────────
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+python-multipart==0.0.9
+
+# ── ASR — PhoWhisper (VinAI, BSD-3-Clause) ───────────────────
+transformers==4.41.2
+torch==2.3.0
+torchaudio==2.3.0
+# Model vinai/PhoWhisper-small tự download lần đầu chạy (~150MB)
+
+# ── Audio Processing ──────────────────────────────────────────
+soundfile==0.12.1
+librosa==0.10.2
+pydub==0.25.1
+
+# ── Database + Security ───────────────────────────────────────
+cryptography==42.0.8
+
+# ── PDF Export ────────────────────────────────────────────────
+reportlab==4.2.0
+
+# ── Utilities ─────────────────────────────────────────────────
+python-dotenv==1.0.1
+pydantic==2.7.2
+httpx==0.27.0
+
+# ── TTS (Queue loa — Phase 1) ─────────────────────────────────
+# gtts==2.5.1  ← bỏ comment khi enable Queue TTS

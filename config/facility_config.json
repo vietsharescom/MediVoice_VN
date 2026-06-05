@@ -1,0 +1,16 @@
+{
+  "_comment": "MediVoice VN — Cấu hình cơ sở y tế. Chạy scripts/setup_facility.py để cập nhật.",
+  "facility_id": "FAC-DEFAULT",
+  "ten_co_so": "Phòng khám tư",
+  "byt_registration_number": "",
+  "province_code": "48",
+  "dia_chi": "",
+  "so_dien_thoai": "",
+  "so_y_te": "Sở Y tế TP. Đà Nẵng",
+  "doctor_ho_ten": "",
+  "doctor_cchn": "",
+  "app_host": "127.0.0.1",
+  "app_port": 8000,
+  "db_path": "medivoice.db",
+  "log_level": "INFO"
+}

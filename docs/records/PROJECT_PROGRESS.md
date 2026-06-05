@@ -86,10 +86,10 @@
 | P0.5.2e | │  ├─ CEER Followup baseline | Followup=0.7🔴 → **0.1✅** | 🟢 | CT-007 | SES-20260608 | _RE_TAI_KHAM captures extra context (kèm/nếu/xét nghiệm). binh_dinh=TRAIN-001 dep. |
 | P0.5.2f | │  └─ Data tổ chức | dental/ folder tách riêng, xóa 22 duplicates | 🟢 | — | SES-20260608 | `data/audio/dental/` |
 | | │ | | | | | |
-| **P0.6** | **├─ ⏳ DEPLOY-001** | **Windows installer cho BS Đà Nẵng** | **⏳** | **CT-005** | — | 🔓 **Đã mở khóa** — CT-007 done ✅ + CT-006 deferred (Andy approved). **Sẵn sàng bắt đầu.** |
-| P0.6a | │  ├─ Python venv bundle | PyInstaller hoặc NSIS installer | ⏳ | CT-005 | — | |
-| P0.6b | │  ├─ Model cache | PhoWhisper + ICD + drug_db pre-bundled | ⏳ | CT-005 | — | |
-| P0.6c | │  └─ Setup wizard | Cấu hình CCHN, phòng khám, license | ⏳ | CONFIG-001 | — | |
+| **P0.6** | **├─ 🟢 DEPLOY-001** | **Windows installer cho BS Đà Nẵng** | **🟢** | **CT-005** | SES-20260608 | install.bat + start.bat + check_env + setup_facility + facility_config |
+| P0.6a | │  ├─ Python venv bundle | install.bat — check Python + create venv + pip install | 🟢 | CT-005 | SES-20260608 | `install.bat` |
+| P0.6b | │  ├─ Model cache | check_env.py checks PhoWhisper cache (~150MB tự download) | 🟢 | CT-005 | SES-20260608 | `scripts/check_env.py` |
+| P0.6c | │  └─ Setup wizard | setup_facility.py + facility_config.json template | 🟢 | CT-005 | SES-20260608 | `scripts/setup_facility.py` |
 | | │ | | | | | |
 | **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
 | P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |
@@ -148,13 +148,13 @@
 
 ## PHIÊN TIẾP THEO — LÀM GÌ?
 
-### ⚡ NGAY BÂY GIỜ (unlocked — CT-007 DONE)
+### ⚡ NGAY BÂY GIỜ
 
 | # | Task | Điều kiện | File |
 |---|---|---|---|
-| 1 | **DEPLOY-001** Windows installer PyInstaller | Sẵn sàng | CT-005 |
-| 2 | GAP-003 (error handler tests) | Song song | `tests/unit/` |
-| 3 | GAP-004 (PDF export tests) | Song song | `tests/unit/` |
+| 1 | **GAP-003** unit tests L8 error handler | Sẵn sàng | `tests/unit/test_l8_error_handler.py` |
+| 2 | **GAP-004** unit tests L9a PDF export | Sẵn sàng | `tests/unit/test_l9a_pdf_export.py` |
+| 3 | **PILOT Đà Nẵng** Cài install.bat, BS dùng thật | DEPLOY-001 DONE ✅ | Andy |
 
 ### 🟡 SONG SONG (Andy làm)
 
@@ -176,11 +176,11 @@
 
 ---
 
-## METRICS HIỆN TẠI (2026-06-07)
+## METRICS HIỆN TẠI (2026-06-08)
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | 272/272 | 🟢 |
+| Tests PASS | 100% | 287/287 | 🟢 |
 | bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
 | Vital extraction (TC audio) | >0% | bench tc_001/tc_002: vital=True | 🟢 fixed FID-VN-005 |
 | WER | <30% | 36-52% | 🔴 cần fine-tune |
@@ -207,9 +207,10 @@
 | SES-20260606b | 2026-06-06 | v0.4.5→v0.5.0 | VN-ROUTER-001 DONE — L6 branch FID-VN-004 (232 tests) |
 | SES-20260607 | 2026-06-07 | v0.5.0→v0.5.1 | VN-NER-002 DONE — FID-VN-005 word-form numbers (272 tests) |
 | SES-20260608 | 2026-06-08 | v0.5.1→v0.5.2 | BENCH-002 baseline lâm sàng 10 vùng miền + tools + data organization |
-| SES-20260608b | 2026-06-08 | v0.5.2→v0.5.3 | CT-007 DONE — Followup CEER 0.7→0.1 (tai_kham regex extended) |
+| SES-20260608b | 2026-06-08 | v0.5.2→v0.5.3 | CT-007 DONE — Followup CEER 0.7→0.1 (tai_kham regex extended) + Naming Convention v1.2 |
+| SES-20260608c | 2026-06-08 | v0.5.3→v0.6.0 | CT-005 DEPLOY-001 DONE — install.bat + start.bat + check_env + setup_facility (287 tests) |
 
 ---
 
-*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.1 | 2026-06-07*
+*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.2 | 2026-06-08*
 *Cập nhật mỗi phiên đóng. Đọc cùng BACKLOG.md + PENDING_REQUESTS.md*
