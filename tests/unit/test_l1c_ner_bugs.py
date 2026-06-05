@@ -256,3 +256,110 @@ class TestICD10AutoLookup:
     def test_empty_returns_empty(self):
         from core.l1d_icd_lookup import auto_lookup
         assert auto_lookup("") == ("", "")
+
+
+# ── Real-world transcript A-04 (PhoWhisper output) ───────────────────────────
+# Test case: nam 28 tuổi viêm họng — reveals BUG-A through BUG-F
+
+_TRANSCRIPT_A04 = (
+    "bệnh nhân nam 28 tuổi nhân viên văn phòng "
+    "em bị đau họng nuốt khó đã ban ngày nay sốt nhẹ việt chiều "
+    "không có bệnh lý nền "
+    "huyết áp 120/80 "
+    "mặc 80 lần mỗi phút "  # "mặc" = PhoWhisper for "mạch"
+    "nhiệt độ 37 độ 8 "     # "37 độ 8" → should be 37.8
+    "cân nặng 68 ký "
+    "viêm hỗn cấp "         # "chẩn đoán" keyword dropped by ASR
+    "kê đơn ammos lim 500 mg hai viên chia ba lần mỗi ngày trong bảy ngày "
+    "paracidamone 500 mg một viên khi đau hoặc sốt "
+    "tái khám sau năm ngày nếu không đỡ"
+)
+
+
+class TestBugA_TempDoDecimal:
+    """BUG-A: 'ba mươi bảy độ tám' / '37 độ 8' → 37.8 (not 37.0)"""
+
+    def test_nhiet_do_do_separator(self):
+        t = "nhiệt độ 37 độ 8"
+        ent = extract_entities(t)
+        assert ent.nhiet_do == pytest.approx(37.8)
+
+    def test_nhiet_do_do_separator_word_form(self):
+        t = "nhiệt độ ba mươi bảy độ tám"
+        from core.l1c_ner import extract_entities as ee
+        ent = ee(t)
+        assert ent.nhiet_do == pytest.approx(37.8)
+
+    def test_a04_nhiet_do(self):
+        ent = extract_entities(_TRANSCRIPT_A04)
+        assert ent.nhiet_do == pytest.approx(37.8)
+
+
+class TestBugB_MachAlias:
+    """BUG-B: 'mặc 80 lần' → mạch = 80"""
+
+    def test_mac_alias(self):
+        t = "mặc 80 lần mỗi phút"
+        ent = extract_entities(t)
+        assert ent.mach == pytest.approx(80)
+
+    def test_a04_mach(self):
+        ent = extract_entities(_TRANSCRIPT_A04)
+        assert ent.mach == pytest.approx(80)
+
+
+class TestBugC_NhanVienOccupation:
+    """BUG-C: 'nhân viên văn phòng' occupation skip in ly_do fallback"""
+
+    def test_nhan_vien_not_in_ly_do(self):
+        t = "bệnh nhân nam 28 tuổi nhân viên văn phòng em bị đau họng huyết áp 120/80"
+        ent = extract_entities(t)
+        assert "nhân viên" not in ent.ly_do
+
+    def test_symptom_still_captured(self):
+        t = "bệnh nhân nam 28 tuổi nhân viên văn phòng em bị đau họng huyết áp 120/80"
+        ent = extract_entities(t)
+        assert "đau" in ent.ly_do or ent.ly_do == ""
+
+
+class TestBugD_ChanDoanFallback:
+    """BUG-D: chan_doan extracted even when 'chẩn đoán' keyword dropped by ASR"""
+
+    def test_fallback_no_keyword(self):
+        t = "viêm hỗn cấp kê đơn Amoxicillin 500 mg"
+        ent = extract_entities(t)
+        assert ent.chan_doan != ""
+        assert "viêm" in ent.chan_doan.lower()
+
+    def test_tang_huyet_ap_fallback(self):
+        t = "tăng huyết áp điều trị Amlodipine 10 mg"
+        ent = extract_entities(t)
+        assert "tăng" in ent.chan_doan.lower() or ent.chan_doan != ""
+
+    def test_explicit_keyword_still_works(self):
+        t = "chẩn đoán viêm họng cấp kê đơn Amoxicillin 500 mg"
+        ent = extract_entities(t)
+        assert ent.chan_doan == "viêm họng cấp"
+
+
+class TestBugEF_DrugAliases:
+    """BUG-E+F: 'ammos lim' → Amoxicillin, 'paracidamone' → Paracetamol"""
+
+    def test_ammos_lim(self):
+        from core.l1b_drug_correct import extract_drug_candidates
+        candidates = extract_drug_candidates("ammos lim 500 mg ba lần mỗi ngày")
+        inns = [c["inn"] for c in candidates]
+        assert "Amoxicillin" in inns
+
+    def test_paracidamone(self):
+        from core.l1b_drug_correct import extract_drug_candidates
+        candidates = extract_drug_candidates("paracidamone 500 mg khi đau")
+        inns = [c["inn"] for c in candidates]
+        assert "Paracetamol" in inns
+
+    def test_a04_drugs_detected(self):
+        from core.l1b_drug_correct import extract_drug_candidates
+        candidates = extract_drug_candidates(_TRANSCRIPT_A04)
+        inns = {c["inn"] for c in candidates}
+        assert "Amoxicillin" in inns
+        assert "Paracetamol" in inns

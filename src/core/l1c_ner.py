@@ -45,7 +45,7 @@ class MedicalEntities:
 _RE_NHIET_DO = re.compile(
     r"(?:sốt|nhiệt độ|temp(?:erature)?)\s*[:\s]?\s*"
     r"(\d{2}(?:[.,]\d)?)"
-    r"(?:\s+(một|hai|ba|bốn|năm|sáu|bảy|bẩy|tám|chín))?"
+    r"(?:\s+(?:độ\s*)?(\d|một|hai|ba|bốn|năm|sáu|bảy|bẩy|tám|chín))?"  # digit OR VN word; allow "độ" separator
     r"\s*°?(?:c|celsius|độ)?",
     re.IGNORECASE
 )
@@ -54,7 +54,7 @@ _RE_HA_SYSTOLIC = re.compile(
     re.IGNORECASE
 )
 _RE_MACH = re.compile(
-    r"(?:mạch|pulse|HR)\s*[:\s]?\s*(\d{2,3})\s*(?:lần/phút|bpm|nhịp)?",
+    r"(?:mạch|mặc|pulse|HR)\s*[:\s]?\s*(\d{2,3})\s*(?:lần/phút|bpm|nhịp)?",  # "mặc" = PhoWhisper for "mạch"
     re.IGNORECASE
 )
 _RE_NHIP_THO = re.compile(
@@ -95,7 +95,7 @@ _RE_LY_DO = re.compile(
 )
 _RE_LY_DO_FALLBACK = re.compile(
     r"\b\d+\s*tuổi[\s,.]+"
-    r"(?:nghề\s*nghiệp\s+[^,;.]{1,30}[,;.]?\s*)?"  # skip "nghề nghiệp X"
+    r"(?:(?:nghề\s*nghiệp|nhân\s*viên)\s+[^,;.]{1,30}[,;.]?\s*)?"  # skip "nghề nghiệp X" / "nhân viên X"
     r"([^.!?\n]{5,}?)(?=\s*(?:tiền\s*sử|huyết\s*áp|nhiệt\s*độ|mạch\s+\d|$))",
     re.IGNORECASE,
 )
@@ -114,6 +114,14 @@ _RE_CHAN_DOAN = re.compile(
     r"(?:chẩn\s*đoán|diagnos\w*)[:\s]+([^.,;,\n]+?)"
     r"(?=\s*(?:điều\s*trị|kê\s*(?:đơn|thuốc)?|cho\s*(?:uống|dùng)|"
     r"đơn\s*thuốc|tái\s*khám|hẹn|$))",
+    re.IGNORECASE
+)
+# Fallback: PhoWhisper sometimes drops "chẩn đoán" keyword entirely.
+# Detect disease name (viêm/tăng/đái...) directly before "kê đơn/điều trị".
+_RE_CHAN_DOAN_FALLBACK = re.compile(
+    r"\b((?:viêm|tăng|đái|suy|nhồi|thiếu|đau|gãy|loét|rối\s*loạn|hội\s*chứng)"
+    r"(?:\s+\w+){1,5}?)"
+    r"(?=\s*(?:kê\s*(?:đơn|thuốc)?|điều\s*trị|cho\s*(?:uống|dùng)))",
     re.IGNORECASE
 )
 
@@ -256,9 +264,11 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
     m = _RE_NHIET_DO.search(t)
     if m:
         val = m.group(1).replace(",", ".")
-        # PhoWhisper often drops "phẩy" → decimal digit follows as bare VN word (e.g., "37 tám")
+        # PhoWhisper often drops "phẩy" or uses "độ" separator:
+        # "37 tám" / "37 độ tám" → 37.8 | "37 độ 8" → 37.8
         if "." not in val and m.group(2):
-            dec = _VN_ONES.get(m.group(2).lower().strip(), 0)
+            dec_str = m.group(2).lower().strip()
+            dec = int(dec_str) if dec_str.isdigit() else _VN_ONES.get(dec_str, 0)
             val = f"{val}.{dec}"
         ent.nhiet_do = float(val)
 
@@ -300,10 +310,14 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
             if _symptom_kw.search(captured):
                 ent.ly_do = captured
 
-    # Chẩn đoán
+    # Chẩn đoán — try explicit keyword first, then fallback (PhoWhisper may drop "chẩn đoán")
     m = _RE_CHAN_DOAN.search(t)
     if m:
         ent.chan_doan = m.group(1).strip()
+    else:
+        m = _RE_CHAN_DOAN_FALLBACK.search(t)
+        if m:
+            ent.chan_doan = m.group(1).strip()
 
     # Tái khám
     m = _RE_TAI_KHAM.search(t)
