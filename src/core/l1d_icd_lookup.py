@@ -63,14 +63,19 @@ def search_by_text(query: str, max_results: int = 5) -> list[dict]:
 def auto_lookup(diagnosis_text: str) -> tuple[str, str]:
     """
     Tự động tra ICD-10-VN từ text chẩn đoán.
+    Thử full text trước; nếu không đạt ngưỡng, bỏ dần trailing words (ASR noise).
     Returns: (icd_code, display_vn) hoặc ("", "") nếu không tìm được.
     """
     if not diagnosis_text:
         return "", ""
 
-    results = search_by_text(diagnosis_text, max_results=1)
-    if results and results[0]["score"] >= 0.5:
-        return results[0]["code"], results[0]["display"]
+    words = diagnosis_text.split()
+    # Drop up to 3 trailing words to remove ASR noise (e.g. "tát rạn" from "tá tràng")
+    for n in range(len(words), max(2, len(words) - 3) - 1, -1):
+        query = " ".join(words[:n])
+        results = search_by_text(query, max_results=1)
+        if results and results[0]["score"] >= 0.5:
+            return results[0]["code"], results[0]["display"]
 
     return "", ""
 

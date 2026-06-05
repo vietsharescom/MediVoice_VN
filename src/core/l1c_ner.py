@@ -86,6 +86,19 @@ _RE_ROUTE = re.compile(
     re.IGNORECASE
 )
 
+# ─── Lý do khám patterns ─────────────────────────────────────────────────────
+
+_RE_LY_DO = re.compile(
+    r"(?:lý\s*do\s*(?:vào\s*)?(?:khám|cán|kham)|chief\s*complaint)[:\s]+"
+    r"([^.!?\n]{3,}?)(?=\s*(?:bệnh\s*nhân|tiền\s*sử|huyết\s*áp|nhiệt\s*độ|mạch|$))",
+    re.IGNORECASE,
+)
+_RE_LY_DO_FALLBACK = re.compile(
+    r"\b\d+\s*tuổi[\s,.]+"
+    r"([^.!?\n]{5,}?)(?=\s*(?:tiền\s*sử|huyết\s*áp|nhiệt\s*độ|mạch\s+\d|$))",
+    re.IGNORECASE,
+)
+
 # ─── Tái khám patterns ──────────────────────────────────────────────────────
 
 _RE_TAI_KHAM = re.compile(
@@ -269,6 +282,15 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
     if m:
         ent.spo2 = float(m.group(1))
 
+    # Lý do khám — explicit prefix first, fallback to text after age mention
+    m = _RE_LY_DO.search(t)
+    if m:
+        ent.ly_do = m.group(1).strip()
+    else:
+        m = _RE_LY_DO_FALLBACK.search(t)
+        if m:
+            ent.ly_do = m.group(1).strip()[:80]
+
     # Chẩn đoán
     m = _RE_CHAN_DOAN.search(t)
     if m:
@@ -294,8 +316,11 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
         for dc in drug_candidates:
             pos = dc.get("word_position", 0)
             # Filter: drug mentioned in patient self-medication context (tiền sử), not prescription
+            # Also filter discontinuation instructions ("ngưng X", "ngừng X")
             pre = " ".join(words_orig[max(0, pos - 5): pos])
             if _RE_PATIENT_MED.search(pre):
+                continue
+            if re.search(r"\bng[ưừ]ng\b", pre, re.IGNORECASE):
                 continue
             drug_entry = _extract_drug_context(transcript, dc)
             ent.don_thuoc.append(drug_entry)
@@ -315,7 +340,7 @@ def _extract_drug_context(transcript: str, drug_candidate: dict) -> dict:
 
     ham_luong = ""
     m = _RE_DOSE_NUMBER.search(context)
-    if m:
+    if m and m.group(2):  # require explicit medical unit (mg, g, ml, mcg, iu, đv)
         ham_luong = m.group(0).strip()
 
     so_lan_ngay = ""

@@ -34,10 +34,10 @@ def _build_alias_map() -> dict[str, str]:
 
     for inn, entry in db.get("by_inn", {}).items():
         alias_map[_normalize_text(inn)] = inn
-        for brand in entry.get("brand_names_vn", []):
+        for brand in entry.get("brands", []):
             alias_map[_normalize_text(brand)] = inn
-        for alias in entry.get("aliases", []):
-            alias_map[_normalize_text(alias)] = inn
+        for variant in entry.get("name_variants", []):
+            alias_map[_normalize_text(variant)] = inn
 
     return alias_map
 

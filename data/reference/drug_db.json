@@ -122,7 +122,8 @@
         "Brufen",
         "Advil",
         "Nurofen",
-        "Ibuprofen"
+        "Ibuprofen",
+        "ibuprofan"
       ],
       "forms": [
         "viên 200mg",
@@ -136,6 +137,7 @@
       "otc": true,
       "keywords": [
         "ibuprofen",
+        "ibuprofan",
         "brufen",
         "advil",
         "nurofen"
@@ -274,7 +276,11 @@
         "Amoxicillin",
         "Augmentin (+ clavulanate)",
         "Amoxil",
-        "Clamoxyl"
+        "Clamoxyl",
+        "amo xylin",
+        "amo xi lan",
+        "amoxicilin",
+        "amoxylin"
       ],
       "forms": [
         "viên 250mg",
@@ -2581,6 +2587,9 @@
       "Paracetamol"
     ],
     "ibuprofen": [
+      "Ibuprofen"
+    ],
+    "ibuprofan": [
       "Ibuprofen"
     ],
     "brufen": [
