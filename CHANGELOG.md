@@ -1,6 +1,31 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.5.1] — 2026-06-07 — VN-NER-002: VN word-to-number + L6 lam_sang dùng VN NER [FID-VN-005]
+
+### Core fix (vital signs extraction from PhoWhisper output)
+- feat(L1c): `_normalize_vn_numbers()` — VN word-form numbers → Arabic digits before NER regex
+  - BP: "một trăm ba mươi trên chín mươi" → "130/90" ✅
+  - Decimal: "ba mươi tám phẩy năm" → "38.5", "ba mươi tám rưỡi" → "38.5" ✅
+  - Tens: "tám mươi" → "80", "bảy mươi lăm" → "75" ✅
+  - Shorthand: "tám lăm" → "85" (spoken shorthand for 85) ✅
+  - Units: "một tuần" → "1 tuần", "ba ngày" → "3 ngày", "năm miligam" → "5 miligam" ✅
+- feat(L6): `generate_mau15_from_vn_ner()` — maps MedicalEntities (VN dataclass) directly
+  replaces Canada NEREntity bridge for lam_sang route (FID-VN-004 interim)
+- feat(L6): `l6_agent.py` lam_sang path now uses original VI text → l1c_ner → VN NER
+  root cause fix: was using processed_text (MarianMT output) → Canada NER → 0% vital coverage
+- test: `tests/unit/test_l1c_vn_numbers.py` — 40 tests: _vn_to_int, _normalize_vn_numbers,
+  full transcript acceptance criteria (TC-001, TC-002, TC-003)
+- bench: `bench_ceer.py --partial` tc_001: vital=True followup=True ✅
+          `bench_ceer.py --partial` tc_002: vital=True followup=True ✅
+
+### Root cause fixed (FID-VN-005 §WHY)
+PhoWhisper outputs word-form numbers ("tám mươi") — l1c_ner regex required `\d{2,3}` digits.
+l6_agent lam_sang was using `processed_text` (MarianMT, mixed EN/VI) + Canada NER → silent fail.
+Fix: normalize VN numbers first, then use original VI text + VN NER directly.
+
+### Stats: 232 → 272 tests (+40 new)
+
 ## [v0.5.0] — 2026-06-06 — VN-ROUTER-001 DONE [FID-VN-004]
 
 ### Core feature (Phase 0 complete)

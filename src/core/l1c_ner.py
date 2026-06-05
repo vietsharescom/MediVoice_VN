@@ -104,6 +104,114 @@ _RE_CHI_DINH = re.compile(
     re.IGNORECASE
 )
 
+# ─── Vietnamese word-form number normalization (FID-VN-005) ───────────────────
+# PhoWhisper outputs word-form numbers ("tám mươi", "một trăm ba mươi trên chín mươi")
+# These must be converted to digits before regex NER patterns can match.
+
+_VN_ONES: dict[str, int] = {
+    "không": 0,
+    "mốt": 1, "một": 1,
+    "hai": 2,
+    "ba": 3,
+    "bốn": 4, "tư": 4,
+    "năm": 5, "lăm": 5,
+    "sáu": 6,
+    "bảy": 7, "bẩy": 7,
+    "tám": 8,
+    "chín": 9,
+}
+
+# Building blocks (all non-capturing)
+_W1  = r"(?:mốt|một|hai|ba|bốn|tư|lăm|năm|sáu|bảy|bẩy|tám|chín)"
+_WO  = r"(?:không|mốt|một|hai|ba|bốn|tư|lăm|năm|sáu|bảy|bẩy|tám|chín)"
+_WTG = r"(?:hai|ba|bốn|tư|năm|sáu|bảy|bẩy|tám|chín)\s+mươi(?:\s+" + _W1 + r")?"
+_W10 = r"mười(?:\s+" + _W1 + r")?"
+_WSH = r"(?:ba|bốn|tư|năm|sáu|bảy|bẩy|tám|chín)\s+(?:lăm|mốt)"   # "tám lăm"=85
+_WH  = (r"(?:một|hai|ba|bốn|tư|năm|sáu|bảy|bẩy|tám|chín)\s+trăm"
+        r"(?:\s+(?:" + _WTG + r"|" + _W10 + r"|" + _W1 + r"))?")
+_WN  = r"(?:" + _WH + r"|" + _WTG + r"|" + _W10 + r"|" + _WSH + r")"
+
+_RE_BP_WORDS  = re.compile(r"\b(" + _WN + r")\s+trên\s+(" + _WN + r")\b", re.I | re.U)
+_RE_DEC_WORDS = re.compile(r"\b(" + _WN + r"|" + _WO + r")\s+phẩy\s+(" + _WO + r")\b", re.I | re.U)
+_RE_RUOI      = re.compile(r"\b(" + _WN + r"|" + _WO + r")\s+(?:độ\s+)?rưỡi\b", re.I | re.U)
+_RE_WINT      = re.compile(r"\b" + _WN + r"\b", re.I | re.U)
+_WU           = r"\s*(?:viên|lần|ngày|tuần|tháng|kg|kilogram|g(?:ram)?|mg|miligam|ml|mililit|mcg|microgam|ống|gói|giọt)"
+_RE_W1U       = re.compile(r"\b(" + _WO + r")(" + _WU + r")\b", re.I | re.U)
+
+
+def _vn_tens_int(t: str) -> int | None:
+    m = re.match(
+        r"^(hai|ba|bốn|tư|năm|sáu|bảy|bẩy|tám|chín)"
+        r"\s+mươi(?:\s+(mốt|một|hai|ba|bốn|tư|lăm|năm|sáu|bảy|bẩy|tám|chín))?$",
+        t, re.UNICODE,
+    )
+    if m:
+        return _VN_ONES[m.group(1)] * 10 + (_VN_ONES.get(m.group(2), 0) if m.group(2) else 0)
+    m = re.match(
+        r"^mười(?:\s+(mốt|một|hai|ba|bốn|tư|lăm|năm|sáu|bảy|bẩy|tám|chín))?$",
+        t, re.UNICODE,
+    )
+    if m:
+        return 10 + (_VN_ONES.get(m.group(1), 0) if m.group(1) else 0)
+    # Shorthand: "tám lăm"→85, "ba mốt"→31
+    m = re.match(r"^(ba|bốn|tư|năm|sáu|bảy|bẩy|tám|chín)\s+(lăm|mốt)$", t, re.UNICODE)
+    if m:
+        _sh = {"ba": 3, "bốn": 4, "tư": 4, "năm": 5, "sáu": 6, "bảy": 7, "bẩy": 7, "tám": 8, "chín": 9}
+        return _sh[m.group(1)] * 10 + (5 if m.group(2) == "lăm" else 1)
+    return _VN_ONES.get(t)
+
+
+def _vn_to_int(text: str) -> int | None:
+    """Parse Vietnamese word-form integer (0–999) → int. Returns None on failure."""
+    t = re.sub(r"\s+", " ", text.lower().strip())
+    m = re.match(
+        r"^(một|hai|ba|bốn|tư|năm|sáu|bảy|bẩy|tám|chín)\s+trăm(?:\s+(.+))?$",
+        t, re.UNICODE,
+    )
+    if m:
+        h = _VN_ONES[m.group(1)] * 100
+        rest = (m.group(2) or "").strip()
+        if not rest:
+            return h
+        sub = _vn_tens_int(rest)
+        return h + sub if sub is not None else None
+    return _vn_tens_int(t)
+
+
+def _normalize_vn_numbers(text: str) -> str:
+    """
+    Convert Vietnamese word-form numbers → Arabic digits.
+    Called at start of extract_entities() so all NER regex can match digit format.
+    Order: BP first (avoid "trên" ambiguity), then decimal, rưỡi, integers, units.
+    """
+    def _bp(m: re.Match) -> str:
+        a, b = _vn_to_int(m.group(1)), _vn_to_int(m.group(2))
+        return f"{a}/{b}" if (a is not None and b is not None) else m.group(0)
+
+    def _dec(m: re.Match) -> str:
+        a = _vn_to_int(m.group(1))
+        b = _VN_ONES.get(m.group(2).lower().strip())
+        return f"{a}.{b}" if (a is not None and b is not None) else m.group(0)
+
+    def _ruoi(m: re.Match) -> str:
+        a = _vn_to_int(m.group(1))
+        return f"{a}.5" if a is not None else m.group(0)
+
+    def _wint(m: re.Match) -> str:
+        v = _vn_to_int(m.group(0))
+        return str(v) if v is not None else m.group(0)
+
+    def _unit(m: re.Match) -> str:
+        v = _VN_ONES.get(m.group(1).lower().strip())
+        return f"{v}{m.group(2)}" if v is not None else m.group(0)
+
+    r = _RE_BP_WORDS.sub(_bp, text)
+    r = _RE_DEC_WORDS.sub(_dec, r)
+    r = _RE_RUOI.sub(_ruoi, r)
+    r = _RE_WINT.sub(_wint, r)
+    r = _RE_W1U.sub(_unit, r)
+    return r
+
 
 def extract_entities(transcript: str, drug_candidates: list[dict] | None = None) -> MedicalEntities:
     """
@@ -112,49 +220,53 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
     """
     ent = MedicalEntities()
 
+    # Pre-process: convert VN word-form numbers → digits for regex matching
+    t = _normalize_vn_numbers(transcript)
+
     # Sinh hiệu
-    m = _RE_NHIET_DO.search(transcript)
+    m = _RE_NHIET_DO.search(t)
     if m:
         ent.nhiet_do = float(m.group(1).replace(",", "."))
 
-    m = _RE_HA_SYSTOLIC.search(transcript)
+    m = _RE_HA_SYSTOLIC.search(t)
     if m:
         ent.huyet_ap_tam_thu = int(m.group(1))
         ent.huyet_ap_tam_truong = int(m.group(2))
 
-    m = _RE_MACH.search(transcript)
+    m = _RE_MACH.search(t)
     if m:
         ent.mach = float(m.group(1))
 
-    m = _RE_NHIP_THO.search(transcript)
+    m = _RE_NHIP_THO.search(t)
     if m:
         ent.nhip_tho = float(m.group(1))
 
-    m = _RE_CAN_NANG.search(transcript)
+    m = _RE_CAN_NANG.search(t)
     if m:
         ent.can_nang = float(m.group(1).replace(",", "."))
 
-    m = _RE_SPO2.search(transcript)
+    m = _RE_SPO2.search(t)
     if m:
         ent.spo2 = float(m.group(1))
 
     # Chẩn đoán
-    m = _RE_CHAN_DOAN.search(transcript)
+    m = _RE_CHAN_DOAN.search(t)
     if m:
         ent.chan_doan = m.group(1).strip()
 
     # Tái khám
-    m = _RE_TAI_KHAM.search(transcript)
+    m = _RE_TAI_KHAM.search(t)
     if m:
         ent.tai_kham = f"Sau {m.group(1)} {m.group(2)}"
 
     # Chi định
-    for m in _RE_CHI_DINH.finditer(transcript):
+    for m in _RE_CHI_DINH.finditer(t):
         val = m.group(0).strip()
         if val:
             ent.chi_dinh.append(val)
 
-    # Đơn thuốc — dùng drug_candidates từ L1b
+    # Đơn thuốc — word positions from L1b are based on original transcript;
+    # normalize only the extracted context window to avoid position shifts.
     if drug_candidates:
         for dc in drug_candidates:
             drug_entry = _extract_drug_context(transcript, dc)
@@ -168,9 +280,10 @@ def _extract_drug_context(transcript: str, drug_candidate: dict) -> dict:
     inn = drug_candidate["inn"]
     pos = drug_candidate.get("word_position", 0)
 
-    # Lấy context 20 words sau tên thuốc
+    # Original word positions preserved; normalize only the context window
     words = transcript.split()
-    context = " ".join(words[pos: pos + 20])
+    context_raw = " ".join(words[pos: pos + 20])
+    context = _normalize_vn_numbers(context_raw)
 
     ham_luong = ""
     m = _RE_DOSE_NUMBER.search(context)

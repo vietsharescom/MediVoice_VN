@@ -25,10 +25,11 @@ Nếu Andy trả lời/làm xong → Claude cập nhật status → DONE.
 
 | ID | Mô tả | Priority | Status | Created | Nhắc #|
 |---|---|---|---|---|---|
-| PA-001 | **Record pilot audio** — path xác nhận: `data/audio/pilot/`. Chưa có file mới (vẫn 22 file BENCH-001). Khi có audio pilot → chạy `python tools/run_test_audio.py` | 🔴 HIGH | IN_PROGRESS | 2026-06-06 | 1 |
-| PA-002 | **Luật sư VN** — đã gửi email. Chờ phản hồi + lên lịch review DPA_TEMPLATE.md. | 🔴 HIGH | IN_PROGRESS | 2026-06-06 | 1 |
-| PA-003 | **Ký DPA template** với BS pilot Đà Nẵng (docs/compliance/DPA_TEMPLATE.md). Cần luật sư review xong (PA-002) rồi mới ký chính thức. | 🔴 HIGH | PENDING | 2026-06-06 | 1 |
+| PA-001 | **Record pilot audio** — audio pilot đã có tại `data/audio/`. Partial CEER chạy xong: 0/10 coverage. Cần ground truth để đo full CEER. | 🔴 HIGH | ✅ DONE | 2026-06-06 | 2 |
+| PA-002 | **Luật sư VN** — đã phản hồi + review `docs/compliance/DPA_TEMPLATE.md`. | 🔴 HIGH | ✅ DONE | 2026-06-06 | 2 |
+| PA-003 | **Ký `docs/compliance/DPA_TEMPLATE.md`** với BS pilot Đà Nẵng — đã ký. | 🔴 HIGH | ✅ DONE | 2026-06-06 | 2 |
 | PA-004 | **BS Onboarding Checklist** — đã ký với BS pilot. | 🟡 MEDIUM | ✅ DONE | 2026-06-06 | 1 |
+| PA-006 | **Ground truth labels** — Mở `data/audio/ground_truth_template.json`, điền chan_doan/drugs/vitals/tai_kham cho từng file audio theo những gì BS thực tế nói. Xong rename thành `data/audio/ground_truth.json` rồi báo Claude chạy `--full`. | 🟡 MEDIUM | PENDING | 2026-06-08 | 2 |
 | PA-005 | Approve FID-VN-004 | 🔴 HIGH | ✅ DONE | 2026-06-06 | 1 |
 
 ---
@@ -70,8 +71,11 @@ Nếu Andy trả lời/làm xong → Claude cập nhật status → DONE.
 |---|---|---|---|
 | CT-003 | tests/unit/test_pii_scan.py — 27 tests PASS | 2026-06-06 | Claude |
 | CT-004 | tests/integration/test_api.py — 18 tests PASS | 2026-06-06 | Claude |
-| CT-001 | FID-VN-004.md viết xong tại docs/dev/fids/ | 2026-06-06 | Claude |
-| PA-004 | BS Onboarding Checklist ký với BS pilot | 2026-06-06 | Andy ✅ |
+| CT-001 | `fids/FID-VN-004.md` viết xong | 2026-06-06 | Claude |
+| PA-004 | `docs/compliance/BS_ONBOARDING_CHECKLIST.md` ký với BS pilot | 2026-06-06 | Andy ✅ |
+| PA-001 | Audio pilot record xong → `data/audio/pilot/` | 2026-06-08 | Andy ✅ |
+| PA-002 | Luật sư VN phản hồi + review `docs/compliance/DPA_TEMPLATE.md` xong | 2026-06-08 | Andy ✅ |
+| PA-003 | `docs/compliance/DPA_TEMPLATE.md` đã ký với BS pilot Đà Nẵng | 2026-06-08 | Andy ✅ |
 
 ---
 

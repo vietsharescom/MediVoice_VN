@@ -2,138 +2,92 @@
 # Ghi đè mỗi phiên — git history lưu lịch sử cũ tự động
 # ISO/IEC 42001:2023 Cl.9.1 (Performance evaluation)
 
-## Mã phiên: SES-20260606
-## Thời gian: 2026-06-06
-## Version: v0.4.0 → v0.5.0
+## Mã phiên: SES-20260607
+## Thời gian: 2026-06-07
+## Version: v0.5.0 → v0.5.1
 
 ---
 
 ## Trạng thái đầu → cuối
-v0.4.0 | 165 tests → v0.5.0 | 232 tests PASS | VN-ROUTER-001 DONE
+v0.5.0 | 232 tests → v0.5.1 | 272 tests PASS | VN-NER-002 DONE + process fixes
 
 ---
 
 ## Đã hoàn thành
 
-### A. ISO FRAMEWORK (đầu phiên)
+### A. FID-VN-005 — VN-NER-002: VN word-form numbers + L6 VN NER
 
-**A1. Full ISO Audit + Gap Analysis**
-- Đọc toàn bộ 40+ files — so sánh DESIGN_REPORT vs code vs ISO docs
-- Tìm ra 16 issues: 4 bugs thật, 6 ISO gaps, 6 by-design
-- Kết quả: 24/24 ISO 42001 controls mapped ✅
+**Root cause fix cho 0% vital extraction từ PhoWhisper:**
+PhoWhisper output "tám mươi" / "một trăm ba mươi trên chín mươi" — regex NER dùng `\d{2,3}` → 0% extract.
+L6 lam_sang cũ dùng Canada NER trên MarianMT-translated text → silent entity failure.
 
-**A2. ISO Gaps Đã Đóng (6 files)**
-- RISK_REGISTER.md v1.1: fix R-P02 + thêm R-D01/D02/D03/R-O06
-- SCOPE.md v1.1: system boundary Phase 0/1/2/out-of-scope
-- MANAGEMENT_REVIEW.md: REVIEW 1 milestone 2026-06-06
-- LIFECYCLE_PLAN.md v1.1: P0.1→P2.1 milestones đầy đủ
-- STATEMENT_OF_APPLICABILITY.md: 61→165 tests
-- RTM.md v1.1: GAP-002+005 CLOSED, priority nâng CRITICAL
+**A1. src/core/l1c_ner.py — thêm VN word-to-number normalizer**
+- `_normalize_vn_numbers(text)`: 5 bước — BP (trên), decimal (phẩy), rưỡi (+độ), multi-word ints, single+unit
+- `_vn_to_int()` + `_vn_tens_int()`: parse "tám lăm"→85, "ba mươi tám"→38, "một trăm ba mươi"→130
+- `extract_entities()`: normalize transcript trước khi chạy regex NER
+- `_extract_drug_context()`: normalize chỉ context window 20-word (không normalize toàn bộ — tránh position drift)
 
-**A3. ISO Mới Tạo (6 files)**
-- DPA_TEMPLATE.md (DS-VN-COM-014): NĐ13/2023 data processing agreement
-- INCIDENT_RESPONSE_PLAN.md (DS-VN-COM-015): 72h breach + AI incident SOP
-- BS_ONBOARDING_CHECKLIST.md (DS-VN-COM-016): 17 điểm BS ký trước dùng app
-- IMPROVEMENT_PROCESS.md v1.1: consultation workflow + ISO cadence chuẩn
-- CONFUSION_PATTERNS.md (Tầng 4 Memory): 25 patterns Claude hay nhầm
-- CONSULTATION_TEMPLATE.md: multi-AI consultation workflow + synthesis
+**A2. src/pipeline/p2_decision/l6_mau15_generator.py — thêm generate_mau15_from_vn_ner()**
+- Map `MedicalEntities` (VN dataclass fields) trực tiếp → `form_data` → `generate_benh_an()`
+- `generate_mau15()` cũ giữ nguyên (Canada path cho cdha/nha_khoa)
+- `ly_do` fallback: lấy symptom đầu tiên nếu `ents.ly_do` rỗng
 
-**A4. PENDING_REQUESTS System**
-- docs/records/PENDING_REQUESTS.md: track Andy/Claude pending items
-- iso_audit.py v2.0: check_pending_requests() + --weekly + --quality
-- audit_schedule.json: session counter (session 1/7)
-- SESSION PROTOCOL: thêm Step C (PENDING_REQUESTS) + BƯỚC 2 (pending report)
-- QUALITY_AUDIT_TEMPLATE.md: ISO 9001+42001+25010 explicit clause mapping
+**A3. src/pipeline/p2_decision/l6_agent.py — lam_sang dùng VN NER**
+- `vi_transcript = payload.get("original_text") or original or text`
+- Gọi `l1b_drug_correct` + `l1c_ner.extract_entities()` trực tiếp
+- Kết quả: TC-001 HA=130/90 ✅, TC-002 nhiet_do=38.5 ✅, TC-003 HA=135/85 ✅
 
-**A5. Tiến độ Andy (PA actions)**
-- PA-002: Luật sư VN đã gửi email ✅
-- PA-004: BS Onboarding Checklist đã ký ✅
-- PA-001: Audio path xác nhận (data/audio/pilot/)
-- PA-003: DPA chờ luật sư review
+**A4. tests/unit/test_l1c_vn_numbers.py — 40 tests mới**
+- TestVnToInt (9 tests): digit forms, alternate, tens, tens+units, 10-19, hundreds, shorthand
+- TestNormalizeVnNumbers (16 tests): BP, decimal, rưỡi, standalone, units, digits unchanged, empty
+- TestExtractEntitiesVnNumbers (15 tests): FID acceptance criteria TC-001/002/003
 
-### B. KỸ THUẬT — Pipeline Bug Fixes
+**A5. fids/FID-VN-005.md — tất cả acceptance criteria [x]**
+- Status: Approved 2026-06-07 | Implemented 2026-06-07 | 272/272 PASS · bandit 0 HIGH/MEDIUM
 
-**B1. 4 Bugs Cố định (trước VN-ROUTER-001)**
-- l6_generate_form.py:63: qua_trinh_benh_ly dùng nhầm ly_do → fix dùng trieu_chung list
-- l6_generate_form.py: trieu_chung list từ NER bị bỏ → fix: ghép vào qua_trinh_benh_ly
-- l3_route.py: route detect từ form_data only → fix: thêm transcript fallback
-- main.py: patient_name không lưu → fix: store vào form_data["ho_va_ten"]
-- main.py PDF export: patient_data không pass → fix: pass từ form_data
+### B. Process fixes (Andy feedback)
 
-**B2. Tests Mới (GAP-002 + GAP-005 CLOSED)**
-- tests/unit/test_pii_scan.py: 27 tests — GAP-002 ✅
-- tests/integration/test_api.py: 18 tests — GAP-005 ✅
+**B1. CLAUDE.md — ĐÓNG PHIÊN 5→6 bước**
+- Thêm BƯỚC 2: Update `docs/records/PROJECT_PROGRESS.md`
+- Nguyên nhân: PROJECT_PROGRESS.md không có trong close protocol → bỏ sót milestone tracking
 
-### C. KỸ THUẬT — VN-ROUTER-001 [FID-VN-004] DONE
+**B2. docs/compliance/IMPROVEMENT_PROCESS.md — v1.1→v1.2**
+- Section 5 trigger table "Phiên CLOSE": thêm PROJECT_PROGRESS
+- Section 6 post-close checklist: thêm bước 4 cho PROJECT_PROGRESS.md (renumber 5→6)
 
-**C1. FID-VN-004**
-- Viết: 2026-06-06 | Approved: Andy Phan 2026-06-06 | Status: DONE
-
-**C2. Implementation (3 files)**
-- src/pipeline/p1_processing/l3_routing.py v1.3:
-  detect_vn_route(original_text) → lam_sang/cdha/nha_khoa
-  vn_route field added to L3 output payload
-- src/pipeline/p2_decision/l6_agent.py:
-  if vn_route=="lam_sang" → generate_mau15() (no SOAP)
-  cdha/nha_khoa: Canada SOAP path preserved
-- src/pipeline/p2_decision/l6_mau15_generator.py (NEW):
-  generate_mau15(entities, payload) → BenhAnNgoaiTru dict
-  Tái sử dụng l6_generate_form.generate_benh_an()
-  NER mapping: VITAL→sinh_hieu, SYMPTOM→ly_do, MEDICATION→don_thuoc...
-
-**C3. Tests VN-ROUTER-001**
-- tests/unit/test_vn_router.py: 22 tests
-  14 detect_vn_route tests + L3 handle output
-  6 AC tests: AC-001..006 (FID acceptance criteria)
-  AC-001 ✅ lam_sang → benh_an (not SOAP)
-  AC-002 ✅ cdha → soap_note preserved
-  AC-003 ✅ Amoxicillin → don_thuoc
-  AC-004 ✅ 120/80 → sinh_hieu.huyet_ap
-  AC-005 ✅ disclaimer present
-  AC-006 ✅ vn_route + mau_form labeled
-
-**C4. Tài liệu bổ sung**
-- PROJECT_PROGRESS.md: bảng tiến độ toàn dự án P0→P3
+**B3. docs/records/PROJECT_PROGRESS.md — milestone update**
+- P0.5.1 VN-NER-002: 5 sub-rows (a→e) với chi tiết implementation
+- L1c + L6 rows: cập nhật FID-VN-005 DONE
+- Metrics: 232→272 tests, vital extraction fixed
+- Lịch sử phiên: SES-20260607 added
 
 ---
 
 ## Kết quả đo được
-- Tests: 165 → **232/232 PASS** (+67 tests trong 1 phiên)
-- ISO gaps: 6 CLOSED (GAP-002, GAP-005 + RTM/SCOPE/RISK/SoA)
-- ISO docs mới: 6 files (DPA, IRP, Onboarding, Improvement, Confusion, Consultation)
-- Pipeline bugs fixed: 4
-- VN-ROUTER-001: DONE ✅ (FID approved + implemented + tested)
-- Session counter: 1/7 (next full ISO audit at session 7)
+- Tests: 232 → **272/272 PASS** (+40 tests VN number normalization)
+- bench_ceer --partial tc_001_noi_khoa.wav: vital=True, followup=True ✅
+- bench_ceer --partial tc_002_ho_hap.wav: vital=True, followup=True ✅
+- TC-001 pipeline: HA=130/90, mach=80.0, tai_kham="Sau 1 tuần"
+- TC-002 pipeline: HA=120/80, nhiet_do=38.5, nhip_tho=22.0, tai_kham="Sau 3 ngày"
+- TC-003 pipeline: HA=135/85, can_nang=72.0, mach=75.0, tai_kham="Sau 1 tháng"
+- bandit: 0 HIGH/MEDIUM ✅
+- Process gaps fixed: 2 (close protocol + improvement process)
 
 ---
 
 ## Blocker / Phụ thuộc bên ngoài
-- PA-001: BENCH-002 audio — Andy cần record tại Đà Nẵng
-- PA-002: Luật sư VN — email đã gửi, chờ phản hồi
-- PA-003: DPA ký — chờ luật sư review xong
+- [PA-006] Andy chưa điền `data/audio/ground_truth.json` → chưa đo CEER thật (nhắc #2)
+- Drug detection 0% trên real audio — PhoWhisper transcribes drug names differently from gTTS
+  Không phải regression — pre-existing limitation, cần PA-006 ground truth để đánh giá đúng
 
 ---
 
 ## Phiên tiếp theo — làm ngay theo thứ tự
 
-### Theo PROJECT_PROGRESS.md (P0.6 là next milestone):
-
-1. **DEPLOY-001** 🔴 — Windows installer cho BS Đà Nẵng
+1. **[CT-005] DEPLOY-001** 🟡 — Windows installer PyInstaller cho BS Đà Nẵng (ưu tiên cao nhất)
    - PyInstaller bundle: app + venv + models pre-cached
    - CONFIG-001: Facility config UI (tên phòng khám, CCHN, khoa)
-   - Setup wizard: install + configure + launch
-
-2. **GAP-003** 🟡 — Unit tests error handler (l8_error_handler)
-3. **GAP-004** 🟡 — Unit tests PDF export (l9a_pdf_export)
-4. **DRUG-ALIAS-001** 🟢 — Thêm aliases drug_db.json (typos phổ biến VN)
-
-### Andy làm song song:
-- PA-001: Record 30-50 audio tại phòng khám Đà Nẵng → data/audio/pilot/
-- PA-002: Chờ phản hồi luật sư → ký DPA_TEMPLATE.md
-- PA-003: DPA ký sau khi luật sư confirm
-
-### Khi có audio pilot:
-- BENCH-002: Chạy CEER measurement
-- Nếu CEER < 5%: → launch pilot trả tiền
-- Nếu CEER 5-10%: → launch với cảnh báo BS review kỹ
-- Nếu CEER > 10%: → TRAIN-001 (fine-tune PhoWhisper) trước
+2. **[GAP-003]** 🟡 — Unit tests `src/pipeline/p3_storage/l8_error_handler.py`
+3. **[GAP-004]** 🟡 — Unit tests `src/pipeline/p3_storage/l9a_pdf_export.py`
+4. **[CT-006]** 🟢 — Update `data/drug_db.json` — 30 drug interaction pairs
+5. **[PA-006]** Andy điền ground truth → `python -X utf8 tools/bench_ceer.py --full`

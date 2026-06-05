@@ -167,7 +167,7 @@ VÌ SAO: git history lưu mọi thứ — BACKLOG là source of truth
 | FID implement xong | RTM, CHANGELOG, DECISIONS | Claude | ✅ Bắt buộc |
 | Design thay đổi lớn | DESIGN_REPORT mới, CLAUDE.md, DECISIONS | Claude + Andy | ✅ Bắt buộc |
 | Test fail | Fix ngay, NONCONFORMING.md | Claude | ✅ Bắt buộc |
-| Phiên CLOSE | BACKLOG, CHANGELOG, LAST_SESSION, CLAUDE.md CURRENT STATE | Claude | ✅ Bắt buộc |
+| Phiên CLOSE | BACKLOG, **PROJECT_PROGRESS**, CHANGELOG, LAST_SESSION, CLAUDE.md CURRENT STATE | Claude | ✅ Bắt buộc |
 
 ### Time-based (định kỳ)
 
@@ -245,8 +245,9 @@ SAU MỖI PHIÊN CLOSE:
   1. git status → không còn unstaged changes
   2. LAST_SESSION.md → đủ 5 mục
   3. BACKLOG.md → tasks done đánh ✅
-  4. CHANGELOG → version entry có không?
-  5. Push thành công
+  4. PROJECT_PROGRESS.md → milestones/metrics/session history cập nhật
+  5. CHANGELOG → version entry có không?
+  6. Push thành công
 ```
 
 ---
@@ -379,6 +380,7 @@ HÀNG NĂM (khi có revenue):
 
 ---
 
-*DS-VN-COM-013 | IMPROVEMENT_PROCESS v1.1*
-*ISO 9001:2015 Cl.10.3 | ISO/IEC 42001:2023 Cl.10 | 2026-06-06*
+*DS-VN-COM-013 | IMPROVEMENT_PROCESS v1.2*
+*ISO 9001:2015 Cl.10.3 | ISO/IEC 42001:2023 Cl.10 | 2026-06-07*
+*Change: thêm PROJECT_PROGRESS.md vào Phiên CLOSE checklist (2026-06-07)*
 *Ref: DESIGN_REPORT_v1.1_20260606.md | CLAUDE.md SESSION PROTOCOL*

@@ -9,13 +9,20 @@
 - [ ] **LEGAL-001** 🔴 Thuê luật sư VN (healthtech + data + AI) — trước khi launch
 - [x] **BENCH-001** ✅ Benchmark PhoWhisper trên 22 audio — WER 36–52%, T-005 20/22 PASS (2026-06-05)
 - [ ] **BENCH-002** 🟡 Đo CEER thật: audio pilot thực tế BS nói + ground truth labels
+  - Partial CEER (2026-06-08): 0/10 coverage — WER 36–52% + dental terminology → NER miss 100%
+  - Tool: `tools/bench_ceer.py` | Template: `data/audio/ground_truth_template.json`
+  - Full CEER: Andy điền `data/audio/ground_truth_template.json` → rename → `data/audio/ground_truth.json` → `python tools/bench_ceer.py --full`
 - [x] **GAP-002** ✅ Unit tests PII scan — tests/unit/test_pii_scan.py 27 tests PASS (2026-06-06)
 - [x] **GAP-005** ✅ API integration tests — tests/integration/test_api.py 18 tests PASS (2026-06-06)
 - [x] **FID-VN-004** ✅ Feature Intent Document VN-ROUTER-001 — Andy approved 2026-06-06
 - [x] **VN-ROUTER-001** ✅ L6 branch: lam_sang→Mẫu15/BV-01 | cdha→SOAP — 232 tests PASS (2026-06-06)
+- [x] **VN-NER-002** ✅ [FID-VN-005] VN word-to-number + L6 lam_sang dùng VN NER — 272 tests PASS (2026-06-07)
+  - _normalize_vn_numbers() — PhoWhisper word-form → digits
+  - generate_mau15_from_vn_ner() — MedicalEntities direct mapping
+  - bench_ceer tc_001/tc_002: vital=True, followup=True
 
-- [ ] **DPA-SIGN-001** 🔴 Andy ký DPA_TEMPLATE với BS pilot Đà Nẵng trước ngày dùng app đầu tiên
-- [ ] **ONBOARD-001** 🔴 Andy ký BS_ONBOARDING_CHECKLIST với từng BS pilot
+- [x] **DPA-SIGN-001** ✅ Andy ký `docs/compliance/DPA_TEMPLATE.md` với BS pilot Đà Nẵng (2026-06-08)
+- [ ] **ONBOARD-001** 🔴 Andy ký `docs/compliance/BS_ONBOARDING_CHECKLIST.md` với từng BS pilot
 - [ ] **BENCH-002** 🟡 Record 30-50 audio consultations tại Đà Nẵng + ground truth labels → CEER thật
 - [ ] **LEGAL-001** 🔴 Thuê luật sư VN review DPA + tư vấn pháp lý trước launch thương mại
 

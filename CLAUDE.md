@@ -137,20 +137,27 @@ BƯỚC 1 — Update BACKLOG.md
   DOING → DONE cho tasks hoàn thành
   Thêm tasks mới nếu phát sinh
 
-BƯỚC 2 — Update CHANGELOG.md
+BƯỚC 2 — Update PROJECT_PROGRESS.md
+  docs/records/PROJECT_PROGRESS.md
+  Cập nhật status (🟢/🔵/⏳/🔴/🟡) cho milestones liên quan
+  Thêm rows mới nếu có milestone/sub-task mới hoàn thành
+  Cập nhật METRICS + LỊCH SỬ PHIÊN + "PHIÊN TIẾP THEO"
+  Cập nhật header: "Cập nhật: YYYY-MM-DD | vX.Y.Z"
+
+BƯỚC 3 — Update CHANGELOG.md
   Thêm entry nếu có code thay đổi
   Format: ## [vX.Y.Z] — YYYY-MM-DD — mô tả ngắn
 
-BƯỚC 3 — Update CURRENT STATE
+BƯỚC 4 — Update CURRENT STATE
   Section bên dưới trong file này
   Cập nhật: Version, Status, Tests, Blocker, Next task
 
-BƯỚC 4 — Ghi đè LAST_SESSION.md
+BƯỚC 5 — Ghi đè LAST_SESSION.md
   File: docs/records/LAST_SESSION.md
   Dùng template bên dưới — đủ 5 mục, không bỏ qua
   1 file duy nhất, git history tự lưu các phiên cũ
 
-BƯỚC 5 — Increment session counter + Commit & Push
+BƯỚC 6 — Increment session counter + Commit & Push
   python scripts/iso_audit.py --increment-session
   (nếu báo "WEEKLY AUDIT DUE" → chạy thêm: python scripts/iso_audit.py --weekly)
   git add -A
@@ -234,9 +241,9 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.5.0 |
-| Status | **VN-ROUTER-001 DONE ✅ — 232/232 PASS — lam_sang → Mẫu 15/BV-01 trực tiếp** |
-| Tests | **232/232 PASS** · bandit 0 HIGH/MEDIUM · Coverage 88% |
+| Version | v0.5.1 |
+| Status | **VN-NER-002 DONE ✅ — 272/272 PASS — VN word-form numbers → vital extraction fixed** |
+| Tests | **272/272 PASS** · bandit 0 HIGH/MEDIUM |
 | Pending | **4 Andy actions** (PA-001..004) · **2 Claude todos** (CT-005, CT-006) |
 | Next task | **DEPLOY-001** (Windows installer) · BENCH-002 (audio Đà Nẵng) |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` |
@@ -369,6 +376,10 @@ STAFF CONFIRM GATE (sau L10 — admin side):
 13. Booking Engine: 7 states (SUGGESTED→PENDING→CONFIRMED→COMPLETED/CANCELLED/NO_SHOW/RESCHEDULED)
     + Buffer sau mỗi 4 ca + Waitlist cho slot cancel
     + Reminder: D-1 (9h) → H-2 → H-0:15 (chuẩn Canada)
+14. Tên tài liệu PHẢI kèm đường dẫn đầy đủ — mọi lúc, mọi nơi:
+    — Đúng: `docs/compliance/DPA_TEMPLATE.md` | Sai: `DPA_TEMPLATE.md`
+    — Áp dụng: chat output, LAST_SESSION.md, PENDING_REQUESTS.md, BACKLOG.md, mọi file
+    — Exception: bảng TÀI LIỆU HỆ THỐNG (đã có cột Vị trí riêng)
 
 ---
 

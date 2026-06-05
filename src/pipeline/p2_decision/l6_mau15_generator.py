@@ -28,6 +28,55 @@ import re
 from typing import Any, Dict, List
 
 
+def generate_mau15_from_vn_ner(ents: Any, payload: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    VN NER MedicalEntities (l1c_ner output) → form_data → generate_benh_an() → dict.
+    Used when vn_route == "lam_sang" (FID-VN-005). Replaces generate_mau15() for lam_sang.
+    Existing generate_mau15() (Canada NEREntity path) is kept for cdha/nha_khoa.
+    """
+    ly_do = ents.ly_do or (ents.trieu_chung[0] if ents.trieu_chung else "")
+    form_data: Dict[str, Any] = {
+        "ly_do": ly_do,
+        "trieu_chung": list(ents.trieu_chung),
+        "sinh_hieu": {
+            "huyet_ap_tam_thu":    ents.huyet_ap_tam_thu,
+            "huyet_ap_tam_truong": ents.huyet_ap_tam_truong,
+            "nhiet_do":  ents.nhiet_do,
+            "mach":      ents.mach,
+            "nhip_tho":  ents.nhip_tho,
+            "can_nang":  ents.can_nang,
+            "spo2":      ents.spo2,
+        },
+        "toan_than":   "",
+        "cac_bo_phan": "",
+        "chan_doan":   ents.chan_doan or payload.get("icd_display", "") or "",
+        "icd_code":    payload.get("icd_code", "") or "",
+        "icd_display": payload.get("icd_display", "") or "",
+        "don_thuoc":   list(ents.don_thuoc),
+        "tai_kham":    ents.tai_kham or "",
+        "chi_dinh":    list(ents.chi_dinh),
+        "tien_su":     "",
+    }
+    ho_va_ten = payload.get("ho_va_ten") or payload.get("patient_name", "")
+    if ho_va_ten:
+        form_data["ho_va_ten"] = ho_va_ten
+
+    try:
+        from src.core.l6_generate_form import generate_benh_an
+        doctor_cchn = payload.get("doctor_id", "") or payload.get("doctor_cchn", "")
+        facility_id = payload.get("facility_id", "FAC-DEFAULT")
+        patient_data = {"ho_va_ten": ho_va_ten} if ho_va_ten else None
+        benh_an = generate_benh_an(
+            form_data=form_data,
+            doctor_cchn=doctor_cchn,
+            facility_id=facility_id,
+            patient_data=patient_data,
+        )
+        return _benh_an_to_dict(benh_an, form_data)
+    except ImportError:
+        return {"form_data": form_data, "source": "form_data_fallback"}
+
+
 def generate_mau15(entities, payload: Dict[str, Any]) -> Dict[str, Any]:
     """
     Canada NER entities + payload → form_data dict for generate_benh_an().

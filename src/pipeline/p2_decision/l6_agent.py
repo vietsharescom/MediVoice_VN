@@ -75,12 +75,18 @@ def handle(payload: Any) -> Dict[str, Any]:
     vi_text = original if hint_language == "vi" and original != text else ""
     entities = _generator.extract_entities(text, vi_text=vi_text)
 
-    # FID-VN-004: VN branch — lam_sang → Mẫu 15/BV-01 directly (no SOAP)
+    # FID-VN-005: lam_sang uses VN NER (l1c_ner) directly from original VI text
+    # FID-VN-004: established the branch; FID-VN-005: switches from Canada NER to VN NER
     vn_route = payload.get("vn_route", "lam_sang")
     if vn_route == "lam_sang":
-        from src.pipeline.p2_decision.l6_mau15_generator import generate_mau15
+        from src.core import l1b_drug_correct, l1c_ner
+        from src.pipeline.p2_decision.l6_mau15_generator import generate_mau15_from_vn_ner
+        vi_transcript = payload.get("original_text") or original or text
+        corrected_vn = l1b_drug_correct.correct_drug_names(vi_transcript)
+        drug_cands = l1b_drug_correct.extract_drug_candidates(corrected_vn)
+        vn_ents = l1c_ner.extract_entities(corrected_vn, drug_cands)
         elapsed_ms = (time.perf_counter() - t0) * 1000
-        benh_an_dict = generate_mau15(entities, payload)
+        benh_an_dict = generate_mau15_from_vn_ner(vn_ents, payload)
         return {
             "ok": True,
             "stage": "L6_AGENT",
