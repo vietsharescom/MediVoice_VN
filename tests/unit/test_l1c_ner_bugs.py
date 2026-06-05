@@ -363,3 +363,67 @@ class TestBugEF_DrugAliases:
         inns = {c["inn"] for c in candidates}
         assert "Amoxicillin" in inns
         assert "Paracetamol" in inns
+
+
+# ── A-04b transcript (new PhoWhisper errors discovered) ─────────────────────
+# "mặt" for mạch, "huyết á" for huyết áp, "amosilic"/"paracitamol"
+
+_TRANSCRIPT_A04B = (
+    "bệnh nhân nam 28 tuổi nhân viên văn phòng em bị đau họng khó nuốt đã ba ngày nay "
+    "xuất hiện về chiều không có bệnh lý mềm "
+    "huyết á 80 "
+    "mặt 80 lần mỗi phút "
+    "nhiệt độ 37 phẩy 8 độ "
+    "cân nặng 68 ký "
+    "họng đỏ amidan xinh nhẹ có ít mũ trắng "
+    "chuẩn đoán viêm họng cấp "
+    "kê đơn amosilic 500 mg hai viên chia ba lần mỗi ngày trong bảy ngày "
+    "paracitamol một viên khi đau hoặc sốt "
+    "tái khám sau năm ngày nếu không đỡ"
+)
+
+
+class TestBugG_MatAlias:
+    """BUG-G: 'mặt 80 lần' → mạch = 80 (second PhoWhisper alias for 'mạch')"""
+
+    def test_mat_alias(self):
+        t = "mặt 80 lần mỗi phút"
+        ent = extract_entities(t)
+        assert ent.mach == pytest.approx(80)
+
+    def test_a04b_mach(self):
+        ent = extract_entities(_TRANSCRIPT_A04B)
+        assert ent.mach == pytest.approx(80)
+
+
+class TestBugH_HuyetAFlexible:
+    """BUG-H: 'huyết á' (dropped 'p') → still extract BP when both numbers present"""
+
+    def test_huyet_a_with_slash(self):
+        t = "huyết á 120/80"
+        ent = extract_entities(t)
+        assert ent.huyet_ap_tam_thu == 120
+        assert ent.huyet_ap_tam_truong == 80
+
+
+class TestBugIJ_NewDrugAliases:
+    """BUG-I+J: 'amosilic' → Amoxicillin, 'paracitamol' → Paracetamol"""
+
+    def test_amosilic(self):
+        from core.l1b_drug_correct import extract_drug_candidates
+        candidates = extract_drug_candidates("amosilic 500 mg ba lần mỗi ngày")
+        inns = [c["inn"] for c in candidates]
+        assert "Amoxicillin" in inns
+
+    def test_paracitamol(self):
+        from core.l1b_drug_correct import extract_drug_candidates
+        candidates = extract_drug_candidates("paracitamol 500 mg khi đau")
+        inns = [c["inn"] for c in candidates]
+        assert "Paracetamol" in inns
+
+    def test_a04b_drugs(self):
+        from core.l1b_drug_correct import extract_drug_candidates
+        candidates = extract_drug_candidates(_TRANSCRIPT_A04B)
+        inns = {c["inn"] for c in candidates}
+        assert "Amoxicillin" in inns
+        assert "Paracetamol" in inns

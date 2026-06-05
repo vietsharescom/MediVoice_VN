@@ -50,11 +50,11 @@ _RE_NHIET_DO = re.compile(
     re.IGNORECASE
 )
 _RE_HA_SYSTOLIC = re.compile(
-    r"(?:huyết\s*áp|HA|BP)\b[^/\d]{0,40}?(\d{2,3})\s*/\s*(\d{2,3})",
+    r"(?:huyết\s*á(?:p)?|HA|BP)\b[^/\d]{0,40}?(\d{2,3})\s*/\s*(\d{2,3})",  # "huyết á" (no p) accepted
     re.IGNORECASE
 )
 _RE_MACH = re.compile(
-    r"(?:mạch|mặc|pulse|HR)\s*[:\s]?\s*(\d{2,3})\s*(?:lần/phút|bpm|nhịp)?",  # "mặc" = PhoWhisper for "mạch"
+    r"(?:mạch|mặc|mặt|pulse|HR)\s*[:\s]?\s*(\d{2,3})\s*(?:lần/phút|bpm|nhịp)?",  # "mặc"/"mặt" = PhoWhisper for "mạch"
     re.IGNORECASE
 )
 _RE_NHIP_THO = re.compile(
@@ -96,7 +96,7 @@ _RE_LY_DO = re.compile(
 _RE_LY_DO_FALLBACK = re.compile(
     r"\b\d+\s*tuổi[\s,.]+"
     r"(?:(?:nghề\s*nghiệp|nhân\s*viên)\s+[^,;.]{1,30}[,;.]?\s*)?"  # skip "nghề nghiệp X" / "nhân viên X"
-    r"([^.!?\n]{5,}?)(?=\s*(?:tiền\s*sử|huyết\s*áp|nhiệt\s*độ|mạch\s+\d|$))",
+    r"([^.!?\n]{5,}?)(?=\s*(?:tiền\s*sử|huyết\s*á|nhiệt\s*độ|mạch\s+\d|mặc\s+\d|mặt\s+\d|$))",  # "huyết á" without p
     re.IGNORECASE,
 )
 
