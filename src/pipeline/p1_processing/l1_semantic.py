@@ -1,6 +1,6 @@
 # src/pipeline/p1_processing/l1_semantic.py
 # Stage:    L1_SEMANTIC
-# Role:     Transcribe audio (PhoWhisper-small / whisper-small), detect language,
+# Role:     Transcribe audio (PhoWhisper-medium / whisper-small), detect language,
 #           route VI through L1b. No decisions. No memory access.
 # Req:      SRS-L1-001..009 -- see docs/cl08_operation/SRS.md
 # FID:      MV-FID-001 | MV-FID-002 | MV-FID-011 | MV-FID-014 | v1.5
@@ -40,7 +40,7 @@ _EN_PHRASE_RE = re.compile(
 
 _translator = ViEnMedicalTranslator()
 
-# VI model cache (PhoWhisper-small — vinai/PhoWhisper-small)
+# VI model cache (PhoWhisper-medium — vinai/PhoWhisper-medium)
 _phow_processor = None
 _phow_model = None
 _phow_lock = threading.Lock()  # CA-007 NC-001: thread-safe lazy load
@@ -52,7 +52,7 @@ _whisper_lock = threading.Lock()  # CA-007 NC-001: thread-safe lazy load
 
 
 # @req SRS-L1-001 -- Normalize and extract meaning. No decisions. No memory access.
-# @req SRS-L1-005 -- Transcribe audio using PhoWhisper-small (VI) or whisper-small (EN/mixed).
+# @req SRS-L1-005 -- Transcribe audio using PhoWhisper-medium (VI) or whisper-small (EN/mixed).
 def handle(payload: Any) -> Dict[str, Any]:
     """L1_SEMANTIC: ASR (if audio), language detection, VI→EN routing."""
     if not isinstance(payload, dict):
@@ -61,7 +61,7 @@ def handle(payload: Any) -> Dict[str, Any]:
     hint_language = payload.get("hint_language", "vi")
 
     # @req SRS-L1-005 -- audio path: transcribe with ASR before text processing
-    # @req SRS-L1-008 -- route to PhoWhisper-small (vi) or whisper-small (en/mixed)
+    # @req SRS-L1-008 -- route to PhoWhisper-medium (vi) or whisper-small (en/mixed)
     # @req SRS-L1-009 -- reject audio_array longer than MAX_AUDIO_SAMPLES
     asr_confidence: Optional[float] = None
     came_from_audio = False
@@ -180,10 +180,10 @@ def _compute_confidence(text: str, hint_language: str) -> float:
     return round(max(0.05, min(0.95, 0.35 + dr * 1.5)), 2)
 
 
-# @req SRS-L1-005 -- PhoWhisper-small for VI transcription
+# @req SRS-L1-005 -- PhoWhisper-medium for VI transcription
 # @req SRS-L1-006 -- offline, model cached after first download
 def _load_phowhisper() -> Tuple:
-    """Lazy-load PhoWhisper-small once (VI — vinai/PhoWhisper-small)."""
+    """Lazy-load PhoWhisper-medium once (VI — vinai/PhoWhisper-medium)."""
     global _phow_processor, _phow_model
     with _phow_lock:  # CA-007 NC-001: prevent double-load under concurrency
         if _phow_model is None:
@@ -192,8 +192,8 @@ def _load_phowhisper() -> Tuple:
                     "transformers and torch required for audio transcription. "
                     "Run: pip install transformers torch"
                 )
-            _phow_processor = WhisperProcessor.from_pretrained("vinai/PhoWhisper-small")
-            _phow_model = WhisperForConditionalGeneration.from_pretrained("vinai/PhoWhisper-small")
+            _phow_processor = WhisperProcessor.from_pretrained("vinai/PhoWhisper-medium")
+            _phow_model = WhisperForConditionalGeneration.from_pretrained("vinai/PhoWhisper-medium")
             _phow_model.eval()
     return _phow_processor, _phow_model
 
@@ -222,7 +222,7 @@ def _load_whisper_small() -> Tuple:
 def _transcribe(audio_array, hint_language: str = "vi") -> Dict[str, Any]:
     """Transcribe float32 16kHz mono array using language-appropriate ASR model.
 
-    VI:    PhoWhisper-small, decoder forced language="vi"
+    VI:    PhoWhisper-medium, decoder forced language="vi"
     EN:    whisper-small, decoder forced language="en"
     mixed: whisper-small, auto-detect (no forced language — VI+EN medical terms)
 

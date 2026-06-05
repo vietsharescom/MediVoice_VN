@@ -21,7 +21,7 @@
 | Project | MediVoice VN — Phần mềm quản lý phòng khám tư + AI Voice |
 | Positioning | **"Documentation Assistant"** — AI nghe BS nói, mapping vào đúng form, BS review + ký |
 | Market | Phòng mạch tư nhân lâm sàng có đăng ký BYT — VN |
-| Stack | Python 3.10, FastAPI, PhoWhisper-small, PhoBERT+CRF, SQLite, Fernet, PWA |
+| Stack | Python 3.10, FastAPI, PhoWhisper-medium, PhoBERT+CRF, SQLite, Fernet, PWA |
 | Compliance | NĐ13/2023 · TT32/2023 · TT13/2025 · Luật KCB 2023 · Luật AI 134/2025 |
 | Pilot | Phòng khám Đà Nẵng (Andy) + Phòng mạch Sài Gòn (BS partner) |
 | GitHub | https://github.com/vietsharescom/MediVoice_VN |
@@ -304,7 +304,7 @@ GÓI 3 — Phòng Khám Đầy Đủ    ~4–8M/tháng
 
 ```
 Audio → [L0]  Normalize 16kHz mono, VAD, hash, purge (Privacy by Design)
-      → [L1a] PhoWhisper chunk streaming (10s overlap) — offline
+      → [L1a] PhoWhisper-medium chunk streaming (10s overlap) — offline
       → [L1b] Drug name correction (VN drug database, INN chuẩn)
       → [L1c] Medical NER VN (VITAL/SYMPTOM/MEDICATION/HISTORY/FOLLOWUP)
       → [L1d] ICD-10-VN auto-lookup (QĐ5837 — 15,026 mã)
@@ -410,7 +410,7 @@ STAFF CONFIRM GATE (sau L10 — admin side):
 
 | Component | Decision | Lý do |
 |---|---|---|
-| ASR | PhoWhisper-small (BSD-3-Clause) | Only VN medical ASR, offline |
+| ASR | PhoWhisper-medium (BSD-3-Clause) | Only VN medical ASR, offline — better accent + drug coverage |
 | Training data | VietMed dataset (MIT) | Commercial OK |
 | NLP/NER | PhoBERT + CRF (MIT) | Best VN NER |
 | Frontend | **PWA** (FastAPI + HTML/JS) | Mobile-first — BS dùng phone |

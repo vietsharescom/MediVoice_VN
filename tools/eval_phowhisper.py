@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 tools/eval_phowhisper.py
-T-007: PhoWhisper-small vs Whisper-small evaluation
+T-007: PhoWhisper-medium vs Whisper-small evaluation
 ─────────────────────────────────────────────────────
 Compare transcript quality + WER proxy on T-005 audio files.
 Run from project root:
@@ -92,11 +92,11 @@ def load_whisper_small():
 def load_phowhisper():
     global _phow_processor, _phow_model
     if _phow_model is None:
-        print("[PhoWhisper-small] Loading (first run: download ~300MB)...")
-        _phow_processor = WhisperProcessor.from_pretrained("vinai/PhoWhisper-small")
-        _phow_model = WhisperForConditionalGeneration.from_pretrained("vinai/PhoWhisper-small")
+        print("[PhoWhisper-medium] Loading (first run: download ~300MB)...")
+        _phow_processor = WhisperProcessor.from_pretrained("vinai/PhoWhisper-medium")
+        _phow_model = WhisperForConditionalGeneration.from_pretrained("vinai/PhoWhisper-medium")
         _phow_model.eval()
-        print("[PhoWhisper-small] Ready.")
+        print("[PhoWhisper-medium] Ready.")
     return _phow_processor, _phow_model
 
 
@@ -170,7 +170,7 @@ def main():
         sys.exit(1)
 
     print("=" * 70)
-    print("T-007: PhoWhisper-small vs Whisper-small Evaluation")
+    print("T-007: PhoWhisper-medium vs Whisper-small Evaluation")
     print(f"Files: {len(files)} | WER reject: >{WER_REJECT} | WER flag: >{WER_FLAG}")
     print("=" * 70)
 
@@ -198,14 +198,14 @@ def main():
         else:
             print("  [Whisper-small]  SKIP (not installed)")
 
-        # ── PhoWhisper-small ──
+        # ── PhoWhisper-medium ──
         ph = transcribe_phowhisper(audio)
         row["phowhisper"] = ph
         ph_label = wer_label(ph["wer"])
         if ph_label != "FAIL(reject)":
             phowhisper_pass += 1
         lp_str = f"vi_ratio={ph['vi_diacritic_ratio']:.2f}(proxy)"
-        print(f"  [PhoWhisper-small] WER={ph['wer']:.0%} ({ph_label}) | {ph['elapsed']}s | {lp_str}")
+        print(f"  [PhoWhisper-medium] WER={ph['wer']:.0%} ({ph_label}) | {ph['elapsed']}s | {lp_str}")
         print(f"    Transcript: {safe_print(ph['text'][:80])}")
 
         # ── Winner ──
@@ -228,7 +228,7 @@ def main():
     n = len(files)
     if WHISPER_AVAILABLE:
         print(f"  Whisper-small   PASS: {whisper_pass}/{n}")
-    print(f"  PhoWhisper-small PASS: {phowhisper_pass}/{n}")
+    print(f"  PhoWhisper-medium PASS: {phowhisper_pass}/{n}")
 
     if WHISPER_AVAILABLE:
         ph_wins = sum(1 for r in results if r.get("winner") == "PhoWhisper ↑")
@@ -237,7 +237,7 @@ def main():
         print(f"\n  PhoWhisper wins: {ph_wins} | Whisper wins: {ws_wins} | Ties: {ties}")
 
         if phowhisper_pass > whisper_pass:
-            verdict = "RECOMMEND: Switch to PhoWhisper-small"
+            verdict = "RECOMMEND: Switch to PhoWhisper-medium"
         elif whisper_pass > phowhisper_pass:
             verdict = "RECOMMEND: Keep Whisper-small"
         else:

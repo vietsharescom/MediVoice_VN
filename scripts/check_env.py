@@ -71,13 +71,13 @@ def check_disk() -> bool:
 
 
 def check_model() -> bool:
-    # PhoWhisper-small cached by HuggingFace transformers
-    model_dirs = list(MODEL_CACHE.glob("models--vinai--PhoWhisper-small")) if MODEL_CACHE.exists() else []
+    # PhoWhisper-medium cached by HuggingFace transformers
+    model_dirs = list(MODEL_CACHE.glob("models--vinai--PhoWhisper-medium")) if MODEL_CACHE.exists() else []
     if model_dirs:
-        print(f"{PASS} PhoWhisper-small model: đã cache tại {MODEL_CACHE}")
+        print(f"{PASS} PhoWhisper-medium model: đã cache tại {MODEL_CACHE}")
         return True
-    print(f"{WARN} PhoWhisper-small model: chưa download")
-    print(f"       Sẽ tự download lần đầu chạy (~150MB). Cần Internet.")
+    print(f"{WARN} PhoWhisper-medium model: chưa download")
+    print(f"       Sẽ tự download lần đầu chạy (~3GB). Cần Internet + ~10 phút.")
     return True  # Warning chỉ, không fail — model tự download khi chạy
 
 

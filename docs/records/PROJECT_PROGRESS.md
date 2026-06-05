@@ -35,7 +35,7 @@
 | | │ | | | | | |
 | P0.2 | ├─ 🟢 **Implement L0→L10** | AI Pipeline đầy đủ + FastAPI PWA | 🟢 | — | SES-20260608d | GAP-003 ✅ GAP-004 ✅ — 322/322 PASS |
 | P0.2.L0 | │  ├─ L0 Normalize | 16kHz mono, VAD, hash, purge audio | 🟢 | — | SES-20260604 | NĐ13/2023 |
-| P0.2.L1a | │  ├─ L1a PhoWhisper ASR | Nhận dạng giọng nói VN, offline, chunk 10s | 🟢 | — | SES-20260604 | WER 36-52% chưa fine-tune |
+| P0.2.L1a | │  ├─ L1a PhoWhisper ASR | Nhận dạng giọng nói VN, offline, chunk 10s | 🟢 | — | SES-20260608e | **Upgraded medium** — better accent/drug coverage. WER 36-52% chưa fine-tune |
 | P0.2.L1b | │  ├─ L1b Drug Correct | Sửa tên thuốc về INN, alias map 110+ thuốc | 🟢 | — | SES-20260604 | |
 | P0.2.L1c | │  ├─ L1c NER VN | Rule-based: vitals, drugs, diagnosis, follow-up | 🟢 | FID-VN-005 | SES-20260608e | 11 bugs fixed A-01/A-02/A-03 — real-world testing |
 | P0.2.L1d | │  ├─ L1d ICD-10-VN | Auto-lookup 15,026 mã (QĐ5837/BYT) | 🟢 | — | SES-20260604 | |
