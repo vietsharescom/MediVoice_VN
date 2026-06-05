@@ -249,11 +249,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.6.0 |
-| Status | **CT-005 DEPLOY-001 DONE ✅ — install.bat + venv installer — 287/287 PASS** |
-| Tests | **287/287 PASS** · bandit 0 HIGH/MEDIUM |
-| Pending | **1 Andy action** (PA-006: BENCH-002 real audio) · GAP-003 + GAP-004 unit tests |
-| Next task | **GAP-003** (test_l8_error_handler) · **GAP-004** (test_l9a_pdf_export) · **PILOT Đà Nẵng** |
+| Version | v0.6.1 |
+| Status | **GAP-003 ✅ GAP-004 ✅ — L8+L9a unit tests — 322/322 PASS** |
+| Tests | **322/322 PASS** · bandit 0 HIGH/MEDIUM |
+| Pending | **1 Andy action** (PA-006: BENCH-002 real audio) |
+| Next task | **PILOT Đà Nẵng** (install.bat thật) · **BENCH-002** (audio BS thật) |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` |
 
 ---

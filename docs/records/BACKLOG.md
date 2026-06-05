@@ -16,8 +16,8 @@
   - Chạy CEER: `python -X utf8 tools/bench_ceer.py --full --gt <template.json>`
   - Full CEER thật: Andy record audio BS nói → điền ground truth → chạy bench
 - [x] **GAP-002** ✅ Unit tests PII scan — tests/unit/test_pii_scan.py 27 tests PASS (2026-06-06)
-- [ ] **GAP-003** 🟡 Unit tests L8 error handler — `tests/unit/test_l8_error_handler.py` (impl done, tests còn thiếu) | P0.2.L8
-- [ ] **GAP-004** 🟡 Unit tests L9a PDF export — `tests/unit/test_l9a_pdf_export.py` (impl done, tests còn thiếu) | P0.2.L9a
+- [x] **GAP-003** ✅ Unit tests L8 error handler — `tests/unit/test_l8_error_handler.py` 20 tests PASS (2026-06-08) | P0.2.L8
+- [x] **GAP-004** ✅ Unit tests L9a PDF export — `tests/unit/test_l9a_pdf_export.py` 15 tests PASS (2026-06-08) | P0.2.L9a
 - [x] **GAP-005** ✅ API integration tests — tests/integration/test_api.py 18 tests PASS (2026-06-06)
 - [x] **FID-VN-004** ✅ Feature Intent Document VN-ROUTER-001 — Andy approved 2026-06-06
 - [x] **VN-ROUTER-001** ✅ L6 branch: lam_sang→Mẫu15/BV-01 | cdha→SOAP — 232 tests PASS (2026-06-06)

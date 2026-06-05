@@ -33,7 +33,7 @@
 | P0.1c | │  ├─ PROJECT_KICKOFF | S1-S9: legal scan, tech scan, market, solution | 🟢 | — | SES-20260603 | S10 Andy ký sau |
 | P0.1d | │  └─ DECISIONS.md | 47 ADRs — kiến trúc, pháp lý, kỹ thuật | 🟢 | — | SES-20260606 | Thêm 15 ADR mới |
 | | │ | | | | | |
-| P0.2 | ├─ 🔵 **Implement L0→L10** | AI Pipeline đầy đủ + FastAPI PWA | 🔵 | — | SES-20260604 | Impl done. GAP-003/GAP-004 unit tests còn thiếu |
+| P0.2 | ├─ 🟢 **Implement L0→L10** | AI Pipeline đầy đủ + FastAPI PWA | 🟢 | — | SES-20260608d | GAP-003 ✅ GAP-004 ✅ — 322/322 PASS |
 | P0.2.L0 | │  ├─ L0 Normalize | 16kHz mono, VAD, hash, purge audio | 🟢 | — | SES-20260604 | NĐ13/2023 |
 | P0.2.L1a | │  ├─ L1a PhoWhisper ASR | Nhận dạng giọng nói VN, offline, chunk 10s | 🟢 | — | SES-20260604 | WER 36-52% chưa fine-tune |
 | P0.2.L1b | │  ├─ L1b Drug Correct | Sửa tên thuốc về INN, alias map 110+ thuốc | 🟢 | — | SES-20260604 | |
@@ -45,8 +45,8 @@
 | P0.2.L5 | │  ├─ L5 PII Scan | CCCD/SĐT/BHYT/email — NĐ13/2023 | 🟢 | GAP-002 | SES-20260604 | 27 unit tests ✅ |
 | P0.2.L6 | │  ├─ L6 Form Gen | NER → BenhAnNgoaiTru (Mẫu 15/BV-01) | 🟢 | FID-VN-004 | SES-20260607 | VN NER direct mapping |
 | P0.2.L7 | │  ├─ L7 Storage | SQLite + WAL + Fernet encryption | 🟢 | — | SES-20260604 | |
-| P0.2.L8 | │  ├─ L8 Recovery | Error handling, @with_recovery | 🔵 | GAP-003 | — | Impl 🟢. Unit tests **chưa có** → `tests/unit/test_l8_error_handler.py` |
-| P0.2.L9a | │  ├─ L9a PDF | Mẫu 15/BV-01 ReportLab + disclaimer | 🔵 | GAP-004 | — | Impl 🟢. Unit tests **chưa có** → `tests/unit/test_l9a_pdf_export.py` |
+| P0.2.L8 | │  ├─ L8 Recovery | Error handling, @with_recovery | 🟢 | GAP-003 ✅ | SES-20260608d | 20 tests PASS `tests/unit/test_l8_error_handler.py` |
+| P0.2.L9a | │  ├─ L9a PDF | Mẫu 15/BV-01 ReportLab + disclaimer | 🟢 | GAP-004 ✅ | SES-20260608d | 15 tests PASS `tests/unit/test_l9a_pdf_export.py` |
 | P0.2.L10 | │  └─ L10 Audit Log | SHA-256 hash chain, append-only, 10 năm | 🟢 | — | SES-20260604 | |
 | | │ | | | | | |
 | P0.2.API | │  ├─ FastAPI PWA | Doctor UI: record → review → approve → PDF | 🟢 | GAP-005 | SES-20260604 | 18 integration tests ✅ |
@@ -152,9 +152,9 @@
 
 | # | Task | Điều kiện | File |
 |---|---|---|---|
-| 1 | **GAP-003** unit tests L8 error handler | Sẵn sàng | `tests/unit/test_l8_error_handler.py` |
-| 2 | **GAP-004** unit tests L9a PDF export | Sẵn sàng | `tests/unit/test_l9a_pdf_export.py` |
-| 3 | **PILOT Đà Nẵng** Cài install.bat, BS dùng thật | DEPLOY-001 DONE ✅ | Andy |
+| 1 | **PILOT Đà Nẵng** Cài install.bat, BS dùng thật | DEPLOY-001 DONE ✅ | Andy |
+| 2 | **BENCH-002** Record 30-50 audio thật → CEER thật | Sau pilot | PA-001 |
+| 3 | **TEST-E2E-001** End-to-end với audio thật | Sau pilot | CT |
 
 ### 🟡 SONG SONG (Andy làm)
 
@@ -180,7 +180,7 @@
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | 287/287 | 🟢 |
+| Tests PASS | 100% | 322/322 | 🟢 |
 | bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
 | Vital extraction (TC audio) | >0% | bench tc_001/tc_002: vital=True | 🟢 fixed FID-VN-005 |
 | WER | <30% | 36-52% | 🔴 cần fine-tune |
@@ -209,8 +209,9 @@
 | SES-20260608 | 2026-06-08 | v0.5.1→v0.5.2 | BENCH-002 baseline lâm sàng 10 vùng miền + tools + data organization |
 | SES-20260608b | 2026-06-08 | v0.5.2→v0.5.3 | CT-007 DONE — Followup CEER 0.7→0.1 (tai_kham regex extended) + Naming Convention v1.2 |
 | SES-20260608c | 2026-06-08 | v0.5.3→v0.6.0 | CT-005 DEPLOY-001 DONE — install.bat + start.bat + check_env + setup_facility (287 tests) |
+| SES-20260608d | 2026-06-08 | v0.6.0→v0.6.1 | GAP-003 ✅ GAP-004 ✅ — 35 unit tests L8+L9a (322 tests total) |
 
 ---
 
-*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.2 | 2026-06-08*
+*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.3 | 2026-06-08*
 *Cập nhật mỗi phiên đóng. Đọc cùng BACKLOG.md + PENDING_REQUESTS.md*

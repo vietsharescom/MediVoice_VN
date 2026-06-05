@@ -1,6 +1,24 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.6.1] — 2026-06-08 — GAP-003 + GAP-004: Unit tests L8 + L9a (322 tests total)
+
+### Tests
+- test(l8): `tests/unit/test_l8_error_handler.py` — 20 tests
+  - TestPipelineErrorCode: enum values + str subclass
+  - TestPipelineError: constructor, code/layer attrs, message format
+  - TestWithRecovery: happy path, PipelineError re-raised, callable fallback, static fallback, no-fallback→PipelineError, logging, zero fallback, functools.wraps
+  - TestSafeLog: happy path, exception swallowed→None, critical logged, functools.wraps, PipelineError swallowed
+- test(l9a): `tests/unit/test_l9a_pdf_export.py` — 15 tests
+  - TestExportPdfFileCreation: str path, file exists, BA_ prefix, record_id in name, correct dir, mkdir parents, .pdf ext, nonempty, valid %PDF header
+  - TestRecordIdEdgeCases: empty→UNKNOWN, short id
+  - TestDrugSection: no drugs, with drugs + tai_kham, multiple drugs
+  - TestDefaultOutputDir: monkeypatch _EXPORTS_DIR
+
+### Stats: **322/322 tests PASS** (+35 new) | bandit 0 HIGH/MEDIUM
+
+---
+
 ## [v0.6.0] — 2026-06-08 — CT-005 DEPLOY-001: Windows venv installer cho BS Đà Nẵng
 
 ### Deploy
