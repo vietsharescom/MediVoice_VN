@@ -86,7 +86,7 @@
 | P0.5.2e | │  ├─ CEER Followup baseline | Followup=0.7🔴 → **0.1✅** | 🟢 | CT-007 | SES-20260608 | _RE_TAI_KHAM captures extra context (kèm/nếu/xét nghiệm). binh_dinh=TRAIN-001 dep. |
 | P0.5.2f | │  └─ Data tổ chức | dental/ folder tách riêng, xóa 22 duplicates | 🟢 | — | SES-20260608 | `data/audio/dental/` |
 | | │ | | | | | |
-| **P0.6** | **├─ ⏳ DEPLOY-001** | **Windows installer cho BS Đà Nẵng** | **⏳** | **CT-005** | — | Mở khóa sau P0.5.2 🔵 done |
+| **P0.6** | **├─ ⏳ DEPLOY-001** | **Windows installer cho BS Đà Nẵng** | **⏳** | **CT-005** | — | 🔓 **Đã mở khóa** — CT-007 done ✅ + CT-006 deferred (Andy approved). **Sẵn sàng bắt đầu.** |
 | P0.6a | │  ├─ Python venv bundle | PyInstaller hoặc NSIS installer | ⏳ | CT-005 | — | |
 | P0.6b | │  ├─ Model cache | PhoWhisper + ICD + drug_db pre-bundled | ⏳ | CT-005 | — | |
 | P0.6c | │  └─ Setup wizard | Cấu hình CCHN, phòng khám, license | ⏳ | CONFIG-001 | — | |
