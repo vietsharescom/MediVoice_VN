@@ -1,6 +1,21 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.7.0] — 2026-06-08 — L4 Correction Capture — FID-VN-006 (366 tests total)
+
+### Feature: L4 Correction Capture (TIER 2 Adaptive Learning)
+- feat(l4_correction_capture): `src/core/l4_correction_capture.py` — diff AI vs BS form_data, log JSONL to `data/corrections/{clinic_id}/`
+- feat(main): hook `capture()` into `approve_record()` — best-effort, non-blocking
+- feat(analyze_corrections): `scripts/analyze_corrections.py` — CLI tool for drug alias suggestions (human review required)
+- feat(gitignore): `data/corrections/` excluded — patient data must not be committed
+- feat(fids): `fids/FID-VN-006.md` — Feature Intent Document approved by Andy
+
+### Tests
+- test(l4_correction_capture): `tests/unit/test_l4_correction_capture.py` — 14 tests, AC-001→AC-005 all PASS
+- Stats: **366/366 tests PASS** (+14) | bandit 0 HIGH/MEDIUM
+
+---
+
 ## [v0.6.3] — 2026-06-08 — Real-world NER+ICD fix A-03 (352 tests total)
 
 ### NER Fixes (A-03 Tăng huyết áp)

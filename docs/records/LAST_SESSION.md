@@ -2,69 +2,35 @@
 # Ghi đè mỗi phiên — git history lưu lịch sử cũ tự động
 # ISO/IEC 42001:2023 Cl.9.1 (Performance evaluation)
 
-## Mã phiên: SES-20260608e
-## Thời gian: 2026-06-08
-## Version: v0.6.1 → v0.6.3
+## Mã phiên: SES-20260608f
+## Thời gian: 2026-06-08 (phiên tiếp theo sau context compaction)
+## Version: v0.6.3 → v0.7.0
 
 ---
 
 ## Trạng thái đầu → cuối
-v0.6.1 | 322 tests → v0.6.3 | 352 tests
+v0.6.3 | 352 tests → v0.7.0 | 366 tests
 
 ## Đã hoàn thành
-
-- [VN-NER-003] **Real-world NER+ICD bug fix — 11 bugs từ A-01/A-02/A-03 testing**
-
-  A-01 (Viêm họng cấp):
-  1. `chan_doan` boundary overflow → stop at "điều trị/kê đơn/tái khám"
-  2. Temperature decimal without "phẩy" → "ba mươi bảy tám" = 37.8
-  3. Patient self-medication filter → "bệnh nhân tự uống X" excluded from don_thuoc
-  4. Drug unit ml→mg for oral route (PhoWhisper: "miligam"→"ml")
-
-  A-02 (Viêm loét dạ dày):
-  5. ICD-10 `auto_lookup()` progressive prefix matching — drop up to 3 trailing ASR noise words
-  6. Iron (Ferrous) context guard — require anemia context to prevent Losartan phonetic false positive
-
-  A-03 (Tăng huyết áp):
-  7. `_RE_HA_SYSTOLIC` — allow up to 40 chars intermediate text ("hôm nay là 170/100")
-  8. `_RE_BP_WORDS` — add "tri" as alias for "trên" (PhoWhisper phonetic confusion)
-  9. `ly_do` fallback — skip "nghề nghiệp X" prefix
-  10. `ly_do` — require symptom keyword (đau/sốt/ho/khó...) to accept fallback
-  11. `tai_kham` — strip trailing admin text, only keep "hoặc/nếu/sớm hơn" clauses
-
-- [CORPUS-001] **CLINICAL_TEST_CORPUS_VN.md v2.0** — VN terminology fixes
-  - "tổng trạng tỉnh táo" → "tình trạng tỉnh táo"
-  - "đau tăng khi nuốt" → "đau khi nuốt"
-
-- [ADAPTIVE-001] **`docs/records/ADAPTIVE_LEARNING_ARCHITECTURE.md`** — Design document
-  - 3-tier: TIER 1 PhoWhisper-medium upgrade · TIER 2 L4 Correction Capture · TIER 3 LoRA fine-tune
-  - ASR failure log: Domperidone/Omeprazole/Losartan phonetic explosions documented
-  - Data flywheel formula: Dùng → Sửa → Học → Dùng nhiều hơn
-
-- [CHATGPT-CORPUS-001] **`docs/dev/CHATGPT_CORPUS_PROMPT.md` v2.0** — 41-case corpus prompt
-  - Groups A-H: A (Tổng quát) B (Thuốc mạn tính) C (Nha khoa) D (CĐHA) E (Phụ sản) F (NER Stress/negation) G (Intent/temporal) H (Dental extended)
-  - 3-file structure per case: script.txt / reference.txt / groundtruth.json
-  - Extended brand→INN mapping, ICD-10-VN clarification
-
-- [DOC] BACKLOG.md: VN-NER-003/CORPUS-001/ADAPTIVE-001 → ✅ | CHATGPT-CORPUS-001 → pending (PA-007)
-- [DOC] CHANGELOG.md: v0.6.2 + v0.6.3 entries added
-- [DOC] PENDING_REQUESTS.md: PA-007 added (ChatGPT corpus)
-- [DOC] PROJECT_PROGRESS.md: SES-20260608e added, metrics 322→352
+- [FID-VN-006] viết + Andy approve `fids/FID-VN-006.md` — L4 Correction Capture
+- [L4-CORRECTION-001] `src/core/l4_correction_capture.py` — diff AI vs BS form_data, log JSONL
+- [L4-CORRECTION-001] hook vào `src/api/main.py` approve_record() — best-effort, không block
+- [L4-CORRECTION-001] `scripts/analyze_corrections.py` — CLI alias suggestion tool (human review)
+- [L4-CORRECTION-001] `tests/unit/test_l4_correction_capture.py` — 14 tests PASS (AC-001→AC-005)
+- [L4-CORRECTION-001] `data/corrections/` vào `.gitignore` — patient data an toàn
 
 ## Kết quả đo được
-- Tests: **352/352 PASS** (+30 NER regression tests từ A-01/A-02/A-03)
-- A-01 (Viêm họng cấp): chan_doan ✅ nhiệt_độ ✅ don_thuoc ✅ (Amoxicillin + Paracetamol)
-- A-02 (Viêm loét dạ dày): ICD-10 auto_lookup ✅ huyết_áp ✅ don_thuoc deferred (TRAIN-001)
-- A-03 (Tăng huyết áp): huyết_áp 170/100 ✅ ly_do '' ✅ (admin filtered) tai_kham '2 tuần' ✅
-- Phonetic explosions confirmed TRAIN-001 dependency: Amlodipine, Losartan, Omeprazole, Domperidone
+- Tests: 366/366 PASS (+14 mới)
+- l4_correction_capture: AC-001 (log correction) ✅ · AC-002 (positive signal) ✅ · AC-003 (non-blocking) ✅ · AC-004 (valid JSONL) ✅ · AC-005 (analyze tool) ✅
 
 ## Blocker / Phụ thuộc bên ngoài
-- [TRAIN-001] Drug NER CEER 0.9🔴 — cần 50-100h audio BS thật (PA-006)
-- [PA-006] Andy điền `data/audio/dental/ground_truth_dental_template.json` — dental ground truth
-- [PA-007] Andy dùng `docs/dev/CHATGPT_CORPUS_PROMPT.md` v2.0 → ChatGPT → 41 scripts → BS review → gửi lại
+- [PA-006] Andy cần record audio dental thật → điền `data/audio/dental/ground_truth_dental_template.json`
+- [PA-007] Andy sử dụng `docs/dev/CHATGPT_CORPUS_PROMPT.md` v2.0 → ChatGPT → 41 scripts
+- [BENCH-002] Cần audio BS thật để đo CEER thật — blocked chờ PILOT
 
 ## Phiên tiếp theo — làm ngay theo thứ tự
-1. [PILOT Đà Nẵng] Andy chạy `install.bat` tại phòng khám thật — ghi nhận feedback
-2. [BENCH-002] Record 30-50 audio consultations thật → ground truth → CEER thật
-3. [PA-007] Andy: copy `docs/dev/CHATGPT_CORPUS_PROMPT.md` v2.0 → ChatGPT → 41 corpus scripts → BS review → gửi Claude
-4. [TEST-A04] Test case A-04 (Đái tháo đường) hoặc A-05 (Đau thắt lưng) — tiếp tục real-world NER validation
+1. [PILOT] Andy cài install.bat tại phòng khám Đà Nẵng — PhoWhisper-medium sẽ download ~3GB lần đầu
+2. [BENCH-002] Sau pilot: record 30-50 audio thật → `data/audio/pilot/` → chạy CEER thật
+3. [PA-007] Andy paste `docs/dev/CHATGPT_CORPUS_PROMPT.md` v2.0 → ChatGPT → gửi 41 scripts về
+4. [analyze_corrections] Sau 10+ approvals pilot: `python scripts/analyze_corrections.py` → xem alias suggestions → update `data/reference/drug_db.json` thủ công
+5. [DRUG-ALIAS-001] Mở rộng alias map dựa trên correction analysis + "parasyte mode" (Paracetamol) mới phát hiện

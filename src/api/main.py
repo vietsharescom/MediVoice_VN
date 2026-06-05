@@ -16,7 +16,7 @@ from fastapi.staticfiles import StaticFiles
 
 from ..core import l0_normalize, l1a_asr, l1b_drug_correct, l1c_ner
 from ..core import l1d_icd_lookup, l2_validate, l3_route
-from ..core import l4_human_gate, l5_pii_scan, l6_generate_form
+from ..core import l4_human_gate, l4_correction_capture, l5_pii_scan, l6_generate_form
 from ..core import l7_storage, l9a_pdf_export, l10_audit_log
 from ..core.l7_storage import init_db, _get_conn
 from ..models.clinical_record import ClinicalRecord, RecordStatus
@@ -187,6 +187,10 @@ async def approve_record(
     if not record:
         raise HTTPException(404, "Record không tìm thấy hoặc đã xử lý")
 
+    # Snapshot AI form trước khi áp dụng sửa đổi của BS
+    ai_form_snapshot = dict(record.form_data)
+    transcript_snapshot = record.transcript_corrected or ""
+
     # Áp dụng chỉnh sửa của BS nếu có
     if edited_form:
         try:
@@ -194,6 +198,16 @@ async def approve_record(
             record = record.model_copy(update={"form_data": edited_data})
         except json.JSONDecodeError:
             pass
+
+    # L4 Correction Capture — best-effort, không block approve flow (FID-VN-006)
+    l4_correction_capture.capture(
+        record_id=record_id,
+        clinic_id=record.facility_id,
+        transcript=transcript_snapshot,
+        ai_form=ai_form_snapshot,
+        bs_form=dict(record.form_data),
+        doctor_cchn=doctor_cchn,
+    )
 
     # L4: Approve
     try:

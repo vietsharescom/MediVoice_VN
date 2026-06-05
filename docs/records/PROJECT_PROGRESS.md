@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-08 | v0.6.3
+# Cập nhật: 2026-06-08 | v0.7.0
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -91,6 +91,11 @@
 | P0.6b | │  ├─ Model cache | check_env.py checks PhoWhisper cache (~150MB tự download) | 🟢 | CT-005 | SES-20260608 | `scripts/check_env.py` |
 | P0.6c | │  └─ Setup wizard | setup_facility.py + facility_config.json template | 🟢 | CT-005 | SES-20260608 | `scripts/setup_facility.py` |
 | | │ | | | | | |
+| **P0.6.1** | **├─ 🟢 L4 Correction Capture** | **Implicit supervision — BS edits = training labels** | **🟢** | **FID-VN-006** | SES-20260608f | 14 tests PASS — hook approve_record(), analyze_corrections.py |
+| P0.6.1a | │  ├─ l4_correction_capture.py | diff AI→BS form_data, log JSONL per-clinic | 🟢 | FID-VN-006 | SES-20260608f | `src/core/l4_correction_capture.py` |
+| P0.6.1b | │  ├─ analyze_corrections.py | CLI tool: alias suggestions, drug miss freq table | 🟢 | FID-VN-006 | SES-20260608f | `scripts/analyze_corrections.py` |
+| P0.6.1c | │  └─ test_l4_correction_capture.py | AC-001→AC-005, 14 tests PASS | 🟢 | FID-VN-006 | SES-20260608f | `tests/unit/test_l4_correction_capture.py` |
+| | │ | | | | | |
 | **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
 | P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |
 | P0.7b |    ├─ DPA ký | Hợp đồng xử lý dữ liệu | 🟡 | PA-003 | — | Luật sư review xong → ký |
@@ -156,6 +161,7 @@
 | 2 | **BENCH-002** Record 30-50 audio thật → CEER thật | Sau pilot | PA-006 |
 | 3 | **CHATGPT-CORPUS-001** Andy paste prompt → ChatGPT → 41 scripts → BS review | `docs/dev/CHATGPT_CORPUS_PROMPT.md` v2.0 | PA-007 |
 | 4 | **TEST-E2E-001** End-to-end với audio thật | Sau pilot | CT |
+| 5 | **analyze_corrections.py** chạy sau khi có 10+ approvals pilot để xem drug alias suggestions | `scripts/analyze_corrections.py` | CT |
 
 ### 🟡 SONG SONG (Andy làm)
 
@@ -181,7 +187,7 @@
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | 352/352 | 🟢 |
+| Tests PASS | 100% | 366/366 | 🟢 |
 | bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
 | Vital extraction (TC audio) | >0% | bench tc_001/tc_002: vital=True | 🟢 fixed FID-VN-005 |
 | WER | <30% | 36-52% | 🔴 cần fine-tune |
@@ -212,6 +218,7 @@
 | SES-20260608c | 2026-06-08 | v0.5.3→v0.6.0 | CT-005 DEPLOY-001 DONE — install.bat + start.bat + check_env + setup_facility (287 tests) |
 | SES-20260608d | 2026-06-08 | v0.6.0→v0.6.1 | GAP-003 ✅ GAP-004 ✅ — 35 unit tests L8+L9a (322 tests total) |
 | SES-20260608e | 2026-06-08 | v0.6.1→v0.6.3 | Real-world test A-01/A-02/A-03 — 11 NER+ICD bugs fixed — 352 tests — Adaptive Learning arch doc |
+| SES-20260608f | 2026-06-08 | v0.6.3→v0.7.0 | FID-VN-006 L4 Correction Capture — 14 new tests — 366 tests total |
 
 ---
 

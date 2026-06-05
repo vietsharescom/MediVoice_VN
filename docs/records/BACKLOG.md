@@ -92,6 +92,13 @@
   - Iron context guard · BP intermediate text · BP "tri" alias · ly_do symptom filter · tai_kham admin strip
 - [x] **CORPUS-001** ✅ CLINICAL_TEST_CORPUS_VN.md v2.0 — terminology fixes ("tình trạng", "đau khi nuốt") (2026-06-08)
 - [x] **ADAPTIVE-001** ✅ `docs/records/ADAPTIVE_LEARNING_ARCHITECTURE.md` — 3-tier learning design (2026-06-08)
+- [x] **FID-VN-006** ✅ Feature Intent Document L4 Correction Capture — Andy approved 2026-06-08
+- [x] **L4-CORRECTION-001** ✅ [FID-VN-006] L4 Correction Capture — implicit supervision (2026-06-08)
+  - `src/core/l4_correction_capture.py` — diff AI→BS, log to data/corrections/ JSONL
+  - `scripts/analyze_corrections.py` — CLI alias suggestion tool (human review req)
+  - `tests/unit/test_l4_correction_capture.py` — 14 tests PASS | Total: 366/366
+  - Hook vào `src/api/main.py` approve_record() — best-effort, không block flow
+  - `data/corrections/` vào .gitignore — không commit patient data
 - [ ] **CHATGPT-CORPUS-001** 🟡 Andy sử dụng `docs/dev/CHATGPT_CORPUS_PROMPT.md` v2.0 → ChatGPT/Grok → 41 corpus scripts → BS review → gửi lại Claude update CLINICAL_TEST_CORPUS_VN.md (PA-007)
 - [ ] **DRUG-ALIAS-001** 🟢 Mở rộng alias map trong drug_db.json (thêm typo VN phổ biến)
 
