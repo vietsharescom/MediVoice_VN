@@ -86,7 +86,8 @@ _RE_ROUTE = re.compile(
 # ─── Tái khám patterns ──────────────────────────────────────────────────────
 
 _RE_TAI_KHAM = re.compile(
-    r"(?:tái\s*khám|hẹn\s*lại|follow.?up)\s*(?:sau|after)?\s*(\d+)\s*(ngày|tuần|tháng)",
+    r"(?:tái\s*khám|hẹn\s*lại|follow.?up)\s*(?:sau|after)?\s*(\d+)\s*(ngày|tuần|tháng)"
+    r"([^.!?\n]*)",
     re.IGNORECASE
 )
 
@@ -257,7 +258,9 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
     # Tái khám
     m = _RE_TAI_KHAM.search(t)
     if m:
-        ent.tai_kham = f"Sau {m.group(1)} {m.group(2)}"
+        base = f"{m.group(1)} {m.group(2)}"
+        extra = m.group(3).strip() if m.group(3) else ""
+        ent.tai_kham = f"{base} {extra}".strip() if extra else base
 
     # Chi định
     for m in _RE_CHI_DINH.finditer(t):

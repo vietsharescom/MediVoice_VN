@@ -215,10 +215,11 @@ def _live_transcribe(wav_path: str) -> str:
         return ""
 
 
-def load_transcripts(target_file: str = None) -> dict:
+def load_transcripts(target_file: str = None, whitelist: set = None) -> dict:
     """
     Returns {filename: transcript_text}.
     Tries T007_eval_results.json cache first (fast), then live PhoWhisper ASR.
+    whitelist: if set, only process files in this set (used with --gt flag).
     """
     t007_path = os.path.join(AUDIO_DIR, "T007_eval_results.json")
     cache = {}
@@ -229,7 +230,9 @@ def load_transcripts(target_file: str = None) -> dict:
 
     wavs = sorted([
         f for f in os.listdir(AUDIO_DIR)
-        if f.endswith(".wav") and (f == target_file if target_file else True)
+        if f.endswith(".wav")
+        and (f == target_file if target_file else True)
+        and (f in whitelist if whitelist else True)
     ])
 
     result = {}
@@ -323,14 +326,17 @@ def main():
     parser = argparse.ArgumentParser(description="BENCH-002: Clinical Entity Error Rate")
     grp = parser.add_mutually_exclusive_group(required=True)
     grp.add_argument("--partial", action="store_true", help="Coverage only (không cần ground truth)")
-    grp.add_argument("--full",    action="store_true", help="Full CEER vs. data/audio/ground_truth.json")
+    grp.add_argument("--full",    action="store_true", help="Full CEER vs. ground truth JSON")
     parser.add_argument("--file", default=None, help="Chỉ chạy 1 file (vd: test_medivoice_04.wav)")
+    parser.add_argument("--gt",   default=None,
+                        help="Custom ground truth JSON (default: data/audio/ground_truth.json)")
     args = parser.parse_args()
 
-    if args.full and not os.path.exists(GT_FILE):
-        print(f"[ERROR] Ground truth không tìm thấy: {GT_FILE}")
-        print(f"        Andy điền vào template: data/audio/ground_truth_template.json")
-        print(f"        Rồi copy/rename thành: data/audio/ground_truth.json")
+    gt_file = args.gt if args.gt else GT_FILE
+    if args.full and not os.path.exists(gt_file):
+        print(f"[ERROR] Ground truth không tìm thấy: {gt_file}")
+        print(f"        Dùng --gt để chỉ file khác, hoặc chạy:")
+        print(f"        python tools/gen_test_audio.py --input data/audio/ground_truth_lam_sang_template.json")
         sys.exit(1)
 
     print("=" * 65)
@@ -339,8 +345,14 @@ def main():
     print(f"Mode: {mode}  |  File: {args.file or 'all'}")
     print("=" * 65)
 
+    # Build whitelist from GT template when --gt is used
+    gt_whitelist = None
+    if args.gt and args.full:
+        with open(gt_file, encoding="utf-8") as f:
+            gt_whitelist = {row["file"] for row in json.load(f)}
+
     # Load transcripts
-    transcripts = load_transcripts(args.file)
+    transcripts = load_transcripts(args.file, whitelist=gt_whitelist)
     if not transcripts:
         print(f"[ERROR] Không tìm thấy file WAV trong {AUDIO_DIR}/")
         sys.exit(1)
@@ -348,7 +360,7 @@ def main():
     # Load ground truth if full mode
     gt_map = {}
     if args.full:
-        with open(GT_FILE, encoding="utf-8") as f:
+        with open(gt_file, encoding="utf-8") as f:
             for row in json.load(f):
                 gt_map[row["file"]] = row
 

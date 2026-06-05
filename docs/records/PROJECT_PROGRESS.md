@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-07 | v0.5.1
+# Cập nhật: 2026-06-08 | v0.5.3
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -19,75 +19,83 @@
 
 ## BẢNG TIẾN ĐỘ TOÀN DỰ ÁN
 
-| # | Lưu đồ | Chức năng | Status | Phiên hoàn thành | Ghi chú |
-|---|---|---|---|---|---|
-| | **▼ START** | | | | |
-| | | | | | |
-| **P0** | **══════════════** | | | | |
-| **P0** | **PHASE 0 — MVP** | BS nói → Mẫu 15/BV-01 → PDF | 🔵 | — | 6/7 milestones done |
-| **P0** | **══════════════** | | | | |
-| | | | | | |
-| P0.1 | ├─ 🟢 **Design** | VISION, BRS, PROJECT_KICKOFF S1-S9, 32 decisions locked | 🟢 | SES-20260603 | Andy ký S10 còn treo |
-| P0.1a | │  ├─ VISION.md | Tầm nhìn, 3 gói, 9 modules, roadmap | 🟢 | SES-20260603 | |
-| P0.1b | │  ├─ BRS.md | Business requirements, user stories, constraints | 🟢 | SES-20260603 | |
-| P0.1c | │  ├─ PROJECT_KICKOFF | S1-S9: legal scan, tech scan, market, solution | 🟢 | SES-20260603 | S10 Andy ký sau |
-| P0.1d | │  └─ DECISIONS.md | 47 ADRs — kiến trúc, pháp lý, kỹ thuật | 🟢 | SES-20260606 | Thêm 15 ADR mới |
-| | │ | | | | |
-| P0.2 | ├─ 🟢 **Implement L0→L10** | AI Pipeline đầy đủ + FastAPI PWA | 🟢 | SES-20260604 | 165 tests PASS |
-| P0.2.L0 | │  ├─ L0 Normalize | 16kHz mono, VAD, hash, purge audio | 🟢 | SES-20260604 | NĐ13/2023 |
-| P0.2.L1a | │  ├─ L1a PhoWhisper ASR | Nhận dạng giọng nói VN, offline, chunk 10s | 🟢 | SES-20260604 | WER 36-52% chưa fine-tune |
-| P0.2.L1b | │  ├─ L1b Drug Correct | Sửa tên thuốc về INN, alias map 110+ thuốc | 🟢 | SES-20260604 | |
-| P0.2.L1c | │  ├─ L1c NER VN | Rule-based: vitals, drugs, diagnosis, follow-up | 🟢 | SES-20260607 | VN word-form numbers fixed [FID-VN-005] |
-| P0.2.L1d | │  ├─ L1d ICD-10-VN | Auto-lookup 15,026 mã (QĐ5837/BYT) | 🟢 | SES-20260604 | |
-| P0.2.L2 | │  ├─ L2 Validate | Confidence scoring, weighted fields | 🟢 | SES-20260604 | |
-| P0.2.L3 | │  ├─ L3 Route | lam_sang/cdha/nha_khoa + transcript fallback | 🟢 | SES-20260606 | Bug fix: transcript fallback |
-| P0.2.L4 | │  ├─ L4 Human Gate | BS approve bắt buộc — không bypass | 🟢 | SES-20260604 | Luật KCB Đ.62 |
-| P0.2.L5 | │  ├─ L5 PII Scan | CCCD/SĐT/BHYT/email — NĐ13/2023 | 🟢 | SES-20260604 | Tests: 27 unit tests ✅ |
-| P0.2.L6 | │  ├─ L6 Form Gen | NER → BenhAnNgoaiTru (Mẫu 15/BV-01) | 🟢 | SES-20260607 | VN NER direct mapping [FID-VN-005] |
-| P0.2.L7 | │  ├─ L7 Storage | SQLite + WAL + Fernet encryption | 🟢 | SES-20260604 | |
-| P0.2.L8 | │  ├─ L8 Recovery | Error handling, @with_recovery | 🟢 | SES-20260604 | |
-| P0.2.L9a | │  ├─ L9a PDF | Mẫu 15/BV-01 ReportLab + disclaimer | 🟢 | SES-20260604 | |
-| P0.2.L10 | │  └─ L10 Audit Log | SHA-256 hash chain, append-only, 10 năm | 🟢 | SES-20260604 | |
-| | │ | | | | |
-| P0.2.API | │  ├─ FastAPI PWA | Doctor UI: record → review → approve → PDF | 🟢 | SES-20260604 | API tests: 18 tests ✅ |
-| P0.2.CA | │  └─ Canada Pipeline Port | L0→L9 Canada (MarianMT + SOAP) cho NER quality | 🟢 | SES-20260605 | Dùng nội bộ, không nối API |
-| | │ | | | | |
-| P0.3 | ├─ 🟢 **Benchmark BENCH-001** | PhoWhisper + Canada pipeline trên 22 audio | 🟢 | SES-20260605 | T-007 10/10, T-005 20/22 PASS |
-| P0.3a | │  ├─ T-007 WER | eval_phowhisper.py — WER 36-52%, RTF 0.5x | 🟢 | SES-20260605 | |
-| P0.3b | │  └─ T-005 Pipeline | Canada pipeline 20/22 PASS (91%) | 🟢 | SES-20260605 | 2 FAIL hợp lệ (silence) |
-| | │ | | | | |
-| P0.4 | ├─ 🟢 **Design Review** | DESIGN_REPORT v1.1 + ISO audit system | 🟢 | SES-20260606 | Full system design confirmed |
-| P0.4a | │  ├─ DESIGN_REPORT v1.1 | Master design 21 sections, 700+ dòng | 🟢 | SES-20260606 | docs/records/ |
-| P0.4b | │  ├─ ISO Audit System | iso_audit.py + session counter + weekly trigger | 🟢 | SES-20260606 | |
-| P0.4c | │  ├─ AI Memory System | 5-tier memory + CONFUSION_PATTERNS (25 patterns) | 🟢 | SES-20260606 | |
-| P0.4d | │  ├─ Consultation Template | Multi-AI consultation workflow | 🟢 | SES-20260606 | |
-| P0.4e | │  ├─ PENDING_REQUESTS | PA/CT/TP tracking system | 🟢 | SES-20260606 | |
-| P0.4f | │  ├─ ISO Docs Mới | DPA, INCIDENT_PLAN, BS_ONBOARDING | 🟢 | SES-20260606 | |
-| P0.4g | │  └─ Bug Fixes (4) | trieu_chung, patient_name, l3 transcript, qua_trinh | 🟢 | SES-20260606 | 210 tests PASS |
-| | │ | | | | |
-| **P0.5** | **├─ 🟢 VN-ROUTER-001** | **L6 branch: NER → Mẫu 15/BV-01 trực tiếp** | **🟢** | SES-20260606 | **232 tests PASS** |
-| P0.5a | │  ├─ FID-VN-004 | Feature Intent Document | 🟢 | SES-20260606 | fids/FID-VN-004.md DONE |
-| P0.5b | │  ├─ l3_routing vn_route | detect_vn_route() trong Canada L3 | 🟢 | SES-20260606 | 14 tests PASS |
-| P0.5c | │  ├─ l6_agent dispatch | lam_sang → benh_an / cdha → SOAP | 🟢 | SES-20260606 | AC-001 AC-002 PASS |
-| P0.5d | │  └─ l6_mau15_generator | generate_mau15(): NER → form_data → generate_benh_an() | 🟢 | SES-20260606 | 22 new tests PASS |
-| | │ | | | | |
-| **P0.5.1** | **├─ 🟢 VN-NER-002** | **VN word-form numbers → vital extraction fixed** | **🟢** | SES-20260607 | **272 tests PASS** |
-| P0.5.1a | │  ├─ FID-VN-005 | Feature Intent Document — approved Andy | 🟢 | SES-20260607 | fids/FID-VN-005.md DONE |
-| P0.5.1b | │  ├─ _normalize_vn_numbers() | PhoWhisper word-form → digits trước NER regex | 🟢 | SES-20260607 | "tám mươi"→80, "một trăm ba mươi"→130 |
-| P0.5.1c | │  ├─ generate_mau15_from_vn_ner() | MedicalEntities direct mapping (không qua Canada NER) | 🟢 | SES-20260607 | Root cause fix FID-VN-004 bridge |
-| P0.5.1d | │  ├─ l6_agent lam_sang | original VI text → l1c_ner (không qua MarianMT) | 🟢 | SES-20260607 | Canada path (cdha) giữ nguyên |
-| P0.5.1e | │  └─ test_l1c_vn_numbers | 40 tests: _vn_to_int, normalize, TC-001/002/003 | 🟢 | SES-20260607 | bench_ceer tc_001/002: vital=True ✅ |
-| | │ | | | | |
-| **P0.6** | **├─ ⏳ DEPLOY-001** | **Windows installer cho BS Đà Nẵng** | **⏳** | — | Sau P0.5.1 |
-| P0.6a | │  ├─ Python venv bundle | PyInstaller hoặc NSIS installer | ⏳ | — | |
-| P0.6b | │  ├─ Model cache | PhoWhisper + ICD + drug_db pre-bundled | ⏳ | — | |
-| P0.6c | │  └─ Setup wizard | Cấu hình CCHN, phòng khám, license | ⏳ | — | CONFIG-001 |
-| | │ | | | | |
-| **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | Chờ P0.5+P0.6 + PA-001..003 |
-| P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |
-| P0.7b |    ├─ DPA ký | Hợp đồng xử lý dữ liệu | 🟡 | — | PA-003 — chờ luật sư review |
-| P0.7c |    ├─ BENCH-002 | Record 30-50 audio thật → CEER measurement | 🟡 | — | PA-001 — chờ Andy record |
-| P0.7d |    └─ LEGAL-001 | Luật sư VN review DPA + tư vấn | 🔵 | SES-20260606 | Email đã gửi — PA-002 |
+| # | Lưu đồ | Chức năng | Status | Task ID | Phiên hoàn thành | Ghi chú |
+|---|---|---|---|---|---|---|
+| | **▼ START** | | | | | |
+| | | | | | | |
+| **P0** | **══════════════** | | | | | |
+| **P0** | **PHASE 0 — MVP** | BS nói → Mẫu 15/BV-01 → PDF | 🔵 | — | — | 6/7 milestones done |
+| **P0** | **══════════════** | | | | | |
+| | | | | | | |
+| P0.1 | ├─ 🟢 **Design** | VISION, BRS, PROJECT_KICKOFF S1-S9, 32 decisions locked | 🟢 | — | SES-20260603 | Andy ký S10 còn treo |
+| P0.1a | │  ├─ VISION.md | Tầm nhìn, 3 gói, 9 modules, roadmap | 🟢 | — | SES-20260603 | |
+| P0.1b | │  ├─ BRS.md | Business requirements, user stories, constraints | 🟢 | — | SES-20260603 | |
+| P0.1c | │  ├─ PROJECT_KICKOFF | S1-S9: legal scan, tech scan, market, solution | 🟢 | — | SES-20260603 | S10 Andy ký sau |
+| P0.1d | │  └─ DECISIONS.md | 47 ADRs — kiến trúc, pháp lý, kỹ thuật | 🟢 | — | SES-20260606 | Thêm 15 ADR mới |
+| | │ | | | | | |
+| P0.2 | ├─ 🔵 **Implement L0→L10** | AI Pipeline đầy đủ + FastAPI PWA | 🔵 | — | SES-20260604 | Impl done. GAP-003/GAP-004 unit tests còn thiếu |
+| P0.2.L0 | │  ├─ L0 Normalize | 16kHz mono, VAD, hash, purge audio | 🟢 | — | SES-20260604 | NĐ13/2023 |
+| P0.2.L1a | │  ├─ L1a PhoWhisper ASR | Nhận dạng giọng nói VN, offline, chunk 10s | 🟢 | — | SES-20260604 | WER 36-52% chưa fine-tune |
+| P0.2.L1b | │  ├─ L1b Drug Correct | Sửa tên thuốc về INN, alias map 110+ thuốc | 🟢 | — | SES-20260604 | |
+| P0.2.L1c | │  ├─ L1c NER VN | Rule-based: vitals, drugs, diagnosis, follow-up | 🟢 | FID-VN-005 | SES-20260607 | VN word-form numbers fixed |
+| P0.2.L1d | │  ├─ L1d ICD-10-VN | Auto-lookup 15,026 mã (QĐ5837/BYT) | 🟢 | — | SES-20260604 | |
+| P0.2.L2 | │  ├─ L2 Validate | Confidence scoring, weighted fields | 🟢 | — | SES-20260604 | |
+| P0.2.L3 | │  ├─ L3 Route | lam_sang/cdha/nha_khoa + transcript fallback | 🟢 | — | SES-20260606 | Bug fix: transcript fallback |
+| P0.2.L4 | │  ├─ L4 Human Gate | BS approve bắt buộc — không bypass | 🟢 | — | SES-20260604 | Luật KCB Đ.62 |
+| P0.2.L5 | │  ├─ L5 PII Scan | CCCD/SĐT/BHYT/email — NĐ13/2023 | 🟢 | GAP-002 | SES-20260604 | 27 unit tests ✅ |
+| P0.2.L6 | │  ├─ L6 Form Gen | NER → BenhAnNgoaiTru (Mẫu 15/BV-01) | 🟢 | FID-VN-004 | SES-20260607 | VN NER direct mapping |
+| P0.2.L7 | │  ├─ L7 Storage | SQLite + WAL + Fernet encryption | 🟢 | — | SES-20260604 | |
+| P0.2.L8 | │  ├─ L8 Recovery | Error handling, @with_recovery | 🔵 | GAP-003 | — | Impl 🟢. Unit tests **chưa có** → `tests/unit/test_l8_error_handler.py` |
+| P0.2.L9a | │  ├─ L9a PDF | Mẫu 15/BV-01 ReportLab + disclaimer | 🔵 | GAP-004 | — | Impl 🟢. Unit tests **chưa có** → `tests/unit/test_l9a_pdf_export.py` |
+| P0.2.L10 | │  └─ L10 Audit Log | SHA-256 hash chain, append-only, 10 năm | 🟢 | — | SES-20260604 | |
+| | │ | | | | | |
+| P0.2.API | │  ├─ FastAPI PWA | Doctor UI: record → review → approve → PDF | 🟢 | GAP-005 | SES-20260604 | 18 integration tests ✅ |
+| P0.2.CA | │  └─ Canada Pipeline Port | L0→L9 Canada (MarianMT + SOAP) cho NER quality | 🟢 | — | SES-20260605 | Dùng nội bộ |
+| | │ | | | | | |
+| P0.3 | ├─ 🟢 **Benchmark BENCH-001** | PhoWhisper + Canada pipeline trên 22 audio | 🟢 | BENCH-001 | SES-20260605 | T-007 10/10, T-005 20/22 PASS |
+| P0.3a | │  ├─ T-007 WER | eval_phowhisper.py — WER 36-52%, RTF 0.5x | 🟢 | — | SES-20260605 | |
+| P0.3b | │  └─ T-005 Pipeline | Canada pipeline 20/22 PASS (91%) | 🟢 | — | SES-20260605 | 2 FAIL hợp lệ (silence) |
+| | │ | | | | | |
+| P0.4 | ├─ 🟢 **Design Review** | DESIGN_REPORT v1.1 + ISO audit system | 🟢 | — | SES-20260606 | Full system design confirmed |
+| P0.4a | │  ├─ DESIGN_REPORT v1.1 | Master design 21 sections, 700+ dòng | 🟢 | — | SES-20260606 | docs/records/ |
+| P0.4b | │  ├─ ISO Audit System | iso_audit.py + session counter + weekly trigger | 🟢 | — | SES-20260606 | |
+| P0.4c | │  ├─ AI Memory System | 5-tier memory + CONFUSION_PATTERNS (25 patterns) | 🟢 | — | SES-20260606 | |
+| P0.4d | │  ├─ Consultation Template | Multi-AI consultation workflow | 🟢 | — | SES-20260606 | |
+| P0.4e | │  ├─ PENDING_REQUESTS | PA/CT/TP tracking system | 🟢 | — | SES-20260606 | |
+| P0.4f | │  ├─ ISO Docs Mới | DPA, INCIDENT_PLAN, BS_ONBOARDING | 🟢 | — | SES-20260606 | |
+| P0.4g | │  └─ Bug Fixes (4) | trieu_chung, patient_name, l3 transcript, qua_trinh | 🟢 | — | SES-20260606 | 210 tests PASS |
+| | │ | | | | | |
+| **P0.5** | **├─ 🟢 VN-ROUTER-001** | **L6 branch: NER → Mẫu 15/BV-01 trực tiếp** | **🟢** | **FID-VN-004** | SES-20260606 | **232 tests PASS** |
+| P0.5a | │  ├─ FID-VN-004 | Feature Intent Document | 🟢 | CT-001 | SES-20260606 | fids/FID-VN-004.md DONE |
+| P0.5b | │  ├─ l3_routing vn_route | detect_vn_route() trong Canada L3 | 🟢 | CT-002 | SES-20260606 | 14 tests PASS |
+| P0.5c | │  ├─ l6_agent dispatch | lam_sang → benh_an / cdha → SOAP | 🟢 | CT-002 | SES-20260606 | AC-001 AC-002 PASS |
+| P0.5d | │  └─ l6_mau15_generator | generate_mau15(): NER → form_data → generate_benh_an() | 🟢 | CT-002 | SES-20260606 | 22 new tests PASS |
+| | │ | | | | | |
+| **P0.5.1** | **├─ 🟢 VN-NER-002** | **VN word-form numbers → vital extraction fixed** | **🟢** | **FID-VN-005** | SES-20260607 | **272 tests PASS** |
+| P0.5.1a | │  ├─ FID-VN-005 | Feature Intent Document — approved Andy | 🟢 | — | SES-20260607 | fids/FID-VN-005.md DONE |
+| P0.5.1b | │  ├─ _normalize_vn_numbers() | PhoWhisper word-form → digits trước NER regex | 🟢 | FID-VN-005 | SES-20260607 | "tám mươi"→80 |
+| P0.5.1c | │  ├─ generate_mau15_from_vn_ner() | MedicalEntities direct mapping (không qua Canada NER) | 🟢 | FID-VN-005 | SES-20260607 | Root cause fix |
+| P0.5.1d | │  ├─ l6_agent lam_sang | original VI text → l1c_ner (không qua MarianMT) | 🟢 | FID-VN-005 | SES-20260607 | Canada path (cdha) giữ nguyên |
+| P0.5.1e | │  └─ test_l1c_vn_numbers | 40 tests: _vn_to_int, normalize, TC-001/002/003 | 🟢 | FID-VN-005 | SES-20260607 | bench_ceer tc_001/002: vital=True ✅ |
+| | │ | | | | | |
+| **P0.5.2** | **├─ 🔵 BENCH-002 Baseline** | **Lâm sàng vùng miền: 10 files, Vitals✅ Diag✅ Drug🔴 Followup✅(0.1)** | **🔵** | **BENCH-002** | SES-20260608 | **Drug🔴 blocked TRAIN-001. Followup fixed CT-007.** |
+| P0.5.2a | │  ├─ gen_test_audio.py | Tạo WAV từ JSON template (gTTS → 16kHz mono) | 🟢 | — | SES-20260608 | `tools/gen_test_audio.py` |
+| P0.5.2b | │  ├─ bench_ceer --gt flag | Whitelist filtering, fix AUDIO_TOO_LONG | 🟢 | — | SES-20260608 | `tools/bench_ceer.py` |
+| P0.5.2c | │  ├─ 10 vùng miền template | Hà Nội→Kiên Giang, ground truth đầy đủ | 🟢 | PA-006 | SES-20260608 | `data/audio/ground_truth_lam_sang_template.json` |
+| P0.5.2d | │  ├─ CEER Drug baseline | Drug=0.9🔴 → DEFERRED | 🟡 | CT-006 | — | Blocked: TRAIN-001 cần 50-100h audio thật. Andy approved defer 2026-06-08 |
+| P0.5.2e | │  ├─ CEER Followup baseline | Followup=0.7🔴 → **0.1✅** | 🟢 | CT-007 | SES-20260608 | _RE_TAI_KHAM captures extra context (kèm/nếu/xét nghiệm). binh_dinh=TRAIN-001 dep. |
+| P0.5.2f | │  └─ Data tổ chức | dental/ folder tách riêng, xóa 22 duplicates | 🟢 | — | SES-20260608 | `data/audio/dental/` |
+| | │ | | | | | |
+| **P0.6** | **├─ ⏳ DEPLOY-001** | **Windows installer cho BS Đà Nẵng** | **⏳** | **CT-005** | — | Mở khóa sau P0.5.2 🔵 done |
+| P0.6a | │  ├─ Python venv bundle | PyInstaller hoặc NSIS installer | ⏳ | CT-005 | — | |
+| P0.6b | │  ├─ Model cache | PhoWhisper + ICD + drug_db pre-bundled | ⏳ | CT-005 | — | |
+| P0.6c | │  └─ Setup wizard | Cấu hình CCHN, phòng khám, license | ⏳ | CONFIG-001 | — | |
+| | │ | | | | | |
+| **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
+| P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |
+| P0.7b |    ├─ DPA ký | Hợp đồng xử lý dữ liệu | 🟡 | PA-003 | — | Luật sư review xong → ký |
+| P0.7c |    ├─ BENCH-002 thật | Record 30-50 audio thật → CEER thật | 🟡 | PA-006 | — | Chờ pilot deploy |
+| P0.7d |    └─ LEGAL-001 | Luật sư VN review DPA + tư vấn | 🔵 | LEGAL-001 | SES-20260606 | Email đã gửi |
 | | | | | | |
 | | **▼** | | | | |
 | | | | | | |
@@ -140,7 +148,7 @@
 
 ## PHIÊN TIẾP THEO — LÀM GÌ?
 
-### ⚡ NGAY BÂY GIỜ (unlocked — VN-NER-002 DONE)
+### ⚡ NGAY BÂY GIỜ (unlocked — CT-007 DONE)
 
 | # | Task | Điều kiện | File |
 |---|---|---|---|
@@ -176,7 +184,11 @@
 | bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
 | Vital extraction (TC audio) | >0% | bench tc_001/tc_002: vital=True | 🟢 fixed FID-VN-005 |
 | WER | <30% | 36-52% | 🔴 cần fine-tune |
-| CEER | <5% | ❓ cần ground_truth.json | 🟡 BENCH-002 PA-004 |
+| CEER Vitals | <5% | 0.033 (lam_sang gTTS baseline) | 🟢 near-perfect |
+| CEER Diagnosis | <10% | 0.1 (lam_sang gTTS baseline) | 🟢 tốt |
+| CEER Drug | <10% | 0.9 (lam_sang gTTS baseline) | 🔴 cần TRAIN-001 |
+| CEER Followup | <10% | **0.1** (lam_sang gTTS baseline) | 🟢 CT-007 done |
+| CEER thật | <5% | ❓ cần audio BS thật | 🟡 BENCH-002 PA-006 |
 | BS approve rate | >85% | ❓ chưa pilot | ⏳ |
 | NPS | >7/10 | ❓ chưa pilot | ⏳ |
 | Paying users | ≥5 | 0 | ⏳ |
@@ -194,6 +206,8 @@
 | SES-20260606 | 2026-06-06 | v0.4→v0.4.5 | Design review + ISO audit + 4 bugs fixed (210 tests) |
 | SES-20260606b | 2026-06-06 | v0.4.5→v0.5.0 | VN-ROUTER-001 DONE — L6 branch FID-VN-004 (232 tests) |
 | SES-20260607 | 2026-06-07 | v0.5.0→v0.5.1 | VN-NER-002 DONE — FID-VN-005 word-form numbers (272 tests) |
+| SES-20260608 | 2026-06-08 | v0.5.1→v0.5.2 | BENCH-002 baseline lâm sàng 10 vùng miền + tools + data organization |
+| SES-20260608b | 2026-06-08 | v0.5.2→v0.5.3 | CT-007 DONE — Followup CEER 0.7→0.1 (tai_kham regex extended) |
 
 ---
 

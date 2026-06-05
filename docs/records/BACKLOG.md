@@ -9,10 +9,15 @@
 - [ ] **LEGAL-001** 🔴 Thuê luật sư VN (healthtech + data + AI) — trước khi launch
 - [x] **BENCH-001** ✅ Benchmark PhoWhisper trên 22 audio — WER 36–52%, T-005 20/22 PASS (2026-06-05)
 - [ ] **BENCH-002** 🟡 Đo CEER thật: audio pilot thực tế BS nói + ground truth labels
-  - Partial CEER (2026-06-08): 0/10 coverage — WER 36–52% + dental terminology → NER miss 100%
-  - Tool: `tools/bench_ceer.py` | Template: `data/audio/ground_truth_template.json`
-  - Full CEER: Andy điền `data/audio/ground_truth_template.json` → rename → `data/audio/ground_truth.json` → `python tools/bench_ceer.py --full`
+  - Baseline lâm sàng synthetic (2026-06-08): 10/10 files | Vitals=0.033✅ Diag=0.1✅ Drug=0.9🔴
+  - Template lâm sàng: `data/audio/ground_truth_lam_sang_template.json` (10 vùng miền, gTTS done)
+  - Template dental: `data/audio/dental/ground_truth_dental_template.json` (Andy điền khi có audio nha khoa thật)
+  - Tạo WAV: `python tools/gen_test_audio.py --input <template.json>`
+  - Chạy CEER: `python -X utf8 tools/bench_ceer.py --full --gt <template.json>`
+  - Full CEER thật: Andy record audio BS nói → điền ground truth → chạy bench
 - [x] **GAP-002** ✅ Unit tests PII scan — tests/unit/test_pii_scan.py 27 tests PASS (2026-06-06)
+- [ ] **GAP-003** 🟡 Unit tests L8 error handler — `tests/unit/test_l8_error_handler.py` (impl done, tests còn thiếu) | P0.2.L8
+- [ ] **GAP-004** 🟡 Unit tests L9a PDF export — `tests/unit/test_l9a_pdf_export.py` (impl done, tests còn thiếu) | P0.2.L9a
 - [x] **GAP-005** ✅ API integration tests — tests/integration/test_api.py 18 tests PASS (2026-06-06)
 - [x] **FID-VN-004** ✅ Feature Intent Document VN-ROUTER-001 — Andy approved 2026-06-06
 - [x] **VN-ROUTER-001** ✅ L6 branch: lam_sang→Mẫu15/BV-01 | cdha→SOAP — 232 tests PASS (2026-06-06)
@@ -66,9 +71,13 @@
 
 ### Phase 0 Còn Lại
 - [x] **BENCH-001** ✅ T-005 20/22 PASS | T-007 10/10 PASS | WER 29–52% | SOAP 20/20 (2026-06-05)
-- [ ] **FID-VN-004** 🔴 Feature Intent Document cho VN-ROUTER-001 (L6 branch design)
-- [ ] **VN-ROUTER-001** 🔴 L6 branch: NER entities → BenhAnNgoaiTru (lam_sang, không qua SOAP)
-- [ ] **TEST-E2E-001** 🟡 End-to-end test full pipeline với audio thực tế (sau VN-ROUTER-001)
+- [x] **FID-VN-004** ✅ Feature Intent Document cho VN-ROUTER-001 (2026-06-06)
+- [x] **VN-ROUTER-001** ✅ L6 branch: NER entities → BenhAnNgoaiTru (2026-06-06)
+- [x] **BENCH-002-BASELINE** ✅ Lâm sàng synthetic 10 vùng miền — Vitals 0.033, Diag 0.1 (2026-06-08)
+  - `tools/gen_test_audio.py` — tạo WAV từ JSON template
+  - `bench_ceer.py --gt` flag — whitelist filtering
+  - `data/audio/dental/` — dental audio tách riêng
+- [ ] **TEST-E2E-001** 🟡 End-to-end test full pipeline với audio thực tế (sau DEPLOY-001)
 - [ ] **DEPLOY-001** 🟡 Package app để BS Đà Nẵng install (Windows + Python venv installer)
 - [ ] **CONFIG-001** 🟢 Facility config UI (tên phòng khám, CCHN, khoa — file JSON)
 - [ ] **DRUG-ALIAS-001** 🟢 Mở rộng alias map trong drug_db.json (thêm typo VN phổ biến)

@@ -1,6 +1,55 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.5.3] — 2026-06-08 — CT-007: Followup CEER 0.7→0.1 (tai_kham regex extended)
+
+### NER Fix
+- fix(l1c_ner): `_RE_TAI_KHAM` extended to capture optional trailing context after time unit
+  - Adds group(3) `([^.!?\n]*)` — captures "kèm điện tâm đồ", "xét nghiệm axit uric", "nếu không đỡ" etc.
+  - Removes "Sau" prefix from output (GT format: "2 tuần" not "Sau 2 tuần")
+  - Output: `f"{N} {unit} {extra}".strip()` — includes all context up to sentence boundary
+- data: `data/audio/ground_truth_lam_sang_template.json` — simplify aspirational GT entries
+  - nghe_an tai_kham: "1 tháng + HbA1c" → "1 tháng" (transcript không đề cập HbA1c)
+  - kien_giang tai_kham: "1 tháng + đường huyết + creatinin" → "1 tháng" (transcript không đề cập)
+  - binh_dinh: "a xít u rích" (PhoWhisper) ≠ "axit uric" (GT) — documented as TRAIN-001 dependency
+
+### Benchmark BENCH-002 — Followup CEER improved
+- Followup CEER: **0.7🔴 → 0.1✅** (target <0.3)
+  8/10 pass | 1 fail = binh_dinh (TRAIN-001 phonetic: "a xít u rích" ≠ "axit uric")
+- All other CEER unchanged: Vitals=0.033✅, Diag=0.1✅, Drug=0.9🔴(TRAIN-001)
+
+### Stats: 272/272 tests PASS | bandit 0 HIGH/MEDIUM
+
+---
+
+## [v0.5.2] — 2026-06-08 — BENCH-002 lam_sang baseline + tools + data organization
+
+### Tools
+- feat(tools): `tools/gen_test_audio.py` — tạo WAV từ JSON ground_truth template (gTTS → 16kHz mono)
+  - `--input` chỉ file JSON, `--force` ghi đè, `--dry-run` preview
+- fix(tools): `tools/bench_ceer.py` — thêm `--gt` flag + whitelist filtering
+  - Khi dùng `--gt`, chỉ scan/transcribe files listed trong GT template (bỏ scan toàn folder)
+  - Fix AUDIO_TOO_LONG: rút ngắn 3 transcript (Huế/Nghệ An/Kiên Giang) về < 28 giây
+
+### Data
+- data: `data/audio/ground_truth_lam_sang_template.json` — 10 ca lâm sàng × 10 vùng miền VN
+  Hà Nội, Hải Phòng, Nghệ An, Huế, Quảng Nam, Bình Định, Phú Yên, Sài Gòn, Tiền Giang, Kiên Giang
+  Mỗi ca: ground truth đầy đủ (drugs, chan_doan, vitals, tai_kham) + accent_risk notes
+- data: `data/audio/dental/ground_truth_dental_template.json` — 10 ca nha khoa điền đầy đủ chan_doan
+- data: dental audio → `data/audio/dental/` (24 WAV + 1 JSON tách khỏi lâm sàng)
+- data: xóa 22 " - Copy.wav" duplicate files
+- data: 10 `lam_sang_*.wav` generated (gTTS, 16kHz mono, 25-28s mỗi file)
+
+### Benchmark BENCH-002 — Baseline lâm sàng vùng miền
+- bench: 10/10 files processed (fix AUDIO_TOO_LONG cho Huế/Nghệ An/Kiên Giang)
+  Vitals CEER:    0.033 ✅  (near-perfect — NER vitals hoạt động tốt)
+  Diagnosis CEER: 0.1   ✅  (~90% chan_doan đúng)
+  Drug CEER:      0.9   🔴  (cần TRAIN-001 — drug NER yếu trên gTTS audio)
+  Follow-up CEER: 0.7   🔴  (cần TRAIN-001)
+- Report: `data/audio/BENCH002_ceer_results.json`
+
+### Stats: 272/272 tests PASS (không thay đổi — tooling/data only)
+
 ## [v0.5.1] — 2026-06-07 — VN-NER-002: VN word-to-number + L6 lam_sang dùng VN NER [FID-VN-005]
 
 ### Core fix (vital signs extraction from PhoWhisper output)

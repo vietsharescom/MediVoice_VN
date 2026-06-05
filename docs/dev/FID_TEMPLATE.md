@@ -52,3 +52,4 @@ feat(L{N}): {mô tả} [FID-VN-NNN]
 ---
 
 *FID Template | ISO_VN v1.0 | MediVoice VN*
+*Đặt file mới tại: fids/FID-VN-{NNN}.md (xem docs/dev/NAMING_CONVENTION.md Section 4)*

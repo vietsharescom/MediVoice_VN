@@ -29,7 +29,7 @@ Nếu Andy trả lời/làm xong → Claude cập nhật status → DONE.
 | PA-002 | **Luật sư VN** — đã phản hồi + review `docs/compliance/DPA_TEMPLATE.md`. | 🔴 HIGH | ✅ DONE | 2026-06-06 | 2 |
 | PA-003 | **Ký `docs/compliance/DPA_TEMPLATE.md`** với BS pilot Đà Nẵng — đã ký. | 🔴 HIGH | ✅ DONE | 2026-06-06 | 2 |
 | PA-004 | **BS Onboarding Checklist** — đã ký với BS pilot. | 🟡 MEDIUM | ✅ DONE | 2026-06-06 | 1 |
-| PA-006 | **Ground truth labels** — Mở `data/audio/ground_truth_template.json`, điền chan_doan/drugs/vitals/tai_kham cho từng file audio theo những gì BS thực tế nói. Xong rename thành `data/audio/ground_truth.json` rồi báo Claude chạy `--full`. | 🟡 MEDIUM | PENDING | 2026-06-08 | 2 |
+| PA-006 | **Ground truth labels (dental)** — Mở `data/audio/dental/ground_truth_dental_template.json`, điền chan_doan/drugs/vitals/tai_kham cho từng file audio nha khoa. Dental audio đã move sang `data/audio/dental/`. | 🟡 MEDIUM | PENDING | 2026-06-08 | 2 |
 | PA-005 | Approve FID-VN-004 | 🔴 HIGH | ✅ DONE | 2026-06-06 | 1 |
 
 ---
@@ -42,8 +42,9 @@ Nếu Andy trả lời/làm xong → Claude cập nhật status → DONE.
 | CT-002 | Implement VN-ROUTER-001 | 🔴 HIGH | ✅ DONE — 232 tests PASS | 2026-06-06 |
 | CT-003 | Viết tests GAP-002 (PII scan unit tests) | 🔴 HIGH | ✅ DONE | 2026-06-06 |
 | CT-004 | Viết tests GAP-005 (API integration tests) | 🔴 HIGH | ✅ DONE | 2026-06-06 |
-| CT-005 | Build DEPLOY-001 (Windows installer) sau VN-ROUTER-001 | 🟡 MEDIUM | PENDING | 2026-06-06 |
-| CT-006 | Update drug_db.json với 30 cặp drug interactions (DRUG-INTERACT-001 minimal) | 🟢 LOW | PENDING | 2026-06-06 |
+| CT-006 | **Drug CEER fix** — DEFERRED. Blocked by TRAIN-001 (cần audio thật). Andy approved defer 2026-06-08. \| P0.5.2d | 🟡 LOW | DEFERRED | 2026-06-08 |
+| CT-007 | **Followup CEER fix** — Cải thiện tai_kham regex `src/core/l1c_ner.py` → Followup CEER **0.7→0.1** ✅ \| P0.5.2e | 🟡 MEDIUM | ✅ DONE | 2026-06-08 |
+| CT-005 | **DEPLOY-001** Windows installer PyInstaller — mở khóa sau CT-007 done ✅ \| P0.6 | 🟡 MEDIUM | PENDING | 2026-06-06 |
 
 ---
 

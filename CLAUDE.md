@@ -230,10 +230,18 @@ v{trước} | {N} tests → v{sau} | {N} tests
 | `CONFUSION_PATTERNS.md` | `docs/dev/` | **Claude** | Tầng 4 Memory — đọc khi confused/FID |
 | `CONSULTATION_TEMPLATE.md` | `docs/dev/` | Claude + Andy | Multi-AI consultation workflow |
 | `QUALITY_AUDIT_TEMPLATE.md` | `docs/dev/` | Claude + Andy | ISO/IEC 25010 product quality audit |
+| `FID_TEMPLATE.md` | `docs/dev/` | Claude | Template tạo FID mới (FID-VN-{NNN}.md → fids/) |
+| `SRS.md` | `docs/compliance/` | Claude + Andy | Software Requirements Specification |
+| `RTM.md` | `docs/compliance/` | Claude + Andy | Requirements Traceability Matrix |
+| `DPA_TEMPLATE.md` | `docs/compliance/` | Andy | Data Processing Agreement — ký với BS pilot |
+| `BS_ONBOARDING_CHECKLIST.md` | `docs/compliance/` | Andy | Checklist onboarding BS — ký trước pilot |
+| `PENDING_REQUESTS.md` | `docs/records/` | Claude + Andy | PA/CT/TP tracking — đọc mỗi phiên |
+| `BACKLOG.md` | `docs/records/` | Claude + Andy | Task tracker — nguồn Next task (xem ở trên) |
 
 > `docs/archive/` — files cũ/done, không đọc trong workflow thường ngày.
 > `DESIGN_REPORT` — đọc theo section khi cần, không cần đọc toàn bộ mỗi phiên.
 > `scripts/iso_audit.py` — chạy mỗi phiên (Step D), output: ✅/⚠️/🔴.
+> Naming convention đầy đủ (task IDs, progress IDs, folder structure): `docs/dev/NAMING_CONVENTION.md`
 
 ---
 
@@ -241,11 +249,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.5.1 |
-| Status | **VN-NER-002 DONE ✅ — 272/272 PASS — VN word-form numbers → vital extraction fixed** |
+| Version | v0.5.3 |
+| Status | **CT-007 DONE ✅ — Followup CEER 0.7→0.1 — 272/272 PASS** |
 | Tests | **272/272 PASS** · bandit 0 HIGH/MEDIUM |
-| Pending | **4 Andy actions** (PA-001..004) · **2 Claude todos** (CT-005, CT-006) |
-| Next task | **DEPLOY-001** (Windows installer) · BENCH-002 (audio Đà Nẵng) |
+| Pending | **1 Andy action** (PA-006) · **1 Claude todo** (CT-005) · CT-006 DEFERRED |
+| Next task | **DEPLOY-001** (CT-005, Windows installer) · BENCH-002 real audio (PA-006) |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` |
 
 ---
