@@ -72,14 +72,30 @@ _RE_SPO2 = re.compile(
 
 # ─── Đơn thuốc patterns ────────────────────────────────────────────────────
 
-_RE_DOSE_NUMBER = re.compile(r"(\d+(?:[.,]\d+)?)\s*(mg|g|ml|mcg|iu|đv|kg)?", re.IGNORECASE)
-_RE_FREQUENCY = re.compile(
-    r"(\d+)\s*(?:lần|viên|ống|gói)\s*(?:/|mỗi|x)?\s*(?:ngày|day)",
-    re.IGNORECASE
+_RE_DOSE_NUMBER = re.compile(
+    r"(\d+(?:[.,]\d+)?)\s*(mg|g|ml|mcg|iu|đv|kg|milygam|miligam|mililit)",
+    re.IGNORECASE,
 )
-_RE_DURATION = re.compile(
-    r"(?:trong|uống|dùng)?\s*(\d+)\s*(?:ngày|day)",
-    re.IGNORECASE
+# PhoWhisper hay gộp số và đơn vị: "trămmilygam", "mươimilygam" → cần tách trước normalize
+_RE_UNIT_GLUE = re.compile(
+    r"(trăm|mười|mươi|một|hai|ba|bốn|năm|sáu|bảy|tám|chín|nghìn|ngàn)"
+    r"(milygam|miligam|mg|ml|mcg)",
+    re.IGNORECASE,
+)
+_RE_FREQUENCY = re.compile(
+    # Allow "một/1" between "lần" and "ngày": "3 lần một ngày", "3 lần/ngày", "3 lần mỗi ngày"
+    r"(\d+)\s*(?:lần|viên|ống|gói)\s*(?:/|mỗi|x|\d+|một)?\s*(?:ngày|day)",
+    re.IGNORECASE,
+)
+# Strong: "trong/uống/dùng N ngày/tuần/tháng" — preferred, unambiguous duration signal
+_RE_DURATION_STRONG = re.compile(
+    r"(?:trong|uống|dùng)\s*(\d+)\s*(ngày|tuần|tháng)",
+    re.IGNORECASE,
+)
+# Weak fallback: bare "N ngày/tuần" — may match frequency context, only used if strong fails
+_RE_DURATION_WEAK = re.compile(
+    r"\b(\d+)\s*(ngày|tuần|tháng)\b",
+    re.IGNORECASE,
 )
 _RE_ROUTE = re.compile(
     r"\b(uống|tiêm|nhỏ\s*mắt|nhỏ\s*mũi|đặt|bôi|hít|truyền)\b",
@@ -103,7 +119,7 @@ _RE_LY_DO_FALLBACK = re.compile(
 # ─── Tái khám patterns ──────────────────────────────────────────────────────
 
 _RE_TAI_KHAM = re.compile(
-    r"(?:tái\s*khám|hẹn\s*lại|follow.?up)\s*(?:sau|after)?\s*(\d+)\s*(ngày|tuần|tháng)"
+    r"(?:tái\s*kh[aá]m|tai\s*kh[aá]m|hẹn\s*lại|follow.?up)\s*(?:sau|after)?\s*(\d+)\s*(ngày|tuần|tháng)"
     r"([^.!?\n]*)",
     re.IGNORECASE
 )
@@ -386,12 +402,18 @@ def _extract_drug_context(transcript: str, drug_candidate: dict) -> dict:
     # Original word positions preserved; normalize only the context window
     words = transcript.split()
     context_raw = " ".join(words[pos: pos + 20])
+    # Split concatenated VN number+unit before normalize ("trămmilygam" → "trăm milygam")
+    context_raw = _RE_UNIT_GLUE.sub(r"\1 \2", context_raw)
     context = _normalize_vn_numbers(context_raw)
 
     ham_luong = ""
     m = _RE_DOSE_NUMBER.search(context)
-    if m and m.group(2):  # require explicit medical unit (mg, g, ml, mcg, iu, đv)
+    if m and m.group(2):  # require explicit medical unit
         ham_luong = m.group(0).strip()
+        # Normalize unit variants to standard abbreviations
+        ham_luong = (ham_luong
+                     .replace("milygam", "mg").replace("miligam", "mg")
+                     .replace("mililit", "ml"))
 
     so_lan_ngay = ""
     m = _RE_FREQUENCY.search(context)
@@ -399,12 +421,26 @@ def _extract_drug_context(transcript: str, drug_candidate: dict) -> dict:
         so_lan_ngay = m.group(0).strip()
 
     so_ngay = 0
-    m = _RE_DURATION.search(context)
+    m = _RE_DURATION_STRONG.search(context)
     if m:
         try:
-            so_ngay = int(m.group(1))
-        except ValueError:
+            val = int(m.group(1))
+            unit = m.group(2).lower()
+            so_ngay = val * (7 if "tuần" in unit else 30 if "tháng" in unit else 1)
+        except (ValueError, IndexError):
             pass
+    else:
+        # Take max across all weak matches to avoid "1 ngày" from frequency context
+        # (e.g., "3 lần 1 ngày trong 4 tuần" → max(1, 28) = 28)
+        for m2 in _RE_DURATION_WEAK.finditer(context):
+            try:
+                val = int(m2.group(1))
+                unit = m2.group(2).lower()
+                candidate = val * (7 if "tuần" in unit else 30 if "tháng" in unit else 1)
+                if candidate > so_ngay:
+                    so_ngay = candidate
+            except (ValueError, IndexError):
+                pass
 
     duong_dung = "uống"
     m = _RE_ROUTE.search(context)

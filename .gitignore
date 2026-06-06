@@ -34,3 +34,7 @@ data/corrections/
 
 # External datasets — large files, download via scripts/download_datasets.py
 data/external/
+
+# Synthetic audio binary files — too large for git (120MB), use separate storage
+data/synthetic_audio/*.mp3
+data/synthetic_audio/wav/

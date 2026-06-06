@@ -67,7 +67,7 @@ def correct_drug_names(transcript: str) -> str:
     i = 0
     while i < len(words):
         matched = False
-        for n in (3, 2, 1):
+        for n in (4, 3, 2, 1):
             if i + n > len(words):
                 continue
             candidate = " ".join(words[i:i+n])
@@ -95,7 +95,7 @@ def extract_drug_candidates(transcript: str) -> list[dict]:
 
     i = 0
     while i < len(words):
-        for n in (3, 2, 1):
+        for n in (4, 3, 2, 1):
             if i + n > len(words):
                 continue
             candidate = " ".join(words[i:i+n])

@@ -29,7 +29,7 @@ Nếu Andy trả lời/làm xong → Claude cập nhật status → DONE.
 | PA-002 | **Luật sư VN** — đã phản hồi + review `docs/compliance/DPA_TEMPLATE.md`. | 🔴 HIGH | ✅ DONE | 2026-06-06 | 2 |
 | PA-003 | **Ký `docs/compliance/DPA_TEMPLATE.md`** với BS pilot Đà Nẵng — đã ký. | 🔴 HIGH | ✅ DONE | 2026-06-06 | 2 |
 | PA-004 | **BS Onboarding Checklist** — đã ký với BS pilot. | 🟡 MEDIUM | ✅ DONE | 2026-06-06 | 1 |
-| PA-006 | **Ground truth labels (dental)** — Mở `data/audio/dental/ground_truth_dental_template.json`, điền chan_doan/drugs/vitals/tai_kham cho từng file audio nha khoa. Dental audio đã move sang `data/audio/dental/`. | 🟡 MEDIUM | PENDING | 2026-06-08 | 4 |
+| PA-006 | **Ground truth labels (dental)** — Mở `data/audio/dental/ground_truth_dental_template.json`, điền chan_doan/drugs/vitals/tai_kham cho từng file audio nha khoa. Dental audio đã move sang `data/audio/dental/`. | 🟡 MEDIUM | ✅ DONE (Claude 2026-06-10) | 2026-06-08 | 4 |
 | PA-007 | **Corpus ChatGPT** — Copy toàn bộ nội dung `docs/dev/CHATGPT_CORPUS_PROMPT.md` → paste vào ChatGPT/Grok → nhận 41 scripts → BS đọc và xác nhận → gửi lại Claude để update `docs/dev/CLINICAL_TEST_CORPUS_VN.md` v3.0 | 🟡 MEDIUM | PENDING | 2026-06-08 | 2 |
 | PA-008 | **Semi-synthetic ghi âm** — Tìm 4 người: 1 HN + 1 SG + 1 CT + 1 Canada. In `docs/dev/RECORDING_SCRIPTS_4BS.md` (4 sections riêng). Mỗi người ghi 5 scripts × 2 takes. Upload vào `data/audio/corpus/semi_synthetic/`. Xem kế hoạch: `docs/dev/SEMI_SYNTHETIC_DATA_PLAN.md` | 🔴 HIGH | PENDING | 2026-06-09 | 2 |
 | PA-005 | Approve FID-VN-004 | 🔴 HIGH | ✅ DONE | 2026-06-06 | 1 |

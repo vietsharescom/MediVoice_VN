@@ -102,7 +102,10 @@
         "para si ta mol",
         "paracitamol",
         "paracetamo",
-        "para cetamol"
+        "para cetamol",
+        "para xe ta",
+        "para xê ta",
+        "paracetamol"
       ],
       "forms": [
         "viên 500mg",
@@ -296,7 +299,13 @@
         "amosilic",
         "amoxisilin",
         "amosi lic",
-        "amoxilin"
+        "amoxilin",
+        "amosicilin",
+        "ammos xi lin",
+        "ami xi lin",
+        "amo si ci lin",
+        "amosicin",
+        "ammo xi lin"
       ],
       "forms": [
         "viên 250mg",
@@ -844,7 +853,14 @@
         "Prilosec",
         "Omeprazol",
         "Omeprazole",
-        "Lomac"
+        "Lomac",
+        "omega ro",
+        "ô mê pra zol",
+        "ô me pra",
+        "omega rô",
+        "omepra zo",
+        "ome pra",
+        "ome pra zol"
       ],
       "forms": [
         "viên 10mg",
@@ -953,7 +969,11 @@
       "brands": [
         "Motilium",
         "Domperidone",
-        "Dompan"
+        "Dompan",
+        "rom phe ri don",
+        "rom phe ri đôn",
+        "dom pe ri đôn",
+        "domperidon"
       ],
       "forms": [
         "viên 10mg",
@@ -1148,7 +1168,11 @@
         "Norvasc",
         "Amlodipine",
         "Amlor",
-        "Amlodipin"
+        "Amlodipin",
+        "am lo di pin",
+        "am lô đi pin",
+        "am lô đi",
+        "amlodipine"
       ],
       "forms": [
         "viên 5mg",
@@ -1172,7 +1196,11 @@
       "brands": [
         "Cozaar",
         "Losartan",
-        "Lozar"
+        "Lozar",
+        "lo xar tan",
+        "lô xar tan",
+        "lô sa tan",
+        "loxartan"
       ],
       "forms": [
         "viên 25mg",
@@ -1502,7 +1530,11 @@
         "Glucophage",
         "Metformin",
         "Siofor",
-        "Glucofor"
+        "Glucofor",
+        "me pho min",
+        "mê phô min",
+        "met pho min",
+        "metphomin"
       ],
       "forms": [
         "viên 500mg",
