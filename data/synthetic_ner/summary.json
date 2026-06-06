@@ -1,0 +1,48 @@
+{
+  "total": 2100,
+  "train": 1680,
+  "val": 210,
+  "test": 210,
+  "scenarios": {
+    "gout": 300,
+    "viem_hong": 300,
+    "viem_da_day": 300,
+    "cam_cum": 300,
+    "dai_thao_duong": 300,
+    "tang_huyet_ap": 300,
+    "xuong_khop": 300
+  },
+  "regions": {
+    "CA": 525,
+    "CT": 525,
+    "HN": 525,
+    "SG": 525
+  },
+  "entity_counts": {
+    "MEDICATION": 2808,
+    "DOSE": 2490,
+    "VITAL": 1441,
+    "FREQUENCY": 1015,
+    "SYMPTOM": 737,
+    "FOLLOWUP": 331,
+    "ROUTE": 44,
+    "DURATION": 31
+  },
+  "asr_error_samples": 95,
+  "seed": 42,
+  "entity_types": [
+    "DIAGNOSIS",
+    "DOSE",
+    "DURATION",
+    "FOLLOWUP",
+    "FREQUENCY",
+    "MEDICATION",
+    "ROUTE",
+    "SYMPTOM",
+    "VITAL"
+  ],
+  "usage": {
+    "train_ner": "from datasets import load_dataset; ds = load_dataset('json', data_files={'train': 'data/synthetic_ner/train.jsonl', 'validation': 'data/synthetic_ner/val.jsonl'})",
+    "load_sample": "import json; [json.loads(l) for l in open('data/synthetic_ner/train.jsonl')]"
+  }
+}

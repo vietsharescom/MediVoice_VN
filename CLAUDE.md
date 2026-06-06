@@ -249,11 +249,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.7.0 |
-| Status | **L4 Correction Capture ✅ — FID-VN-006 DONE — 366/366 PASS** |
-| Tests | **366/366 PASS** · bandit 0 HIGH/MEDIUM |
-| Pending | **2 Andy actions** (PA-006: dental ground truth · PA-007: ChatGPT corpus) |
-| Next task | **PILOT Đà Nẵng** (install.bat thật) · **BENCH-002** (audio BS thật) · **analyze_corrections.py** sau 10+ approvals |
+| Version | v0.7.1 |
+| Status | **Synthetic NER 2100 samples ✅ · chan_doan regex fix ✅ · drug_db 118 drugs ✅ — 395/395 PASS** |
+| Tests | **395/395 PASS** · bandit 0 HIGH/MEDIUM |
+| Pending | **3 Andy actions** (PA-006: dental · PA-007: ChatGPT corpus · PA-008: 4 người ghi âm semi-synthetic) |
+| Next task | **PILOT Đà Nẵng** (install.bat thật) · **BENCH-002a** (semi-synthetic 4 vùng miền) · **DATASET-001 còn lại** (VietMed 2.5GB + ViMedCSS 4GB) |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` |
 
 ---

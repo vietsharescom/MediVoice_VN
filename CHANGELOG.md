@@ -1,6 +1,43 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.7.1] — 2026-06-09 — Synthetic NER pipeline + chan_doan regex fix (395 tests total)
+
+### Fix: chan_doan regex major improvement
+- fix(l1c_ner): `_RE_CHAN_DOAN` — hai-alternative lookahead: xử lý ". filler Kê" (sentence break + filler word) + inline keyword
+- fix(l1c_ner): `_RE_CHAN_DOAN` — cho phép ICD code trong captured group (e.g. "viêm họng cấp J02.9")
+- fix(l1c_ner): `_RE_CHAN_DOAN_FALLBACK` — thêm "gout" vào disease list, thêm "bị/mắc/có" trigger pattern
+- fix(l1c_ner): `_PRESCRIPTION_KW` — shared constant, thêm "kê toa", "cho anh/chị uống" pattern
+
+### Feature: Synthetic NER training data
+- feat(generate_synthetic_ner): `scripts/generate_synthetic_ner.py` — 2100 BIO-tagged VN outpatient samples
+  - 7 clinical scenarios × 4 regional dialects (HN/SG/CT/CA)
+  - 9 entity types: MEDICATION DOSE FREQUENCY DURATION ROUTE SYMPTOM DIAGNOSIS VITAL FOLLOWUP
+  - ASR error injection 5% — simulate PhoWhisper mishear
+  - Output: `data/synthetic_ner/train.jsonl` (1680) · `val.jsonl` (210) · `test.jsonl` (210)
+- fix(generate_synthetic_ner): ICD code không xuất hiện trong spoken text (chỉ trong ground_truth.icd10)
+- fix(generate_synthetic_ner): bỏ "hổng" (negation) khỏi CT fillers
+
+### Feature: Dataset analysis tools
+- feat(download_datasets): `scripts/download_datasets.py` — HuggingFace download VietMed family
+- feat(analyze_vietmed_ner): `scripts/analyze_vietmed_ner.py` — entity mapping + vocab extraction
+- data: VietMed-NER (9K) + VietMed-Sum (106K) + VN Medical QA (9K) → `data/external/`
+- data: `data/reference/vietmed_drugs_raw.json` (313 drugs) · `data/reference/vietmed_ner_vocabulary.json`
+- data: `data/reference/drug_db.json` v0.2.0 — 110 → 118 drugs (+8: Progesterone/Estradiol/Dydrogesterone/MefenamicAcid/Norfloxacin/Spironolactone/Carvedilol/Ceftriaxone)
+- docs: `docs/dev/DATA_CATALOG.md` — 26 datasets, license/domain/status
+
+### Feature: Semi-synthetic data strategy
+- docs: `docs/dev/SEMI_SYNTHETIC_DATA_PLAN.md` — quality standards + calibration workflow
+- docs: `docs/dev/RECORDING_SCRIPTS_4BS.md` — 20 scripts (4 doctors × 5 scenarios)
+- data: `data/audio/corpus/semi_synthetic/groundtruth_all.json` — 20 entries with placeholders
+
+### Tests
+- test(synthetic_ner_pipeline): `tests/unit/test_synthetic_ner_pipeline.py` — 7 tests pipeline benchmark
+  - Drug hit rate 97-100% · chan_doan 63-80% · vital 63-77% · tai_kham 33-60%
+- Stats: **395/395 tests PASS** (+29 net) | bandit 0 HIGH/MEDIUM
+
+---
+
 ## [v0.7.0] — 2026-06-08 — L4 Correction Capture — FID-VN-006 (366 tests total)
 
 ### Feature: L4 Correction Capture (TIER 2 Adaptive Learning)

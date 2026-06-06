@@ -8,13 +8,18 @@
 
 - [ ] **LEGAL-001** 🔴 Thuê luật sư VN (healthtech + data + AI) — trước khi launch
 - [x] **BENCH-001** ✅ Benchmark PhoWhisper trên 22 audio — WER 36–52%, T-005 20/22 PASS (2026-06-05)
-- [ ] **BENCH-002** 🟡 Đo CEER thật: audio pilot thực tế BS nói + ground truth labels
+- [ ] **BENCH-002a** 🟡 Semi-synthetic calibration: 4 BS × 5 kịch bản = 20 recordings
+  - Kịch bản: `docs/dev/RECORDING_SCRIPTS_4BS.md` (4 sections, in riêng cho từng người)
+  - Ground truth: `data/audio/corpus/semi_synthetic/groundtruth_all.json` (20 entries)
+  - Kế hoạch: `docs/dev/SEMI_SYNTHETIC_DATA_PLAN.md`
+  - Thực hiện: 4 người × ghi âm 5 scripts × 2 takes → chọn take tốt
+  - Calibrate: `python -X utf8 tools/bench_ceer.py --full --gt data/audio/corpus/semi_synthetic/groundtruth_all.json`
+  - Mục tiêu: CEER per entity × per region → tune drug_db.json + l1c_ner.py
+  - Andy cần: Tìm 4 người (HN/SG/CT/CA) để ghi âm trong 1 ngày (PA-008)
+- [ ] **BENCH-002b** 🟡 CEER thật: audio pilot BS Đà Nẵng + ground truth labels (sau BENCH-002a)
   - Baseline lâm sàng synthetic (2026-06-08): 10/10 files | Vitals=0.033✅ Diag=0.1✅ Drug=0.9🔴
-  - Template lâm sàng: `data/audio/ground_truth_lam_sang_template.json` (10 vùng miền, gTTS done)
-  - Template dental: `data/audio/dental/ground_truth_dental_template.json` (Andy điền khi có audio nha khoa thật)
-  - Tạo WAV: `python tools/gen_test_audio.py --input <template.json>`
-  - Chạy CEER: `python -X utf8 tools/bench_ceer.py --full --gt <template.json>`
-  - Full CEER thật: Andy record audio BS nói → điền ground truth → chạy bench
+  - Template lâm sàng: `data/audio/ground_truth_lam_sang_template.json`
+  - Template dental: `data/audio/dental/ground_truth_dental_template.json`
 - [x] **GAP-002** ✅ Unit tests PII scan — tests/unit/test_pii_scan.py 27 tests PASS (2026-06-06)
 - [x] **GAP-003** ✅ Unit tests L8 error handler — `tests/unit/test_l8_error_handler.py` 20 tests PASS (2026-06-08) | P0.2.L8
 - [x] **GAP-004** ✅ Unit tests L9a PDF export — `tests/unit/test_l9a_pdf_export.py` 15 tests PASS (2026-06-08) | P0.2.L9a
@@ -28,7 +33,8 @@
 
 - [x] **DPA-SIGN-001** ✅ Andy ký `docs/compliance/DPA_TEMPLATE.md` với BS pilot Đà Nẵng (2026-06-08)
 - [ ] **ONBOARD-001** 🔴 Andy ký `docs/compliance/BS_ONBOARDING_CHECKLIST.md` với từng BS pilot
-- [ ] **BENCH-002** 🟡 Record 30-50 audio consultations tại Đà Nẵng + ground truth labels → CEER thật
+- [ ] **BENCH-002a** 🟡 Semi-synthetic: 4 BS × 5 scripts = 20 recordings → calibrate pipeline (PA-008)
+- [ ] **BENCH-002b** 🟡 Pilot thật: record 30-50 audio tại Đà Nẵng → CEER thật (sau BENCH-002a)
 - [ ] **LEGAL-001** 🔴 Thuê luật sư VN review DPA + tư vấn pháp lý trước launch thương mại
 
 ---
@@ -101,6 +107,24 @@
   - `data/corrections/` vào .gitignore — không commit patient data
 - [ ] **CHATGPT-CORPUS-001** 🟡 Andy sử dụng `docs/dev/CHATGPT_CORPUS_PROMPT.md` v2.0 → ChatGPT/Grok → 41 corpus scripts → BS review → gửi lại Claude update CLINICAL_TEST_CORPUS_VN.md (PA-007)
 - [ ] **DRUG-ALIAS-001** 🟢 Mở rộng alias map trong drug_db.json (thêm typo VN phổ biến)
+- [~] **DATASET-001** 🔵 PARTIAL — Download P1 public datasets (VietMed family — MIT/Apache-2.0)
+  - ✅ Downloaded: VietMed-NER (9K NER, ~30MB) · VietMed-Sum (106K, ~43MB) · VN Medical QA (9K, ~5MB) → `data/external/`
+  - ⏳ Not yet: VietMed (2.5GB ASR audio) · ViMedCSS (4GB code-switch) — cần disk + bandwidth
+  - Script: `python -X utf8 scripts/download_datasets.py` | Catalog: `docs/dev/DATA_CATALOG.md`
+- [~] **DATASET-002** 🔵 PARTIAL — Phân tích VietMed-NER → map 18 entity types → MediVoice 5 types
+  - ✅ `scripts/analyze_vietmed_ner.py` — entity mapping, vocab extracted, staging file
+  - ✅ `data/reference/vietmed_drugs_raw.json` — 313 unique DRUGCHEMICAL entities
+  - ✅ `data/reference/vietmed_ner_vocabulary.json` — top terms extracted
+  - ⏳ `scripts/train_ner.py` — fine-tune training pipeline (gated FID-VN-007)
+- [x] **SYNTHETIC-NER-001** ✅ Tạo 2100 samples BIO-tagged VN outpatient NER (2026-06-09)
+  - `scripts/generate_synthetic_ner.py` — 7 scenarios × 4 regions × multiple templates
+  - `data/synthetic_ner/` — train 1680 / val 210 / test 210 (JSONL, BIO format)
+  - `tests/unit/test_synthetic_ner_pipeline.py` — 7 tests pipeline benchmark (395/395 PASS)
+  - Hit rates: Drug 97-100% · Diagnosis 63-80% · Vital 63-77% · Tái khám 33-60%
+- [x] **NER-BUGFIX-004** ✅ chan_doan regex major fix (2026-06-09)
+  - Fix: lookahead xử lý ". filler Kê" pattern, ICD codes, "bị/mắc" prefix, "gout" fallback
+  - File: `src/core/l1c_ner.py` — _RE_CHAN_DOAN + _RE_CHAN_DOAN_FALLBACK
+  - Verified: 10/10 test cases pass, 92/92 existing tests không bị break
 
 ---
 
@@ -140,8 +164,14 @@
 - [ ] **ACCOUNT-API-001:** Kế toán export API (MISA/Fast CSV + REST)
 
 ### Training
-- [ ] **TRAIN-001:** Fine-tune PhoWhisper trên 50–100h audio thực tế từ pilot
-- [ ] **TRAIN-002:** Fine-tune NER trên VN medical entities từ pilot data
+- [ ] **TRAIN-001:** Fine-tune PhoWhisper trên VietMed (16h labeled MIT) + pilot audio (50–100h)
+  - Datasets: `data/external/VietMed` + `data/external/ViMedCSS` + pilot audio
+  - Target: WER 35–40% → <20% | Drug CEER 0.90 → <0.10
+  - Cần: GPU/cloud VM (VNG/FPT) | FID-VN-007 trước khi implement
+- [ ] **TRAIN-002:** Fine-tune PhoBERT+CRF NER trên VietMed-NER (9K samples MIT) + pilot corrections
+  - Datasets: `data/external/VietMed-NER` + `data/external/ViMQ` + `data/corrections/` (L4)
+  - Target: Drug CEER 0.90 → <0.10 | Diagnosis CEER 0.10 → <0.05
+  - Gated on: DATASET-002 (entity mapping analysis) + BENCH-002b (pilot CEER baseline)
 
 ---
 

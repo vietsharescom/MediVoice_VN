@@ -72,7 +72,7 @@ _RE_SPO2 = re.compile(
 
 # ─── Đơn thuốc patterns ────────────────────────────────────────────────────
 
-_RE_DOSE_NUMBER = re.compile(r"(\d+(?:[.,]\d+)?)\s*(mg|g|ml|mcg|iu|đv)?", re.IGNORECASE)
+_RE_DOSE_NUMBER = re.compile(r"(\d+(?:[.,]\d+)?)\s*(mg|g|ml|mcg|iu|đv|kg)?", re.IGNORECASE)
 _RE_FREQUENCY = re.compile(
     r"(\d+)\s*(?:lần|viên|ống|gói)\s*(?:/|mỗi|x)?\s*(?:ngày|day)",
     re.IGNORECASE
@@ -110,18 +110,28 @@ _RE_TAI_KHAM = re.compile(
 
 # ─── Chẩn đoán patterns ─────────────────────────────────────────────────────
 
+_PRESCRIPTION_KW = (
+    r"(?:điều\s*trị|kê\s*(?:đơn|thuốc|toa)?|đơn\s*thuốc|toa\s*thuốc|"
+    r"tái\s*khám|hẹn|follow|cho\s*(?:\w+/?\w*\s*)?(?:uống|dùng))"
+)
 _RE_CHAN_DOAN = re.compile(
-    r"(?:chẩn\s*đoán|diagnos\w*)[:\s]+([^.,;,\n]+?)"
-    r"(?=\s*(?:điều\s*trị|kê\s*(?:đơn|thuốc)?|cho\s*(?:uống|dùng)|"
-    r"đơn\s*thuốc|tái\s*khám|hẹn|$))",
+    r"(?:chẩn\s*đoán|diagnos\w*)[:\s]+"
+    r"([^.,;!?\n]+?(?:\s+[A-Z]\d+(?:\.\d+)?)?)"        # VN diagnosis + optional ICD code
+    # Two lookahead alternatives:
+    #  A) inline keyword (no sentence break): "viêm họng cấp điều trị"
+    #  B) after sentence punct + optional 1 filler word: "gout cấp. thôi Kê"
+    r"(?=\s*(?:" + _PRESCRIPTION_KW + r"|$)"
+    r"|\s*[.,;!?]\s*(?:\w+\s+){0,2}" + _PRESCRIPTION_KW + r")",
     re.IGNORECASE
 )
 # Fallback: PhoWhisper sometimes drops "chẩn đoán" keyword entirely.
-# Detect disease name (viêm/tăng/đái...) directly before "kê đơn/điều trị".
+# Detect disease name (viêm/tăng/đái/gout...) directly before "kê đơn/điều trị".
+# Also catches "bị <disease>" pattern.
 _RE_CHAN_DOAN_FALLBACK = re.compile(
-    r"\b((?:viêm|tăng|đái|suy|nhồi|thiếu|đau|gãy|loét|rối\s*loạn|hội\s*chứng)"
+    r"(?:bị\s+|mắc\s+|có\s+)?"
+    r"((?:viêm|tăng|đái|gout|suy|nhồi|thiếu|đau|gãy|loét|rối\s*loạn|hội\s*chứng)"
     r"(?:\s+\w+){1,5}?)"
-    r"(?=\s*(?:kê\s*(?:đơn|thuốc)?|điều\s*trị|cho\s*(?:uống|dùng)))",
+    r"(?=\s*[.,;!?]?\s*(?:\w+\s+){0,2}" + _PRESCRIPTION_KW + r")",
     re.IGNORECASE
 )
 
@@ -403,6 +413,11 @@ def _extract_drug_context(transcript: str, drug_candidate: dict) -> dict:
 
     # PhoWhisper commonly mishears "miligam/mg" as "ml" for oral tablets
     if duong_dung == "uống" and ham_luong.endswith("ml"):
+        ham_luong = ham_luong[:-2] + "mg"
+
+    # Southern VN accent: "miligam" → "ký" (kg). Safe to correct for oral route
+    # because valid mg/kg pediatric dosing is captured as "X mg trên kg", not "X kg"
+    if duong_dung == "uống" and ham_luong.endswith("kg"):
         ham_luong = ham_luong[:-2] + "mg"
 
     return {

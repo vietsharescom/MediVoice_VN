@@ -1,0 +1,1238 @@
+{
+  "source": "VietMed-NER DRUGCHEMICAL (auto-extracted)",
+  "date": "2026-06-09",
+  "warning": "Cần review thủ công trước khi merge vào drug_db.json",
+  "merge_command": "python -X utf8 scripts/analyze_vietmed_ner.py --apply",
+  "entries": [
+    {
+      "name": "Thuốc",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 424,
+      "_needs_review": true
+    },
+    {
+      "name": "Canxi",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 100,
+      "_needs_review": true
+    },
+    {
+      "name": "Vitamin D",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 72,
+      "_needs_review": true
+    },
+    {
+      "name": "Đông Trùng Hạ Thảo",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 71,
+      "_needs_review": true
+    },
+    {
+      "name": "Sữa Mẹ",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 59,
+      "_needs_review": true
+    },
+    {
+      "name": "Vitamin",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 54,
+      "_needs_review": true
+    },
+    {
+      "name": "Hoạt Chất",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 47,
+      "_needs_review": true
+    },
+    {
+      "name": "Thảo Dược",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 43,
+      "_needs_review": true
+    },
+    {
+      "name": "Vắcxin",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 37,
+      "_needs_review": true
+    },
+    {
+      "name": "Kẽm",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 29,
+      "_needs_review": true
+    },
+    {
+      "name": "Chất Béo",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 29,
+      "_needs_review": true
+    },
+    {
+      "name": "Oxy",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 27,
+      "_needs_review": true
+    },
+    {
+      "name": "Selen",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 21,
+      "_needs_review": true
+    },
+    {
+      "name": "Estrogen",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 21,
+      "_needs_review": true
+    },
+    {
+      "name": "Hormone",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 20,
+      "_needs_review": true
+    },
+    {
+      "name": "Chất Dinh Dưỡng",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 20,
+      "_needs_review": true
+    },
+    {
+      "name": "Thực Phẩm Chức Năng",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 19,
+      "_needs_review": true
+    },
+    {
+      "name": "Protein",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 19,
+      "_needs_review": true
+    },
+    {
+      "name": "Kháng Sinh",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 18,
+      "_needs_review": true
+    },
+    {
+      "name": "Sữa Rửa Mặt",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 17,
+      "_needs_review": true
+    },
+    {
+      "name": "Hóa Chất",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 17,
+      "_needs_review": true
+    },
+    {
+      "name": "Tân Dược",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 16,
+      "_needs_review": true
+    },
+    {
+      "name": "Vitamin K",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 16,
+      "_needs_review": true
+    },
+    {
+      "name": "Thuốc Ngừa Thai",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 16,
+      "_needs_review": true
+    },
+    {
+      "name": "Thuốc Kháng Đông",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 14,
+      "_needs_review": true
+    },
+    {
+      "name": "Thuốc Uống",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 14,
+      "_needs_review": true
+    },
+    {
+      "name": "Immunesoyz",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 13,
+      "_needs_review": true
+    },
+    {
+      "name": "Đan Sâm",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 13,
+      "_needs_review": true
+    },
+    {
+      "name": "Collagen",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 13,
+      "_needs_review": true
+    },
+    {
+      "name": "Hoàng Liên",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 12,
+      "_needs_review": true
+    },
+    {
+      "name": "Vi Khuẩn Có Lợi",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 12,
+      "_needs_review": true
+    },
+    {
+      "name": "Quả Thể",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 12,
+      "_needs_review": true
+    },
+    {
+      "name": "Khoáng Chất",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 12,
+      "_needs_review": true
+    },
+    {
+      "name": "Thuốc Giảm Đau",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 12,
+      "_needs_review": true
+    },
+    {
+      "name": "Kga1",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 12,
+      "_needs_review": true
+    },
+    {
+      "name": "Hòe Hoa",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 11,
+      "_needs_review": true
+    },
+    {
+      "name": "Fumarate",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 11,
+      "_needs_review": true
+    },
+    {
+      "name": "Thuốc Tránh Thai",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 11,
+      "_needs_review": true
+    },
+    {
+      "name": "L-Carnitine",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 10,
+      "_needs_review": true
+    },
+    {
+      "name": "Iod",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 10,
+      "_needs_review": true
+    },
+    {
+      "name": "Dưỡng Chất",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 10,
+      "_needs_review": true
+    },
+    {
+      "name": "Axit",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 10,
+      "_needs_review": true
+    },
+    {
+      "name": "Viên Nang Đông Trùng Hạ Thảo",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 10,
+      "_needs_review": true
+    },
+    {
+      "name": "Niacinamide",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 9,
+      "_needs_review": true
+    },
+    {
+      "name": "Kem Chống Nắng",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 9,
+      "_needs_review": true
+    },
+    {
+      "name": "Serum",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 9,
+      "_needs_review": true
+    },
+    {
+      "name": "Hạ Thảo",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 8,
+      "_needs_review": true
+    },
+    {
+      "name": "Hương Liệu",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 8,
+      "_needs_review": true
+    },
+    {
+      "name": "Corticoid",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 8,
+      "_needs_review": true
+    },
+    {
+      "name": "Kem Dưỡng Ẩm",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 7,
+      "_needs_review": true
+    },
+    {
+      "name": "Vi Khuẩn Có Hại",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 7,
+      "_needs_review": true
+    },
+    {
+      "name": "Chiết Xuất Từ Thực Vật",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 7,
+      "_needs_review": true
+    },
+    {
+      "name": "Kem Dưỡng",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 7,
+      "_needs_review": true
+    },
+    {
+      "name": "Enzyme",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 7,
+      "_needs_review": true
+    },
+    {
+      "name": "Melanin",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 7,
+      "_needs_review": true
+    },
+    {
+      "name": "Penicillin",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 7,
+      "_needs_review": true
+    },
+    {
+      "name": "Axit Amin",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 7,
+      "_needs_review": true
+    },
+    {
+      "name": "Polysaccharide",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 7,
+      "_needs_review": true
+    },
+    {
+      "name": "Natri",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 7,
+      "_needs_review": true
+    },
+    {
+      "name": "Toner",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 6,
+      "_needs_review": true
+    },
+    {
+      "name": "Insulin",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 6,
+      "_needs_review": true
+    },
+    {
+      "name": "Viên Nang",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 6,
+      "_needs_review": true
+    },
+    {
+      "name": "Vitamin E",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 6,
+      "_needs_review": true
+    },
+    {
+      "name": "Vắc Xin",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 6,
+      "_needs_review": true
+    },
+    {
+      "name": "Nấm Hầu Thủ",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 6,
+      "_needs_review": true
+    },
+    {
+      "name": "Đẳng Sâm",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 6,
+      "_needs_review": true
+    },
+    {
+      "name": "Độc Tố",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 6,
+      "_needs_review": true
+    },
+    {
+      "name": "Xà Phòng",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 6,
+      "_needs_review": true
+    },
+    {
+      "name": "Lợi Khuẩn",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 6,
+      "_needs_review": true
+    },
+    {
+      "name": "Thuốc Chống Đông",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 6,
+      "_needs_review": true
+    },
+    {
+      "name": "Chất Bổ Trợ",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 6,
+      "_needs_review": true
+    },
+    {
+      "name": "Immunegamma",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 6,
+      "_needs_review": true
+    },
+    {
+      "name": "Levodopa",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 5,
+      "_needs_review": true
+    },
+    {
+      "name": "Nấm Đông Trùng Hạ Thảo",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 5,
+      "_needs_review": true
+    },
+    {
+      "name": "Chất Bảo Quản",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 5,
+      "_needs_review": true
+    },
+    {
+      "name": "Thuốc Tiêm",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 5,
+      "_needs_review": true
+    },
+    {
+      "name": "Protid",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 5,
+      "_needs_review": true
+    },
+    {
+      "name": "Sâm Ngọc Linh",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "Adenosine",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "Rutin",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "Serotonin",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "Omega3",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "Hoa Thủy Tiên Biển",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "Cồn",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "Nguyên Tố Vi Lượng",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "Sodium",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "Delta",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "Chất Khoáng",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "Nhân Sâm",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "Magie",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "Phốtpho",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "Bạch Phục Linh",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "Hoàng Bá",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "5Htp",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 4,
+      "_needs_review": true
+    },
+    {
+      "name": "Thuốc Chống Tiểu Cầu",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Cam Thảo",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Bạch Quả",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Serum Đặc Trị",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Bã Nhờn",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Chất Bột Đường",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Thuốc Tiêu Sợi Huyết",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Inr",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Chất Độc",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Kiềm",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Mồ Hôi",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Cetaphil",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Umami",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Thuốc Chống Trầm Cảm",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Adenosine Cordycepin",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Thuốc Men",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Cordycepin",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Carbohydrate",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Cortisol Trong Máu",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Tam Đại Bộ Phẩm",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Hạt Sắc Tố",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Pepsin",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Thuốc Thoa",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Gel Lotion",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Thuốc Tê",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Vi Lượng",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Nước Tiểu",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Biphosphonate",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    },
+    {
+      "name": "Bạch Thược",
+      "aliases": [],
+      "brands": [],
+      "route": "uống",
+      "unit": "mg",
+      "source": "VietMed-NER",
+      "count": 3,
+      "_needs_review": true
+    }
+  ]
+}

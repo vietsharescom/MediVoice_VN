@@ -4,10 +4,11 @@
     "sources_used": [
       "TT07/2017/TT-BYT - Danh muc thuoc khong ke don (243 hoat chat)",
       "TT28/2024/TT-BYT - Danh muc thuoc thiet yeu",
-      "Common VN primary care prescriptions"
+      "Common VN primary care prescriptions",
+      "VietMed-NER DRUGCHEMICAL analysis + clinical VN OB/GYN (2026-06-09)"
     ],
-    "total_drugs": 110,
-    "version": "0.1.0",
+    "total_drugs": 118,
+    "version": "0.2.0",
     "categories": {
       "Giảm đau": 3,
       "Chống viêm NSAIDs": 4,
@@ -2571,6 +2572,192 @@
         "đau nặng",
         "đau sau mổ"
       ]
+    },
+    "Progesterone": {
+      "inn": "Progesterone",
+      "brands": [
+        "Utrogestan",
+        "Progeffik",
+        "Cyclogest",
+        "Crinone",
+        "Prometrium",
+        "prô ges tê rôn",
+        "progesterone"
+      ],
+      "forms": [
+        "viên nang 100mg",
+        "viên nang 200mg",
+        "gel âm đạo 8%"
+      ],
+      "typical": "100-200mg x 2-3 lần/ngày",
+      "category": "Hormone sinh dục nữ - Progestogen",
+      "otc": false,
+      "keywords": [
+        "progesterone",
+        "utrogestan",
+        "thai kỳ",
+        "dọa sẩy thai",
+        "hỗ trợ sinh sản"
+      ]
+    },
+    "Estradiol": {
+      "inn": "Estradiol",
+      "brands": [
+        "Progynova",
+        "Estradiol",
+        "Femoston",
+        "Divigel",
+        "Estrogel",
+        "ét tra đi ol",
+        "estradiol valerate"
+      ],
+      "forms": [
+        "viên 1mg",
+        "viên 2mg",
+        "gel 0.1%",
+        "miếng dán"
+      ],
+      "typical": "1-2mg/ngày",
+      "category": "Hormone sinh dục nữ - Estrogen",
+      "otc": false,
+      "keywords": [
+        "estrogen",
+        "estradiol",
+        "progynova",
+        "tiền mãn kinh",
+        "mãn kinh"
+      ]
+    },
+    "Dydrogesterone": {
+      "inn": "Dydrogesterone",
+      "brands": [
+        "Duphaston",
+        "du pha ston",
+        "đi đrô ges tê rôn"
+      ],
+      "forms": [
+        "viên 10mg"
+      ],
+      "typical": "10mg x 1-3 lần/ngày",
+      "category": "Hormone sinh dục nữ - Progestogen tổng hợp",
+      "otc": false,
+      "keywords": [
+        "duphaston",
+        "dydrogesterone",
+        "rối loạn kinh nguyệt",
+        "dọa sẩy thai"
+      ]
+    },
+    "Mefenamic Acid": {
+      "inn": "Mefenamic Acid",
+      "brands": [
+        "Ponstan",
+        "Mefenamic",
+        "mê phê na mic",
+        "ponstan"
+      ],
+      "forms": [
+        "viên 250mg",
+        "viên 500mg"
+      ],
+      "typical": "500mg x 3 lần/ngày sau ăn",
+      "category": "Chống viêm NSAIDs",
+      "otc": false,
+      "keywords": [
+        "mefenamic",
+        "ponstan",
+        "đau bụng kinh",
+        "giảm đau"
+      ]
+    },
+    "Norfloxacin": {
+      "inn": "Norfloxacin",
+      "brands": [
+        "Norbactin",
+        "Noroxin",
+        "Norflox",
+        "norflo xa xin"
+      ],
+      "forms": [
+        "viên 400mg"
+      ],
+      "typical": "400mg x 2 lần/ngày",
+      "category": "Kháng sinh Quinolone",
+      "otc": false,
+      "keywords": [
+        "norfloxacin",
+        "norbactin",
+        "nhiễm trùng tiết niệu",
+        "viêm bàng quang"
+      ]
+    },
+    "Spironolactone": {
+      "inn": "Spironolactone",
+      "brands": [
+        "Aldactone",
+        "Spirolang",
+        "spi rô no lac ton"
+      ],
+      "forms": [
+        "viên 25mg",
+        "viên 100mg"
+      ],
+      "typical": "25-100mg/ngày",
+      "category": "Lợi tiểu giữ kali",
+      "otc": false,
+      "keywords": [
+        "spironolactone",
+        "aldactone",
+        "suy tim",
+        "phù",
+        "lợi tiểu"
+      ]
+    },
+    "Carvedilol": {
+      "inn": "Carvedilol",
+      "brands": [
+        "Coreg",
+        "Dilatrend",
+        "Carveda",
+        "car vê đi lol"
+      ],
+      "forms": [
+        "viên 6.25mg",
+        "viên 12.5mg",
+        "viên 25mg"
+      ],
+      "typical": "6.25-25mg x 2 lần/ngày",
+      "category": "Chẹn beta không chọn lọc",
+      "otc": false,
+      "keywords": [
+        "carvedilol",
+        "coreg",
+        "dilatrend",
+        "suy tim",
+        "tăng huyết áp"
+      ]
+    },
+    "Ceftriaxone": {
+      "inn": "Ceftriaxone",
+      "brands": [
+        "Rocephin",
+        "Ceftriaxone",
+        "Triaxon",
+        "xef tri a zon"
+      ],
+      "forms": [
+        "tiêm bắp 1g",
+        "tiêm tĩnh mạch 1g",
+        "tiêm 2g"
+      ],
+      "typical": "1-2g/ngày tiêm",
+      "category": "Kháng sinh Cephalosporin 3G tiêm",
+      "otc": false,
+      "keywords": [
+        "ceftriaxone",
+        "rocephin",
+        "tiêm kháng sinh"
+      ]
     }
   },
   "keyword_index": {
@@ -3268,7 +3455,8 @@
     ],
     "lợi tiểu": [
       "Furosemide",
-      "Hydrochlorothiazide"
+      "Hydrochlorothiazide",
+      "Spironolactone"
     ],
     "frusemide": [
       "Furosemide"
@@ -4088,6 +4276,170 @@
     ],
     "đau sau mổ": [
       "Tramadol"
+    ],
+    "progesterone": [
+      "Progesterone"
+    ],
+    "utrogestan": [
+      "Progesterone"
+    ],
+    "thai kỳ": [
+      "Progesterone"
+    ],
+    "dọa sẩy thai": [
+      "Progesterone",
+      "Dydrogesterone"
+    ],
+    "hỗ trợ sinh sản": [
+      "Progesterone"
+    ],
+    "progeffik": [
+      "Progesterone"
+    ],
+    "cyclogest": [
+      "Progesterone"
+    ],
+    "crinone": [
+      "Progesterone"
+    ],
+    "prometrium": [
+      "Progesterone"
+    ],
+    "prô ges tê rôn": [
+      "Progesterone"
+    ],
+    "estrogen": [
+      "Estradiol"
+    ],
+    "estradiol": [
+      "Estradiol"
+    ],
+    "progynova": [
+      "Estradiol"
+    ],
+    "tiền mãn kinh": [
+      "Estradiol"
+    ],
+    "mãn kinh": [
+      "Estradiol"
+    ],
+    "femoston": [
+      "Estradiol"
+    ],
+    "divigel": [
+      "Estradiol"
+    ],
+    "estrogel": [
+      "Estradiol"
+    ],
+    "ét tra đi ol": [
+      "Estradiol"
+    ],
+    "estradiol valerate": [
+      "Estradiol"
+    ],
+    "duphaston": [
+      "Dydrogesterone"
+    ],
+    "dydrogesterone": [
+      "Dydrogesterone"
+    ],
+    "rối loạn kinh nguyệt": [
+      "Dydrogesterone"
+    ],
+    "du pha ston": [
+      "Dydrogesterone"
+    ],
+    "đi đrô ges tê rôn": [
+      "Dydrogesterone"
+    ],
+    "mefenamic": [
+      "Mefenamic Acid"
+    ],
+    "ponstan": [
+      "Mefenamic Acid"
+    ],
+    "đau bụng kinh": [
+      "Mefenamic Acid"
+    ],
+    "giảm đau": [
+      "Mefenamic Acid"
+    ],
+    "mê phê na mic": [
+      "Mefenamic Acid"
+    ],
+    "norfloxacin": [
+      "Norfloxacin"
+    ],
+    "norbactin": [
+      "Norfloxacin"
+    ],
+    "nhiễm trùng tiết niệu": [
+      "Norfloxacin"
+    ],
+    "viêm bàng quang": [
+      "Norfloxacin"
+    ],
+    "noroxin": [
+      "Norfloxacin"
+    ],
+    "norflox": [
+      "Norfloxacin"
+    ],
+    "norflo xa xin": [
+      "Norfloxacin"
+    ],
+    "spironolactone": [
+      "Spironolactone"
+    ],
+    "aldactone": [
+      "Spironolactone"
+    ],
+    "suy tim": [
+      "Spironolactone",
+      "Carvedilol"
+    ],
+    "phù": [
+      "Spironolactone"
+    ],
+    "spirolang": [
+      "Spironolactone"
+    ],
+    "spi rô no lac ton": [
+      "Spironolactone"
+    ],
+    "carvedilol": [
+      "Carvedilol"
+    ],
+    "coreg": [
+      "Carvedilol"
+    ],
+    "dilatrend": [
+      "Carvedilol"
+    ],
+    "tăng huyết áp": [
+      "Carvedilol"
+    ],
+    "carveda": [
+      "Carvedilol"
+    ],
+    "car vê đi lol": [
+      "Carvedilol"
+    ],
+    "ceftriaxone": [
+      "Ceftriaxone"
+    ],
+    "rocephin": [
+      "Ceftriaxone"
+    ],
+    "tiêm kháng sinh": [
+      "Ceftriaxone"
+    ],
+    "triaxon": [
+      "Ceftriaxone"
+    ],
+    "xef tri a zon": [
+      "Ceftriaxone"
     ]
   }
 }

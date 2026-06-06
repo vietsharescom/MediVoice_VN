@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-08 | v0.7.0
+# Cập nhật: 2026-06-09 | v0.7.1
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -95,6 +95,14 @@
 | P0.6.1a | │  ├─ l4_correction_capture.py | diff AI→BS form_data, log JSONL per-clinic | 🟢 | FID-VN-006 | SES-20260608f | `src/core/l4_correction_capture.py` |
 | P0.6.1b | │  ├─ analyze_corrections.py | CLI tool: alias suggestions, drug miss freq table | 🟢 | FID-VN-006 | SES-20260608f | `scripts/analyze_corrections.py` |
 | P0.6.1c | │  └─ test_l4_correction_capture.py | AC-001→AC-005, 14 tests PASS | 🟢 | FID-VN-006 | SES-20260608f | `tests/unit/test_l4_correction_capture.py` |
+| | │ | | | | | |
+| **P0.6.2** | **├─ 🟢 Synthetic NER + Data** | **2100 BIO samples · chan_doan fix · drug_db 118 · pipeline test** | **🟢** | SYNTHETIC-NER-001 | SES-20260609 | 395/395 PASS |
+| P0.6.2a | │  ├─ generate_synthetic_ner.py | 7 scenarios × 4 regions × 300 each — BIO format | 🟢 | — | SES-20260609 | `scripts/generate_synthetic_ner.py` |
+| P0.6.2b | │  ├─ test_synthetic_ner_pipeline.py | 7 tests — drug 97-100% · CD 63-80% · vital 63-77% | 🟢 | — | SES-20260609 | `tests/unit/test_synthetic_ner_pipeline.py` |
+| P0.6.2c | │  ├─ chan_doan regex fix | ". filler Kê" pattern · ICD code · "gout" fallback · "bị" trigger | 🟢 | NER-BUGFIX-004 | SES-20260609 | `src/core/l1c_ner.py` |
+| P0.6.2d | │  ├─ drug_db.json v0.2.0 | 110 → 118 drugs (+8 Progesterone/Estradiol/Ceftriaxone...) | 🟢 | — | SES-20260609 | `data/reference/drug_db.json` |
+| P0.6.2e | │  ├─ VietMed family (partial) | VietMed-NER 9K · Sum 106K · QA 9K — `data/external/` | 🔵 | DATASET-001 | SES-20260609 | VietMed audio 2.5GB + ViMedCSS 4GB còn lại |
+| P0.6.2f | │  └─ DATA_CATALOG.md | 26 datasets, license/domain/download status | 🟢 | — | SES-20260609 | `docs/dev/DATA_CATALOG.md` |
 | | │ | | | | | |
 | **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
 | P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |

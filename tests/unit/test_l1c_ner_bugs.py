@@ -164,6 +164,34 @@ class TestDrugUnitMlToMg:
             assert ent.don_thuoc[0]["ham_luong"] == "10 ml"
 
 
+# ── Bug #4b: oral drug unit kg → mg correction (Southern VN accent) ──────────
+# PhoWhisper (giọng Nam): "miligam" → "ký" (kg). Oral route only.
+# Pediatric "mg/kg" dosing uses "X mg trên kg" pattern → not affected.
+
+class TestDrugUnitKgToMg:
+    def test_oral_kg_corrected_to_mg(self):
+        t = "kê đơn Amoxicillin 500 kg uống ba lần mỗi ngày trong 7 ngày"
+        drugs = extract_drug_candidates(t)
+        ent = extract_entities(t, drugs)
+        assert len(ent.don_thuoc) == 1
+        assert ent.don_thuoc[0]["ham_luong"] == "500 mg"
+
+    def test_oral_paracetamol_kg_corrected(self):
+        t = "Paracetamol 500 kg uống khi sốt"
+        drugs = extract_drug_candidates(t)
+        ent = extract_entities(t, drugs)
+        if ent.don_thuoc:
+            assert ent.don_thuoc[0]["ham_luong"] == "500 mg"
+
+    def test_injection_kg_preserved(self):
+        # tiêm route → kg NOT converted (keep as-is, unusual but don't silently corrupt)
+        t = "kê đơn Metoclopramide 10 kg tiêm bắp một lần"
+        drugs = extract_drug_candidates(t)
+        ent = extract_entities(t, drugs)
+        if ent.don_thuoc:
+            assert ent.don_thuoc[0]["ham_luong"] == "10 kg"
+
+
 # ── Feature: lý do khám extraction ──────────────────────────────────────────
 # Explicit "lý do khám:" prefix → extract chief complaint
 # Fallback: text after age mention until vitals boundary
