@@ -161,3 +161,21 @@ DÀI HẠN (3-6 tháng):
   Pilot audio → novel outpatient VN NER dataset (đầu tiên trên thế giới)
   Contact DAV → drugbank.vn bulk data
   Fine-tune PhoWhisper (TRAIN-001) khi có 50h+ audio thực tế
+  ============
+
+  v0.7.1 | 395/395 PASS | Pushed ✅
+
+Phiên này đã làm:
+
+#	Việc	Kết quả
+1	generate_synthetic_ner.py	2100 BIO samples, 7 scenarios × 4 vùng miền
+2	test_synthetic_ner_pipeline.py	7 tests: Drug 97-100% · CD 63-80% · Vital 63-77%
+3	chan_doan regex fix	10/10 patterns pass — ". filler Kê", ICD code, "bị gout cấp"
+4	drug_db.json v0.2.0	110 → 118 drugs
+5	VietMed datasets	NER 9K + Sum 106K + QA 9K downloaded
+6	Docs	DATA_CATALOG + RECORDING_SCRIPTS + SEMI_SYNTHETIC_PLAN
+Andy cần làm tiếp:
+
+PA-008 🔴 Tìm 4 người (HN/SG/CT/CA) ghi âm 5 scripts — unblock BENCH-002a
+PA-006 🟡 Điền dental ground truth labels
+PA-007 🟡 ChatGPT corpus generation
