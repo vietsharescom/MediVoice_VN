@@ -201,8 +201,14 @@
   - Best model: `models/ner_phobert/best/` (512.8MB, checkpoint-3000) ✅
   - Entities: MEDICATION · DOSE · FREQUENCY · SYMPTOM · VITAL · FOLLOWUP
   - Datasets: `data/synthetic_ner/` (7994 train / 1003 val / 1003 test)
-  - **Next:** FID-VN-NER-ML → tích hợp hybrid vào `src/core/l1c_ner.py` (rule-based primary + PhoBERT fallback)
   - **Note:** Trained trên synthetic data — cần validate trên pilot audio thực trước khi dùng production
+- [ ] **FID-VN-009-IMPL** 🟡 Implement Hybrid NER [FID-VN-009 APPROVED 2026-06-10]
+  - CONS-20260610-003 CLOSED: ChatGPT + Grok + Copilot → APPROVE_WITH_CHANGES
+  - Architecture: PARALLEL + optional early-exit (khi rule đã cover trieu_chung+tai_kham+ly_do)
+  - Tạo `src/core/l1c_phobert.py` — lazy load, confidence thresholds, BIO→MedicalEntities
+  - Update `src/core/l1c_ner.py` — thêm extract_entities_hybrid()
+  - Tests: `tests/unit/test_l1c_phobert_hybrid.py` ≥ 18 cases
+  - Default OFF (MEDIVOICE_PHOBERT_NER=false) — bật sau BENCH-002b GO criteria
 - [ ] **CONS-002-EVAL** 🟡 Sprint 4: Evaluation dataset drug correction — 200-500 câu, ground truth labels
   - 3 categories: clean 50% / noisy+regional 30% / ambiguous+dangerous 20%
   - Metrics: Drug Recall / Dose Accuracy / False Positive / Safety Catch rate
