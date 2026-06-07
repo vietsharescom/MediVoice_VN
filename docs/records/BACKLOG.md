@@ -109,6 +109,7 @@
 - [ ] **CHATGPT-CORPUS-001** 🟡 Andy sử dụng `docs/dev/CHATGPT_CORPUS_PROMPT.md` v2.0 → ChatGPT/Grok → 41 corpus scripts → BS review → gửi lại Claude update CLINICAL_TEST_CORPUS_VN.md (PA-007)
 - [x] **DRUG-ALIAS-001** ✅ Mở rộng alias map drug_db.json v0.3.0 — PhoWhisper phonetic variants cho 6 drugs: Glimepiride/Colchicine/Etoricoxib/VitaminB/Metformin/Omeprazole (2026-06-10)
 - [ ] **BUG-K2** 🟢 "một sáu lăm" (double-abbreviated SG) → 165 — BP regex bắt "sáu lăm"=65 trước colloquial-hundreds pattern. Affects: SC-03 SG "một sáu lăm trên chín lăm". Cần extend `_vn_tens_int()` để handle abbreviated tens ("sáu lăm" = 65 = 6×10+5). Xem: `src/core/l1c_ner.py` `_vn_tens_int()`
+- [x] **BUG-N** ✅ chan_doan rỗng cho follow-up visits (2026-06-10) — BS nói "tái khám tăng huyết áp" mà không có "chẩn đoán:" keyword. Fix: `_RE_TAI_KHAM_DIAGNOSIS` checked trước `_RE_CHAN_DOAN_FALLBACK`. +4 tests → 408/408 PASS
 - [~] **DATASET-001** 🔵 PARTIAL — Download P1 public datasets (VietMed family — MIT/Apache-2.0)
   - ✅ Downloaded: VietMed-NER (9K NER, ~30MB) · VietMed-Sum (106K, ~43MB) · VN Medical QA (9K, ~5MB) → `data/external/`
   - ✅ `scripts/download_vietmed.py` sẵn sàng — chạy overnight qua `scripts/overnight_run.bat`

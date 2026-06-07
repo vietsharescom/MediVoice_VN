@@ -108,7 +108,9 @@
 | P0.6.3a | │  ├─ BENCH-002a CEER | 15 files HN/SG/CT — Drug=0.967✅ Diag=0.667⚠️ Vital=0.333🔴 | 🟢 | — | SES-20260607 | `tools/bench_ceer_semi.py` |
 | P0.6.3b | │  ├─ ner_semantic_test.py | HYP transcript test — BS1 7/7=100% · BS2 6/7=86% (post-fix) | 🟢 | — | SES-20260610 | `tools/ner_semantic_test.py` |
 | P0.6.3c | │  ├─ wer_clinical_test.py | WER test trên clinical WAV — semi_synthetic + real | 🟢 | — | SES-20260610 | `tools/wer_clinical_test.py` |
-| P0.6.3d | │  └─ TRAIN-002 overnight | PhoBERT NER train 3 epochs · 7994 samples · CPU ~5-8h | 🔵 | TRAIN-002 | SES-20260610 | `scripts/overnight_run.bat` đang chạy |
+| P0.6.3d | │  ├─ TRAIN-002 overnight | PhoBERT NER epoch 1/3 F1=98.9% · resume epoch 2-3 đang chạy | 🔵 | TRAIN-002 | SES-20260610 | `models/ner_phobert/checkpoint-1000` |
+| P0.6.3e | │  ├─ NER Bug K/L/M fixes | SG colloquial BP · nhiet_do digit-split · nặng+ký · +9 tests | 🟢 | — | SES-20260610 | `src/core/l1c_ner.py` — 408/408 PASS |
+| P0.6.3f | │  └─ NER Bug N fix | chan_doan from "tái khám [disease]" follow-up pattern · +4 tests | 🟢 | BUG-N | SES-20260610 | `src/core/l1c_ner.py` — 408/408 PASS |
 | | │ | | | | | |
 | **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
 | P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |
