@@ -500,14 +500,16 @@ class TestBugK_SGColloquialBP:
         assert ent.huyet_ap_tam_truong == 80
 
     def test_sg_bp_colloquial_165_full_form(self):
-        # "một sáu mươi lăm" (full tens form) → supported
         ent = extract_entities("huyết áp một sáu mươi lăm trên chín mươi lăm")
         assert ent.huyet_ap_tam_thu == 165
         assert ent.huyet_ap_tam_truong == 95
 
-    # TODO: "một sáu lăm" (double-abbreviated, "mươi" implied) → 165 — NOT yet supported
-    # BP regex matches "sáu lăm"=65 before colloquial-hundreds fires.
-    # Affects: BS2 SC-03 "một sáu lăm trên chín lăm". Track as BUG-K2.
+    def test_sg_bp_colloquial_165_abbreviated(self):
+        # BUG-K2 fix: "một sáu lăm" (abbreviation of "một sáu mươi lăm") → 165/95
+        # Fixed by adding _WABR (abbreviated tens) to _WCOLLQ pattern
+        ent = extract_entities("huyết áp một sáu lăm trên chín lăm")
+        assert ent.huyet_ap_tam_thu == 165, f"expected 165, got {ent.huyet_ap_tam_thu}"
+        assert ent.huyet_ap_tam_truong == 95
 
     def test_standard_bp_still_works(self):
         ent = extract_entities("huyết áp một trăm hai mươi trên tám mươi")

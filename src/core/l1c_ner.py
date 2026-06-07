@@ -211,9 +211,12 @@ _W10 = r"mười(?:\s+" + _W1 + r")?"
 _WSH = r"(?:ba|bốn|tư|năm|sáu|bảy|bẩy|tám|chín)\s+(?:lăm|mốt)"   # "tám lăm"=85
 _WH  = (r"(?:một|hai|ba|bốn|tư|năm|sáu|bảy|bẩy|tám|chín)\s+trăm"
         r"(?:\s+(?:" + _WTG + r"|" + _W10 + r"|" + _W1 + r"))?")
+# Abbreviated tens (SG shorthand): "sáu lăm"=65, "chín lăm"=95 — "mươi" implied.
+# Same as _WSH but used in WCOLLQ context (so named separately for clarity).
+_WABR = r"(?:ba|bốn|tư|năm|sáu|bảy|bẩy|tám|chín)\s+(?:lăm|mốt)"
 # Colloquial hundreds (spoken in SG/Nam): "một hai mươi"=120, "một sáu lăm"=165
-# Used mainly in BP readings — "một" + tens (without "trăm")
-_WCOLLQ = r"(?:một)\s+(?:" + _WTG + r"|" + _W10 + r")"
+# "một" + standard tens OR abbreviated tens (without "trăm").
+_WCOLLQ = r"(?:một)\s+(?:" + _WTG + r"|" + _W10 + r"|" + _WABR + r")"
 _WN  = r"(?:" + _WH + r"|" + _WCOLLQ + r"|" + _WTG + r"|" + _W10 + r"|" + _WSH + r")"
 
 _RE_BP_WORDS  = re.compile(r"\b(" + _WN + r")\s+(?:trên|tri)\s+(" + _WN + r")\b", re.I | re.U)
