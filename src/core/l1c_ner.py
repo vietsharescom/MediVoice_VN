@@ -49,6 +49,15 @@ _RE_NHIET_DO = re.compile(
     r"\s*°?(?:c|celsius|độ)?",
     re.IGNORECASE
 )
+# Fallback: "sốt ba 7.8" after DEC_WORDS normalize "bảy phẩy tám"→"7.8" but "ba" stays as word.
+# Also handles: "sốt 3 7.8", "sốt 3 7 phẩy 8" (all digit-by-digit temp readings).
+# tens group: VN word (ba/bốn/...) OR already-digit; rest: decimal number already normalized.
+_RE_NHIET_DO_SPLIT = re.compile(
+    r"(?:sốt|nhiệt độ|temp(?:erature)?)\s*[:\s]?\s*"
+    r"(ba|bốn|tư|năm|sáu|bảy|bẩy|tám|chín|\d)\s+"
+    r"(\d+(?:[.,]\d)?)",
+    re.IGNORECASE
+)
 _RE_HA_SYSTOLIC = re.compile(
     r"(?:huyết\s*á(?:p)?|HA|BP)\b[^/\d]{0,40}?(\d{2,3})\s*/\s*(\d{2,3})",  # "huyết á" (no p) accepted
     re.IGNORECASE
@@ -62,7 +71,7 @@ _RE_NHIP_THO = re.compile(
     re.IGNORECASE
 )
 _RE_CAN_NANG = re.compile(
-    r"(?:cân\s*nặng|weight|CN)\s*[:\s]?\s*(\d{2,3}(?:[.,]\d)?)\s*(?:kg)?",
+    r"(?:cân\s*nặng|weight|CN|(?<!\S)nặng)\s*[:\s]?\s*(\d{2,3}(?:[.,]\d)?)\s*(?:k[gý]|kilogram)?",
     re.IGNORECASE
 )
 _RE_SPO2 = re.compile(
@@ -192,7 +201,10 @@ _W10 = r"mười(?:\s+" + _W1 + r")?"
 _WSH = r"(?:ba|bốn|tư|năm|sáu|bảy|bẩy|tám|chín)\s+(?:lăm|mốt)"   # "tám lăm"=85
 _WH  = (r"(?:một|hai|ba|bốn|tư|năm|sáu|bảy|bẩy|tám|chín)\s+trăm"
         r"(?:\s+(?:" + _WTG + r"|" + _W10 + r"|" + _W1 + r"))?")
-_WN  = r"(?:" + _WH + r"|" + _WTG + r"|" + _W10 + r"|" + _WSH + r")"
+# Colloquial hundreds (spoken in SG/Nam): "một hai mươi"=120, "một sáu lăm"=165
+# Used mainly in BP readings — "một" + tens (without "trăm")
+_WCOLLQ = r"(?:một)\s+(?:" + _WTG + r"|" + _W10 + r")"
+_WN  = r"(?:" + _WH + r"|" + _WCOLLQ + r"|" + _WTG + r"|" + _W10 + r"|" + _WSH + r")"
 
 _RE_BP_WORDS  = re.compile(r"\b(" + _WN + r")\s+(?:trên|tri)\s+(" + _WN + r")\b", re.I | re.U)
 _RE_DEC_WORDS = re.compile(r"\b(" + _WN + r"|" + _WO + r")\s+phẩy\s+(" + _WO + r")\b", re.I | re.U)
@@ -227,6 +239,7 @@ def _vn_tens_int(t: str) -> int | None:
 def _vn_to_int(text: str) -> int | None:
     """Parse Vietnamese word-form integer (0–999) → int. Returns None on failure."""
     t = re.sub(r"\s+", " ", text.lower().strip())
+    # Standard hundreds: "một trăm hai mươi" = 120
     m = re.match(
         r"^(một|hai|ba|bốn|tư|năm|sáu|bảy|bẩy|tám|chín)\s+trăm(?:\s+(.+))?$",
         t, re.UNICODE,
@@ -238,6 +251,13 @@ def _vn_to_int(text: str) -> int | None:
             return h
         sub = _vn_tens_int(rest)
         return h + sub if sub is not None else None
+    # Colloquial hundreds (SG/Nam): "một hai mươi"=120, "một sáu lăm"=165
+    # "một" + tens (without "trăm") — common in casual BP readings
+    m = re.match(r"^(một)\s+(.+)$", t, re.UNICODE)
+    if m:
+        sub = _vn_tens_int(m.group(2))
+        if sub is not None:
+            return 100 + sub
     return _vn_tens_int(t)
 
 
@@ -297,6 +317,15 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
             dec = int(dec_str) if dec_str.isdigit() else _VN_ONES.get(dec_str, 0)
             val = f"{val}.{dec}"
         ent.nhiet_do = float(val)
+    else:
+        # Digit-split fallback: "sốt ba 7.8" (DEC_WORDS converted "bảy phẩy tám"→"7.8"
+        # but single-word "ba" stays unconverted). Handles SG colloquial digit-by-digit temp.
+        m2 = _RE_NHIET_DO_SPLIT.search(t)
+        if m2:
+            tens_raw = m2.group(1).strip()
+            tens = int(tens_raw) if tens_raw.isdigit() else _VN_ONES.get(tens_raw.lower(), 0)
+            rest = float(m2.group(2).replace(",", "."))
+            ent.nhiet_do = tens * 10 + rest
 
     m = _RE_HA_SYSTOLIC.search(t)
     if m:

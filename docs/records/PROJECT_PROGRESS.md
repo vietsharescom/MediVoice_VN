@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-09 | v0.7.1
+# Cập nhật: 2026-06-10 | v0.7.2
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -96,13 +96,19 @@
 | P0.6.1b | │  ├─ analyze_corrections.py | CLI tool: alias suggestions, drug miss freq table | 🟢 | FID-VN-006 | SES-20260608f | `scripts/analyze_corrections.py` |
 | P0.6.1c | │  └─ test_l4_correction_capture.py | AC-001→AC-005, 14 tests PASS | 🟢 | FID-VN-006 | SES-20260608f | `tests/unit/test_l4_correction_capture.py` |
 | | │ | | | | | |
-| **P0.6.2** | **├─ 🟢 Synthetic NER + Data** | **2100 BIO samples · chan_doan fix · drug_db 118 · pipeline test** | **🟢** | SYNTHETIC-NER-001 | SES-20260609 | 395/395 PASS |
-| P0.6.2a | │  ├─ generate_synthetic_ner.py | 7 scenarios × 4 regions × 300 each — BIO format | 🟢 | — | SES-20260609 | `scripts/generate_synthetic_ner.py` |
-| P0.6.2b | │  ├─ test_synthetic_ner_pipeline.py | 7 tests — drug 97-100% · CD 63-80% · vital 63-77% | 🟢 | — | SES-20260609 | `tests/unit/test_synthetic_ner_pipeline.py` |
-| P0.6.2c | │  ├─ chan_doan regex fix | ". filler Kê" pattern · ICD code · "gout" fallback · "bị" trigger | 🟢 | NER-BUGFIX-004 | SES-20260609 | `src/core/l1c_ner.py` |
-| P0.6.2d | │  ├─ drug_db.json v0.2.0 | 110 → 118 drugs (+8 Progesterone/Estradiol/Ceftriaxone...) | 🟢 | — | SES-20260609 | `data/reference/drug_db.json` |
-| P0.6.2e | │  ├─ VietMed family (partial) | VietMed-NER 9K · Sum 106K · QA 9K — `data/external/` | 🔵 | DATASET-001 | SES-20260609 | VietMed audio 2.5GB + ViMedCSS 4GB còn lại |
-| P0.6.2f | │  └─ DATA_CATALOG.md | 26 datasets, license/domain/download status | 🟢 | — | SES-20260609 | `docs/dev/DATA_CATALOG.md` |
+| **P0.6.2** | **├─ 🟢 Synthetic NER + Data** | **10K BIO samples · 17 scenarios · chan_doan fix · drug_db 118 · pipeline test** | **🟢** | SYNTHETIC-NER-001 | SES-20260607 | 395/395 PASS |
+| P0.6.2a | │  ├─ generate_synthetic_ner.py | 17 scenarios × 4 regions — BIO format, 10K samples | 🟢 | — | SES-20260607 | `scripts/generate_synthetic_ner.py` |
+| P0.6.2b | │  ├─ test_synthetic_ner_pipeline.py | 7 tests — drug 97-100% · CD 63-80% · vital 63-77% | 🟢 | — | SES-20260607 | `tests/unit/test_synthetic_ner_pipeline.py` |
+| P0.6.2c | │  ├─ chan_doan regex fix | ". filler Kê" pattern · ICD code · "gout" fallback · "bị" trigger | 🟢 | NER-BUGFIX-004 | SES-20260607 | `src/core/l1c_ner.py` |
+| P0.6.2d | │  ├─ drug_db.json v0.2.0 | 110 → 118 drugs (+8 Progesterone/Estradiol/Ceftriaxone...) | 🟢 | — | SES-20260607 | `data/reference/drug_db.json` |
+| P0.6.2e | │  ├─ VietMed family (partial) | VietMed-NER 9K · Sum 106K · QA 9K — `data/external/` | 🔵 | DATASET-001 | SES-20260607 | VietMed audio 2.5GB + ViMedCSS 4GB còn lại |
+| P0.6.2f | │  └─ DATA_CATALOG.md | 26 datasets, license/domain/download status | 🟢 | — | SES-20260607 | `docs/dev/DATA_CATALOG.md` |
+| | │ | | | | | |
+| **P0.6.3** | **├─ 🔵 BENCH-002a + TRAIN-002 Overnight** | **Semi-synthetic CEER · 10K NER · overnight train PhoBERT** | **🔵** | BENCH-002a | SES-20260610 | Overnight running |
+| P0.6.3a | │  ├─ BENCH-002a CEER | 15 files HN/SG/CT — Drug=0.967✅ Diag=0.667⚠️ Vital=0.333🔴 | 🟢 | — | SES-20260607 | `tools/bench_ceer_semi.py` |
+| P0.6.3b | │  ├─ ner_semantic_test.py | HYP transcript test — BS1 7/7=100% · BS2 3/7=43% | 🟢 | — | SES-20260610 | `tools/ner_semantic_test.py` |
+| P0.6.3c | │  ├─ wer_clinical_test.py | WER test trên clinical WAV — semi_synthetic + real | 🟢 | — | SES-20260610 | `tools/wer_clinical_test.py` |
+| P0.6.3d | │  └─ TRAIN-002 overnight | PhoBERT NER train 3 epochs · 7994 samples · CPU ~5-8h | 🔵 | TRAIN-002 | SES-20260610 | `scripts/overnight_run.bat` đang chạy |
 | | │ | | | | | |
 | **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
 | P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |
@@ -191,19 +197,22 @@
 
 ---
 
-## METRICS HIỆN TẠI (2026-06-08)
+## METRICS HIỆN TẠI (2026-06-10)
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | 366/366 | 🟢 |
+| Tests PASS | 100% | **395/395** | 🟢 |
 | bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
 | Vital extraction (TC audio) | >0% | bench tc_001/tc_002: vital=True | 🟢 fixed FID-VN-005 |
-| WER | <30% | 36-52% | 🔴 cần fine-tune |
-| CEER Vitals | <5% | 0.033 (lam_sang gTTS baseline) | 🟢 near-perfect |
-| CEER Diagnosis | <10% | 0.1 (lam_sang gTTS baseline) | 🟢 tốt |
-| CEER Drug | <10% | 0.9 (lam_sang gTTS baseline) | 🔴 cần TRAIN-001 |
-| CEER Followup | <10% | **0.1** (lam_sang gTTS baseline) | 🟢 CT-007 done |
-| CEER thật | <5% | ❓ cần audio BS thật | 🟡 BENCH-002 PA-006 |
+| WER semi-synthetic | <30% | SG 25.8% · CT 30.4% · HN 34.6% | 🟡 cần fine-tune |
+| NER BS1 (Bắc chuẩn, WER=8%) | >80% | **7/7 = 100%** | 🟢 |
+| NER BS2 (Nam nhanh, WER=19%) | >80% | **3/7 = 43%** | 🔴 BP colloquial + vital miss |
+| CEER Drug (semi-synthetic) | <10% | 0.967 (Drug 97%) | ✅ |
+| CEER Diag (semi-synthetic) | <10% | 0.667 | ⚠️ cần TRAIN-002 |
+| CEER Vital (semi-synthetic) | <10% | 0.333 | 🔴 cần TRAIN-002 + NER fix |
+| CEER Followup (semi-synthetic) | <10% | 0.400 | 🔴 cần TRAIN-002 |
+| CEER thật | <5% | ❓ cần audio BS thật | 🟡 BENCH-002b |
+| TRAIN-002 PhoBERT NER | F1 > 0.70 | ⏳ running overnight | 🔵 |
 | BS approve rate | >85% | ❓ chưa pilot | ⏳ |
 | NPS | >7/10 | ❓ chưa pilot | ⏳ |
 | Paying users | ≥5 | 0 | ⏳ |
@@ -227,8 +236,11 @@
 | SES-20260608d | 2026-06-08 | v0.6.0→v0.6.1 | GAP-003 ✅ GAP-004 ✅ — 35 unit tests L8+L9a (322 tests total) |
 | SES-20260608e | 2026-06-08 | v0.6.1→v0.6.3 | Real-world test A-01/A-02/A-03 — 11 NER+ICD bugs fixed — 352 tests — Adaptive Learning arch doc |
 | SES-20260608f | 2026-06-08 | v0.6.3→v0.7.0 | FID-VN-006 L4 Correction Capture — 14 new tests — 366 tests total |
+| SES-20260607 | 2026-06-07 | v0.7.0→v0.7.1 | Synthetic NER 10K · 17 scenarios · chan_doan fix · VietMed download (395 tests) |
+| SES-20260607b | 2026-06-07 | v0.7.1→v0.7.2 | BENCH-002a · CEER semi-synthetic (15 files) · overnight scripts · conftest SKIP_QWEN fix |
+| SES-20260610 | 2026-06-10 | v0.7.2 | TRAIN-002 overnight started · ner_semantic_test · wer_clinical_test tools committed |
 
 ---
 
-*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.3 | 2026-06-08*
+*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.4 | 2026-06-10*
 *Cập nhật mỗi phiên đóng. Đọc cùng BACKLOG.md + PENDING_REQUESTS.md*
