@@ -510,3 +510,133 @@ def _extract_drug_context(transcript: str, drug_candidate: dict) -> dict:
         "so_ngay": so_ngay,
         "duong_dung": duong_dung,
     }
+
+
+# ─── Hybrid NER (FID-VN-009) ──────────────────────────────────────────────────
+
+def _get_filled_fields(entities: MedicalEntities) -> list[str]:
+    """List non-empty MedicalEntities fields for meta reporting."""
+    filled = []
+    if entities.ly_do:
+        filled.append("ly_do")
+    if entities.trieu_chung:
+        filled.append("trieu_chung")
+    if entities.nhiet_do is not None:
+        filled.append("nhiet_do")
+    if entities.huyet_ap_tam_thu is not None:
+        filled.append("huyet_ap")
+    if entities.mach is not None:
+        filled.append("mach")
+    if entities.chan_doan:
+        filled.append("chan_doan")
+    if entities.don_thuoc:
+        filled.append("don_thuoc")
+    if entities.tai_kham:
+        filled.append("tai_kham")
+    return filled
+
+
+def extract_entities_hybrid(
+    transcript: str,
+    drug_candidates: list[dict] | None = None,
+    use_phobert: bool = False,
+) -> tuple[MedicalEntities, dict]:
+    """
+    Hybrid NER: rule-based PRIMARY + PhoBERT SUPPLEMENT (opt-in).
+
+    Architecture: PARALLEL + optional early-exit (FID-VN-009, CONS-20260610-003).
+    Returns (entities, meta).
+
+    meta keys:
+        rule_fields_filled: list[str]
+        phobert_fields_added: list[str]
+        phobert_confidence_avg: float
+        phobert_used: bool
+        phobert_vital_detected: list[str]   — log only, not written to entities
+        early_exit: bool                    — True if PhoBERT skipped (no gap)
+    """
+    # Lazy import to avoid circular dependency at module level
+    from src.core.l1c_phobert import (
+        bio_to_updates,
+        has_coverage_gap,
+        normalize_symptom,
+        predict_entities,
+        PHOBERT_CONFIDENCE_MIN,
+    )
+
+    # Step 1: Rule-based (always runs)
+    entities = extract_entities(transcript, drug_candidates)
+
+    meta: dict = {
+        "rule_fields_filled": _get_filled_fields(entities),
+        "phobert_fields_added": [],
+        "phobert_confidence_avg": 0.0,
+        "phobert_used": False,
+        "phobert_vital_detected": [],
+        "early_exit": False,
+    }
+
+    if not use_phobert:
+        return entities, meta
+
+    # Step 2: Optional early-exit when rule-based already covers contextual fields
+    if not has_coverage_gap(entities):
+        meta["early_exit"] = True
+        return entities, meta
+
+    # Step 3: PhoBERT inference (lazy load, graceful fallback)
+    try:
+        predictions = predict_entities(transcript)
+    except FileNotFoundError:
+        return entities, meta
+
+    updates, vital_detected = bio_to_updates(predictions, transcript)
+    meta["phobert_vital_detected"] = vital_detected
+
+    all_scores = [
+        p.get("score", 0.0)
+        for p in predictions
+        if p.get("score", 0.0) >= PHOBERT_CONFIDENCE_MIN
+    ]
+    meta["phobert_confidence_avg"] = (
+        sum(all_scores) / len(all_scores) if all_scores else 0.0
+    )
+    meta["phobert_used"] = True
+
+    added_fields: list[str] = []
+
+    # Merge trieu_chung — UNION with normalized dedup (R-009-08)
+    existing_norm = {normalize_symptom(s) for s in entities.trieu_chung}
+    for symptom in updates["trieu_chung_add"]:
+        norm = normalize_symptom(symptom)
+        if norm not in existing_norm:
+            entities.trieu_chung.append(symptom)
+            existing_norm.add(norm)
+            if "trieu_chung" not in added_fields:
+                added_fields.append("trieu_chung")
+
+    # Merge tai_kham — PhoBERT fills only when rule-based left it empty
+    if not entities.tai_kham and updates["tai_kham_fill"]:
+        entities.tai_kham = updates["tai_kham_fill"]
+        added_fields.append("tai_kham")
+
+    # Merge don_thuoc — SUPPLEMENT with strict INN dedup (R-009-10)
+    existing_inns = {d.get("inn", "").lower() for d in entities.don_thuoc}
+    for drug in updates["don_thuoc_supplement"]:
+        inn_key = drug.get("inn", "").lower()
+        if inn_key not in existing_inns:
+            entities.don_thuoc.append({
+                "inn": drug["inn"],
+                "ham_luong": drug.get("ham_luong", ""),
+                "so_lan_ngay": drug.get("so_lan_ngay", ""),
+                "so_ngay": drug.get("so_ngay", 0),
+                "duong_dung": drug.get("duong_dung", "uống"),
+                "flagged_for_review": True,
+                "flag_source": "phobert_supplement",
+            })
+            existing_inns.add(inn_key)
+            if "don_thuoc" not in added_fields:
+                added_fields.append("don_thuoc")
+
+    meta["phobert_fields_added"] = added_fields
+    return entities, meta

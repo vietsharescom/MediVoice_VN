@@ -1,6 +1,25 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.8.1] — 2026-06-10 — Hybrid NER Architecture [FID-VN-009] · 473 tests
+
+### Hybrid NER (L1c) [FID-VN-009 APPROVED — CONS-20260610-003]
+- feat(L1c): `src/core/l1c_phobert.py` — PhoBERT NER module (lazy load, lru_cache)
+  - PARALLEL + optional early-exit architecture (Grok+Copilot 2/3 majority)
+  - Entity-type-specific confidence thresholds: MEDICATION/DOSE ≥0.85 | SYMPTOM/FOLLOWUP ≥0.75 | discard <0.60
+  - bio_to_updates(): BIO predictions → field updates dict + VITAL detection log
+  - has_coverage_gap(): check contextual field coverage (trieu_chung / tai_kham / ly_do)
+  - VITAL → meta["phobert_vital_detected"] only — never written to MedicalEntities (Copilot)
+  - R-009-12: conditional FOLLOWUP ("nếu không đỡ") → NOT auto-filled to tai_kham
+- feat(L1c): `src/core/l1c_ner.py` — extract_entities_hybrid(transcript, drug_candidates, use_phobert)
+  - Backward compat: extract_entities() UNCHANGED — 444 existing tests still PASS
+  - PARALLEL: rule-based always runs first; PhoBERT supplements gaps
+  - Optional early-exit: trieu_chung+tai_kham+ly_do all filled → skip PhoBERT (saves ~300ms)
+  - MEDICATION dedup: strict INN normalize (R-009-10); PhoBERT supplement flagged_for_review=True
+  - trieu_chung UNION with normalized dedup (R-009-08 semantic merge)
+  - Default: MEDIVOICE_PHOBERT_NER=false (validate on pilot BENCH-002b before enabling)
+- test: `tests/unit/test_l1c_phobert_hybrid.py` — 29 tests (→ 473/473 PASS)
+
 ## [v0.8.0] — 2026-06-10 — DrugCorrectionEngine v2 [FID-VN-008] · drug_db_v200 146 drugs · 444 tests
 
 ### Drug DB v200 [CONS-002-IMPL / DRUG-DB-002]
