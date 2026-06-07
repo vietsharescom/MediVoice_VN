@@ -75,8 +75,8 @@ TOP_MANUAL = {
     },
     "Amoxicillin/Clavulanate": {
         "phonetic_variants": {
-            "north":   ["a mốc xi lin", "ô gờ men tin", "au gờ men tin"],
-            "central": ["a moc xi lin cla vu la nat", "ô gờ men tin"],
+            "north":   ["ô gờ men tin", "au gờ men tin", "ô gờ men tin"],
+            "central": ["ô gờ men tin", "o go men tin"],
             "south":   ["ô gờ men tin", "an xi lin", "anh xi lin"],
         },
         "valid_doses_mg": [375, 625, 1000],

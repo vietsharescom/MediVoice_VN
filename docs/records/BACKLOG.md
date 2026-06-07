@@ -112,13 +112,15 @@
   - Ưu tiên: Augmentin (Amox/Clav) · Bisoprolol · Tramadol · Empagliflozin · Sitagliptin · Folic acid · Vitamin D3 · Smecta · Phosphalugel · Celecoxib · Dapagliflozin · Indapamide
   - VietMed-NER drugs (313 entries) = OB/GYN context, overlap thấp → KHÔNG dùng
   - Source: TT07/2017 (243 OTC hoạt chất) + TT28/2024 + pilot prescription review
-- [ ] **CONS-002-IMPL** 🟡 Sprint 1: Tạo `data/reference/drug_db_v200.json` — 200 drugs, thêm `phonetic_variants:{north,central,south}` field
+- [x] **CONS-002-IMPL** ✅ Sprint 1: `data/reference/drug_db_v200.json` v2.0.0 — 146 drugs + phonetic_variants (2026-06-10)
   - Basis: CONS-20260610-001 + CONS-20260610-002 CLOSED, Approach C APPROVED
   - Top 50 drugs: manual × 3 vùng = ~300-500 entries thủ công (high accuracy)
   - 150 drugs còn lại: 7 consensus phoneme rules (R1-R7) auto-generate
   - Fields mới: `phonetic_variants`, `valid_doses_mg[]`, `dose_range{min,max}`, `drug_class`, `compatible_diagnoses`
   - Depend: drug_db_v200 là prerequisite của CONS-002-SPRINT2, CONS-002-SPRINT6
-- [ ] **CONS-002-SPRINT2** 🟡 DrugCorrectionEngine v2 — RapidFuzz + phonetic_variants + Safety Rules
+- [x] **CONS-002-SPRINT2** ✅ DrugCorrectionEngine v2 — 4-layer fuzzy + Ambiguity Gate + Safety (2026-06-10)
+  - `src/core/l1b_drug_correct.py` v2 · `fids/FID-VN-008.md` APPROVED
+  - 35 new tests → 444/444 PASS
   - Layer 1: Exact alias match (current behavior)
   - Layer 2: Fuzzy match RapidFuzz fuzz.token_sort_ratio() cutoff ~85%
   - Layer 3: Phonetic prefix + context (session_context: diagnosis, drug_class)

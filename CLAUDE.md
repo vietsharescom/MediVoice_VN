@@ -249,11 +249,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.7.2 |
-| Status | **TRAIN-002 ✅ F1=99.44% · BUG-K2+N ✅ · DRUG-DB-002 pending · 409/409 PASS** |
-| Tests | **409/409 PASS** · bandit 0 HIGH/MEDIUM · conftest.py SKIP_QWEN |
-| Pending | **PA-007** (ChatGPT corpus) · **DRUG-DB-002** (118→150 drugs) · **BENCH-002b** pilot Đà Nẵng · **VIETMED-FIX-001** (HF_TOKEN) |
-| Next task | **DRUG-DB-002** mở rộng drug_db.json (Augmentin/Bisoprolol/Tramadol/SGLT-2...) · **FID-VN-NER-ML** hybrid PhoBERT integration · **BENCH-002b** pilot |
+| Version | v0.8.0 |
+| Status | **FID-VN-008 ✅ DrugCorrectionEngine v2 · drug_db_v200 146 drugs · 444/444 PASS** |
+| Tests | **444/444 PASS** · bandit 0 HIGH/MEDIUM · conftest.py SKIP_QWEN |
+| Pending | **PA-007** (ChatGPT corpus) · **BENCH-002b** pilot Đà Nẵng · **VIETMED-FIX-001** (HF_TOKEN) |
+| Next task | **FID-VN-NER-ML** hybrid PhoBERT integration vào l1c_ner.py · **CONS-002-EVAL** evaluation dataset · **BENCH-002b** pilot |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` |
 
 ---

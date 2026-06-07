@@ -1,69 +1,268 @@
-# L1b — Drug Name Correction
+# L1b — Drug Name Correction v2
 # Input: raw transcript | Output: transcript với tên thuốc đã chuẩn hóa
 # Rule: tên INN giữ nguyên tiếng Anh — KHÔNG dịch sang tiếng Việt
 # FROZEN PIPELINE LAYER
+# FID-VN-008 — APPROVED 2026-06-10
 
 from __future__ import annotations
 import json
+import logging
 import unicodedata
-from pathlib import Path
+from dataclasses import dataclass, field
 from functools import lru_cache
+from pathlib import Path
+
+from rapidfuzz import fuzz, process as rf_process
+
+logger = logging.getLogger(__name__)
 
 DATA_DIR = Path(__file__).parent.parent.parent / "data" / "reference"
 
+# Configurable thresholds (Copilot: tune via pilot data, not hardcoded logic)
+DRUG_FUZZY_CUTOFF_STRICT: int = 82   # auto-accept
+DRUG_FUZZY_CUTOFF_FLAG:   int = 70   # flag for BS review
+
+# Filler words PhoWhisper inserts — stripped before window matching
+_FILLER_WORDS = {"ừm", "ừ", "ờ", "à", "ơ", "ê", "thì", "là", "mà", "thôi", "nhé"}
+
+
+@dataclass
+class DrugMatch:
+    inn: str
+    original_text: str
+    word_position: int
+    confidence: float           # 0.0–1.0
+    match_layer: int            # 1=exact, 2=fuzzy, 3=context
+    flagged_for_review: bool
+    flag_reason: str            # "" | "LOW_CONFIDENCE" | "AMBIGUOUS" | "DOSE_OUT_OF_RANGE" | "CLASS_MISMATCH"
+    severity: str               # "" | "LOW" | "MEDIUM" | "HIGH"
+    fuzzy_score: float = 0.0   # raw RapidFuzz score; 0.0 for Layer 1
+
+
+# ─── DB loading ──────────────────────────────────────────────────────────────
 
 @lru_cache(maxsize=1)
 def _load_drug_db() -> dict:
-    with open(DATA_DIR / "drug_db.json", encoding="utf-8") as f:
+    v200 = DATA_DIR / "drug_db_v200.json"
+    legacy = DATA_DIR / "drug_db.json"
+    path = v200 if v200.exists() else legacy
+    if path == legacy:
+        logger.warning("drug_db_v200.json not found — falling back to drug_db.json")
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
-def _normalize_text(text: str) -> str:
-    """Lowercase + remove diacritics để fuzzy match."""
+def _normalize(text: str) -> str:
+    """Lowercase + strip Vietnamese diacritics."""
     nfkd = unicodedata.normalize("NFKD", text.lower())
     return "".join(c for c in nfkd if not unicodedata.combining(c))
 
 
+# ─── Alias map builder ────────────────────────────────────────────────────────
+
+@lru_cache(maxsize=1)
 def _build_alias_map() -> dict[str, str]:
     """
-    Xây alias map: tên viết tắt / tên thường gặp → INN chuẩn.
-    VD: "paracetamol" → "Paracetamol", "amox" → "Amoxicillin"
+    Build alias → INN map from drug_db_v200:
+      brands[] + phonetic_variants{north/central/south}[] + INN itself.
     """
     db = _load_drug_db()
     alias_map: dict[str, str] = {}
-
     for inn, entry in db.get("by_inn", {}).items():
-        alias_map[_normalize_text(inn)] = inn
+        alias_map[_normalize(inn)] = inn
         for brand in entry.get("brands", []):
-            alias_map[_normalize_text(brand)] = inn
+            alias_map[_normalize(brand)] = inn
         for variant in entry.get("name_variants", []):
-            alias_map[_normalize_text(variant)] = inn
-
+            alias_map[_normalize(variant)] = inn
+        # v200: phonetic_variants per region
+        pv = entry.get("phonetic_variants", {})
+        for _region, variants in pv.items():
+            for v in variants:
+                alias_map[_normalize(v)] = inn
     return alias_map
 
 
-_ALIAS_MAP: dict[str, str] | None = None
-
-
 def _get_alias_map() -> dict[str, str]:
-    global _ALIAS_MAP
-    if _ALIAS_MAP is None:
-        _ALIAS_MAP = _build_alias_map()
-    return _ALIAS_MAP
+    return _build_alias_map()
+
+
+# ─── Session-filtered alias map ───────────────────────────────────────────────
+
+def _build_filtered_alias_map(session_context: dict) -> dict[str, str]:
+    """
+    PRE-FILTER: build alias_map restricted to drugs compatible with
+    session_context diagnosis + drug_class_context.
+    Falls back to full map if context insufficient.
+    [ChatGPT: constrained search space reduces false positive ~70%]
+    """
+    drug_class_ctx = set(session_context.get("drug_class_context", []))
+    diagnosis = _normalize(session_context.get("diagnosis", ""))
+    icd10 = session_context.get("diagnosis_icd10", "")
+
+    full = _get_alias_map()
+    if not drug_class_ctx and not diagnosis and not icd10:
+        return full
+
+    db = _load_drug_db()
+    allowed_inns: set[str] = set()
+    for inn, entry in db.get("by_inn", {}).items():
+        dc = entry.get("drug_class", "")
+        compat = entry.get("compatible_diagnoses", [])
+        # match by drug_class
+        if dc and dc in drug_class_ctx:
+            allowed_inns.add(inn)
+            continue
+        # match by diagnosis text overlap
+        if diagnosis and any(diagnosis in _normalize(d) or _normalize(d) in diagnosis for d in compat):
+            allowed_inns.add(inn)
+
+    if not allowed_inns:
+        return full  # context too narrow → fallback safe
+
+    return {alias: inn for alias, inn in full.items() if inn in allowed_inns}
+
+
+# ─── Safety engine ────────────────────────────────────────────────────────────
+
+def _run_safety(match: DrugMatch, transcript_fragment: str, session_context: dict | None) -> DrugMatch:
+    """
+    Layer 4: validate dose + class coherence. Never overrides match, only adds flags.
+    [ChatGPT severity scoring; Copilot: dose_range skip when {0,0}]
+    """
+    db = _load_drug_db()
+    entry = db.get("by_inn", {}).get(match.inn, {})
+    dose_range = entry.get("dose_range", {"min": 0, "max": 0})
+
+    # Extract dose from fragment (simple heuristic: number before mg/mcg)
+    import re
+    dose_val: float | None = None
+    m = re.search(r"(\d+(?:[.,]\d+)?)\s*mg", transcript_fragment, re.IGNORECASE)
+    if m:
+        try:
+            dose_val = float(m.group(1).replace(",", "."))
+        except ValueError:
+            pass
+
+    if dose_val is not None and dose_range["min"] > 0:
+        if dose_val < dose_range["min"] or dose_val > dose_range["max"]:
+            match.flagged_for_review = True
+            match.flag_reason = "DOSE_OUT_OF_RANGE"
+            match.severity = "HIGH"
+            logger.warning("Safety flag: %s %.1fmg out of range [%s, %s]",
+                           match.inn, dose_val, dose_range["min"], dose_range["max"])
+
+    # Class mismatch check
+    if session_context and not match.flagged_for_review:
+        drug_class_ctx = set(session_context.get("drug_class_context", []))
+        dc = entry.get("drug_class", "")
+        if drug_class_ctx and dc and dc not in drug_class_ctx:
+            match.flagged_for_review = True
+            match.flag_reason = "CLASS_MISMATCH"
+            match.severity = "MEDIUM"
+
+    return match
+
+
+# ─── Core matching ────────────────────────────────────────────────────────────
+
+def _match_window(words: list[str], i: int, alias_map: dict[str, str]) -> tuple[str | None, int, float]:
+    """Layer 1 exact match. Returns (inn, n_words_consumed, confidence)."""
+    for n in (4, 3, 2, 1):
+        if i + n > len(words):
+            continue
+        candidate = " ".join(words[i:i+n])
+        key = _normalize(candidate)
+        if key in alias_map:
+            return alias_map[key], n, 1.0
+    return None, 0, 0.0
+
+
+def _fuzzy_match(token: str, alias_map: dict[str, str]) -> tuple[str | None, float, bool]:
+    """
+    Layer 2 fuzzy match with Ambiguity Gate.
+    Returns (inn, confidence, is_ambiguous).
+    [ChatGPT: top2 gap check; Copilot: configurable cutoff]
+    """
+    keys = list(alias_map.keys())
+    if not keys:
+        return None, 0.0, False
+
+    results = rf_process.extract(
+        token,
+        keys,
+        scorer=fuzz.token_sort_ratio,
+        limit=2,
+        score_cutoff=DRUG_FUZZY_CUTOFF_FLAG,
+    )
+    if not results:
+        return None, 0.0, False
+
+    best_key, best_score, _ = results[0]
+    best_inn = alias_map[best_key]
+
+    # Ambiguity Gate: if 2nd candidate close → flag ambiguous
+    if len(results) >= 2:
+        second_key, second_score, _ = results[1]
+        second_inn = alias_map[second_key]
+        if second_inn != best_inn and (best_score - second_score) < 8:
+            return best_inn, (best_score / 100) * 0.7, True  # ambiguous
+
+    return best_inn, best_score / 100, False
+
+
+def _context_prefix_match(token: str, alias_map: dict[str, str]) -> str | None:
+    """
+    Layer 3: prefix match within filtered alias_map.
+    Returns INN only if exactly 1 unique candidate (no ambiguity).
+    """
+    norm = _normalize(token)
+    if len(norm) < 3:
+        return None
+    candidates: set[str] = set()
+    for key, inn in alias_map.items():
+        if key.startswith(norm):
+            candidates.add(inn)
+    if len(candidates) == 1:
+        return next(iter(candidates))
+    return None
+
+
+# ─── Public API — backward compat (unchanged) ─────────────────────────────────
+
+def _build_alias_map_legacy() -> dict[str, str]:
+    """Legacy builder for correct_drug_names() — identical to v1 behavior."""
+    db = _load_drug_db()
+    alias_map: dict[str, str] = {}
+    for inn, entry in db.get("by_inn", {}).items():
+        alias_map[_normalize(inn)] = inn
+        for brand in entry.get("brands", []):
+            alias_map[_normalize(brand)] = inn
+        for variant in entry.get("name_variants", []):
+            alias_map[_normalize(variant)] = inn
+    return alias_map
+
+
+_LEGACY_MAP: dict[str, str] | None = None
+
+
+def _get_legacy_map() -> dict[str, str]:
+    global _LEGACY_MAP
+    if _LEGACY_MAP is None:
+        _LEGACY_MAP = _build_alias_map_legacy()
+    return _LEGACY_MAP
 
 
 def correct_drug_names(transcript: str) -> str:
     """
-    Quét transcript, chuẩn hóa tên thuốc về INN chuẩn.
-    VD: "amoxicilin" → "Amoxicillin", "panadol" → "Paracetamol"
+    [BACKWARD COMPAT — unchanged signature]
+    Exact alias match only (Layer 1 behavior).
     """
     if not transcript:
         return transcript
 
-    alias_map = _get_alias_map()
+    alias_map = _get_legacy_map()
     words = transcript.split()
     result = []
-
     i = 0
     while i < len(words):
         matched = False
@@ -71,7 +270,7 @@ def correct_drug_names(transcript: str) -> str:
             if i + n > len(words):
                 continue
             candidate = " ".join(words[i:i+n])
-            key = _normalize_text(candidate)
+            key = _normalize(candidate)
             if key in alias_map:
                 result.append(alias_map[key])
                 i += n
@@ -80,26 +279,24 @@ def correct_drug_names(transcript: str) -> str:
         if not matched:
             result.append(words[i])
             i += 1
-
     return " ".join(result)
 
 
 def extract_drug_candidates(transcript: str) -> list[dict]:
     """
-    Tìm các tên thuốc trong transcript.
-    Returns: list of {inn, position, original_text}
+    [BACKWARD COMPAT — unchanged signature]
+    Find drug candidates via exact match.
     """
-    alias_map = _get_alias_map()
+    alias_map = _get_legacy_map()
     candidates = []
     words = transcript.split()
-
     i = 0
     while i < len(words):
         for n in (4, 3, 2, 1):
             if i + n > len(words):
                 continue
             candidate = " ".join(words[i:i+n])
-            key = _normalize_text(candidate)
+            key = _normalize(candidate)
             if key in alias_map:
                 candidates.append({
                     "inn": alias_map[key],
@@ -110,5 +307,135 @@ def extract_drug_candidates(transcript: str) -> list[dict]:
                 break
         else:
             i += 1
-
     return candidates
+
+
+# ─── v2 API ───────────────────────────────────────────────────────────────────
+
+def correct_drug_names_v2(
+    transcript: str,
+    session_context: dict | None = None,
+) -> tuple[str, list[DrugMatch]]:
+    """
+    4-layer drug name correction with fuzzy matching, context-aware filtering,
+    and Safety Rule Engine.
+
+    Returns: (corrected_transcript, list[DrugMatch])
+    DrugMatch contains audit fields: confidence, layer, flagged, severity.
+
+    [FID-VN-008 | APPROVED 2026-06-10]
+    """
+    if not transcript:
+        return transcript, []
+
+    # Pre-filter alias map by session context
+    if session_context:
+        alias_map = _build_filtered_alias_map(session_context)
+    else:
+        alias_map = _get_alias_map()
+
+    full_alias = _get_alias_map()  # always available for L2 fallback
+
+    # Strip filler words for matching window, keep original for output
+    words_raw = transcript.split()
+    words = [w for w in words_raw if w.lower() not in _FILLER_WORDS]
+
+    result_words = list(words_raw)  # will replace in place
+    matches: list[DrugMatch] = []
+
+    i = 0
+    raw_i = 0  # track position in words_raw for result replacement
+    while i < len(words):
+        # skip filler words in result_words position tracking
+        while raw_i < len(words_raw) and words_raw[raw_i].lower() in _FILLER_WORDS:
+            raw_i += 1
+
+        # ── Layer 1: Exact match ──────────────────────────────────────────
+        inn, n_consumed, conf = _match_window(words, i, alias_map)
+        if inn is None:
+            inn, n_consumed, conf = _match_window(words, i, full_alias)
+
+        if inn is not None:
+            original = " ".join(words[i:i+n_consumed])
+            dm = DrugMatch(
+                inn=inn, original_text=original, word_position=raw_i,
+                confidence=1.0, match_layer=1,
+                flagged_for_review=False, flag_reason="", severity="",
+                fuzzy_score=0.0,
+            )
+            fragment = " ".join(words[i:min(i+n_consumed+3, len(words))])
+            dm = _run_safety(dm, fragment, session_context)
+            matches.append(dm)
+            # Replace in result
+            for j in range(n_consumed):
+                if raw_i + j < len(result_words):
+                    result_words[raw_i + j] = inn if j == 0 else ""
+            i += n_consumed
+            raw_i += n_consumed
+            continue
+
+        # ── Layer 2: Fuzzy match ──────────────────────────────────────────
+        token_normalized = _normalize(words[i])
+        if len(token_normalized) >= 3:
+            # Try multi-word token (2-3 words) first
+            for n in (3, 2, 1):
+                if i + n > len(words):
+                    continue
+                multi_token = _normalize(" ".join(words[i:i+n]))
+                fuzzy_map = alias_map if alias_map else full_alias
+                fuzz_inn, fuzz_conf, is_ambiguous = _fuzzy_match(multi_token, fuzzy_map)
+                if fuzz_inn is not None and fuzz_conf >= DRUG_FUZZY_CUTOFF_FLAG / 100:
+                    original = " ".join(words[i:i+n])
+                    flag = is_ambiguous or fuzz_conf < DRUG_FUZZY_CUTOFF_STRICT / 100
+                    reason = "AMBIGUOUS" if is_ambiguous else ("LOW_CONFIDENCE" if flag else "")
+                    severity = "HIGH" if is_ambiguous else ("LOW" if flag else "")
+                    dm = DrugMatch(
+                        inn=fuzz_inn, original_text=original, word_position=raw_i,
+                        confidence=fuzz_conf, match_layer=2,
+                        flagged_for_review=flag, flag_reason=reason, severity=severity,
+                        fuzzy_score=fuzz_conf * 100,
+                    )
+                    fragment = " ".join(words[i:min(i+n+3, len(words))])
+                    dm = _run_safety(dm, fragment, session_context)
+                    matches.append(dm)
+                    for j in range(n):
+                        if raw_i + j < len(result_words):
+                            result_words[raw_i + j] = fuzz_inn if j == 0 else ""
+                    i += n
+                    raw_i += n
+                    break
+            else:
+                # ── Layer 3: Context prefix match ─────────────────────────
+                ctx_inn = _context_prefix_match(words[i], alias_map)
+                if ctx_inn:
+                    dm = DrugMatch(
+                        inn=ctx_inn, original_text=words[i], word_position=raw_i,
+                        confidence=0.6, match_layer=3,
+                        flagged_for_review=True, flag_reason="LOW_CONFIDENCE", severity="LOW",
+                        fuzzy_score=0.0,
+                    )
+                    fragment = " ".join(words[i:min(i+4, len(words))])
+                    dm = _run_safety(dm, fragment, session_context)
+                    matches.append(dm)
+                    result_words[raw_i] = ctx_inn
+                    i += 1
+                    raw_i += 1
+                else:
+                    i += 1
+                    raw_i += 1
+        else:
+            i += 1
+            raw_i += 1
+
+    # Clean up empty strings from multi-word replacements
+    corrected = " ".join(w for w in result_words if w)
+
+    # Audit log
+    for dm in matches:
+        logger.info(
+            "DrugMatch layer=%d inn=%s orig=%r conf=%.2f flag=%s reason=%s severity=%s score=%.1f",
+            dm.match_layer, dm.inn, dm.original_text,
+            dm.confidence, dm.flagged_for_review, dm.flag_reason, dm.severity, dm.fuzzy_score,
+        )
+
+    return corrected, matches

@@ -1,6 +1,37 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.8.0] — 2026-06-10 — DrugCorrectionEngine v2 [FID-VN-008] · drug_db_v200 146 drugs · 444 tests
+
+### Drug DB v200 [CONS-002-IMPL / DRUG-DB-002]
+- feat(drug-db): `data/reference/drug_db_v200.json` v2.0.0 — 146 drugs (118+28 mới)
+- feat(drug-db): phonetic_variants {north, central, south} cho 40 top drugs (manual, CONS-001 rules)
+- feat(drug-db): auto-generated phonetic variants cho 78 drugs còn lại (R2/R5/R7 rules)
+- feat(drug-db): +28 drugs mới — SGLT-2 (Empagliflozin/Dapagliflozin/Canagliflozin),
+  DPP-4 (Vildagliptin/Linagliptin/Pioglitazone), ARBs (Telmisartan/Olmesartan/Irbesartan),
+  CCBs (Nifedipine/Lercanidipine), Metoprolol, Indapamide, PPIs (Rabeprazole/Lansoprazole),
+  Sucralfate, Phosphalugel, Lornoxicam, Mecobalamin, Alpha Lipoic Acid,
+  SSRIs (Sertraline/Escitalopram), Zolpidem, Cefdinir, Spiramycin, Tinidazole, CoQ10, Acarbose
+- feat(drug-db): new schema fields — phonetic_variants, valid_doses_mg, dose_range, drug_class, compatible_diagnoses
+- feat(drug-db): `scripts/build_drug_db_v200.py` — reproducible builder
+- bridge: phonetic_variants → TTS input text (CONS-002 CONDITIONAL-GO prerequisite)
+
+### DrugCorrectionEngine v2 [FID-VN-008 — APPROVED]
+- feat(L1b): `src/core/l1b_drug_correct.py` v2 — 4-layer matching + Safety Rule Engine
+  - Layer 1: exact alias (+ phonetic_variants từ drug_db_v200 → rộng hơn v1)
+  - Layer 2: RapidFuzz fuzzy (token_sort_ratio, cutoff=82) + Ambiguity Gate (top1-top2 < 8 → FLAG)
+  - Layer 3: context-aware prefix match (session_context → pre-filtered alias_map)
+  - Layer 4: Safety — dose_range validation (DOSE_OUT_OF_RANGE severity=HIGH)
+  - feat(L1b): PRE-FILTER — constrain search space by drug_class + compatible_diagnoses (ChatGPT)
+  - feat(L1b): DrugMatch dataclass — confidence/layer/flagged/severity/fuzzy_score audit fields
+  - feat(L1b): correct_drug_names_v2(transcript, session_context) → (str, list[DrugMatch])
+  - feat(L1b): filler word strip (ừm/ờ/à) trước window matching
+  - feat(L1b): audit logging mỗi DrugMatch (Copilot)
+  - feat(L1b): DRUG_FUZZY_CUTOFF_STRICT/FLAG configurable constants (Copilot)
+  - backward compat: correct_drug_names() và extract_drug_candidates() unchanged
+- feat(tests): `tests/unit/test_l1b_drug_correct_v2.py` — 35 tests PASS
+- tests: 409 → 444 PASS
+
 ## [v0.7.2b] — 2026-06-10 — TRAIN-002 DONE F1=99.44% · BUG-K2+N · 409 tests
 
 ### Training: TRAIN-002 PhoBERT NER — HOÀN TẤT
