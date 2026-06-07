@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-10b | v0.7.2
+# Cập nhật: 2026-06-10c | v0.8.2
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -113,6 +113,18 @@
 | P0.6.3f | │  ├─ NER Bug N fix | chan_doan from "tái khám [disease]" follow-up pattern · +4 tests | 🟢 | BUG-N | SES-20260610 | `src/core/l1c_ner.py` — 409/409 PASS |
 | P0.6.3g | │  └─ VietMed audio download ❌ | `trust_remote_code` deprecated · doof-ferb/VietMed gated (cần HF login) | 🔵 | VIETMED-FIX-001 | SES-20260610 | Fix `scripts/download_vietmed.py` + HF_TOKEN |
 | | │ | | | | | |
+| **P0.6.4** | **├─ 🟢 FID-VN-009 Hybrid NER** | **PARALLEL rule+PhoBERT · optional early-exit · 29 tests · 473 PASS** | **🟢** | **FID-VN-009** | SES-20260610 | **CONS-20260610-003 CLOSED APPROVE_WITH_CHANGES** |
+| P0.6.4a | │  ├─ l1c_phobert.py | PhoBERT NER lazy load · lru_cache · confidence thresholds 0.85/0.75/0.60 | 🟢 | FID-VN-009 | SES-20260610 | `src/core/l1c_phobert.py` |
+| P0.6.4b | │  ├─ extract_entities_hybrid() | PARALLEL: rule-based luôn chạy · PhoBERT supplement gaps | 🟢 | FID-VN-009 | SES-20260610 | `src/core/l1c_ner.py` |
+| P0.6.4c | │  ├─ VITAL meta-only | VITAL → meta["phobert_vital_detected"] · không viết vào MedicalEntities | 🟢 | FID-VN-009 | SES-20260610 | R-009-12: conditional FOLLOWUP guard |
+| P0.6.4d | │  └─ test_l1c_phobert_hybrid.py | 29 tests — backward compat · early-exit · dedup · fallback · meta | 🟢 | FID-VN-009 | SES-20260610 | `tests/unit/test_l1c_phobert_hybrid.py` |
+| | │ | | | | | |
+| **P0.6.5** | **├─ 🟢 CONS-002-EVAL Drug Eval** | **204 cases · GO: Recall=99.5% FP=0.0% Safety=92.1% Phonetic=98.7%** | **🟢** | **CONS-002-EVAL** | SES-20260610 | **✅ GO — DrugCorrectionEngine v2 production-ready** |
+| P0.6.5a | │  ├─ generate_drug_eval_dataset.py | 204 cases: clean=90 noisy=76 dangerous=38 · seed + templates | 🟢 | CONS-002-EVAL | SES-20260610 | `scripts/generate_drug_eval_dataset.py` |
+| P0.6.5b | │  ├─ eval_drug_correction.py | 4 metrics: Drug Recall / Silent FP / Safety Catch / Phonetic Recall | 🟢 | CONS-002-EVAL | SES-20260610 | `scripts/eval_drug_correction.py` |
+| P0.6.5c | │  ├─ drug_correction_eval.json | 204 ground-truth cases v1.0.0 | 🟢 | CONS-002-EVAL | SES-20260610 | `data/eval/drug_correction_eval.json` |
+| P0.6.5d | │  └─ Known issues | "a zi thro my xin" FN · "metro" AMBIGUOUS miss (3/38) | 🔵 | — | — | Log để cải tiến sau pilot |
+| | │ | | | | | |
 | **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
 | P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |
 | P0.7b |    ├─ DPA ký | Hợp đồng xử lý dữ liệu | 🟡 | PA-003 | — | Luật sư review xong → ký |
@@ -174,11 +186,11 @@
 
 | # | Task | Điều kiện | File |
 |---|---|---|---|
-| 1 | **PILOT Đà Nẵng** Cài install.bat, BS dùng thật | DEPLOY-001 DONE ✅ | Andy |
-| 2 | **BENCH-002** Record 30-50 audio thật → CEER thật | Sau pilot | PA-006 |
-| 3 | **CHATGPT-CORPUS-001** Andy paste prompt → ChatGPT → 41 scripts → BS review | `docs/dev/CHATGPT_CORPUS_PROMPT.md` v2.0 | PA-007 |
+| 1 | **BENCH-002b** Record 30-50 audio BS thật → CEER thật | DEPLOY-001 DONE ✅ | Andy |
+| 2 | **PA-007** Andy paste prompt → ChatGPT → 41 corpus scripts → BS review | `docs/dev/CHATGPT_CORPUS_PROMPT.md` v2.0 | Andy |
+| 3 | **CONS-002-SPRINT6** TTS Pilot (XTTS-v2 / F5-TTS) — CONDITIONAL-GO | CONS-002-IMPL DONE ✅ | CT |
 | 4 | **TEST-E2E-001** End-to-end với audio thật | Sau pilot | CT |
-| 5 | **analyze_corrections.py** chạy sau khi có 10+ approvals pilot để xem drug alias suggestions | `scripts/analyze_corrections.py` | CT |
+| 5 | **analyze_corrections.py** chạy sau khi có 10+ approvals pilot | `scripts/analyze_corrections.py` | CT |
 
 ### 🟡 SONG SONG (Andy làm)
 
@@ -204,7 +216,7 @@
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | **409/409** | 🟢 |
+| Tests PASS | 100% | **473/473** | 🟢 |
 | bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
 | Vital extraction (TC audio) | >0% | bench tc_001/tc_002: vital=True | 🟢 fixed FID-VN-005 |
 | WER semi-synthetic | <30% | SG 25.8% · CT 30.4% · HN 34.6% | 🟡 cần fine-tune |
@@ -216,6 +228,10 @@
 | CEER Followup (semi-synthetic) | <10% | 0.400 | 🟡 |
 | CEER thật | <5% | ❓ cần audio BS thật | 🟡 BENCH-002b |
 | TRAIN-002 PhoBERT NER | F1 > 0.70 | **F1=99.44%** (epoch 3, synthetic data) | ✅ |
+| **Drug Recall (CONS-002-EVAL)** | **≥88%** | **99.5%** | **✅ GO** |
+| **Silent FP Rate (CONS-002-EVAL)** | **≤10%** | **0.0%** | **✅ GO** |
+| **Safety Catch (CONS-002-EVAL)** | **≥80%** | **92.1%** | **✅ GO** |
+| **Phonetic Recall (CONS-002-EVAL)** | **≥85%** | **98.7%** | **✅ GO** |
 | BS approve rate | >85% | ❓ chưa pilot | ⏳ |
 | NPS | >7/10 | ❓ chưa pilot | ⏳ |
 | Paying users | ≥5 | 0 | ⏳ |
