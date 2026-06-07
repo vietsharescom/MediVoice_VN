@@ -5,10 +5,11 @@
       "TT07/2017/TT-BYT - Danh muc thuoc khong ke don (243 hoat chat)",
       "TT28/2024/TT-BYT - Danh muc thuoc thiet yeu",
       "Common VN primary care prescriptions",
-      "VietMed-NER DRUGCHEMICAL analysis + clinical VN OB/GYN (2026-06-09)"
+      "VietMed-NER DRUGCHEMICAL analysis + clinical VN OB/GYN (2026-06-09)",
+      "DRUG-ALIAS-001: PhoWhisper phonetic variants for Glimepiride/Colchicine/Etoricoxib/Vitamin B/Metformin/Omeprazole (2026-06-10)"
     ],
     "total_drugs": 118,
-    "version": "0.2.0",
+    "version": "0.3.0",
     "categories": {
       "Giảm đau": 3,
       "Chống viêm NSAIDs": 4,
@@ -860,7 +861,13 @@
         "omega rô",
         "omepra zo",
         "ome pra",
-        "ome pra zol"
+        "ome pra zol",
+        "ome ra zol",
+        "omerazole",
+        "ome ra zo",
+        "ô mê ra zol",
+        "omeprazole 20",
+        "ome prazol"
       ],
       "forms": [
         "viên 10mg",
@@ -1534,7 +1541,12 @@
         "me pho min",
         "mê phô min",
         "met pho min",
-        "metphomin"
+        "metphomin",
+        "met fo min",
+        "metformine",
+        "mét pho min",
+        "mê fo min",
+        "glucomet"
       ],
       "forms": [
         "viên 500mg",
@@ -1617,6 +1629,17 @@
         "glimepiride",
         "amaryl",
         "gliamide"
+      ],
+      "name_variants": [
+        "glimepirit",
+        "glimepirid",
+        "gli me pi rit",
+        "gli me pi rid",
+        "glimipiride",
+        "glimipe rit",
+        "gli me pi ride",
+        "glimipirit",
+        "gliame pi rit"
       ]
     },
     "Insulin Regular": {
@@ -1880,6 +1903,16 @@
         "arcoxia",
         "đau khớp",
         "viêm khớp"
+      ],
+      "name_variants": [
+        "eto ri cob",
+        "e to ri coc xit",
+        "eto ri coxit",
+        "etoricoxip",
+        "eto ri cop",
+        "e to ri cop",
+        "eto ri coc xip",
+        "etoricoxib arcoxia"
       ]
     },
     "Colchicine": {
@@ -1901,6 +1934,18 @@
         "gout",
         "gút",
         "đau khớp ngón cái"
+      ],
+      "name_variants": [
+        "colchicin",
+        "col chi xin",
+        "coi chi cin",
+        "col chi sin",
+        "côn chi sin",
+        "co chi sin",
+        "colchixin",
+        "col chi kin",
+        "coi chi xin",
+        "col chi kin"
       ]
     },
     "Allopurinol": {
@@ -2167,7 +2212,15 @@
       "brands": [
         "Vitamin B1",
         "Thiamine",
-        "Benerva"
+        "Benerva",
+        "Neurobion",
+        "Vitamin B complex",
+        "vitamin b tong hop",
+        "B complex",
+        "Bcomplex",
+        "neuro bi on",
+        "nơ rô bi on",
+        "Neuroton"
       ],
       "forms": [
         "viên 10mg",
