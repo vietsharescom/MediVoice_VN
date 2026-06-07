@@ -249,11 +249,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.8.1 |
-| Status | **FID-VN-009 ✅ Hybrid NER · l1c_phobert.py · PARALLEL+early-exit · 473/473 PASS** |
+| Version | v0.8.2 |
+| Status | **CONS-002-EVAL ✅ Drug eval 204 cases · GO: Recall=99.5% FP=0.0% Safety=92.1% · 473/473 PASS** |
 | Tests | **473/473 PASS** · bandit 0 HIGH/MEDIUM · conftest.py SKIP_QWEN |
 | Pending | **PA-007** (ChatGPT corpus) · **BENCH-002b** pilot Đà Nẵng · **VIETMED-FIX-001** (HF_TOKEN) |
-| Next task | **CONS-002-EVAL** evaluation dataset drug correction · **BENCH-002b** pilot real audio |
+| Next task | **BENCH-002b** pilot Đà Nẵng thật · **PA-007** ChatGPT corpus · **CONS-002-SPRINT6** TTS CONDITIONAL-GO |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` |
 
 ---

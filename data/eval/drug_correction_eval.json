@@ -1,0 +1,3101 @@
+{
+  "_meta": {
+    "name": "MediVoice Drug Correction Eval Dataset",
+    "version": "1.0.0",
+    "created": "2026-06-10",
+    "total": 204,
+    "categories": {
+      "clean": 90,
+      "noisy": 76,
+      "dangerous": 38
+    },
+    "purpose": "CONS-002-EVAL — Evaluation dataset for DrugCorrectionEngine v2",
+    "metrics": [
+      "Drug Recall (INN recognition)",
+      "False Positive Rate (no-drug transcripts)",
+      "Safety Catch Rate (dangerous doses + ambiguous)",
+      "Phonetic Recall (noisy category only)"
+    ]
+  },
+  "cases": [
+    {
+      "id": "CE-001",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "kê metformin 500mg ngày 2 lần trong 30 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-002",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "cho bệnh nhân uống metformin 500mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-003",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "cho bệnh nhân uống amlodipine 5mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-004",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "bệnh nhân dùng amlodipine 5mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-005",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "bệnh nhân dùng paracetamol 500mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Paracetamol",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-006",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "điều trị bằng paracetamol 500mg ngày 3 lần trong 5 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Paracetamol",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-007",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "điều trị bằng amoxicillin 500mg ngày 3 lần trong 7 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Amoxicillin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-008",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "kê amoxicillin 500mg ngày 3 lần trong 7 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Amoxicillin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-009",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "kê omeprazole 20mg ngày 1 lần trong 14 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Omeprazole",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-010",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "cho bệnh nhân uống omeprazole 20mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Omeprazole",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-011",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "cho bệnh nhân uống ibuprofen 400mg ngày 3 lần",
+      "expected_drugs": [
+        {
+          "inn": "Ibuprofen",
+          "dose_mg": 400
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-012",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "bệnh nhân dùng ibuprofen 400mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Ibuprofen",
+          "dose_mg": 400
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-013",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "bệnh nhân dùng atorvastatin 20mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Atorvastatin",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-014",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "điều trị bằng atorvastatin 20mg ngày 1 lần trong 30 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Atorvastatin",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-015",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "điều trị bằng losartan 50mg ngày 1 lần trong 30 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Losartan",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-016",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "kê losartan 50mg ngày 1 lần trong 30 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Losartan",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-017",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "kê metronidazole 250mg ngày 3 lần trong 7 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Metronidazole",
+          "dose_mg": 250
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-018",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "cho bệnh nhân uống metronidazole 250mg ngày 3 lần",
+      "expected_drugs": [
+        {
+          "inn": "Metronidazole",
+          "dose_mg": 250
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-019",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "cho bệnh nhân uống metoprolol 50mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Metoprolol",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-020",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "bệnh nhân dùng metoprolol 50mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Metoprolol",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-021",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "bệnh nhân dùng furosemide 40mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Furosemide",
+          "dose_mg": 40
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-022",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "điều trị bằng furosemide 40mg ngày 1 lần trong 14 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Furosemide",
+          "dose_mg": 40
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-023",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "điều trị bằng glimepiride 2mg ngày 1 lần trong 30 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Glimepiride",
+          "dose_mg": 2
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-024",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "kê glimepiride 2mg ngày 1 lần trong 30 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Glimepiride",
+          "dose_mg": 2
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-025",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "kê cetirizine 10mg ngày 1 lần trong 7 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Cetirizine",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-026",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "cho bệnh nhân uống cetirizine 10mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Cetirizine",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-027",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "cho bệnh nhân uống prednisolone 5mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Prednisolone",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-028",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "bệnh nhân dùng prednisolone 5mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Prednisolone",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-029",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "bệnh nhân dùng azithromycin 500mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Azithromycin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-030",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "điều trị bằng azithromycin 500mg ngày 1 lần trong 3 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Azithromycin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-031",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "điều trị bằng clarithromycin 500mg ngày 2 lần trong 7 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Clarithromycin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-032",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "kê clarithromycin 500mg ngày 2 lần trong 7 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Clarithromycin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-033",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "kê ciprofloxacin 500mg ngày 2 lần trong 7 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Ciprofloxacin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-034",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "cho bệnh nhân uống ciprofloxacin 500mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Ciprofloxacin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-035",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "cho bệnh nhân uống levofloxacin 500mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Levofloxacin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-036",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "bệnh nhân dùng levofloxacin 500mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Levofloxacin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-037",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "bệnh nhân dùng augmentin 625mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Amoxicillin/Clavulanate",
+          "dose_mg": 625
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-038",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "điều trị bằng augmentin 625mg ngày 3 lần trong 7 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Amoxicillin/Clavulanate",
+          "dose_mg": 625
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-039",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "điều trị bằng salbutamol 4mg ngày 3 lần trong 7 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Salbutamol",
+          "dose_mg": 4
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-040",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "kê salbutamol 4mg ngày 3 lần trong 7 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Salbutamol",
+          "dose_mg": 4
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-041",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "kê loratadine 10mg ngày 1 lần trong 7 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Loratadine",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-042",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "cho bệnh nhân uống loratadine 10mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Loratadine",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-043",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "cho bệnh nhân uống valsartan 80mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Valsartan",
+          "dose_mg": 80
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-044",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "bệnh nhân dùng valsartan 80mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Valsartan",
+          "dose_mg": 80
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-045",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "bệnh nhân dùng esomeprazole 40mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Esomeprazole",
+          "dose_mg": 40
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-046",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "điều trị bằng esomeprazole 40mg ngày 1 lần trong 14 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Esomeprazole",
+          "dose_mg": 40
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-047",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "điều trị bằng domperidone 10mg ngày 3 lần trong 7 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Domperidone",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-048",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "kê domperidone 10mg ngày 3 lần trong 7 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Domperidone",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-049",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "kê dexamethasone 4mg ngày 1 lần trong 5 ngày",
+      "expected_drugs": [
+        {
+          "inn": "Dexamethasone injection",
+          "dose_mg": 4
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-050",
+      "category": "clean",
+      "subcategory": "exact_inn",
+      "transcript": "cho bệnh nhân uống dexamethasone 4mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Dexamethasone injection",
+          "dose_mg": 4
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-051",
+      "category": "clean",
+      "subcategory": "brand_name",
+      "transcript": "kê panadol 500mg ngày 3 lần",
+      "expected_drugs": [
+        {
+          "inn": "Paracetamol",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-052",
+      "category": "clean",
+      "subcategory": "brand_name",
+      "transcript": "kê efferalgan 500mg ngày 3 lần",
+      "expected_drugs": [
+        {
+          "inn": "Paracetamol",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-053",
+      "category": "clean",
+      "subcategory": "brand_name",
+      "transcript": "kê advil 400mg ngày 3 lần",
+      "expected_drugs": [
+        {
+          "inn": "Ibuprofen",
+          "dose_mg": 400
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-054",
+      "category": "clean",
+      "subcategory": "brand_name",
+      "transcript": "kê nurofen 400mg ngày 3 lần",
+      "expected_drugs": [
+        {
+          "inn": "Ibuprofen",
+          "dose_mg": 400
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-055",
+      "category": "clean",
+      "subcategory": "brand_name",
+      "transcript": "kê norvasc 5mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-056",
+      "category": "clean",
+      "subcategory": "brand_name",
+      "transcript": "kê losec 20mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Omeprazole",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-057",
+      "category": "clean",
+      "subcategory": "brand_name",
+      "transcript": "kê prilosec 20mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Omeprazole",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-058",
+      "category": "clean",
+      "subcategory": "brand_name",
+      "transcript": "kê glucophage 500mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-059",
+      "category": "clean",
+      "subcategory": "brand_name",
+      "transcript": "kê lipitor 20mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Atorvastatin",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-060",
+      "category": "clean",
+      "subcategory": "brand_name",
+      "transcript": "kê cozaar 50mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Losartan",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-061",
+      "category": "clean",
+      "subcategory": "brand_name",
+      "transcript": "kê zithromax 500mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Azithromycin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-062",
+      "category": "clean",
+      "subcategory": "brand_name",
+      "transcript": "kê zyrtec 10mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Cetirizine",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-063",
+      "category": "clean",
+      "subcategory": "brand_name",
+      "transcript": "kê claritin 10mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Loratadine",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-064",
+      "category": "clean",
+      "subcategory": "brand_name",
+      "transcript": "kê betaloc 50mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Metoprolol",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-065",
+      "category": "clean",
+      "subcategory": "brand_name",
+      "transcript": "kê ventolin 4mg ngày 3 lần",
+      "expected_drugs": [
+        {
+          "inn": "Salbutamol",
+          "dose_mg": 4
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-066",
+      "category": "clean",
+      "subcategory": "multi_drug",
+      "transcript": "kê metformin 500mg và amlodipine 5mg cho bệnh nhân",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 500
+        },
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-067",
+      "category": "clean",
+      "subcategory": "multi_drug",
+      "transcript": "kê paracetamol 500mg và ibuprofen 400mg cho bệnh nhân",
+      "expected_drugs": [
+        {
+          "inn": "Paracetamol",
+          "dose_mg": 500
+        },
+        {
+          "inn": "Ibuprofen",
+          "dose_mg": 400
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-068",
+      "category": "clean",
+      "subcategory": "multi_drug",
+      "transcript": "kê omeprazole 20mg và amoxicillin 500mg cho bệnh nhân",
+      "expected_drugs": [
+        {
+          "inn": "Omeprazole",
+          "dose_mg": 20
+        },
+        {
+          "inn": "Amoxicillin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-069",
+      "category": "clean",
+      "subcategory": "multi_drug",
+      "transcript": "kê atorvastatin 20mg và losartan 50mg và amlodipine 5mg cho bệnh nhân",
+      "expected_drugs": [
+        {
+          "inn": "Atorvastatin",
+          "dose_mg": 20
+        },
+        {
+          "inn": "Losartan",
+          "dose_mg": 50
+        },
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-070",
+      "category": "clean",
+      "subcategory": "multi_drug",
+      "transcript": "kê metformin 500mg và glimepiride 2mg cho bệnh nhân",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 500
+        },
+        {
+          "inn": "Glimepiride",
+          "dose_mg": 2
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-071",
+      "category": "clean",
+      "subcategory": "multi_drug",
+      "transcript": "kê metoprolol 50mg và losartan 50mg cho bệnh nhân",
+      "expected_drugs": [
+        {
+          "inn": "Metoprolol",
+          "dose_mg": 50
+        },
+        {
+          "inn": "Losartan",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-072",
+      "category": "clean",
+      "subcategory": "multi_drug",
+      "transcript": "kê cetirizine 10mg và salbutamol 4mg cho bệnh nhân",
+      "expected_drugs": [
+        {
+          "inn": "Cetirizine",
+          "dose_mg": 10
+        },
+        {
+          "inn": "Salbutamol",
+          "dose_mg": 4
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-073",
+      "category": "clean",
+      "subcategory": "multi_drug",
+      "transcript": "kê prednisolone 5mg và azithromycin 500mg cho bệnh nhân",
+      "expected_drugs": [
+        {
+          "inn": "Prednisolone",
+          "dose_mg": 5
+        },
+        {
+          "inn": "Azithromycin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-074",
+      "category": "clean",
+      "subcategory": "multi_drug",
+      "transcript": "kê omeprazole 20mg và domperidone 10mg cho bệnh nhân",
+      "expected_drugs": [
+        {
+          "inn": "Omeprazole",
+          "dose_mg": 20
+        },
+        {
+          "inn": "Domperidone",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-075",
+      "category": "clean",
+      "subcategory": "multi_drug",
+      "transcript": "kê furosemide 40mg và valsartan 80mg và metoprolol 50mg cho bệnh nhân",
+      "expected_drugs": [
+        {
+          "inn": "Furosemide",
+          "dose_mg": 40
+        },
+        {
+          "inn": "Valsartan",
+          "dose_mg": 80
+        },
+        {
+          "inn": "Metoprolol",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": ""
+    },
+    {
+      "id": "CE-076",
+      "category": "clean",
+      "subcategory": "negative",
+      "transcript": "bệnh nhân 45 tuổi tái khám tăng huyết áp.",
+      "expected_drugs": [],
+      "expected_flags": [],
+      "is_negative": true,
+      "notes": ""
+    },
+    {
+      "id": "CE-077",
+      "category": "clean",
+      "subcategory": "negative",
+      "transcript": "đo huyết áp 130/80 mmHg, mạch 80 lần/phút.",
+      "expected_drugs": [],
+      "expected_flags": [],
+      "is_negative": true,
+      "notes": ""
+    },
+    {
+      "id": "CE-078",
+      "category": "clean",
+      "subcategory": "negative",
+      "transcript": "bệnh nhân khỏe mạnh, không có triệu chứng gì.",
+      "expected_drugs": [],
+      "expected_flags": [],
+      "is_negative": true,
+      "notes": ""
+    },
+    {
+      "id": "CE-079",
+      "category": "clean",
+      "subcategory": "negative",
+      "transcript": "lý do khám: kiểm tra sức khỏe định kỳ.",
+      "expected_drugs": [],
+      "expected_flags": [],
+      "is_negative": true,
+      "notes": ""
+    },
+    {
+      "id": "CE-080",
+      "category": "clean",
+      "subcategory": "negative",
+      "transcript": "tiền sử gia đình có bố bị tiểu đường.",
+      "expected_drugs": [],
+      "expected_flags": [],
+      "is_negative": true,
+      "notes": ""
+    },
+    {
+      "id": "CE-081",
+      "category": "clean",
+      "subcategory": "negative",
+      "transcript": "bệnh nhân phủ nhận dị ứng thuốc.",
+      "expected_drugs": [],
+      "expected_flags": [],
+      "is_negative": true,
+      "notes": ""
+    },
+    {
+      "id": "CE-082",
+      "category": "clean",
+      "subcategory": "negative",
+      "transcript": "hẹn tái khám sau 2 tuần nếu không đỡ.",
+      "expected_drugs": [],
+      "expected_flags": [],
+      "is_negative": true,
+      "notes": ""
+    },
+    {
+      "id": "CE-083",
+      "category": "clean",
+      "subcategory": "negative",
+      "transcript": "kết quả xét nghiệm máu bình thường.",
+      "expected_drugs": [],
+      "expected_flags": [],
+      "is_negative": true,
+      "notes": ""
+    },
+    {
+      "id": "CE-084",
+      "category": "clean",
+      "subcategory": "negative",
+      "transcript": "bệnh nhân ngưng tự ý dùng thuốc cũ.",
+      "expected_drugs": [],
+      "expected_flags": [],
+      "is_negative": true,
+      "notes": ""
+    },
+    {
+      "id": "CE-085",
+      "category": "clean",
+      "subcategory": "negative",
+      "transcript": "chẩn đoán viêm họng cấp, không kê thuốc.",
+      "expected_drugs": [],
+      "expected_flags": [],
+      "is_negative": true,
+      "notes": ""
+    },
+    {
+      "id": "CE-086",
+      "category": "clean",
+      "subcategory": "negative",
+      "transcript": "bệnh nhân được giải thích về lối sống lành mạnh.",
+      "expected_drugs": [],
+      "expected_flags": [],
+      "is_negative": true,
+      "notes": ""
+    },
+    {
+      "id": "CE-087",
+      "category": "clean",
+      "subcategory": "negative",
+      "transcript": "cần kiểm tra lại sau 1 tháng.",
+      "expected_drugs": [],
+      "expected_flags": [],
+      "is_negative": true,
+      "notes": ""
+    },
+    {
+      "id": "CE-088",
+      "category": "clean",
+      "subcategory": "negative",
+      "transcript": "theo dõi thêm, chưa cần dùng thuốc.",
+      "expected_drugs": [],
+      "expected_flags": [],
+      "is_negative": true,
+      "notes": ""
+    },
+    {
+      "id": "CE-089",
+      "category": "clean",
+      "subcategory": "negative",
+      "transcript": "bệnh nhân đang cho con bú, cần thận trọng.",
+      "expected_drugs": [],
+      "expected_flags": [],
+      "is_negative": true,
+      "notes": ""
+    },
+    {
+      "id": "CE-090",
+      "category": "clean",
+      "subcategory": "negative",
+      "transcript": "chuyển viện để làm thêm xét nghiệm chuyên sâu.",
+      "expected_drugs": [],
+      "expected_flags": [],
+      "is_negative": true,
+      "notes": ""
+    },
+    {
+      "id": "CE-091",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê am lô đi pin 5mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Amlodipine"
+    },
+    {
+      "id": "CE-092",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê am lô đi pinh 5mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Amlodipine"
+    },
+    {
+      "id": "CE-093",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê a mốc xi lin 500mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Amoxicillin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Amoxicillin"
+    },
+    {
+      "id": "CE-094",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê a mô xi lin 500mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Amoxicillin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Amoxicillin"
+    },
+    {
+      "id": "CE-095",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê mét pho min 500mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Metformin"
+    },
+    {
+      "id": "CE-096",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê me pho min 500mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Metformin"
+    },
+    {
+      "id": "CE-097",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê pa ra xe ta mol 500mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Paracetamol",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Paracetamol"
+    },
+    {
+      "id": "CE-098",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê pa ra xê ta mol 500mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Paracetamol",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Paracetamol"
+    },
+    {
+      "id": "CE-099",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê ô me pra zôl 20mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Omeprazole",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Omeprazole"
+    },
+    {
+      "id": "CE-100",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê ô mê pra zol 20mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Omeprazole",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Omeprazole"
+    },
+    {
+      "id": "CE-101",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê i bu pho phen 400mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Ibuprofen",
+          "dose_mg": 400
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Ibuprofen"
+    },
+    {
+      "id": "CE-102",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê i bu pro phen 400mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Ibuprofen",
+          "dose_mg": 400
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Ibuprofen"
+    },
+    {
+      "id": "CE-103",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê a zi thro my xin 500mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Azithromycin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Azithromycin"
+    },
+    {
+      "id": "CE-104",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê me tro ni đa zôl 250mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Metronidazole",
+          "dose_mg": 250
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Metronidazole"
+    },
+    {
+      "id": "CE-105",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê a to va sta tin 20mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Atorvastatin",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Atorvastatin"
+    },
+    {
+      "id": "CE-106",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê lo sar tan 50mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Losartan",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Losartan"
+    },
+    {
+      "id": "CE-107",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê me to pro lol 50mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Metoprolol",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Metoprolol"
+    },
+    {
+      "id": "CE-108",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê phu ro se mit 40mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Furosemide",
+          "dose_mg": 40
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Furosemide"
+    },
+    {
+      "id": "CE-109",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê gli me pi rit 2mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Glimepiride",
+          "dose_mg": 2
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Glimepiride"
+    },
+    {
+      "id": "CE-110",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê xe ti ri zin 10mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Cetirizine",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Cetirizine"
+    },
+    {
+      "id": "CE-111",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê lo ra ta đin 10mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Loratadine",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Loratadine"
+    },
+    {
+      "id": "CE-112",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê prét ni so lon 5mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Prednisolone",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Prednisolone"
+    },
+    {
+      "id": "CE-113",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê e so me pra zôl 40mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Esomeprazole",
+          "dose_mg": 40
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Esomeprazole"
+    },
+    {
+      "id": "CE-114",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê dom pe ri đon 10mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Domperidone",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Domperidone"
+    },
+    {
+      "id": "CE-115",
+      "category": "noisy",
+      "subcategory": "phonetic_north",
+      "transcript": "kê xan bu ta mol 4mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Salbutamol",
+          "dose_mg": 4
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "north phonetic for Salbutamol"
+    },
+    {
+      "id": "CE-116",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng am lo 5mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Amlodipine"
+    },
+    {
+      "id": "CE-117",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng am lor 5mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Amlodipine"
+    },
+    {
+      "id": "CE-118",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng a moc xi lin 500mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Amoxicillin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Amoxicillin"
+    },
+    {
+      "id": "CE-119",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng a moc si lin 500mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Amoxicillin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Amoxicillin"
+    },
+    {
+      "id": "CE-120",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng me pho min 500mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Metformin"
+    },
+    {
+      "id": "CE-121",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng mờ pho min 500mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Metformin"
+    },
+    {
+      "id": "CE-122",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng pa ra 500mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Paracetamol",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Paracetamol"
+    },
+    {
+      "id": "CE-123",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng pa ra xe ta 500mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Paracetamol",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Paracetamol"
+    },
+    {
+      "id": "CE-124",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng o me pra 20mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Omeprazole",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Omeprazole"
+    },
+    {
+      "id": "CE-125",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng o me 20mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Omeprazole",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Omeprazole"
+    },
+    {
+      "id": "CE-126",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng i bu pro 400mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Ibuprofen",
+          "dose_mg": 400
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Ibuprofen"
+    },
+    {
+      "id": "CE-127",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng a zi tro my 500mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Azithromycin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Azithromycin"
+    },
+    {
+      "id": "CE-128",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng me tro ni 250mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Metronidazole",
+          "dose_mg": 250
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Metronidazole"
+    },
+    {
+      "id": "CE-129",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng a to va 20mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Atorvastatin",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Atorvastatin"
+    },
+    {
+      "id": "CE-130",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng lo sa 50mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Losartan",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Losartan"
+    },
+    {
+      "id": "CE-131",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng be ta loc 50mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Metoprolol",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Metoprolol"
+    },
+    {
+      "id": "CE-132",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng phu ro 40mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Furosemide",
+          "dose_mg": 40
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Furosemide"
+    },
+    {
+      "id": "CE-133",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng gli me pi 2mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Glimepiride",
+          "dose_mg": 2
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Glimepiride"
+    },
+    {
+      "id": "CE-134",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng a ma ryl 2mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Glimepiride",
+          "dose_mg": 2
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Glimepiride"
+    },
+    {
+      "id": "CE-135",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng xe ti ri 10mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Cetirizine",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Cetirizine"
+    },
+    {
+      "id": "CE-136",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng lo ra ta 10mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Loratadine",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Loratadine"
+    },
+    {
+      "id": "CE-137",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng prét ni 5mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Prednisolone",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Prednisolone"
+    },
+    {
+      "id": "CE-138",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng ne xi um 40mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Esomeprazole",
+          "dose_mg": 40
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Esomeprazole"
+    },
+    {
+      "id": "CE-139",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng dom pe 10mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Domperidone",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Domperidone"
+    },
+    {
+      "id": "CE-140",
+      "category": "noisy",
+      "subcategory": "phonetic_south",
+      "transcript": "cho bệnh nhân dùng ven to lin 4mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Salbutamol",
+          "dose_mg": 4
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "south phonetic for Salbutamol"
+    },
+    {
+      "id": "CE-141",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "kê amlodiphin 5mg",
+      "expected_drugs": [
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Amlodipine"
+    },
+    {
+      "id": "CE-142",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "bệnh nhân uống amlodiphin 5mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Amlodipine"
+    },
+    {
+      "id": "CE-143",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "kê amlodipine 5mg",
+      "expected_drugs": [
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Amlodipine"
+    },
+    {
+      "id": "CE-144",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "bệnh nhân uống amlodipine 5mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Amlodipine"
+    },
+    {
+      "id": "CE-145",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "kê metphomin 500mg",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Metformin"
+    },
+    {
+      "id": "CE-146",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "bệnh nhân uống metphomin 500mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Metformin"
+    },
+    {
+      "id": "CE-147",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "kê metfornin 500mg",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Metformin"
+    },
+    {
+      "id": "CE-148",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "bệnh nhân uống metfornin 500mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Metformin"
+    },
+    {
+      "id": "CE-149",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "kê parasetamol 500mg",
+      "expected_drugs": [
+        {
+          "inn": "Paracetamol",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Paracetamol"
+    },
+    {
+      "id": "CE-150",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "bệnh nhân uống parasetamol 500mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Paracetamol",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Paracetamol"
+    },
+    {
+      "id": "CE-151",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "kê paracetamole 500mg",
+      "expected_drugs": [
+        {
+          "inn": "Paracetamol",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Paracetamol"
+    },
+    {
+      "id": "CE-152",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "bệnh nhân uống paracetamole 500mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Paracetamol",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Paracetamol"
+    },
+    {
+      "id": "CE-153",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "kê amoxicilline 500mg",
+      "expected_drugs": [
+        {
+          "inn": "Amoxicillin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Amoxicillin"
+    },
+    {
+      "id": "CE-154",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "bệnh nhân uống amoxicilline 500mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Amoxicillin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Amoxicillin"
+    },
+    {
+      "id": "CE-155",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "kê omeprazol 20mg",
+      "expected_drugs": [
+        {
+          "inn": "Omeprazole",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Omeprazole"
+    },
+    {
+      "id": "CE-156",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "bệnh nhân uống omeprazol 20mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Omeprazole",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Omeprazole"
+    },
+    {
+      "id": "CE-157",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "kê ibuprophen 400mg",
+      "expected_drugs": [
+        {
+          "inn": "Ibuprofen",
+          "dose_mg": 400
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Ibuprofen"
+    },
+    {
+      "id": "CE-158",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "bệnh nhân uống ibuprophen 400mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Ibuprofen",
+          "dose_mg": 400
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Ibuprofen"
+    },
+    {
+      "id": "CE-159",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "kê azithromicin 500mg",
+      "expected_drugs": [
+        {
+          "inn": "Azithromycin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Azithromycin"
+    },
+    {
+      "id": "CE-160",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "bệnh nhân uống azithromicin 500mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Azithromycin",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Azithromycin"
+    },
+    {
+      "id": "CE-161",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "kê atorvaxtatine 20mg",
+      "expected_drugs": [
+        {
+          "inn": "Atorvastatin",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Atorvastatin"
+    },
+    {
+      "id": "CE-162",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "bệnh nhân uống atorvaxtatine 20mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Atorvastatin",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Atorvastatin"
+    },
+    {
+      "id": "CE-163",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "kê loxartan 50mg",
+      "expected_drugs": [
+        {
+          "inn": "Losartan",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Losartan"
+    },
+    {
+      "id": "CE-164",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "bệnh nhân uống loxartan 50mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Losartan",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Losartan"
+    },
+    {
+      "id": "CE-165",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "kê metronidazol 250mg",
+      "expected_drugs": [
+        {
+          "inn": "Metronidazole",
+          "dose_mg": 250
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Metronidazole"
+    },
+    {
+      "id": "CE-166",
+      "category": "noisy",
+      "subcategory": "fuzzy_typo",
+      "transcript": "bệnh nhân uống metronidazol 250mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Metronidazole",
+          "dose_mg": 250
+        }
+      ],
+      "expected_flags": [],
+      "is_negative": false,
+      "notes": "typo variant of Metronidazole"
+    },
+    {
+      "id": "CE-167",
+      "category": "dangerous",
+      "subcategory": "dose_too_low",
+      "transcript": "kê metformin 10mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 10mg below min 500mg"
+    },
+    {
+      "id": "CE-168",
+      "category": "dangerous",
+      "subcategory": "dose_too_low",
+      "transcript": "bệnh nhân uống metformin 10mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 10mg below min 500mg"
+    },
+    {
+      "id": "CE-169",
+      "category": "dangerous",
+      "subcategory": "dose_too_low",
+      "transcript": "kê metformin 100mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 100
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 100mg below min 500mg"
+    },
+    {
+      "id": "CE-170",
+      "category": "dangerous",
+      "subcategory": "dose_too_low",
+      "transcript": "bệnh nhân uống metformin 100mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Metformin",
+          "dose_mg": 100
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 100mg below min 500mg"
+    },
+    {
+      "id": "CE-171",
+      "category": "dangerous",
+      "subcategory": "dose_too_low",
+      "transcript": "kê furosemide 5mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Furosemide",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 5mg below min 20mg"
+    },
+    {
+      "id": "CE-172",
+      "category": "dangerous",
+      "subcategory": "dose_too_low",
+      "transcript": "bệnh nhân uống furosemide 5mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Furosemide",
+          "dose_mg": 5
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 5mg below min 20mg"
+    },
+    {
+      "id": "CE-173",
+      "category": "dangerous",
+      "subcategory": "dose_too_low",
+      "transcript": "kê glimepiride 0.1mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Glimepiride",
+          "dose_mg": 0.1
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 0.1mg below min 1mg"
+    },
+    {
+      "id": "CE-174",
+      "category": "dangerous",
+      "subcategory": "dose_too_low",
+      "transcript": "bệnh nhân uống glimepiride 0.1mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Glimepiride",
+          "dose_mg": 0.1
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 0.1mg below min 1mg"
+    },
+    {
+      "id": "CE-175",
+      "category": "dangerous",
+      "subcategory": "dose_too_low",
+      "transcript": "kê ibuprofen 50mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Ibuprofen",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 50mg below min 200mg"
+    },
+    {
+      "id": "CE-176",
+      "category": "dangerous",
+      "subcategory": "dose_too_low",
+      "transcript": "bệnh nhân uống ibuprofen 50mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Ibuprofen",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 50mg below min 200mg"
+    },
+    {
+      "id": "CE-177",
+      "category": "dangerous",
+      "subcategory": "dose_too_low",
+      "transcript": "kê prednisolone 0.5mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Prednisolone",
+          "dose_mg": 0.5
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 0.5mg below min 1mg"
+    },
+    {
+      "id": "CE-178",
+      "category": "dangerous",
+      "subcategory": "dose_too_low",
+      "transcript": "bệnh nhân uống prednisolone 0.5mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Prednisolone",
+          "dose_mg": 0.5
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 0.5mg below min 1mg"
+    },
+    {
+      "id": "CE-179",
+      "category": "dangerous",
+      "subcategory": "dose_too_low",
+      "transcript": "kê azithromycin 50mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Azithromycin",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 50mg below min 250mg"
+    },
+    {
+      "id": "CE-180",
+      "category": "dangerous",
+      "subcategory": "dose_too_low",
+      "transcript": "bệnh nhân uống azithromycin 50mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Azithromycin",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 50mg below min 250mg"
+    },
+    {
+      "id": "CE-181",
+      "category": "dangerous",
+      "subcategory": "dose_too_low",
+      "transcript": "kê metronidazole 50mg ngày 2 lần",
+      "expected_drugs": [
+        {
+          "inn": "Metronidazole",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 50mg below min 250mg"
+    },
+    {
+      "id": "CE-182",
+      "category": "dangerous",
+      "subcategory": "dose_too_low",
+      "transcript": "bệnh nhân uống metronidazole 50mg mỗi ngày",
+      "expected_drugs": [
+        {
+          "inn": "Metronidazole",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 50mg below min 250mg"
+    },
+    {
+      "id": "CE-183",
+      "category": "dangerous",
+      "subcategory": "dose_too_high",
+      "transcript": "kê amlodipine 50mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 50mg above max 10mg"
+    },
+    {
+      "id": "CE-184",
+      "category": "dangerous",
+      "subcategory": "dose_too_high",
+      "transcript": "cho bệnh nhân uống amlodipine 50mg",
+      "expected_drugs": [
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 50
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 50mg above max 10mg"
+    },
+    {
+      "id": "CE-185",
+      "category": "dangerous",
+      "subcategory": "dose_too_high",
+      "transcript": "kê amlodipine 20mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 20mg above max 10mg"
+    },
+    {
+      "id": "CE-186",
+      "category": "dangerous",
+      "subcategory": "dose_too_high",
+      "transcript": "cho bệnh nhân uống amlodipine 20mg",
+      "expected_drugs": [
+        {
+          "inn": "Amlodipine",
+          "dose_mg": 20
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 20mg above max 10mg"
+    },
+    {
+      "id": "CE-187",
+      "category": "dangerous",
+      "subcategory": "dose_too_high",
+      "transcript": "kê atorvastatin 100mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Atorvastatin",
+          "dose_mg": 100
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 100mg above max 80mg"
+    },
+    {
+      "id": "CE-188",
+      "category": "dangerous",
+      "subcategory": "dose_too_high",
+      "transcript": "cho bệnh nhân uống atorvastatin 100mg",
+      "expected_drugs": [
+        {
+          "inn": "Atorvastatin",
+          "dose_mg": 100
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 100mg above max 80mg"
+    },
+    {
+      "id": "CE-189",
+      "category": "dangerous",
+      "subcategory": "dose_too_high",
+      "transcript": "kê metoprolol 500mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Metoprolol",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 500mg above max 400mg"
+    },
+    {
+      "id": "CE-190",
+      "category": "dangerous",
+      "subcategory": "dose_too_high",
+      "transcript": "cho bệnh nhân uống metoprolol 500mg",
+      "expected_drugs": [
+        {
+          "inn": "Metoprolol",
+          "dose_mg": 500
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 500mg above max 400mg"
+    },
+    {
+      "id": "CE-191",
+      "category": "dangerous",
+      "subcategory": "dose_too_high",
+      "transcript": "kê glimepiride 10mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Glimepiride",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 10mg above max 8mg"
+    },
+    {
+      "id": "CE-192",
+      "category": "dangerous",
+      "subcategory": "dose_too_high",
+      "transcript": "cho bệnh nhân uống glimepiride 10mg",
+      "expected_drugs": [
+        {
+          "inn": "Glimepiride",
+          "dose_mg": 10
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 10mg above max 8mg"
+    },
+    {
+      "id": "CE-193",
+      "category": "dangerous",
+      "subcategory": "dose_too_high",
+      "transcript": "kê prednisolone 80mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Prednisolone",
+          "dose_mg": 80
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 80mg above max 60mg"
+    },
+    {
+      "id": "CE-194",
+      "category": "dangerous",
+      "subcategory": "dose_too_high",
+      "transcript": "cho bệnh nhân uống prednisolone 80mg",
+      "expected_drugs": [
+        {
+          "inn": "Prednisolone",
+          "dose_mg": 80
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 80mg above max 60mg"
+    },
+    {
+      "id": "CE-195",
+      "category": "dangerous",
+      "subcategory": "dose_too_high",
+      "transcript": "kê cetirizine 40mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Cetirizine",
+          "dose_mg": 40
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 40mg above max 20mg"
+    },
+    {
+      "id": "CE-196",
+      "category": "dangerous",
+      "subcategory": "dose_too_high",
+      "transcript": "cho bệnh nhân uống cetirizine 40mg",
+      "expected_drugs": [
+        {
+          "inn": "Cetirizine",
+          "dose_mg": 40
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 40mg above max 20mg"
+    },
+    {
+      "id": "CE-197",
+      "category": "dangerous",
+      "subcategory": "dose_too_high",
+      "transcript": "kê loratadine 30mg ngày 1 lần",
+      "expected_drugs": [
+        {
+          "inn": "Loratadine",
+          "dose_mg": 30
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 30mg above max 20mg"
+    },
+    {
+      "id": "CE-198",
+      "category": "dangerous",
+      "subcategory": "dose_too_high",
+      "transcript": "cho bệnh nhân uống loratadine 30mg",
+      "expected_drugs": [
+        {
+          "inn": "Loratadine",
+          "dose_mg": 30
+        }
+      ],
+      "expected_flags": [
+        "DOSE_OUT_OF_RANGE"
+      ],
+      "is_negative": false,
+      "notes": "dose 30mg above max 20mg"
+    },
+    {
+      "id": "CE-199",
+      "category": "dangerous",
+      "subcategory": "ambiguous",
+      "transcript": "uống met 500mg ngày 2 lần",
+      "expected_drugs": [],
+      "expected_flags": [
+        "AMBIGUOUS"
+      ],
+      "is_negative": false,
+      "notes": "'met' ambiguous among ['Metformin', 'Metoprolol', 'Metronidazole']"
+    },
+    {
+      "id": "CE-200",
+      "category": "dangerous",
+      "subcategory": "ambiguous",
+      "transcript": "kê met ngày 1 lần",
+      "expected_drugs": [],
+      "expected_flags": [
+        "AMBIGUOUS"
+      ],
+      "is_negative": false,
+      "notes": "'met' ambiguous among ['Metformin', 'Metoprolol', 'Metronidazole']"
+    },
+    {
+      "id": "CE-201",
+      "category": "dangerous",
+      "subcategory": "ambiguous",
+      "transcript": "uống metro 500mg ngày 2 lần",
+      "expected_drugs": [],
+      "expected_flags": [
+        "AMBIGUOUS"
+      ],
+      "is_negative": false,
+      "notes": "'metro' ambiguous among ['Metronidazole', 'Metoprolol']"
+    },
+    {
+      "id": "CE-202",
+      "category": "dangerous",
+      "subcategory": "ambiguous",
+      "transcript": "kê metro ngày 1 lần",
+      "expected_drugs": [],
+      "expected_flags": [
+        "AMBIGUOUS"
+      ],
+      "is_negative": false,
+      "notes": "'metro' ambiguous among ['Metronidazole', 'Metoprolol']"
+    },
+    {
+      "id": "CE-203",
+      "category": "dangerous",
+      "subcategory": "ambiguous",
+      "transcript": "uống me tro 500mg ngày 2 lần",
+      "expected_drugs": [],
+      "expected_flags": [
+        "AMBIGUOUS"
+      ],
+      "is_negative": false,
+      "notes": "'me tro' ambiguous among ['Metronidazole', 'Metoprolol']"
+    },
+    {
+      "id": "CE-204",
+      "category": "dangerous",
+      "subcategory": "ambiguous",
+      "transcript": "kê me tro ngày 1 lần",
+      "expected_drugs": [],
+      "expected_flags": [
+        "AMBIGUOUS"
+      ],
+      "is_negative": false,
+      "notes": "'me tro' ambiguous among ['Metronidazole', 'Metoprolol']"
+    }
+  ]
+}

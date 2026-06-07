@@ -1,6 +1,25 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.8.2] — 2026-06-10 — CONS-002-EVAL: Drug Correction Eval Dataset + Script · 473 tests
+
+### Drug Correction Evaluation [CONS-002-EVAL]
+- feat(eval): `scripts/generate_drug_eval_dataset.py` — 204-case eval dataset generator
+  - 3 categories: clean=90 (INN/brand/negative) · noisy=76 (north/south/fuzzy) · dangerous=38 (dose+ambiguous)
+  - Seed: 25 INN drugs × 2 templates + 15 brands + 15 negatives + 25 north + 25 south + 13 fuzzy + 19 dangerous
+  - Key fix: "Dexamethasone injection" (drug_db_v200 INN, not "Dexamethasone")
+- feat(eval): `scripts/eval_drug_correction.py` — 4-metric evaluation script
+  - Drug Recall: TP_drugs / (TP_drugs + FN_drugs)
+  - Silent FP Rate: unflagged FPs only (warned FPs = LOW_CONFIDENCE flagged → BS reviews → safe)
+  - Safety Catch Rate: AMBIGUOUS/DOSE_OUT_OF_RANGE correctly flagged in dangerous cases
+  - Phonetic Recall: Drug Recall restricted to noisy category
+  - GO/NO-GO criteria: ≥88% / ≤10% / ≥80% / ≥85%
+  - `--json` flag → `data/eval/drug_correction_eval_report.json`
+- data(eval): `data/eval/drug_correction_eval.json` — 204 ground-truth cases (v1.0.0)
+- result: Drug Recall=**99.5%** ✅ | Silent FP=**0.0%** ✅ | Safety=**92.1%** ✅ | Phonetic=**98.7%** ✅
+- verdict: **✅ GO — DrugCorrectionEngine v2 production-ready**
+- known: "a zi thro my xin" (Azithromycin north phonetic) FN · "metro"/"me tro" AMBIGUOUS miss (3/38)
+
 ## [v0.8.1] — 2026-06-10 — Hybrid NER Architecture [FID-VN-009] · 473 tests
 
 ### Hybrid NER (L1c) [FID-VN-009 APPROVED — CONS-20260610-003]
