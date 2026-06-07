@@ -100,13 +100,13 @@
 | P0.6.2a | │  ├─ generate_synthetic_ner.py | 17 scenarios × 4 regions — BIO format, 10K samples | 🟢 | — | SES-20260607 | `scripts/generate_synthetic_ner.py` |
 | P0.6.2b | │  ├─ test_synthetic_ner_pipeline.py | 7 tests — drug 97-100% · CD 63-80% · vital 63-77% | 🟢 | — | SES-20260607 | `tests/unit/test_synthetic_ner_pipeline.py` |
 | P0.6.2c | │  ├─ chan_doan regex fix | ". filler Kê" pattern · ICD code · "gout" fallback · "bị" trigger | 🟢 | NER-BUGFIX-004 | SES-20260607 | `src/core/l1c_ner.py` |
-| P0.6.2d | │  ├─ drug_db.json v0.2.0 | 110 → 118 drugs (+8 Progesterone/Estradiol/Ceftriaxone...) | 🟢 | — | SES-20260607 | `data/reference/drug_db.json` |
+| P0.6.2d | │  ├─ drug_db.json v0.3.0 | 118 drugs + PhoWhisper aliases (Glimepiride/Colchicine/Etoricoxib/Metformin/Omeprazole/VitB) | 🟢 | DRUG-ALIAS-001 | SES-20260610 | `data/reference/drug_db.json` |
 | P0.6.2e | │  ├─ VietMed family (partial) | VietMed-NER 9K · Sum 106K · QA 9K — `data/external/` | 🔵 | DATASET-001 | SES-20260607 | VietMed audio 2.5GB + ViMedCSS 4GB còn lại |
 | P0.6.2f | │  └─ DATA_CATALOG.md | 26 datasets, license/domain/download status | 🟢 | — | SES-20260607 | `docs/dev/DATA_CATALOG.md` |
 | | │ | | | | | |
 | **P0.6.3** | **├─ 🔵 BENCH-002a + TRAIN-002 Overnight** | **Semi-synthetic CEER · 10K NER · overnight train PhoBERT** | **🔵** | BENCH-002a | SES-20260610 | Overnight running |
 | P0.6.3a | │  ├─ BENCH-002a CEER | 15 files HN/SG/CT — Drug=0.967✅ Diag=0.667⚠️ Vital=0.333🔴 | 🟢 | — | SES-20260607 | `tools/bench_ceer_semi.py` |
-| P0.6.3b | │  ├─ ner_semantic_test.py | HYP transcript test — BS1 7/7=100% · BS2 3/7=43% | 🟢 | — | SES-20260610 | `tools/ner_semantic_test.py` |
+| P0.6.3b | │  ├─ ner_semantic_test.py | HYP transcript test — BS1 7/7=100% · BS2 6/7=86% (post-fix) | 🟢 | — | SES-20260610 | `tools/ner_semantic_test.py` |
 | P0.6.3c | │  ├─ wer_clinical_test.py | WER test trên clinical WAV — semi_synthetic + real | 🟢 | — | SES-20260610 | `tools/wer_clinical_test.py` |
 | P0.6.3d | │  └─ TRAIN-002 overnight | PhoBERT NER train 3 epochs · 7994 samples · CPU ~5-8h | 🔵 | TRAIN-002 | SES-20260610 | `scripts/overnight_run.bat` đang chạy |
 | | │ | | | | | |

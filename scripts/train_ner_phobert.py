@@ -165,6 +165,8 @@ def main():
     parser.add_argument("--batch", type=int, default=8)
     parser.add_argument("--lr", type=float, default=2e-5)
     parser.add_argument("--max-len", type=int, default=256)
+    parser.add_argument("--resume", action="store_true",
+                        help="Resume from last checkpoint in output_dir")
     args = parser.parse_args()
 
     (ROOT / "logs").mkdir(exist_ok=True)
@@ -250,7 +252,8 @@ def main():
     )
 
     log.info("=== Starting training ===")
-    trainer.train()
+    resume_ckpt = True if args.resume else None
+    trainer.train(resume_from_checkpoint=resume_ckpt)
 
     log.info("=== Evaluating on test set ===")
     test_results = trainer.evaluate(tokenized_ds["test"])

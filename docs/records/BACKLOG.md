@@ -107,7 +107,8 @@
   - Hook vào `src/api/main.py` approve_record() — best-effort, không block flow
   - `data/corrections/` vào .gitignore — không commit patient data
 - [ ] **CHATGPT-CORPUS-001** 🟡 Andy sử dụng `docs/dev/CHATGPT_CORPUS_PROMPT.md` v2.0 → ChatGPT/Grok → 41 corpus scripts → BS review → gửi lại Claude update CLINICAL_TEST_CORPUS_VN.md (PA-007)
-- [ ] **DRUG-ALIAS-001** 🟢 Mở rộng alias map trong drug_db.json (thêm typo VN phổ biến)
+- [x] **DRUG-ALIAS-001** ✅ Mở rộng alias map drug_db.json v0.3.0 — PhoWhisper phonetic variants cho 6 drugs: Glimepiride/Colchicine/Etoricoxib/VitaminB/Metformin/Omeprazole (2026-06-10)
+- [ ] **BUG-K2** 🟢 "một sáu lăm" (double-abbreviated SG) → 165 — BP regex bắt "sáu lăm"=65 trước colloquial-hundreds pattern. Affects: SC-03 SG "một sáu lăm trên chín lăm". Cần extend `_vn_tens_int()` để handle abbreviated tens ("sáu lăm" = 65 = 6×10+5). Xem: `src/core/l1c_ner.py` `_vn_tens_int()`
 - [~] **DATASET-001** 🔵 PARTIAL — Download P1 public datasets (VietMed family — MIT/Apache-2.0)
   - ✅ Downloaded: VietMed-NER (9K NER, ~30MB) · VietMed-Sum (106K, ~43MB) · VN Medical QA (9K, ~5MB) → `data/external/`
   - ✅ `scripts/download_vietmed.py` sẵn sàng — chạy overnight qua `scripts/overnight_run.bat`
@@ -172,14 +173,13 @@
   - Datasets: `data/external/VietMed` + `data/external/ViMedCSS` + pilot audio
   - Target: WER 35–40% → <20% | Drug CEER 0.90 → <0.10
   - Cần: GPU/cloud VM (VNG/FPT) | FID-VN-007 trước khi implement
-- [ ] **TRAIN-002:** Fine-tune PhoBERT+CRF NER trên synthetic 10K + VietMed-NER
-  - ✅ `scripts/train_ner_phobert.py` — overnight script sẵn sàng (2026-06-07)
-  - ✅ `scripts/overnight_run.bat` — chạy 1 lần trước khi ngủ: download VietMed + train NER
-  - Datasets: `data/synthetic_ner/` (7994 train) + sau đó mở rộng `data/vietmed/` (DATASET-001)
-  - Target: Drug CEER 0.90 → <0.10 | Diagnosis CEER 0.10 → <0.05
-  - Est. runtime: 3-5h CPU (i5-12400F, 3 epochs, batch 8)
-  - Output: `models/ner_phobert/best/` — checkpoint + label_map.json
-  - Packages needed: accelerate ✅ evaluate ✅ seqeval ✅ (installed 2026-06-07)
+- [~] **TRAIN-002** 🔵 PARTIAL — Fine-tune PhoBERT+CRF NER trên synthetic 10K
+  - ✅ Epoch 1/3 hoàn thành: F1=**98.9%** · Precision=98.98% · Recall=98.91% (target >0.70 ✅)
+  - 🔵 Epoch 2-3 đang chạy nền (resumed từ checkpoint-1000, bắt đầu 08:51)
+  - ✅ `scripts/train_ner_phobert.py --resume` — resume từ checkpoint
+  - Datasets: `data/synthetic_ner/` (7994 train / 1003 val / 1003 test)
+  - Output: `models/ner_phobert/checkpoint-1000` ✅ | `models/ner_phobert/best/` ⏳ (sau epoch 3)
+  - **Next:** Sau khi done → FID-VN-NER-ML → tích hợp vào `src/core/l1c_ner.py` (hybrid: rule-based primary, PhoBERT fallback khi confidence thấp)
 
 ---
 

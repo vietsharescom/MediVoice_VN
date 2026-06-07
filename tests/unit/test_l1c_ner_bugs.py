@@ -455,3 +455,76 @@ class TestBugIJ_NewDrugAliases:
         inns = {c["inn"] for c in candidates}
         assert "Amoxicillin" in inns
         assert "Paracetamol" in inns
+
+
+class TestBugK_SGColloquialBP:
+    """BUG-K: SG colloquial 'một hai mươi' = 120 → huyết áp
+    PhoWhisper output khi BS SG đọc BP: 'huyết áp một hai mươi trên tám mươi'
+    Old regex: chỉ nhận 'một trăm hai mươi', không nhận 'một hai mươi'.
+    Fix: thêm _WCOLLQ colloquial hundreds pattern.
+    """
+
+    def test_sg_bp_colloquial_hundreds(self):
+        ent = extract_entities("huyết áp một hai mươi trên tám mươi mạch tám mươi")
+        assert ent.huyet_ap_tam_thu == 120, f"expected 120, got {ent.huyet_ap_tam_thu}"
+        assert ent.huyet_ap_tam_truong == 80
+
+    def test_sg_bp_colloquial_165_full_form(self):
+        # "một sáu mươi lăm" (full tens form) → supported
+        ent = extract_entities("huyết áp một sáu mươi lăm trên chín mươi lăm")
+        assert ent.huyet_ap_tam_thu == 165
+        assert ent.huyet_ap_tam_truong == 95
+
+    # TODO: "một sáu lăm" (double-abbreviated, "mươi" implied) → 165 — NOT yet supported
+    # BP regex matches "sáu lăm"=65 before colloquial-hundreds fires.
+    # Affects: BS2 SC-03 "một sáu lăm trên chín lăm". Track as BUG-K2.
+
+    def test_standard_bp_still_works(self):
+        ent = extract_entities("huyết áp một trăm hai mươi trên tám mươi")
+        assert ent.huyet_ap_tam_thu == 120
+
+
+class TestBugL_NhietDoDigitSplit:
+    """BUG-L: PhoWhisper normalized 'sốt ba 7.8' → nhiet_do=37.8
+    _RE_DEC_WORDS converts 'bảy phẩy tám'→7.8 but single 'ba' stays as word.
+    Old regex expected both parts as digits or both as words.
+    Fix: _RE_NHIET_DO_SPLIT accepts VN word in tens position.
+    """
+
+    def test_digit_split_temperature(self):
+        # After normalize: "sốt ba 7.8" (ba=word, 7.8=digit)
+        from core.l1c_ner import _normalize_vn_numbers
+        text = "sốt ba mươi bảy phẩy tám"
+        norm = _normalize_vn_numbers(text)
+        ent = extract_entities(text)
+        assert ent.nhiet_do == pytest.approx(37.8, abs=0.05), \
+            f"normalized='{norm}', nhiet_do={ent.nhiet_do}"
+
+    def test_digit_split_38_5(self):
+        ent = extract_entities("nhiệt độ ba mươi tám phẩy năm")
+        assert ent.nhiet_do == pytest.approx(38.5, abs=0.05)
+
+    def test_digit_split_sg_spoken(self):
+        # BS SG: "sốt ba bảy phẩy tám" (không nói "mươi")
+        ent = extract_entities("bệnh nhân sốt ba bảy phẩy tám")
+        assert ent.nhiet_do == pytest.approx(37.8, abs=0.05), \
+            f"nhiet_do={ent.nhiet_do}"
+
+
+class TestBugM_NangKyWithoutCan:
+    """BUG-M: BS SG nói 'nặng 70 ký' (không có 'cân') → can_nang=70
+    Old regex required 'cân nặng' or 'weight' keyword.
+    Fix: thêm '(?<!\\S)nặng' trigger trong _RE_CAN_NANG.
+    """
+
+    def test_nang_ky_no_prefix(self):
+        ent = extract_entities("huyết áp một hai mươi trên tám mươi nặng bảy mươi ký")
+        assert ent.can_nang == pytest.approx(70, abs=0.5), f"can_nang={ent.can_nang}"
+
+    def test_nang_ky_with_number(self):
+        ent = extract_entities("nặng sáu mươi lăm ký")
+        assert ent.can_nang == pytest.approx(65, abs=0.5)
+
+    def test_can_nang_standard_still_works(self):
+        ent = extract_entities("cân nặng bảy mươi ki lô")
+        assert ent.can_nang == pytest.approx(70, abs=0.5)
