@@ -58,8 +58,15 @@ def _vital_hit(ent: MedicalEntities, sample: dict) -> bool:
     """True if the vital value appears in any extracted vital field."""
     vital_str = sample["ground_truth"]["sinh_hieu"]
     scenario = sample["scenario"]
+    _TEMP_SCENARIOS = {
+        "viem_hong", "cam_cum", "gout", "xuong_khop", "viem_da_day",
+        # New scenarios — all use temperature
+        "viem_phe_quan", "viem_xoang", "di_ung_mui", "viem_da_ruot",
+        "nhiem_trung_tiet_nieu", "thieu_mau", "mat_ngu", "tang_mo_mau",
+        "viem_ket_mac", "viem_amidan",
+    }
     try:
-        if scenario in ("viem_hong", "cam_cum", "gout", "xuong_khop", "viem_da_day"):
+        if scenario in _TEMP_SCENARIOS:
             # Temperature °C
             expected = float(vital_str.replace(",", "."))
             return ent.nhiet_do is not None and abs(ent.nhiet_do - expected) < 0.15

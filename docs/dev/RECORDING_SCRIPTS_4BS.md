@@ -206,7 +206,7 @@ Tái khám năm ngày. Nặng hơn thì vô sớm nha.
 ```
 Bệnh nhân nữ, ba lăm tuổi. [DỪNG 1s]
 Đau bụng trên hai tuần, đói đau, ăn vô thì đỡ. Ợ chua, đầy bụng. [DỪNG 1s]
-Hổng nôn máu, hổng đi phân đen. [DỪNG 1s]
+Hổng nôn ra máu, hổng đi phân đen. [DỪNG 1s]
 Tiền sử uống Ibuprofen nhiều tháng rồi do đau khớp. [DỪNG 1s]
 
 Huyết áp một mười trên bảy mươi. Mạch bảy lăm. [DỪNG 1.5s]
@@ -484,7 +484,7 @@ Follow up sau năm ngày, hoặc trước nếu sốt không hạ.
 Bệnh nhân nữ, ba mươi lăm tuổi. [DỪNG 1s]
 Chief complaint: epigastric pain hai tuần nay, [DỪNG 0.5s]
 worse khi đói, better sau khi ăn. [DỪNG 1s]
-Có ợ chua, bloating. Không nôn máu, không melena. [DỪNG 1.5s]
+Có ợ chua, bloating. Không nôn ra máu, không melena. [DỪNG 1.5s]
 History: dùng Ibuprofen thường xuyên tháng trước vì joint pain. [DỪNG 1s]
 
 BP một mười trên bảy mươi. Mạch bảy lăm. [DỪNG 1.5s]
@@ -571,7 +571,7 @@ Exam: right great toe sưng to, đỏ, đau khi chạm. [DỪNG 1s]
 Diagnosis: acute gouty arthritis — gout cấp, ngón chân cái phải. [DỪNG 0.5s]
 
 Treatment:
-Colchicine không phẩy năm mg — hai viên stat, [DỪNG 0.5s]
+Colchicine không phẩy năm mg — hai viên start, [DỪNG 0.5s]
 sau đó một viên mỗi giờ until pain resolves, max sáu viên trong hai mươi bốn giờ. [DỪNG 0.5s]
 Etoricoxib sáu mươi mg, một lần sau ăn, trong năm ngày. [DỪNG 0.5s]
 No alcohol completely. Uống nhiều nước. [DỪNG 0.5s]

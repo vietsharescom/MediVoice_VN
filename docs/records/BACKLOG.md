@@ -1,5 +1,5 @@
 # BACKLOG.md — MediVoice VN
-# v0.4.1 — Updated 2026-06-06
+# v0.7.2 — Updated 2026-06-07
 # Single source of truth cho tasks.
 
 ---
@@ -8,14 +8,15 @@
 
 - [ ] **LEGAL-001** 🔴 Thuê luật sư VN (healthtech + data + AI) — trước khi launch
 - [x] **BENCH-001** ✅ Benchmark PhoWhisper trên 22 audio — WER 36–52%, T-005 20/22 PASS (2026-06-05)
-- [ ] **BENCH-002a** 🟡 Semi-synthetic calibration: 4 BS × 5 kịch bản = 20 recordings
-  - Kịch bản: `docs/dev/RECORDING_SCRIPTS_4BS.md` (4 sections, in riêng cho từng người)
-  - Ground truth: `data/audio/corpus/semi_synthetic/groundtruth_all.json` (20 entries)
-  - Kế hoạch: `docs/dev/SEMI_SYNTHETIC_DATA_PLAN.md`
-  - Thực hiện: 4 người × ghi âm 5 scripts × 2 takes → chọn take tốt
-  - Calibrate: `python -X utf8 tools/bench_ceer.py --full --gt data/audio/corpus/semi_synthetic/groundtruth_all.json`
-  - Mục tiêu: CEER per entity × per region → tune drug_db.json + l1c_ner.py
-  - Andy cần: Tìm 4 người (HN/SG/CT/CA) để ghi âm trong 1 ngày (PA-008)
+- [x] **BENCH-002a** ✅ Semi-synthetic CEER: 3 regions VI-only, 15 files (2026-06-07)
+  - ✅ Andy ghi âm 30 files: HN/SG/CT × 5 SC × 2 takes
+  - ✅ CA/BS4 dropped: PhoWhisper không handle code-switch EN/VN (WER 101%)
+  - WER VI-only: SG 25.8% | CT 30.4% | HN 34.6%
+  - CEER Overall: Drug=0.967✅ | Diag=0.667⚠️ | Vital=0.333🔴 | Fup=0.400🔴
+  - CEER by region: SG (Drug=1.1✅ Diag=1.0✅) | HN (Drug=0.9✅ Diag=0.6⚠️) | CT (Drug=0.9✅ Diag=0.4🔴)
+  - ✅ `tools/bench_ceer_semi.py` — CEER tool cho groundtruth_all.json format
+  - `docs/dev/RECORDING_SCRIPTS_4BS.md` — script fixes done
+  - **Kết luận: Drug OK · Diag/Vital/Fup cần TRAIN-002 + TRAIN-001**
 - [ ] **BENCH-002b** 🟡 CEER thật: audio pilot BS Đà Nẵng + ground truth labels (sau BENCH-002a)
   - Baseline lâm sàng synthetic (2026-06-08): 10/10 files | Vitals=0.033✅ Diag=0.1✅ Drug=0.9🔴
   - Template lâm sàng: `data/audio/ground_truth_lam_sang_template.json`
@@ -109,18 +110,21 @@
 - [ ] **DRUG-ALIAS-001** 🟢 Mở rộng alias map trong drug_db.json (thêm typo VN phổ biến)
 - [~] **DATASET-001** 🔵 PARTIAL — Download P1 public datasets (VietMed family — MIT/Apache-2.0)
   - ✅ Downloaded: VietMed-NER (9K NER, ~30MB) · VietMed-Sum (106K, ~43MB) · VN Medical QA (9K, ~5MB) → `data/external/`
-  - ⏳ Not yet: VietMed (2.5GB ASR audio) · ViMedCSS (4GB code-switch) — cần disk + bandwidth
+  - ✅ `scripts/download_vietmed.py` sẵn sàng — chạy overnight qua `scripts/overnight_run.bat`
+  - ⏳ VietMed (~2.5GB ASR audio) → `data/vietmed/` | ViMedCSS (4GB) — để sau
   - Script: `python -X utf8 scripts/download_datasets.py` | Catalog: `docs/dev/DATA_CATALOG.md`
 - [~] **DATASET-002** 🔵 PARTIAL — Phân tích VietMed-NER → map 18 entity types → MediVoice 5 types
   - ✅ `scripts/analyze_vietmed_ner.py` — entity mapping, vocab extracted, staging file
   - ✅ `data/reference/vietmed_drugs_raw.json` — 313 unique DRUGCHEMICAL entities
   - ✅ `data/reference/vietmed_ner_vocabulary.json` — top terms extracted
   - ⏳ `scripts/train_ner.py` — fine-tune training pipeline (gated FID-VN-007)
-- [x] **SYNTHETIC-NER-001** ✅ Tạo 2100 samples BIO-tagged VN outpatient NER (2026-06-09)
-  - `scripts/generate_synthetic_ner.py` — 7 scenarios × 4 regions × multiple templates
-  - `data/synthetic_ner/` — train 1680 / val 210 / test 210 (JSONL, BIO format)
+- [x] **SYNTHETIC-NER-001** ✅ Tạo 10,000 samples BIO-tagged VN outpatient NER (2026-06-07)
+  - `scripts/generate_synthetic_ner.py` — 17 scenarios × 4 regions (expanded từ 7)
+  - `data/synthetic_ner/` — train 7994 / val 1003 / test 1003 (JSONL, BIO format)
   - `tests/unit/test_synthetic_ner_pipeline.py` — 7 tests pipeline benchmark (395/395 PASS)
   - Hit rates: Drug 97-100% · Diagnosis 63-80% · Vital 63-77% · Tái khám 33-60%
+  - 10 scenarios mới: viem_phe_quan · viem_xoang · di_ung_mui · viem_da_ruot · nhiem_trung_tiet_nieu
+    thieu_mau · mat_ngu · tang_mo_mau · viem_ket_mac · viem_amidan
 - [x] **NER-BUGFIX-004** ✅ chan_doan regex major fix (2026-06-09)
   - Fix: lookahead xử lý ". filler Kê" pattern, ICD codes, "bị/mắc" prefix, "gout" fallback
   - File: `src/core/l1c_ner.py` — _RE_CHAN_DOAN + _RE_CHAN_DOAN_FALLBACK
@@ -168,10 +172,14 @@
   - Datasets: `data/external/VietMed` + `data/external/ViMedCSS` + pilot audio
   - Target: WER 35–40% → <20% | Drug CEER 0.90 → <0.10
   - Cần: GPU/cloud VM (VNG/FPT) | FID-VN-007 trước khi implement
-- [ ] **TRAIN-002:** Fine-tune PhoBERT+CRF NER trên VietMed-NER (9K samples MIT) + pilot corrections
-  - Datasets: `data/external/VietMed-NER` + `data/external/ViMQ` + `data/corrections/` (L4)
+- [ ] **TRAIN-002:** Fine-tune PhoBERT+CRF NER trên synthetic 10K + VietMed-NER
+  - ✅ `scripts/train_ner_phobert.py` — overnight script sẵn sàng (2026-06-07)
+  - ✅ `scripts/overnight_run.bat` — chạy 1 lần trước khi ngủ: download VietMed + train NER
+  - Datasets: `data/synthetic_ner/` (7994 train) + sau đó mở rộng `data/vietmed/` (DATASET-001)
   - Target: Drug CEER 0.90 → <0.10 | Diagnosis CEER 0.10 → <0.05
-  - Gated on: DATASET-002 (entity mapping analysis) + BENCH-002b (pilot CEER baseline)
+  - Est. runtime: 3-5h CPU (i5-12400F, 3 epochs, batch 8)
+  - Output: `models/ner_phobert/best/` — checkpoint + label_map.json
+  - Packages needed: accelerate ✅ evaluate ✅ seqeval ✅ (installed 2026-06-07)
 
 ---
 

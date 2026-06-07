@@ -2,40 +2,55 @@
 # Ghi đè mỗi phiên — git history lưu lịch sử cũ tự động
 # ISO/IEC 42001:2023 Cl.9.1 (Performance evaluation)
 
-## Mã phiên: SES-20260609
-## Thời gian: 2026-06-09
-## Version: v0.7.0 → v0.7.1
+## Mã phiên: SES-20260607
+## Thời gian: 2026-06-07
+## Version: v0.7.1 → v0.7.2
 
 ---
 
 ## Trạng thái đầu → cuối
-v0.7.0 | 388 tests → v0.7.1 | 395 tests
+v0.7.1 | 395 tests → v0.7.2 | 395 tests
 
 ## Đã hoàn thành
 
-- [SYNTHETIC-NER-001] `scripts/generate_synthetic_ner.py` — 2100 BIO-tagged samples, 7 scenarios × 4 regions (HN/SG/CT/CA), 9 entity types. Output: `data/synthetic_ner/train.jsonl` (1680) + `val.jsonl` (210) + `test.jsonl` (210)
-- [NER-BUGFIX-004] `src/core/l1c_ner.py` chan_doan regex major fix — xử lý ". filler Kê" pattern (2 lookahead alternatives), ICD codes inline ("viêm họng cấp J02.9"), "gout" trong fallback, "bị/mắc" trigger
-- [SYNTHETIC-NER-001] `tests/unit/test_synthetic_ner_pipeline.py` — 7 tests, 210 test samples qua pipeline. Drug 97-100% · CD 63-80% · Vital 63-77% · TK 33-60%
-- [DATASET-001] Download VietMed-NER (9K) + VietMed-Sum (106K) + VN Medical QA (9K) → `data/external/`
-- [DATASET-002] `scripts/analyze_vietmed_ner.py` — entity mapping 18 types → 9 types, `data/reference/vietmed_drugs_raw.json` (313 drugs)
-- [DRUG-DB] `data/reference/drug_db.json` v0.2.0 — 110 → 118 drugs (+8: Progesterone/Estradiol/Dydrogesterone/MefenamicAcid/Norfloxacin/Spironolactone/Carvedilol/Ceftriaxone)
-- [DATA-PLAN] `docs/dev/SEMI_SYNTHETIC_DATA_PLAN.md` + `docs/dev/RECORDING_SCRIPTS_4BS.md` (20 scripts) + `data/audio/corpus/semi_synthetic/groundtruth_all.json`
-- [DATA-CATALOG] `docs/dev/DATA_CATALOG.md` — 26 datasets, license/domain/download status
+- [BENCH-002a] ✅ Semi-synthetic CEER — 15 files (HN/SG/CT × 5 SC × take1)
+  - Drug=0.967✅ Diag=0.667⚠️ Vital=0.333🔴 Fup=0.400🔴
+  - SG best (Drug=1.1✅ Diag=1.0✅) | HN worst diag (Diag=0.6⚠️) | CT worst vital (Vital=0.22🔴)
+  - `tools/bench_ceer_semi.py` — CEER adapter cho groundtruth_all.json format
+  - `docs/dev/RECORDING_SCRIPTS_4BS.md` — fixes: "nôn ra máu", bỏ pronunciation guide
+  - CA/BS4 dropped (WER 101%, code-switch EN/VN)
+
+- [SYNTHETIC-NER-001] ✅ Expanded 2100 → 10,000 samples, 7 → 17 scenarios
+  - 10 new: viem_phe_quan, viem_xoang, di_ung_mui, viem_da_ruot, nhiem_trung_tiet_nieu,
+    thieu_mau, mat_ngu, tang_mo_mau, viem_ket_mac, viem_amidan
+  - `data/synthetic_ner/` — train 7994 / val 1003 / test 1003
+
+- [TRAIN-002] ✅ Overnight training scripts sẵn sàng
+  - `scripts/train_ner_phobert.py` — PhoBERT NER training (3 epochs, 7994 train samples, CPU)
+  - `scripts/download_vietmed.py` — VietMed download từ HuggingFace
+  - `scripts/overnight_run.bat` — 1-click overnight: download VietMed + train NER (~5-8h)
+  - Dependencies: accelerate + evaluate + seqeval ✅ installed
+
+- [TEST-FIX] ✅ 395/395 PASS (từ 393/395)
+  - `tests/conftest.py` — MEDIVOICE_SKIP_QWEN=1 disable Qwen 3B LLM loading trong tests
+    - Root cause: Qwen load trong full suite → test_ac002_cdha flaky (assessment không có "DDx:")
+  - `tests/unit/test_synthetic_ner_pipeline.py` — _vital_hit() thêm 10 scenarios mới
 
 ## Kết quả đo được
-- Tests: 395/395 PASS (+7 từ `tests/unit/test_synthetic_ner_pipeline.py`)
-- Pipeline hit rates on 210 synthetic samples: Drug 97-100% · chan_doan 63-80% · vital 63-77% · tai_kham 33-60%
-- chan_doan regex: 10/10 test cases pass (". thật ra Kê", "bị gout cấp. Cho dùng", J02.9 inline)
-- doof-ferb/VietMed_labeled = YouTube source (NOT real clinic), ViMedNER data chưa available
+- Tests: 395/395 PASS (33s — cải thiện từ 18 phút nhờ conftest.py + SKIP_QWEN)
+- BENCH-002a CEER: Drug 97% ✅ · Diag 67% ⚠️ · Vital 33% 🔴 · Fup 40% 🔴
+- WER VI-only: SG 25.8% | CT 30.4% | HN 34.6% (CA dropped)
 
 ## Blocker / Phụ thuộc bên ngoài
-- [PA-008] 4 người ghi âm (HN/SG/CT/CA) — Andy cần tìm người trước khi có BENCH-002a
-- [PA-006] Dental ground truth labels — Andy chưa điền
-- [PA-007] ChatGPT corpus — Andy chưa generate
-- [DATASET-001] VietMed audio 2.5GB + ViMedCSS 4GB — cần disk/bandwidth riêng
+- [TRAIN-002] Overnight run chưa bắt đầu — Andy khởi động trước khi ngủ
+- [BENCH-002b] Cần pilot audio thật từ BS Đà Nẵng
+- [PA-007] ChatGPT corpus 41 cases — Andy chưa generate
+- [LEGAL-001] Thuê luật sư VN — Andy cần làm
 
 ## Phiên tiếp theo — làm ngay theo thứ tự
-1. [PILOT] Install.bat thật tại phòng khám Đà Nẵng — nếu Andy sẵn sàng deploy
-2. [BENCH-002a] Sau khi PA-008 xong (4 người ghi âm) → run `tools/bench_ceer.py` calibrate
-3. [DATASET-001] Download phần còn lại: VietMed ASR 2.5GB + ViMedCSS 4GB (khi có disk)
-4. [analyze_corrections.py] Chạy sau 10+ approvals tích lũy từ pilot
+1. [TRAIN-002] Check kết quả overnight: `logs/overnight_run.log` + `models/ner_phobert/best/`
+   - Nếu F1 > 0.70 → tích hợp vào l1c_ner.py (thay thế rule-based NER)
+   - Nếu F1 < 0.50 → cần thêm data hoặc tune hyperparameters
+2. [BENCH-002b] Pilot audio recording tại Đà Nẵng + CEER thật (sau TRAIN-002)
+3. [PILOT] Test install.bat tại phòng khám Đà Nẵng (cần Andy onsite)
+4. [DRUG-ALIAS-001] Mở rộng alias map trong drug_db.json (typo VN phổ biến)

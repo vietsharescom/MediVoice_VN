@@ -1,6 +1,34 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.7.2] — 2026-06-07 — BENCH-002a + overnight NER training setup (395 tests)
+
+### Benchmark: BENCH-002a — Semi-synthetic CEER (real voice, 3 regions)
+- feat(bench_ceer_semi): `tools/bench_ceer_semi.py` — CEER tool cho groundtruth_all.json format
+- result(bench_002a): 15 files HN/SG/CT × 5 SC | Drug=0.967✅ Diag=0.667⚠️ Vital=0.333🔴 Fup=0.400🔴
+- feat(recording_scripts): `docs/dev/RECORDING_SCRIPTS_4BS.md` — fixes: "nôn ra máu", bỏ pronunciation guide
+
+### Feature: Overnight NER training pipeline
+- feat(train_ner_phobert): `scripts/train_ner_phobert.py` — PhoBERT NER training script (3 epochs, 7994 samples)
+  - Manual word_ids alignment cho non-fast tokenizer (vinai/phobert-base-v2)
+  - 14 label types: MEDICATION DOSE FREQUENCY DURATION SYMPTOM VITAL FOLLOWUP + B-/I- variants
+  - Output: `models/ner_phobert/best/` + `label_map.json`
+- feat(download_vietmed): `scripts/download_vietmed.py` — download VietMed ASR dataset (HuggingFace)
+- feat(overnight_run): `scripts/overnight_run.bat` — 1-click overnight: download VietMed + train NER
+- chore(deps): install accelerate, evaluate, seqeval (PhoBERT training dependencies)
+
+### Dataset: Synthetic NER expanded 2100 → 10,000 samples
+- feat(generate_synthetic_ner): 7 → 17 scenarios (thêm viem_phe_quan, viem_xoang, di_ung_mui,
+  viem_da_ruot, nhiem_trung_tiet_nieu, thieu_mau, mat_ngu, tang_mo_mau, viem_ket_mac, viem_amidan)
+- data(synthetic_ner): train 7994 / val 1003 / test 1003 (JSONL, 14 entity types)
+
+### Fix: Test suite determinism
+- fix(conftest): `tests/conftest.py` — MEDIVOICE_SKIP_QWEN=1 để disable Qwen LLM trong tests
+  - Root cause: Qwen 3B model load trong full suite làm test_ac002_cdha_returns_soap flaky
+  - Template DDx fallback luôn dùng — consistent + nhanh (395 tests: 33s thay vì 18 phút)
+- fix(test_synthetic_ner): `_vital_hit()` — thêm 10 scenarios mới vào temperature check
+  - Fix: test_vital_hit_rate_above_threshold FAIL vì các scenarios mới chưa có trong _TEMP_SCENARIOS
+
 ## [v0.7.1] — 2026-06-09 — Synthetic NER pipeline + chan_doan regex fix (395 tests total)
 
 ### Fix: chan_doan regex major improvement

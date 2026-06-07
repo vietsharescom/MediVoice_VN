@@ -11,7 +11,7 @@ Output:
   data/synthetic_ner/summary.json  — thống kê
 
 Usage:
-  python -X utf8 scripts/generate_synthetic_ner.py              # mặc định 2100 samples
+  python -X utf8 scripts/generate_synthetic_ner.py              # mặc định 10000 samples
   python -X utf8 scripts/generate_synthetic_ner.py --n 500      # 500 samples
   python -X utf8 scripts/generate_synthetic_ner.py --seed 42    # reproducible
   python -X utf8 scripts/generate_synthetic_ner.py --preview 5  # xem 5 mẫu, không lưu
@@ -180,6 +180,184 @@ SCENARIOS: list[Scenario] = [
         followup_days=[14, 21],
         followup_conditions=["đau không cải thiện", "tê tay nặng hơn"],
     ),
+    Scenario(
+        id="viem_phe_quan",
+        icd10="J20.9",
+        diagnosis_vi="viêm phế quản cấp",
+        symptoms=["ho có đờm", "ho khan kéo dài", "khó thở nhẹ", "tức ngực", "sốt nhẹ", "mệt mỏi"],
+        vitals=["37.5", "37.8", "38.0", "37.3"],
+        drugs=[
+            Drug("Ambroxol", "30mg", "3 lần/ngày sau ăn", "7 ngày",
+                 alt_names=["am bro xol", "ambroxol"]),
+            Drug("Salbutamol", "4mg", "3 lần/ngày", "5 ngày",
+                 alt_names=["sal bu ta mol", "ventolin"]),
+            Drug("Prednisolone", "5mg", "1 lần/ngày buổi sáng", "5 ngày",
+                 alt_names=["prêd ni so lon"]),
+            Drug("Doxycycline", "100mg", "2 lần/ngày", "7 ngày",
+                 alt_names=["đô xi xi klin"]),
+        ],
+        followup_days=[7, 10, 14],
+        followup_conditions=["ho không giảm", "khó thở tăng", "sốt kéo dài"],
+    ),
+    Scenario(
+        id="viem_xoang",
+        icd10="J32.9",
+        diagnosis_vi="viêm xoang mũi mạn tính",
+        symptoms=["nghẹt mũi", "chảy mũi vàng xanh", "đau nhức vùng mặt", "đau đầu", "mất mùi", "hắt hơi"],
+        vitals=["36.8", "37.0", "37.2", "36.5"],
+        drugs=[
+            Drug("Amoxicillin-Clavulanate", "625mg", "2 lần/ngày sau ăn", "7 ngày",
+                 alt_names=["a moc xi lin cla vu la nat", "augmentin"]),
+            Drug("Fluticasone", "50mcg", "xịt 2 nhát mỗi mũi buổi sáng", "1 tháng",
+                 route="xịt mũi", alt_names=["flu ti ca zon", "flixonase"]),
+            Drug("Cetirizine", "10mg", "1 lần/ngày buổi tối", "2 tuần",
+                 alt_names=["xê ti ri zin"]),
+            Drug("Xylometazoline", "0.1%", "nhỏ 2 giọt mỗi mũi", "5 ngày",
+                 route="nhỏ mũi"),
+        ],
+        followup_days=[7, 14, 21],
+        followup_conditions=["không cải thiện", "đau nhiều hơn", "chảy mũi máu"],
+    ),
+    Scenario(
+        id="di_ung_mui",
+        icd10="J30.4",
+        diagnosis_vi="viêm mũi dị ứng",
+        symptoms=["hắt hơi liên tục", "chảy mũi trong", "ngứa mũi", "ngứa mắt", "nghẹt mũi", "chảy nước mắt"],
+        vitals=["36.5", "36.8", "37.0"],
+        drugs=[
+            Drug("Loratadine", "10mg", "1 lần/ngày buổi sáng", "2 tuần",
+                 alt_names=["lo ra ta đin", "claritin"]),
+            Drug("Mometasone", "50mcg", "xịt 2 nhát mỗi mũi mỗi ngày", "1 tháng",
+                 route="xịt mũi", alt_names=["mo me ta zon", "nasonex"]),
+            Drug("Fexofenadine", "120mg", "1 lần/ngày", "2 tuần",
+                 alt_names=["fex sô phê na đin", "telfast"]),
+        ],
+        followup_days=[14, 30],
+        followup_conditions=["triệu chứng không cải thiện", "khó thở", "phát ban"],
+    ),
+    Scenario(
+        id="viem_da_ruot",
+        icd10="A09",
+        diagnosis_vi="viêm dạ dày ruột cấp",
+        symptoms=["tiêu chảy", "buồn nôn", "nôn", "đau bụng quặn", "chướng bụng", "sốt nhẹ", "mất nước"],
+        vitals=["37.2", "37.5", "37.8", "38.0"],
+        drugs=[
+            Drug("Oresol", "1 gói", "pha 200ml nước uống sau mỗi lần đi tiêu", "khi cần",
+                 alt_names=["o rê sol", "ors"]),
+            Drug("Loperamide", "2mg", "sau mỗi lần tiêu chảy tối đa 16mg/ngày", "3 ngày",
+                 alt_names=["lô pê ra mit"]),
+            Drug("Smecta", "3g", "3 gói/ngày hòa nước uống", "5 ngày",
+                 alt_names=["smék ta", "diosmectite"]),
+            Drug("Metronidazole", "500mg", "3 lần/ngày", "5 ngày",
+                 alt_names=["mê trô ni đa zol"]),
+        ],
+        followup_days=[3, 5, 7],
+        followup_conditions=["tiêu chảy không giảm", "nôn nhiều", "mất nước nặng", "có máu trong phân"],
+    ),
+    Scenario(
+        id="nhiem_trung_tiet_nieu",
+        icd10="N39.0",
+        diagnosis_vi="nhiễm trùng đường tiết niệu",
+        symptoms=["tiểu buốt", "tiểu rắt", "tiểu nhiều lần", "nước tiểu đục", "đau vùng bàng quang", "sốt nhẹ"],
+        vitals=["37.3", "37.5", "37.8", "38.0"],
+        drugs=[
+            Drug("Trimethoprim-Sulfamethoxazole", "960mg", "2 lần/ngày", "7 ngày",
+                 alt_names=["tri mê tô prim", "bactrim"]),
+            Drug("Ciprofloxacin", "500mg", "2 lần/ngày sau ăn", "7 ngày",
+                 alt_names=["xi pro phlo xa xin", "cipro"]),
+            Drug("Nitrofurantoin", "100mg", "2 lần/ngày trong bữa ăn", "5 ngày",
+                 alt_names=["ni tro phu ran toin"]),
+        ],
+        followup_days=[7, 14],
+        followup_conditions=["triệu chứng không cải thiện", "sốt cao", "đau lưng"],
+    ),
+    Scenario(
+        id="thieu_mau",
+        icd10="D50.9",
+        diagnosis_vi="thiếu máu thiếu sắt",
+        symptoms=["mệt mỏi", "da xanh", "chóng mặt", "hồi hộp", "đau đầu", "khó thở khi gắng sức"],
+        vitals=["36.5", "36.8", "37.0"],
+        drugs=[
+            Drug("Ferrous Sulfate", "325mg", "2 lần/ngày trước ăn 1 giờ", "3 tháng",
+                 alt_names=["phê rơ sul phat", "sắt sulfate"]),
+            Drug("Vitamin C", "500mg", "2 lần/ngày cùng sắt", "3 tháng",
+                 alt_names=["vi ta min xê"]),
+            Drug("Folic Acid", "5mg", "1 lần/ngày", "3 tháng",
+                 alt_names=["fo lic axít", "axit folic"]),
+        ],
+        followup_days=[30, 60, 90],
+        followup_conditions=["mệt mỏi không cải thiện", "chóng mặt nhiều", "xét nghiệm máu lại"],
+    ),
+    Scenario(
+        id="mat_ngu",
+        icd10="G47.0",
+        diagnosis_vi="mất ngủ",
+        symptoms=["khó vào giấc ngủ", "ngủ không sâu", "thức dậy sớm", "mệt mỏi ban ngày", "lo âu", "căng thẳng"],
+        vitals=["36.8", "37.0", "36.5"],
+        drugs=[
+            Drug("Melatonin", "3mg", "1 lần/ngày trước ngủ 30 phút", "2 tuần",
+                 alt_names=["mê la to nin"]),
+            Drug("Zolpidem", "10mg", "1 lần/ngày trước khi ngủ", "2 tuần",
+                 alt_names=["zol pi đem", "stilnox"]),
+            Drug("Hydroxyzine", "25mg", "1 lần/ngày trước ngủ", "2 tuần",
+                 alt_names=["hi đrô xi zin"]),
+        ],
+        followup_days=[14, 21, 30],
+        followup_conditions=["vẫn mất ngủ", "lo âu tăng", "buồn ngủ ban ngày nhiều"],
+    ),
+    Scenario(
+        id="tang_mo_mau",
+        icd10="E78.5",
+        diagnosis_vi="rối loạn lipid máu",
+        symptoms=["không có triệu chứng rõ", "đau đầu nhẹ", "mệt mỏi", "xanthoma"],
+        vitals=["36.8", "37.0", "36.5"],
+        drugs=[
+            Drug("Atorvastatin", "20mg", "1 lần/ngày buổi tối", "3 tháng",
+                 alt_names=["a to va sta tin", "lipitor"]),
+            Drug("Rosuvastatin", "10mg", "1 lần/ngày buổi tối", "3 tháng",
+                 alt_names=["ro su va sta tin", "crestor"]),
+            Drug("Fenofibrate", "160mg", "1 lần/ngày trong bữa ăn", "3 tháng",
+                 alt_names=["phê no phi brat"]),
+        ],
+        followup_days=[30, 90],
+        followup_conditions=["xét nghiệm lipid máu", "đau cơ", "men gan tăng"],
+    ),
+    Scenario(
+        id="viem_ket_mac",
+        icd10="H10.9",
+        diagnosis_vi="viêm kết mạc",
+        symptoms=["mắt đỏ", "chảy nước mắt", "ngứa mắt", "ghèn mắt", "cộm mắt", "nhạy cảm ánh sáng"],
+        vitals=["36.8", "37.0", "37.2"],
+        drugs=[
+            Drug("Tobramycin", "0.3%", "nhỏ 1-2 giọt mỗi mắt 4 lần/ngày", "7 ngày",
+                 route="nhỏ mắt", alt_names=["to bra my xin"]),
+            Drug("Ofloxacin", "0.3%", "nhỏ 1 giọt mỗi mắt 4 lần/ngày", "5 ngày",
+                 route="nhỏ mắt", alt_names=["ô phlo xa xin"]),
+            Drug("Dexamethasone", "0.1%", "nhỏ 1 giọt 3 lần/ngày", "5 ngày",
+                 route="nhỏ mắt", alt_names=["đê xa mê ta zon"]),
+        ],
+        followup_days=[5, 7, 10],
+        followup_conditions=["mắt không đỡ", "đau mắt nhiều hơn", "thị lực giảm"],
+    ),
+    Scenario(
+        id="viem_amidan",
+        icd10="J35.0",
+        diagnosis_vi="viêm amidan cấp",
+        symptoms=["đau họng dữ dội", "sốt cao", "khó nuốt", "amidan sưng to", "có mủ amidan", "hạch cổ sưng"],
+        vitals=["38.5", "39.0", "38.8", "38.2", "39.2"],
+        drugs=[
+            Drug("Amoxicillin-Clavulanate", "625mg", "2 lần/ngày sau ăn", "10 ngày",
+                 alt_names=["augmentin", "a moc xi lin"]),
+            Drug("Cefuroxime", "500mg", "2 lần/ngày sau ăn", "7 ngày",
+                 alt_names=["xê phu rôc sim"]),
+            Drug("Paracetamol", "500mg", "3 lần/ngày khi sốt", "khi cần",
+                 alt_names=["para xi ta mol"]),
+            Drug("Ibuprofen", "400mg", "3 lần/ngày sau ăn", "5 ngày",
+                 alt_names=["i bu pro phen"]),
+        ],
+        followup_days=[5, 7, 10],
+        followup_conditions=["sốt không hạ", "amidan mủ nhiều hơn", "khó thở"],
+    ),
 ]
 
 # ── Regional language markers ─────────────────────────────────────────────────
@@ -276,13 +454,23 @@ TEMPLATES = [
 ]
 
 VITAL_PHRASES = {
-    "viem_hong":       "Nhiệt độ {vital} độ C",
-    "viem_da_day":     "Nhiệt độ {vital} độ, không sốt",
-    "tang_huyet_ap":   "Huyết áp {vital} mmHg",
-    "dai_thao_duong":  "Đường huyết {vital} mmol/L",
-    "gout":            "Nhiệt độ {vital} độ",
-    "cam_cum":         "Nhiệt độ {vital} độ C",
-    "xuong_khop":      "Nhiệt độ {vital} độ bình thường",
+    "viem_hong":              "Nhiệt độ {vital} độ C",
+    "viem_da_day":            "Nhiệt độ {vital} độ, không sốt",
+    "tang_huyet_ap":          "Huyết áp {vital} mmHg",
+    "dai_thao_duong":         "Đường huyết {vital} mmol/L",
+    "gout":                   "Nhiệt độ {vital} độ",
+    "cam_cum":                "Nhiệt độ {vital} độ C",
+    "xuong_khop":             "Nhiệt độ {vital} độ bình thường",
+    "viem_phe_quan":          "Nhiệt độ {vital} độ C",
+    "viem_xoang":             "Nhiệt độ {vital} độ, không sốt cao",
+    "di_ung_mui":             "Nhiệt độ {vital} độ bình thường",
+    "viem_da_ruot":           "Nhiệt độ {vital} độ C",
+    "nhiem_trung_tiet_nieu":  "Nhiệt độ {vital} độ C",
+    "thieu_mau":              "Nhiệt độ {vital} độ bình thường",
+    "mat_ngu":                "Nhiệt độ {vital} độ bình thường",
+    "tang_mo_mau":            "Nhiệt độ {vital} độ bình thường",
+    "viem_ket_mac":           "Nhiệt độ {vital} độ",
+    "viem_amidan":            "Nhiệt độ {vital} độ C",
 }
 
 # ── BIO annotation ────────────────────────────────────────────────────────────
@@ -541,7 +729,7 @@ def print_preview(samples: list[dict], n: int = 3):
 
 def main():
     parser = argparse.ArgumentParser(description="Tạo synthetic NER training data cho MediVoice VN")
-    parser.add_argument("--n",       type=int, default=2100, help="Số samples tổng (default: 2100)")
+    parser.add_argument("--n",       type=int, default=10000, help="Số samples tổng (default: 10000)")
     parser.add_argument("--seed",    type=int, default=42,   help="Random seed (default: 42)")
     parser.add_argument("--preview", type=int, default=0,    help="In N mẫu, không lưu file")
     parser.add_argument("--out",     type=str, default="data/synthetic_ner", help="Output directory")
