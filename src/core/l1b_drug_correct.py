@@ -19,8 +19,9 @@ logger = logging.getLogger(__name__)
 DATA_DIR = Path(__file__).parent.parent.parent / "data" / "reference"
 
 # Configurable thresholds (Copilot: tune via pilot data, not hardcoded logic)
-DRUG_FUZZY_CUTOFF_STRICT: int = 82   # auto-accept
-DRUG_FUZZY_CUTOFF_FLAG:   int = 70   # flag for BS review
+# STRICT raised 82→88: "soát"→Iron scored 86% (silent FP on clinical text) — CE-103 fix
+DRUG_FUZZY_CUTOFF_STRICT: int = 88   # auto-accept (≥88% = high confidence, no flag)
+DRUG_FUZZY_CUTOFF_FLAG:   int = 70   # flag for BS review (≥70% <88% = LOW_CONFIDENCE)
 
 # Filler words PhoWhisper inserts — stripped before window matching
 _FILLER_WORDS = {"ừm", "ừ", "ờ", "à", "ơ", "ê", "thì", "là", "mà", "thôi", "nhé"}
@@ -75,10 +76,15 @@ def _build_alias_map() -> dict[str, str]:
         for variant in entry.get("name_variants", []):
             alias_map[_normalize(variant)] = inn
         # v200: phonetic_variants per region
+        # Min 3 syllables (>=2 spaces): 2-syllable prefixes like "ga ba", "am lo"
+        # are too generic and match common Vietnamese words in clinical text.
         pv = entry.get("phonetic_variants", {})
         for _region, variants in pv.items():
             for v in variants:
-                alias_map[_normalize(v)] = inn
+                normalized = _normalize(v)
+                if normalized.count(" ") < 2:
+                    continue  # skip 1- and 2-syllable phonetic prefixes
+                alias_map[normalized] = inn
     return alias_map
 
 
@@ -380,6 +386,13 @@ def correct_drug_names_v2(
             # Try multi-word token (2-3 words) first
             for n in (3, 2, 1):
                 if i + n > len(words):
+                    continue
+                # Don't greedily consume windows where a downstream word is an exact
+                # Layer 1 match — let Layer 1 catch it at its own position (CE-103 fix)
+                if n > 1 and any(
+                    _normalize(words[i + k]) in full_alias
+                    for k in range(1, n)
+                ):
                     continue
                 multi_token = _normalize(" ".join(words[i:i+n]))
                 fuzzy_map = alias_map if alias_map else full_alias

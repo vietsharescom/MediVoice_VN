@@ -53,8 +53,10 @@ class TestLayer1Exact:
         txt, matches = correct_drug_names_v2("kê am lô đi pin 5mg")
         assert any(m.inn == "Amlodipine" and m.match_layer == 1 for m in matches)
 
-    def test_phonetic_south_amlodipine_amlo(self):
-        txt, matches = correct_drug_names_v2("cho bệnh nhân am lo 5mg")
+    def test_phonetic_south_amlodipine_3syl(self):
+        # "a mờ lo" = 3-syllable South variant (min phonetic alias length after CE-103 fix)
+        # 2-syllable "am lo" excluded from alias_map to prevent FPs on clinical text
+        txt, matches = correct_drug_names_v2("cho bệnh nhân a mờ lo 5mg")
         assert any(m.inn == "Amlodipine" for m in matches)
 
     def test_phonetic_north_amoxicillin(self):
@@ -140,8 +142,8 @@ class TestLayer3Context:
             "diagnosis_icd10": "I10",
             "drug_class_context": ["calcium_channel_blocker", "arb"],
         }
-        txt, matches = correct_drug_names_v2("kê am lo 5mg", session_context=ctx)
-        # "am lo" should match Amlodipine (CCB) in this context
+        # Use 3-syllable South phonetic "a mờ lo" — 2-syllable "am lo" excluded (CE-103 fix)
+        txt, matches = correct_drug_names_v2("kê a mờ lo 5mg", session_context=ctx)
         assert any(m.inn == "Amlodipine" for m in matches)
 
     def test_no_context_still_works(self):
