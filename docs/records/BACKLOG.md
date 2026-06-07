@@ -112,6 +112,18 @@
   - Ưu tiên: Augmentin (Amox/Clav) · Bisoprolol · Tramadol · Empagliflozin · Sitagliptin · Folic acid · Vitamin D3 · Smecta · Phosphalugel · Celecoxib · Dapagliflozin · Indapamide
   - VietMed-NER drugs (313 entries) = OB/GYN context, overlap thấp → KHÔNG dùng
   - Source: TT07/2017 (243 OTC hoạt chất) + TT28/2024 + pilot prescription review
+- [ ] **CONS-002-IMPL** 🟡 Sprint 1: Tạo `data/reference/drug_db_v200.json` — 200 drugs, thêm `phonetic_variants:{north,central,south}` field
+  - Basis: CONS-20260610-001 + CONS-20260610-002 CLOSED, Approach C APPROVED
+  - Top 50 drugs: manual × 3 vùng = ~300-500 entries thủ công (high accuracy)
+  - 150 drugs còn lại: 7 consensus phoneme rules (R1-R7) auto-generate
+  - Fields mới: `phonetic_variants`, `valid_doses_mg[]`, `dose_range{min,max}`, `drug_class`, `compatible_diagnoses`
+  - Depend: drug_db_v200 là prerequisite của CONS-002-SPRINT2, CONS-002-SPRINT6
+- [ ] **CONS-002-SPRINT2** 🟡 DrugCorrectionEngine v2 — RapidFuzz + phonetic_variants + Safety Rules
+  - Layer 1: Exact alias match (current behavior)
+  - Layer 2: Fuzzy match RapidFuzz fuzz.token_sort_ratio() cutoff ~85%
+  - Layer 3: Phonetic prefix + context (session_context: diagnosis, drug_class)
+  - Layer 4: Safety Rule Engine — hard dose validation per drug, ambiguity → flag không auto-commit
+  - Depend: CONS-002-IMPL (phonetic_variants trong drug_db_v200)
 - [ ] **VIETMED-FIX-001** 🟢 Fix `scripts/download_vietmed.py` — bỏ `trust_remote_code`, thêm HF_TOKEN auth
   - Lỗi hiện tại: `trust_remote_code is not supported anymore` + 401 Unauthorized
   - Dataset `doof-ferb/VietMed` cần HuggingFace login để download (~2.5GB, 16h audio MIT)
@@ -189,6 +201,16 @@
   - Datasets: `data/synthetic_ner/` (7994 train / 1003 val / 1003 test)
   - **Next:** FID-VN-NER-ML → tích hợp hybrid vào `src/core/l1c_ner.py` (rule-based primary + PhoBERT fallback)
   - **Note:** Trained trên synthetic data — cần validate trên pilot audio thực trước khi dùng production
+- [ ] **CONS-002-EVAL** 🟡 Sprint 4: Evaluation dataset drug correction — 200-500 câu, ground truth labels
+  - 3 categories: clean 50% / noisy+regional 30% / ambiguous+dangerous 20%
+  - Metrics: Drug Recall / Dose Accuracy / False Positive / Safety Catch rate
+  - Basis: CONS-20260610-002 pilot validation gate (20 clips trước) → full eval sau
+- [ ] **CONS-002-SPRINT6** 🟢 Sprint 6: TTS Pilot — XTTS-v2 / F5-TTS Vietnamese drug corpus (CONDITIONAL-GO)
+  - Prerequisite: CONS-002-IMPL done (phonetic_variants) + reference voices thu được từ pilot BS
+  - Step 1: Generate 20 clips (5 câu × 4 voices) → BS evaluate → quyết GO/NO-GO full
+  - Step 2 (nếu GO): 5000 câu × 4 voices = 20K clips overnight + noise augment
+  - Test cả XTTS-v2 (thivux/XTTS-v2-vietnamse) và F5-TTS (nguyenthienhy/F5-TTS-Vietnamese)
+  - Bridge CONS-001→002: dùng phonetic_variants làm TTS input text (KHÔNG dùng INN gốc)
 
 ---
 
