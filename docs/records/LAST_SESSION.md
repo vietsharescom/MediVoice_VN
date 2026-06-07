@@ -2,59 +2,48 @@
 # Ghi đè mỗi phiên — git history lưu lịch sử cũ tự động
 # ISO/IEC 42001:2023 Cl.9.1 (Performance evaluation)
 
-## Mã phiên: SES-20260610c
-## Thời gian: 2026-06-10
-## Version: v0.8.0 → v0.8.2
+## Mã phiên: SES-20260611
+## Thời gian: 2026-06-11
+## Version: v0.8.2 → v0.8.3
 
 ---
 
 ## Trạng thái đầu → cuối
-v0.8.0 | 444 tests → v0.8.2 | 473 tests
+v0.8.2 | 473 tests → v0.8.3 | 473 tests
 
 ## Đã hoàn thành
 
-- [CONS-20260610-003] Tổng hợp 3 AI review FID-VN-009 (ChatGPT+Grok+Copilot) → CLOSED APPROVE_WITH_CHANGES
-  - Quyết định: PARALLEL + optional early-exit (Grok+Copilot 2/3 majority, không phải CASCADE)
-  - VITAL → meta["phobert_vital_detected"] only (Copilot addition)
-  - MEDICATION thresholds: ≥0.85 HIGH | ≥0.75 STD | <0.60 discard
-  - 6 risks mới: R-009-07 to R-009-12 (L1b error propagation, semantic merge, CPU, dedup, over-extraction, conditional FOLLOWUP)
+- [CE-103] 3 safety bug fixes DrugCorrectionEngine v2 — `src/core/l1b_drug_correct.py`
+  - Fix 1: 2-syllable phonetic alias filter (ga ba → Gabapentin FP eliminated)
+  - Fix 2: STRICT threshold 82→88 (soát→Iron silent FP eliminated)
+  - Fix 3: Greedy window guard (ghi kê Paracetamol → Layer 1 exact match restored)
+  - Trade-off: Drug Recall 99.5%→96.9%, Silent FP 0.0% maintained, Safety Catch 100%
+  - 473/473 PASS (2 tests updated for 3-syllable phonetic variants)
 
-- [FID-VN-009-IMPL] Hybrid NER Architecture — DONE 2026-06-10
-  - `src/core/l1c_phobert.py` — PhoBERT NER module (lazy load lru_cache, confidence thresholds, bio_to_updates, has_coverage_gap)
-  - `src/core/l1c_ner.py` — extract_entities_hybrid() + _get_filled_fields() (PARALLEL+early-exit)
-  - `tests/unit/test_l1c_phobert_hybrid.py` — 29 tests → 473/473 PASS
-  - Default OFF: MEDIVOICE_PHOBERT_NER=false — bật sau BENCH-002b GO criteria
-  - R-009-12: "nếu không đỡ tái khám" → NOT auto-filled tai_kham (conditional FOLLOWUP guard)
-
-- [CONS-002-EVAL] Evaluation dataset + script DrugCorrectionEngine v2 — DONE 2026-06-10
-  - `scripts/generate_drug_eval_dataset.py` — 204 cases (clean=90 / noisy=76 / dangerous=38)
-  - `scripts/eval_drug_correction.py` — 4 metrics với GO/NO-GO + per-category breakdown
-  - `data/eval/drug_correction_eval.json` — 204 ground-truth cases v1.0.0
-  - Key fix: "Dexamethasone injection" là INN trong drug_db_v200 (không phải "Dexamethasone")
-  - Phân biệt silent FP (unflagged, nguy hiểm) vs warned FP (LOW_CONFIDENCE flagged, BS review → reject)
+- [BENCH-002a-v2] Re-run BENCH-002a với DrugCorrectionEngine v2 — `tools/bench_ceer_semi.py`
+  - 15 files: HN/SG/CT × 5 SC × take1 (40 files tồn tại, CA dropped)
+  - CEER Overall: Drug=0.989🔴 | Diag=0.667🔴 | Vital=0.272⚠️ | Fup=0.400🔴
+  - By region: CT best (Drug=0.9 Vital=0.15) | SG worst (Drug=1.167 FP hallucination)
+  - By scenario: SC-04 ĐTĐ worst (Drug=1.222) | SC-01 Viêm họng best (Drug=0.833)
+  - Root cause xác nhận: ASR bottleneck — PhoWhisper mangling drug names trên real speech
+  - Gap: CONS-002-EVAL clean text Recall=99.5% vs BENCH-002a speech CEER=0.989
 
 ## Kết quả đo được
 - Tests: 473/473 PASS
-- Drug Recall: **99.5%** ✅ (TP=194 FN=1 — chỉ Azithromycin north phonetic "a zi thro my xin" bị miss)
-- Silent FP Rate: **0.0%** ✅ (8 FPs đều là LOW_CONFIDENCE flagged → BS reject)
-- Safety Catch Rate: **92.1%** ✅ (35/38 — 3 AMBIGUOUS miss: "metro"/"me tro")
-- Phonetic Recall: **98.7%** ✅ (TP=75 FN=1)
-- **→ ✅ GO — DrugCorrectionEngine v2 production-ready**
+- CE-103 Drug eval (clean text): Recall=96.9% Silent FP=0.0% Safety=100% ✅ GO
+- BENCH-002a Drug CEER (ASR speech): 0.989 🔴 — ASR là bottleneck, không phải NER
+- CT (Cần Thơ) tốt nhất: Drug=0.9 Vital=0.15 (nói chậm → transcript sạch hơn)
+- SG (Sài Gòn) tệ nhất: Drug=1.167 (nhanh → ASR garble → FP drugs)
 
 ## Blocker / Phụ thuộc bên ngoài
-- [BENCH-002b] Cần audio BS thật Đà Nẵng — pilot chưa deploy
-- [PA-007] Andy cần paste ChatGPT corpus prompt → lấy 41 scripts → BS review
+- [BENCH-002b] Audio BS thật Đà Nẵng — pilot chưa deploy (HIGHEST PRIORITY)
+- [PA-007] Andy paste ChatGPT corpus prompt → 41 scripts → BS review
 - [VIETMED-FIX-001] HF_TOKEN auth cho download_vietmed.py — không block Phase 0
-- [CONS-002-SPRINT6] CONDITIONAL-GO: cần reference voices từ pilot BS trước khi chạy TTS
-
-## Known issues từ eval
-- CE-103: "a zi thro my xin" (Azithromycin bắc) → Layer 2 fuzzy miss — cần thêm phonetic alias
-- "metro"/"me tro" → Metronidazole 91% confident nhưng không trigger AMBIGUOUS gate (top1-top2 gap ≥8) — acceptable
-- 8 warned FPs: clinical admin words ("theo dõi", "định kỳ", "máu") fuzzy-match drug aliases → LOW_CONFIDENCE flagged → BS sẽ reject
+- [CONS-002-SPRINT6] CONDITIONAL-GO: cần reference voices từ pilot BS
 
 ## Phiên tiếp theo — làm ngay theo thứ tự
-1. [BENCH-002b] Andy record 30-50 audio BS thật → ground truth labels → CEER thật — HIGHEST PRIORITY
-2. [PA-007] Andy paste `docs/dev/CHATGPT_CORPUS_PROMPT.md` prompt → ChatGPT → 41 scripts → BS review
-3. [CONS-002-SPRINT6] TTS Pilot XTTS-v2/F5-TTS — CONDITIONAL-GO sau khi có reference voices
-4. [VIETMED-FIX-001] Fix HF_TOKEN auth nếu cần download VietMed audio
-5. Add minimum token length filter cho drug fuzzy matching (CE-103 follow-up)
+1. [BENCH-002b] Andy record 30-50 audio BS thật → ground truth labels → CEER thật
+2. [PA-007] Andy paste `docs/dev/CHATGPT_CORPUS_PROMPT.md` → ChatGPT → 41 scripts
+3. [DRUG-DB-002] Mở rộng drug_db.json → ~150 thuốc (Augmentin, Bisoprolol, Celecoxib...)
+4. [CE-103-FU] Thêm Azithromycin phonetic alias "a zi thro my xin" vào drug_db_v200
+5. [CONS-002-SPRINT6] TTS Pilot sau khi có reference voices

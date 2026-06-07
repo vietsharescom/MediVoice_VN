@@ -1,7 +1,7 @@
 {
   "last_full_audit_date": "2026-06-05",
   "last_full_audit_session": "SES-20260605",
-  "sessions_since_full_audit": 4,
+  "sessions_since_full_audit": 5,
   "full_audit_trigger_sessions": 7,
   "note": "Auto-managed by scripts/iso_audit.py. DO NOT EDIT MANUALLY."
 }

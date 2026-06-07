@@ -8,15 +8,17 @@
 
 - [ ] **LEGAL-001** 🔴 Thuê luật sư VN (healthtech + data + AI) — trước khi launch
 - [x] **BENCH-001** ✅ Benchmark PhoWhisper trên 22 audio — WER 36–52%, T-005 20/22 PASS (2026-06-05)
-- [x] **BENCH-002a** ✅ Semi-synthetic CEER: 3 regions VI-only, 15 files (2026-06-07)
-  - ✅ Andy ghi âm 30 files: HN/SG/CT × 5 SC × 2 takes
+- [x] **BENCH-002a** ✅ Semi-synthetic CEER: 3 regions VI-only, 15 files (2026-06-07 · v2 re-run 2026-06-11)
+  - ✅ Andy ghi âm 40 files: HN/SG/CT/CA × 5 SC × 2 takes (CA dropped từ benchmark)
   - ✅ CA/BS4 dropped: PhoWhisper không handle code-switch EN/VN (WER 101%)
   - WER VI-only: SG 25.8% | CT 30.4% | HN 34.6%
-  - CEER Overall: Drug=0.967✅ | Diag=0.667⚠️ | Vital=0.333🔴 | Fup=0.400🔴
-  - CEER by region: SG (Drug=1.1✅ Diag=1.0✅) | HN (Drug=0.9✅ Diag=0.6⚠️) | CT (Drug=0.9✅ Diag=0.4🔴)
+  - **v2 engine re-run (2026-06-11):**
+  - CEER Overall: Drug=0.989🔴 | Diag=0.667🔴 | Vital=0.272⚠️ | Fup=0.400🔴
+  - CEER by region: CT (Drug=0.9 Diag=0.4 Vital=0.15) | HN (Drug=0.9 Diag=0.6 Vital=0.5) | SG (Drug=1.167🔴 Diag=1.0 Vital=0.167)
+  - ⚠️ SG Drug=1.167 > 1.0: FP drugs detected (engine hallucinate trên ASR garbled output)
   - ✅ `tools/bench_ceer_semi.py` — CEER tool cho groundtruth_all.json format
-  - `docs/dev/RECORDING_SCRIPTS_4BS.md` — script fixes done
-  - **Kết luận: Drug OK · Diag/Vital/Fup cần TRAIN-002 + TRAIN-001**
+  - **Root cause: ASR bottleneck — PhoWhisper mangling drug names → L1b không tìm được**
+  - **Kết luận: BENCH-002b (pilot thật) + TRAIN-001 bắt buộc trước GO**
 - [ ] **BENCH-002b** 🟡 CEER thật: audio pilot BS Đà Nẵng + ground truth labels (sau BENCH-002a)
   - Baseline lâm sàng synthetic (2026-06-08): 10/10 files | Vitals=0.033✅ Diag=0.1✅ Drug=0.9🔴
   - Template lâm sàng: `data/audio/ground_truth_lam_sang_template.json`
@@ -34,7 +36,6 @@
 
 - [x] **DPA-SIGN-001** ✅ Andy ký `docs/compliance/DPA_TEMPLATE.md` với BS pilot Đà Nẵng (2026-06-08)
 - [ ] **ONBOARD-001** 🔴 Andy ký `docs/compliance/BS_ONBOARDING_CHECKLIST.md` với từng BS pilot
-- [ ] **BENCH-002a** 🟡 Semi-synthetic: 4 BS × 5 scripts = 20 recordings → calibrate pipeline (PA-008)
 - [ ] **BENCH-002b** 🟡 Pilot thật: record 30-50 audio tại Đà Nẵng → CEER thật (sau BENCH-002a)
 - [ ] **LEGAL-001** 🔴 Thuê luật sư VN review DPA + tư vấn pháp lý trước launch thương mại
 

@@ -249,8 +249,8 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.8.2 |
-| Status | **CONS-002-EVAL ✅ Drug eval 204 cases · GO: Recall=99.5% FP=0.0% Safety=92.1% · 473/473 PASS** |
+| Version | v0.8.3 |
+| Status | **BENCH-002a v2 re-run 🔴 Drug=0.989 Vital=0.272 — ASR bottleneck xác nhận · CE-103 fixes 473/473 PASS** |
 | Tests | **473/473 PASS** · bandit 0 HIGH/MEDIUM · conftest.py SKIP_QWEN |
 | Pending | **PA-007** (ChatGPT corpus) · **BENCH-002b** pilot Đà Nẵng · **VIETMED-FIX-001** (HF_TOKEN) |
 | Next task | **BENCH-002b** pilot Đà Nẵng thật · **PA-007** ChatGPT corpus · **CONS-002-SPRINT6** TTS CONDITIONAL-GO |
