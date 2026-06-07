@@ -160,6 +160,16 @@ _RE_CHAN_DOAN_FALLBACK = re.compile(
     re.IGNORECASE
 )
 
+# "tái khám [disease]" — follow-up visit where diagnosis is stated implicitly.
+# e.g. "tái khám tăng huyết áp", "tái khám bệnh đái tháo đường".
+# Stops at digits, "đo", sentence breaks — avoids capturing BP measurement text.
+_RE_TAI_KHAM_DIAGNOSIS = re.compile(
+    r"(?:tái\s*kh[aá]m|t[aá]i\s*kh[aá]m)\s+(?:bệnh\s+)?"
+    r"((?:viêm|tăng|đái|gout|suy|nhồi|thiếu|đau|gãy|loét|rối\s*loạn|hội\s*chứng)"
+    r"(?:\s+(?!(?:đo|lần|lúc|bên|bị|kê|\d)\b)\w+){0,3})",
+    re.IGNORECASE
+)
+
 # ─── Patient self-medication context (exclude from prescription) ────────────
 # Matches "bệnh nhân tự uống X" → drug X is patient history, NOT prescription
 
@@ -365,14 +375,19 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
             if _symptom_kw.search(captured):
                 ent.ly_do = captured
 
-    # Chẩn đoán — try explicit keyword first, then fallback (PhoWhisper may drop "chẩn đoán")
+    # Chẩn đoán — try explicit keyword first, then tái-khám hint, then general fallback
     m = _RE_CHAN_DOAN.search(t)
     if m:
         ent.chan_doan = m.group(1).strip()
     else:
-        m = _RE_CHAN_DOAN_FALLBACK.search(t)
+        # Check "tái khám [disease]" before general fallback — avoids matching drug phrases
+        m = _RE_TAI_KHAM_DIAGNOSIS.search(t)
         if m:
             ent.chan_doan = m.group(1).strip()
+        else:
+            m = _RE_CHAN_DOAN_FALLBACK.search(t)
+            if m:
+                ent.chan_doan = m.group(1).strip()
 
     # Tái khám
     m = _RE_TAI_KHAM.search(t)

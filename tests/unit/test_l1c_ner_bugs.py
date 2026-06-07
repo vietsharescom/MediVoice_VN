@@ -457,6 +457,36 @@ class TestBugIJ_NewDrugAliases:
         assert "Paracetamol" in inns
 
 
+class TestBugN_TaiKhamDiagnosis:
+    """BUG-N: SC-03 THA follow-up — chan_doan rỗng vì BS không nói 'chẩn đoán:'
+    BS3 SG nói 'tái khám tăng huyết áp' mà không có 'chẩn đoán' keyword.
+    Fix: _RE_TAI_KHAM_DIAGNOSIS pattern checked before general fallback.
+    """
+
+    def test_tai_kham_tang_huyet_ap(self):
+        t = "tái khám tăng huyết áp đo lần một một trăm bảy mươi trên một trăm tăng amlodipine lên mười thêm losartan năm mươi tái khám sau hai tuần"
+        ent = extract_entities(t)
+        assert "tăng huyết áp" in ent.chan_doan.lower(), \
+            f"chan_doan={repr(ent.chan_doan)}"
+
+    def test_tai_kham_benh_dai_thao_duong(self):
+        t = "tái khám đái tháo đường loại hai huyết áp một trăm ba mươi trên tám mươi lăm"
+        ent = extract_entities(t)
+        assert "đái tháo đường" in ent.chan_doan.lower(), \
+            f"chan_doan={repr(ent.chan_doan)}"
+
+    def test_explicit_chan_doan_still_wins(self):
+        t = "chẩn đoán viêm họng cấp tái khám tăng huyết áp điều trị amoxicillin"
+        ent = extract_entities(t)
+        assert "viêm họng" in ent.chan_doan.lower(), \
+            f"explicit chan_doan should win: {repr(ent.chan_doan)}"
+
+    def test_simple_tai_kham_no_diagnosis(self):
+        # "tái khám sau X ngày" — no disease name → chan_doan stays empty
+        ent = extract_entities("bệnh nhân tái khám sau năm ngày")
+        assert ent.chan_doan == ""
+
+
 class TestBugK_SGColloquialBP:
     """BUG-K: SG colloquial 'một hai mươi' = 120 → huyết áp
     PhoWhisper output khi BS SG đọc BP: 'huyết áp một hai mươi trên tám mươi'
