@@ -78,7 +78,7 @@
 | P0.5.1d | │  ├─ l6_agent lam_sang | original VI text → l1c_ner (không qua MarianMT) | 🟢 | FID-VN-005 | SES-20260607 | Canada path (cdha) giữ nguyên |
 | P0.5.1e | │  └─ test_l1c_vn_numbers | 40 tests: _vn_to_int, normalize, TC-001/002/003 | 🟢 | FID-VN-005 | SES-20260607 | bench_ceer tc_001/002: vital=True ✅ |
 | | │ | | | | | |
-| **P0.5.2** | **├─ 🔵 BENCH-002 Baseline** | **Lâm sàng vùng miền: 10 files, Vitals✅ Diag✅ Drug🔴 Followup✅(0.1)** | **🔵** | **BENCH-002** | SES-20260608 | **Drug🔴 blocked TRAIN-001. Followup fixed CT-007.** |
+| **P0.5.2** | **├─ 🔵 BENCH-002 Baseline** | **Lâm sàng vùng miền: 10 files, Vitals✅ Diag✅ Drug🔴(v1) Followup✅(0.1)** | **🔵** | **BENCH-002** | SES-20260608 | **Drug🔴 = v1 engine 2026-06-08. Engine v2 → CONS-002-EVAL 99.5%✅. Re-run benchmark để confirm pipeline.** |
 | P0.5.2a | │  ├─ gen_test_audio.py | Tạo WAV từ JSON template (gTTS → 16kHz mono) | 🟢 | — | SES-20260608 | `tools/gen_test_audio.py` |
 | P0.5.2b | │  ├─ bench_ceer --gt flag | Whitelist filtering, fix AUDIO_TOO_LONG | 🟢 | — | SES-20260608 | `tools/bench_ceer.py` |
 | P0.5.2c | │  ├─ 10 vùng miền template | Hà Nội→Kiên Giang, ground truth đầy đủ | 🟢 | PA-006 | SES-20260608 | `data/audio/ground_truth_lam_sang_template.json` |
