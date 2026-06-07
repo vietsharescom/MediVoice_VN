@@ -108,7 +108,15 @@
   - `data/corrections/` vào .gitignore — không commit patient data
 - [ ] **CHATGPT-CORPUS-001** 🟡 Andy sử dụng `docs/dev/CHATGPT_CORPUS_PROMPT.md` v2.0 → ChatGPT/Grok → 41 corpus scripts → BS review → gửi lại Claude update CLINICAL_TEST_CORPUS_VN.md (PA-007)
 - [x] **DRUG-ALIAS-001** ✅ Mở rộng alias map drug_db.json v0.3.0 — PhoWhisper phonetic variants cho 6 drugs: Glimepiride/Colchicine/Etoricoxib/VitaminB/Metformin/Omeprazole (2026-06-10)
-- [ ] **BUG-K2** 🟢 "một sáu lăm" (double-abbreviated SG) → 165 — BP regex bắt "sáu lăm"=65 trước colloquial-hundreds pattern. Affects: SC-03 SG "một sáu lăm trên chín lăm". Cần extend `_vn_tens_int()` để handle abbreviated tens ("sáu lăm" = 65 = 6×10+5). Xem: `src/core/l1c_ner.py` `_vn_tens_int()`
+- [ ] **DRUG-DB-002** 🟡 Mở rộng drug_db.json 118 → ~150 thuốc — bổ sung nhóm thiếu cho phòng mạch tư VN
+  - Ưu tiên: Augmentin (Amox/Clav) · Bisoprolol · Tramadol · Empagliflozin · Sitagliptin · Folic acid · Vitamin D3 · Smecta · Phosphalugel · Celecoxib · Dapagliflozin · Indapamide
+  - VietMed-NER drugs (313 entries) = OB/GYN context, overlap thấp → KHÔNG dùng
+  - Source: TT07/2017 (243 OTC hoạt chất) + TT28/2024 + pilot prescription review
+- [ ] **VIETMED-FIX-001** 🟢 Fix `scripts/download_vietmed.py` — bỏ `trust_remote_code`, thêm HF_TOKEN auth
+  - Lỗi hiện tại: `trust_remote_code is not supported anymore` + 401 Unauthorized
+  - Dataset `doof-ferb/VietMed` cần HuggingFace login để download (~2.5GB, 16h audio MIT)
+  - Dùng cho: TRAIN-001 PhoWhisper fine-tune (Phase 1 — không block Phase 0)
+- [x] **BUG-K2** ✅ "một sáu lăm"=165 abbreviated SG tens fixed (2026-06-10) — `_WABR` pattern + `_WCOLLQ` extended. +1 test `test_sg_bp_colloquial_165_abbreviated` → 409/409 PASS
 - [x] **BUG-N** ✅ chan_doan rỗng cho follow-up visits (2026-06-10) — BS nói "tái khám tăng huyết áp" mà không có "chẩn đoán:" keyword. Fix: `_RE_TAI_KHAM_DIAGNOSIS` checked trước `_RE_CHAN_DOAN_FALLBACK`. +4 tests → 408/408 PASS
 - [~] **DATASET-001** 🔵 PARTIAL — Download P1 public datasets (VietMed family — MIT/Apache-2.0)
   - ✅ Downloaded: VietMed-NER (9K NER, ~30MB) · VietMed-Sum (106K, ~43MB) · VN Medical QA (9K, ~5MB) → `data/external/`
@@ -174,13 +182,13 @@
   - Datasets: `data/external/VietMed` + `data/external/ViMedCSS` + pilot audio
   - Target: WER 35–40% → <20% | Drug CEER 0.90 → <0.10
   - Cần: GPU/cloud VM (VNG/FPT) | FID-VN-007 trước khi implement
-- [~] **TRAIN-002** 🔵 PARTIAL — Fine-tune PhoBERT+CRF NER trên synthetic 10K
-  - ✅ Epoch 1/3 hoàn thành: F1=**98.9%** · Precision=98.98% · Recall=98.91% (target >0.70 ✅)
-  - 🔵 Epoch 2-3 đang chạy nền (resumed từ checkpoint-1000, bắt đầu 08:51)
-  - ✅ `scripts/train_ner_phobert.py --resume` — resume từ checkpoint
+- [x] **TRAIN-002** ✅ Fine-tune PhoBERT+CRF NER trên synthetic 10K — HOÀN TẤT (2026-06-10)
+  - Epoch 1: F1=**98.95%** P=98.98% R=98.91% | Epoch 2: F1=**98.73%** | Epoch 3: F1=**99.44%** ← BEST
+  - Best model: `models/ner_phobert/best/` (512.8MB, checkpoint-3000) ✅
+  - Entities: MEDICATION · DOSE · FREQUENCY · SYMPTOM · VITAL · FOLLOWUP
   - Datasets: `data/synthetic_ner/` (7994 train / 1003 val / 1003 test)
-  - Output: `models/ner_phobert/checkpoint-1000` ✅ | `models/ner_phobert/best/` ⏳ (sau epoch 3)
-  - **Next:** Sau khi done → FID-VN-NER-ML → tích hợp vào `src/core/l1c_ner.py` (hybrid: rule-based primary, PhoBERT fallback khi confidence thấp)
+  - **Next:** FID-VN-NER-ML → tích hợp hybrid vào `src/core/l1c_ner.py` (rule-based primary + PhoBERT fallback)
+  - **Note:** Trained trên synthetic data — cần validate trên pilot audio thực trước khi dùng production
 
 ---
 

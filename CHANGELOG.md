@@ -1,6 +1,22 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.7.2b] — 2026-06-10 — TRAIN-002 DONE F1=99.44% · BUG-K2+N · 409 tests
+
+### Training: TRAIN-002 PhoBERT NER — HOÀN TẤT
+- result(train_002): 3 epochs synthetic 10K — E1=98.95% · E2=98.73% · E3=**99.44%** (BEST)
+- model(ner_phobert_best): `models/ner_phobert/best/` 512.8MB — checkpoint-3000
+- note: trained trên synthetic data — cần validate pilot audio thực trước production integration
+
+### NER Fixes
+- fix(NER+BUG-K2): abbreviated SG tens "sáu lăm"=65 · `_WABR` + `_WCOLLQ` extended · 1 new test
+- fix(NER+BUG-N): chan_doan from "tái khám [disease]" · `_RE_TAI_KHAM_DIAGNOSIS` · 4 new tests
+- tests: 395 → 409 PASS (+14 tests cho BUG-K/L/M/N trong phiên trước)
+
+### Analysis & Docs
+- docs(backlog): DRUG-DB-002 · VIETMED-FIX-001 — VietMed download failed (trust_remote_code deprecated)
+- docs(progress): TRAIN-002 done · metrics updated · SES-20260610b added
+
 ## [v0.7.2] — 2026-06-07 — BENCH-002a + overnight NER training setup (395 tests)
 
 ### Benchmark: BENCH-002a — Semi-synthetic CEER (real voice, 3 regions)

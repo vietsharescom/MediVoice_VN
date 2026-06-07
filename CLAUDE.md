@@ -250,10 +250,10 @@ v{trước} | {N} tests → v{sau} | {N} tests
 | Field | Value |
 |---|---|
 | Version | v0.7.2 |
-| Status | **BENCH-002a ✅ Drug 97% · NER 10K samples 17SC ✅ · Overnight scripts ready ✅ — 395/395 PASS** |
-| Tests | **395/395 PASS** · bandit 0 HIGH/MEDIUM · conftest.py SKIP_QWEN |
-| Pending | **PA-007** (ChatGPT corpus) · **TRAIN-002 overnight** (scripts/overnight_run.bat) · **BENCH-002b** |
-| Next task | **Check overnight results** (logs/overnight_run.log + models/ner_phobert/best/) · **BENCH-002b** pilot Đà Nẵng |
+| Status | **TRAIN-002 ✅ F1=99.44% · BUG-K2+N ✅ · DRUG-DB-002 pending · 409/409 PASS** |
+| Tests | **409/409 PASS** · bandit 0 HIGH/MEDIUM · conftest.py SKIP_QWEN |
+| Pending | **PA-007** (ChatGPT corpus) · **DRUG-DB-002** (118→150 drugs) · **BENCH-002b** pilot Đà Nẵng · **VIETMED-FIX-001** (HF_TOKEN) |
+| Next task | **DRUG-DB-002** mở rộng drug_db.json (Augmentin/Bisoprolol/Tramadol/SGLT-2...) · **FID-VN-NER-ML** hybrid PhoBERT integration · **BENCH-002b** pilot |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` |
 
 ---

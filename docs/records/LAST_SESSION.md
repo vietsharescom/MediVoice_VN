@@ -2,55 +2,46 @@
 # Ghi đè mỗi phiên — git history lưu lịch sử cũ tự động
 # ISO/IEC 42001:2023 Cl.9.1 (Performance evaluation)
 
-## Mã phiên: SES-20260607
-## Thời gian: 2026-06-07
-## Version: v0.7.1 → v0.7.2
+## Mã phiên: SES-20260610b
+## Thời gian: 2026-06-10 (buổi sáng — tiếp nối SES-20260610)
+## Version: v0.7.2 → v0.7.2 (training + analysis + doc — không có code mới phiên này)
 
 ---
 
 ## Trạng thái đầu → cuối
-v0.7.1 | 395 tests → v0.7.2 | 395 tests
+v0.7.2 | training epoch 3 đang chạy 67% → v0.7.2 | 409/409 PASS · TRAIN-002 DONE
 
 ## Đã hoàn thành
-
-- [BENCH-002a] ✅ Semi-synthetic CEER — 15 files (HN/SG/CT × 5 SC × take1)
-  - Drug=0.967✅ Diag=0.667⚠️ Vital=0.333🔴 Fup=0.400🔴
-  - SG best (Drug=1.1✅ Diag=1.0✅) | HN worst diag (Diag=0.6⚠️) | CT worst vital (Vital=0.22🔴)
-  - `tools/bench_ceer_semi.py` — CEER adapter cho groundtruth_all.json format
-  - `docs/dev/RECORDING_SCRIPTS_4BS.md` — fixes: "nôn ra máu", bỏ pronunciation guide
-  - CA/BS4 dropped (WER 101%, code-switch EN/VN)
-
-- [SYNTHETIC-NER-001] ✅ Expanded 2100 → 10,000 samples, 7 → 17 scenarios
-  - 10 new: viem_phe_quan, viem_xoang, di_ung_mui, viem_da_ruot, nhiem_trung_tiet_nieu,
-    thieu_mau, mat_ngu, tang_mo_mau, viem_ket_mac, viem_amidan
-  - `data/synthetic_ner/` — train 7994 / val 1003 / test 1003
-
-- [TRAIN-002] ✅ Overnight training scripts sẵn sàng
-  - `scripts/train_ner_phobert.py` — PhoBERT NER training (3 epochs, 7994 train samples, CPU)
-  - `scripts/download_vietmed.py` — VietMed download từ HuggingFace
-  - `scripts/overnight_run.bat` — 1-click overnight: download VietMed + train NER (~5-8h)
-  - Dependencies: accelerate + evaluate + seqeval ✅ installed
-
-- [TEST-FIX] ✅ 395/395 PASS (từ 393/395)
-  - `tests/conftest.py` — MEDIVOICE_SKIP_QWEN=1 disable Qwen 3B LLM loading trong tests
-    - Root cause: Qwen load trong full suite → test_ac002_cdha flaky (assessment không có "DDx:")
-  - `tests/unit/test_synthetic_ner_pipeline.py` — _vital_hit() thêm 10 scenarios mới
+- [TRAIN-002] PhoBERT NER training 3 epochs HOÀN TẤT:
+  - Epoch 1: F1=98.95% · Epoch 2: F1=98.73% · Epoch 3: F1=**99.44%** (BEST)
+  - Best model: `models/ner_phobert/best/` (512.8MB model.safetensors)
+  - Entities: MEDICATION · DOSE · FREQUENCY · SYMPTOM · VITAL · FOLLOWUP
+  - Note: trained trên synthetic data — cần validate trên pilot audio thực trước production
+- [BUG-K2] "một sáu lăm"=165 abbreviated SG tens — fix xác nhận 409/409 PASS
+- [BUG-N] chan_doan from "tái khám [disease]" — fix xác nhận 409/409 PASS
+- [ANALYSIS] overnight_run.bat evaluation:
+  - VietMed audio FAILED: `trust_remote_code` deprecated + doof-ferb/VietMed gated (cần HF login)
+  - VietMed-NER drugs (313) = OB/GYN context, không phù hợp mở rộng drug_db phòng mạch đa khoa
+  - drug_db.json 118 drugs cần mở rộng theo TT07/2017 + pilot prescription review
+- [ANALYSIS] Canadian medical voice benchmark (Dragon Medical One / Abridge / Suki):
+  - Accuracy cao nhờ speaker adaptation + medical LM + LLM post-processing
+  - Ambient AI Scribe trend: nghe suốt buổi → auto-gen note → BS chỉ ký
+  - MediVoice moat: tiếng Việt + offline + VN compliance + price point
+- [DRUG-DB-002] Phân tích gap + thêm BACKLOG: ~30 thuốc thiếu (Augmentin, Bisoprolol, SGLT-2...)
+- [VIETMED-FIX-001] Thêm BACKLOG: fix download script (HF_TOKEN + trust_remote_code)
 
 ## Kết quả đo được
-- Tests: 395/395 PASS (33s — cải thiện từ 18 phút nhờ conftest.py + SKIP_QWEN)
-- BENCH-002a CEER: Drug 97% ✅ · Diag 67% ⚠️ · Vital 33% 🔴 · Fup 40% 🔴
-- WER VI-only: SG 25.8% | CT 30.4% | HN 34.6% (CA dropped)
+- Tests: 409/409 PASS
+- TRAIN-002 PhoBERT: F1=99.44% (epoch 3 best, synthetic data) — target >0.70 ✅
+- best/ model: `models/ner_phobert/best/model.safetensors` 512.8MB ✅
 
 ## Blocker / Phụ thuộc bên ngoài
-- [TRAIN-002] Overnight run chưa bắt đầu — Andy khởi động trước khi ngủ
-- [BENCH-002b] Cần pilot audio thật từ BS Đà Nẵng
-- [PA-007] ChatGPT corpus 41 cases — Andy chưa generate
-- [LEGAL-001] Thuê luật sư VN — Andy cần làm
+- [BENCH-002b] Pilot Đà Nẵng chưa bắt đầu — cần audio BS thật
+- [VIETMED-FIX-001] doof-ferb/VietMed gated — Andy cần HuggingFace login + request access
+- [PA-007] Andy copy `docs/dev/CHATGPT_CORPUS_PROMPT.md` → ChatGPT/Grok → 41 scripts → BS review
 
 ## Phiên tiếp theo — làm ngay theo thứ tự
-1. [TRAIN-002] Check kết quả overnight: `logs/overnight_run.log` + `models/ner_phobert/best/`
-   - Nếu F1 > 0.70 → tích hợp vào l1c_ner.py (thay thế rule-based NER)
-   - Nếu F1 < 0.50 → cần thêm data hoặc tune hyperparameters
-2. [BENCH-002b] Pilot audio recording tại Đà Nẵng + CEER thật (sau TRAIN-002)
-3. [PILOT] Test install.bat tại phòng khám Đà Nẵng (cần Andy onsite)
-4. [DRUG-ALIAS-001] Mở rộng alias map trong drug_db.json (typo VN phổ biến)
+1. [DRUG-DB-002] Mở rộng drug_db.json 118 → ~150 thuốc (Augmentin · Bisoprolol · Tramadol · SGLT-2 · Folic acid · Vitamin D3 · Smecta...) — L1b correction sẽ chuẩn hơn ngay
+2. [FID-VN-NER-ML] Viết FID hybrid PhoBERT vào `src/core/l1c_ner.py` — Andy approve trước khi implement
+3. [BENCH-002b] Pilot Đà Nẵng — Andy install + BS dùng thật + record audio
+4. [VIETMED-FIX-001] Fix `scripts/download_vietmed.py` — HF_TOKEN auth

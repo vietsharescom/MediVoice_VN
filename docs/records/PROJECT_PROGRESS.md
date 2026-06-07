@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-10 | v0.7.2
+# Cập nhật: 2026-06-10b | v0.7.2
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -104,13 +104,14 @@
 | P0.6.2e | │  ├─ VietMed family (partial) | VietMed-NER 9K · Sum 106K · QA 9K — `data/external/` | 🔵 | DATASET-001 | SES-20260607 | VietMed audio 2.5GB + ViMedCSS 4GB còn lại |
 | P0.6.2f | │  └─ DATA_CATALOG.md | 26 datasets, license/domain/download status | 🟢 | — | SES-20260607 | `docs/dev/DATA_CATALOG.md` |
 | | │ | | | | | |
-| **P0.6.3** | **├─ 🔵 BENCH-002a + TRAIN-002 Overnight** | **Semi-synthetic CEER · 10K NER · overnight train PhoBERT** | **🔵** | BENCH-002a | SES-20260610 | Overnight running |
+| **P0.6.3** | **├─ 🟢 BENCH-002a + TRAIN-002 Overnight** | **Semi-synthetic CEER · 10K NER · PhoBERT F1=99.44% · 409 PASS** | **🟢** | BENCH-002a+TRAIN-002 | SES-20260610 | TRAIN-002 ✅ done |
 | P0.6.3a | │  ├─ BENCH-002a CEER | 15 files HN/SG/CT — Drug=0.967✅ Diag=0.667⚠️ Vital=0.333🔴 | 🟢 | — | SES-20260607 | `tools/bench_ceer_semi.py` |
 | P0.6.3b | │  ├─ ner_semantic_test.py | HYP transcript test — BS1 7/7=100% · BS2 6/7=86% (post-fix) | 🟢 | — | SES-20260610 | `tools/ner_semantic_test.py` |
 | P0.6.3c | │  ├─ wer_clinical_test.py | WER test trên clinical WAV — semi_synthetic + real | 🟢 | — | SES-20260610 | `tools/wer_clinical_test.py` |
-| P0.6.3d | │  ├─ TRAIN-002 overnight | PhoBERT NER epoch 1/3 F1=98.9% · resume epoch 2-3 đang chạy | 🔵 | TRAIN-002 | SES-20260610 | `models/ner_phobert/checkpoint-1000` |
-| P0.6.3e | │  ├─ NER Bug K/L/M fixes | SG colloquial BP · nhiet_do digit-split · nặng+ký · +9 tests | 🟢 | — | SES-20260610 | `src/core/l1c_ner.py` — 408/408 PASS |
-| P0.6.3f | │  └─ NER Bug N fix | chan_doan from "tái khám [disease]" follow-up pattern · +4 tests | 🟢 | BUG-N | SES-20260610 | `src/core/l1c_ner.py` — 408/408 PASS |
+| P0.6.3d | │  ├─ TRAIN-002 ✅ DONE | PhoBERT NER 3 epochs: E1=98.95% · E2=98.73% · E3=**99.44%** best | 🟢 | TRAIN-002 | SES-20260610 | `models/ner_phobert/best/` (512MB) |
+| P0.6.3e | │  ├─ NER Bug K/L/M/K2 fixes | SG colloquial BP · nhiet_do digit-split · nặng+ký · abbreviated tens · +10 tests | 🟢 | BUG-K2 | SES-20260610 | `src/core/l1c_ner.py` — 409/409 PASS |
+| P0.6.3f | │  ├─ NER Bug N fix | chan_doan from "tái khám [disease]" follow-up pattern · +4 tests | 🟢 | BUG-N | SES-20260610 | `src/core/l1c_ner.py` — 409/409 PASS |
+| P0.6.3g | │  └─ VietMed audio download ❌ | `trust_remote_code` deprecated · doof-ferb/VietMed gated (cần HF login) | 🔵 | VIETMED-FIX-001 | SES-20260610 | Fix `scripts/download_vietmed.py` + HF_TOKEN |
 | | │ | | | | | |
 | **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
 | P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |
@@ -203,18 +204,18 @@
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | **395/395** | 🟢 |
+| Tests PASS | 100% | **409/409** | 🟢 |
 | bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
 | Vital extraction (TC audio) | >0% | bench tc_001/tc_002: vital=True | 🟢 fixed FID-VN-005 |
 | WER semi-synthetic | <30% | SG 25.8% · CT 30.4% · HN 34.6% | 🟡 cần fine-tune |
 | NER BS1 (Bắc chuẩn, WER=8%) | >80% | **7/7 = 100%** | 🟢 |
-| NER BS2 (Nam nhanh, WER=19%) | >80% | **3/7 = 43%** | 🔴 BP colloquial + vital miss |
+| NER BS2 (Nam nhanh, WER=19%) | >80% | **6/7 = 86%** (post-fix BUG-K/L/M) | 🟢 |
 | CEER Drug (semi-synthetic) | <10% | 0.967 (Drug 97%) | ✅ |
-| CEER Diag (semi-synthetic) | <10% | 0.667 | ⚠️ cần TRAIN-002 |
-| CEER Vital (semi-synthetic) | <10% | 0.333 | 🔴 cần TRAIN-002 + NER fix |
-| CEER Followup (semi-synthetic) | <10% | 0.400 | 🔴 cần TRAIN-002 |
+| CEER Diag (semi-synthetic) | <10% | 0.667 | ⚠️ cần pilot thật |
+| CEER Vital (semi-synthetic) | <10% | 0.333 (pre-fix) → cải thiện sau BUG-K/L/M fix | 🟡 |
+| CEER Followup (semi-synthetic) | <10% | 0.400 | 🟡 |
 | CEER thật | <5% | ❓ cần audio BS thật | 🟡 BENCH-002b |
-| TRAIN-002 PhoBERT NER | F1 > 0.70 | ⏳ running overnight | 🔵 |
+| TRAIN-002 PhoBERT NER | F1 > 0.70 | **F1=99.44%** (epoch 3, synthetic data) | ✅ |
 | BS approve rate | >85% | ❓ chưa pilot | ⏳ |
 | NPS | >7/10 | ❓ chưa pilot | ⏳ |
 | Paying users | ≥5 | 0 | ⏳ |
@@ -241,6 +242,7 @@
 | SES-20260607 | 2026-06-07 | v0.7.0→v0.7.1 | Synthetic NER 10K · 17 scenarios · chan_doan fix · VietMed download (395 tests) |
 | SES-20260607b | 2026-06-07 | v0.7.1→v0.7.2 | BENCH-002a · CEER semi-synthetic (15 files) · overnight scripts · conftest SKIP_QWEN fix |
 | SES-20260610 | 2026-06-10 | v0.7.2 | TRAIN-002 overnight started · ner_semantic_test · wer_clinical_test tools committed |
+| SES-20260610b | 2026-06-10 | v0.7.2 | TRAIN-002 ✅ DONE F1=99.44% · BUG-K2+BUG-N fix · 409/409 · Drug corpus analysis · Canadian MedVoice benchmark |
 
 ---
 
