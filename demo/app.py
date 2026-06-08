@@ -12,47 +12,32 @@ from datetime import datetime
 
 
 def transcribe_audio(audio_bytes: bytes) -> tuple[str, str]:
-    """Transcribe using Google Cloud Speech-to-Text (Vietnamese).
-    Tries WEBM_OPUS (Chrome/Edge) then OGG_OPUS (Firefox) automatically.
+    """Transcribe using Groq Whisper Large V3 (free tier, Vietnamese).
     Returns (transcript, error_msg).
     """
     try:
-        from google.cloud import speech_v1 as speech
-        from google.oauth2 import service_account
-
-        creds = service_account.Credentials.from_service_account_info(
-            st.secrets["gcp_service_account"],
-            scopes=["https://www.googleapis.com/auth/cloud-platform"],
+        api_key = st.secrets.get("groq_api_key", "")
+        if not api_key:
+            return "", "groq_api_key chưa được cấu hình trong Secrets"
+        headers = {"Authorization": f"Bearer {api_key}"}
+        files = {
+            "file": ("audio.wav", io.BytesIO(audio_bytes), "audio/wav"),
+            "model": (None, "whisper-large-v3"),
+            "language": (None, "vi"),
+            "response_format": (None, "json"),
+        }
+        resp = requests.post(
+            "https://api.groq.com/openai/v1/audio/transcriptions",
+            headers=headers,
+            files=files,
+            timeout=60,
         )
-        client = speech.SpeechClient(credentials=creds)
-        audio = speech.RecognitionAudio(content=audio_bytes)
-
-        for encoding in [
-            speech.RecognitionConfig.AudioEncoding.WEBM_OPUS,
-            speech.RecognitionConfig.AudioEncoding.OGG_OPUS,
-        ]:
-            try:
-                config = speech.RecognitionConfig(
-                    encoding=encoding,
-                    language_code="vi-VN",
-                    enable_automatic_punctuation=True,
-                    model="default",
-                )
-                response = client.recognize(config=config, audio=audio)
-                texts = [
-                    r.alternatives[0].transcript
-                    for r in response.results
-                    if r.alternatives
-                ]
-                text = " ".join(texts).strip()
-                if text:
-                    return text, ""
-            except Exception:
-                continue
-
-        return "", "Không nhận diện được giọng nói — thử ghi âm lại rõ hơn"
+        if resp.status_code == 200:
+            text = resp.json().get("text", "").strip()
+            return (text, "") if text else ("", "Không nhận diện được giọng nói")
+        return "", f"Groq lỗi {resp.status_code}: {resp.text[:300]}"
     except Exception as e:
-        return "", f"Speech API lỗi: {e}"
+        return "", f"Exception: {e}"
 
 
 def upload_to_drive(audio_bytes: bytes, session_data: dict) -> tuple[bool, str]:
