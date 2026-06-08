@@ -656,6 +656,12 @@
         "viêm phổi",
         "viêm họng",
         "nhiễm trùng hô hấp"
+      ],
+      "name_variants": [
+        "a zit ro my cin",
+        "azitro my xin",
+        "a zi rô mai xin",
+        "azithro"
       ]
     },
     "Clarithromycin": {
@@ -931,6 +937,12 @@
         "viêm phổi",
         "viêm xoang",
         "nhiễm trùng tiết niệu"
+      ],
+      "name_variants": [
+        "le vo flo xa cin",
+        "levo flox acin",
+        "levofloxasin",
+        "le fo xa xin"
       ]
     },
     "Doxycycline": {
@@ -2312,6 +2324,13 @@
       "compatible_diagnoses": [
         "tăng huyết áp",
         "đau thắt ngực"
+      ],
+      "name_variants": [
+        "am lo di phi",
+        "am lo di phin",
+        "amlodiphin",
+        "am lo din",
+        "amlodiphine"
       ]
     },
     "Losartan": {
@@ -2371,6 +2390,14 @@
         "tăng huyết áp",
         "suy tim",
         "bệnh thận đái tháo đường"
+      ],
+      "name_variants": [
+        "l'occitane",
+        "loccitane",
+        "locitan",
+        "lo xi tan",
+        "lo si tan",
+        "lo xi tang"
       ]
     },
     "Valsartan": {
@@ -2575,6 +2602,12 @@
         "tăng huyết áp",
         "suy tim",
         "rối loạn nhịp"
+      ],
+      "name_variants": [
+        "biso pro lol",
+        "bi so pro lo",
+        "bisoprolo",
+        "biso polo"
       ]
     },
     "Atenolol": {
@@ -2769,6 +2802,13 @@
       "compatible_diagnoses": [
         "rối loạn lipid máu",
         "phòng ngừa tim mạch"
+      ],
+      "name_variants": [
+        "avobastatin",
+        "avo bastatin",
+        "atobastatin",
+        "atovastatin",
+        "a to va sta tin"
       ]
     },
     "Rosuvastatin": {
@@ -3123,6 +3163,12 @@
       "drug_class": "biguanide",
       "compatible_diagnoses": [
         "đái tháo đường type 2"
+      ],
+      "name_variants": [
+        "met pho min",
+        "metfomin",
+        "met fo min",
+        "me pho min"
       ]
     },
     "Glibenclamide": {
@@ -3236,15 +3282,17 @@
         "gliamide"
       ],
       "name_variants": [
-        "glimepirit",
         "glimepirid",
+        "gliame pi rit",
         "gli me pi rit",
-        "gli me pi rid",
         "glimipiride",
+        "gli me pi rid",
+        "glimepirit",
+        "glimipirit",
         "glimipe rit",
         "gli me pi ride",
-        "glimipirit",
-        "gliame pi rit"
+        "gly me pi rit",
+        "gli me bi rit"
       ],
       "phonetic_variants": {
         "north": [
@@ -3471,6 +3519,12 @@
         "đau thần kinh",
         "động kinh",
         "rối loạn lo âu"
+      ],
+      "name_variants": [
+        "pre ga bo lin",
+        "pregabolin",
+        "prego ba lin",
+        "prê ga ba linh"
       ]
     },
     "Amitriptyline": {
@@ -3794,14 +3848,17 @@
         "viêm khớp"
       ],
       "name_variants": [
-        "eto ri cob",
-        "e to ri coc xit",
-        "eto ri coxit",
-        "etoricoxip",
         "eto ri cop",
+        "etoricoxip",
         "e to ri cop",
+        "eto ri coxit",
         "eto ri coc xip",
-        "etoricoxib arcoxia"
+        "e to ri coc xit",
+        "eto ri cob",
+        "etoricoxib arcoxia",
+        "eto ri cok xip",
+        "eto ko xip",
+        "eto ri coxip"
       ],
       "phonetic_variants": {
         "north": [
@@ -6546,7 +6603,14 @@
         "lo âu",
         "rối loạn ám ảnh cưỡng chế"
       ],
-      "inn": "Sertraline"
+      "inn": "Sertraline",
+      "name_variants": [
+        "cetralin",
+        "xetralin",
+        "cetraline",
+        "setralin",
+        "se tra lin"
+      ]
     },
     "Escitalopram": {
       "brands": [

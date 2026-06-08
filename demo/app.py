@@ -10,7 +10,17 @@ import io
 import wave
 import requests
 import os
+import sys
+from pathlib import Path
 from datetime import datetime
+
+# RAG chain (L1b + LangChain + L1d)
+sys.path.insert(0, str(Path(__file__).parent.parent))
+try:
+    from demo.rag_chain import extract_clinical_rag as _rag_extract
+    _RAG_OK = True
+except Exception as _rag_err:
+    _RAG_OK = False
 
 # ── Load test scripts ────────────────────────────────────────────────────────
 @st.cache_data
@@ -465,9 +475,16 @@ if audio_data is not None and not st.session_state.approved:
 
     clinical_data = {}
     ner_error = ""
+    drug_flags = []
     if real_transcript:
-        with st.spinner("🧠 Đang phân tích lâm sàng và điền form..."):
-            clinical_data, ner_error = extract_clinical_data(real_transcript)
+        api_key = st.secrets.get("groq_api_key", "")
+        if _RAG_OK and api_key:
+            with st.spinner("🧠 MediVoice AI đang phân tích lâm sàng (RAG pipeline)..."):
+                clinical_data, ner_error, drug_flags = _rag_extract(real_transcript, api_key)
+        else:
+            with st.spinner("🧠 Đang phân tích lâm sàng và điền form..."):
+                clinical_data, ner_error = extract_clinical_data(real_transcript)
+                drug_flags = []
 
     # Start from mock structure, override with real extracted data
     # Khi có real transcript: dùng NER data hoàn toàn, KHÔNG fallback mock
@@ -495,6 +512,10 @@ if audio_data is not None and not st.session_state.approved:
     result["ner_error"] = ner_error
     result["ner_ok"] = bool(clinical_data)
     result["benh_nhan_ner"] = clinical_data.get("benh_nhan", {}) if clinical_data else {}
+    result["drug_flags"] = [
+        {"inn": m.inn, "original": m.original_text, "reason": m.flag_reason, "confidence": round(m.confidence, 2)}
+        for m in drug_flags if m.flagged_for_review
+    ] if drug_flags else []
     result["form_ner"] = {
         "ly_do": clinical_data.get("ly_do", "") if clinical_data else "",
         "chan_doan": clinical_data.get("chan_doan", "") if clinical_data else "",
@@ -526,6 +547,11 @@ if st.session_state.result:
     if real_t:
         st.markdown("**🎙️ MediVoice AI nghe giọng Bác sĩ**")
         st.markdown(f'<div class="result-real">{real_t}</div>', unsafe_allow_html=True)
+        # Drug flags from L1b
+        _flags = r.get("drug_flags", [])
+        if _flags:
+            for f in _flags:
+                st.warning(f"⚠️ Tên thuốc cần xác nhận: **{f['inn']}** (nghe: *{f['original']}*, lý do: {f['reason']}, confidence: {f['confidence']})")
         if ner_ok:
             st.success("✅ Form đã được điền tự động từ giọng Bác sĩ — kiểm tra và chỉnh sửa bên dưới")
         else:
