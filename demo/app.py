@@ -386,13 +386,23 @@ if test_suite:
 
 st.divider()
 
-# ── Thông tin Bác sĩ ─────────────────────────────────────────────────────────
-st.subheader("👤 Thông tin phiên khám")
-col1, col2 = st.columns(2)
+# ── Thông tin Bác sĩ & Cơ sở ─────────────────────────────────────────────────
+st.subheader("👨‍⚕️ Thông tin phiên khám")
+
+col_bs1, col_bs2 = st.columns(2)
+with col_bs1:
+    ten_bs = st.text_input("Tên Bác sĩ khám ★", placeholder="VD: BS Nguyễn Văn An", key="ten_bs")
+with col_bs2:
+    co_so = st.text_input("Cơ sở y tế ★", placeholder="VD: Phòng khám Đa khoa ABC", key="co_so")
+
+col1, col2, col3 = st.columns(3)
 with col1:
     chuyen_khoa = st.selectbox("Chuyên khoa", list(MOCK_CASES.keys()), index=0)
 with col2:
-    cchn = st.text_input("Mã CCHN (demo)", placeholder="VD: CCHN-012345")
+    cchn = st.text_input("Mã CCHN ★", placeholder="VD: CCHN-012345")
+with col3:
+    ngay_kham_str = datetime.now().strftime("%d/%m/%Y")
+    st.text_input("Ngày khám", value=ngay_kham_str, disabled=True)
 
 ten_bn_demo = st.text_input(
     "Tên bệnh nhân (dùng tên giả cho demo)",
@@ -631,6 +641,9 @@ if st.session_state.result:
                 session_data = {
                     "session_id": st.session_state.session_id,
                     "timestamp": r["timestamp"],
+                    "ngay_kham": ngay_kham_str,
+                    "ten_bs": ten_bs,
+                    "co_so": co_so,
                     "cchn": r["cchn"],
                     "ten_bn_demo": r["ten_bn"],
                     "chuyen_khoa": r["chuyen_khoa"],
