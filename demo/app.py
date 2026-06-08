@@ -40,6 +40,75 @@ def transcribe_audio(audio_bytes: bytes) -> tuple[str, str]:
         return "", f"Exception: {e}"
 
 
+def extract_clinical_data(transcript: str) -> tuple[dict, str]:
+    """Use Groq LLM to extract structured clinical fields from real transcript.
+    Returns (data_dict, error_msg).
+    """
+    try:
+        api_key = st.secrets.get("groq_api_key", "")
+        if not api_key or not transcript:
+            return {}, "Không có transcript hoặc API key"
+        prompt = f"""Bạn là AI phân tích bệnh án y tế tiếng Việt.
+Từ transcript sau của bác sĩ, trích xuất thông tin lâm sàng và trả về JSON hợp lệ.
+Chỉ trả về JSON, không giải thích thêm.
+
+TRANSCRIPT:
+{transcript}
+
+FORMAT JSON:
+{{
+  "ly_do": "lý do khám ngắn gọn",
+  "chan_doan": "chẩn đoán chính",
+  "icd": "mã ICD-10 nếu biết (VD: J06.9), để trống nếu không chắc",
+  "sinh_hieu": {{
+    "nhiet_do": 36.5,
+    "huyet_ap": "120/80",
+    "mach": 75,
+    "can_nang": 0
+  }},
+  "don_thuoc": [
+    {{"ten": "tên thuốc", "ham_luong": "hàm lượng", "lieu": "cách dùng", "ngay": "số ngày/lần dùng"}}
+  ],
+  "tai_kham": "hướng dẫn tái khám hoặc dặn dò"
+}}"""
+        resp = requests.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+            json={
+                "model": "llama-3.3-70b-versatile",
+                "messages": [{"role": "user", "content": prompt}],
+                "temperature": 0.1,
+                "max_tokens": 1000,
+            },
+            timeout=30,
+        )
+        if resp.status_code != 200:
+            return {}, f"Groq LLM lỗi {resp.status_code}"
+        content = resp.json()["choices"][0]["message"]["content"].strip()
+        import re
+        m = re.search(r"\{.*\}", content, re.DOTALL)
+        if not m:
+            return {}, "LLM không trả về JSON"
+        data = json.loads(m.group())
+        sh = data.get("sinh_hieu", {})
+        try:
+            sh["nhiet_do"] = float(sh.get("nhiet_do", 36.5))
+        except (ValueError, TypeError):
+            sh["nhiet_do"] = 36.5
+        try:
+            sh["mach"] = int(sh.get("mach", 0))
+        except (ValueError, TypeError):
+            sh["mach"] = 0
+        try:
+            sh["can_nang"] = float(sh.get("can_nang", 0))
+        except (ValueError, TypeError):
+            sh["can_nang"] = 0.0
+        data["sinh_hieu"] = sh
+        return data, ""
+    except Exception as e:
+        return {}, f"NER exception: {e}"
+
+
 def upload_to_drive(audio_bytes: bytes, session_data: dict) -> tuple[bool, str]:
     """Returns (success, error_msg)."""
     try:
@@ -235,20 +304,35 @@ audio_data = st.audio_input("Nhấn để ghi âm")
 if audio_data is not None and not st.session_state.approved:
     audio_bytes = audio_data.getvalue()
 
-    with st.spinner("🔄 Đang transcribe giọng nói (PhoWhisper-medium)..."):
-        real_transcript, hf_error = transcribe_audio(audio_bytes)
+    with st.spinner("🔄 Đang transcribe giọng nói (Whisper)..."):
+        real_transcript, asr_error = transcribe_audio(audio_bytes)
 
-    with st.spinner("🧠 Đang nhận diện thực thể y tế..."):
-        time.sleep(0.8)
+    clinical_data = {}
+    ner_error = ""
+    if real_transcript:
+        with st.spinner("🧠 Đang phân tích lâm sàng và điền form..."):
+            clinical_data, ner_error = extract_clinical_data(real_transcript)
 
+    # Start from mock structure, override with real extracted data
     result = MOCK_CASES[chuyen_khoa].copy()
+    if clinical_data:
+        result.update({
+            "ly_do": clinical_data.get("ly_do") or result["ly_do"],
+            "chan_doan": clinical_data.get("chan_doan") or result["chan_doan"],
+            "icd": clinical_data.get("icd") or result["icd"],
+            "sinh_hieu": clinical_data.get("sinh_hieu") or result["sinh_hieu"],
+            "don_thuoc": clinical_data.get("don_thuoc") or result["don_thuoc"],
+            "tai_kham": clinical_data.get("tai_kham") or result["tai_kham"],
+        })
     result["chuyen_khoa"] = chuyen_khoa
     result["ten_bn"] = ten_bn_demo or "Bệnh nhân Demo"
     result["cchn"] = cchn or "DEMO"
     result["audio"] = audio_bytes
     result["timestamp"] = datetime.now().isoformat()
     result["transcript_real"] = real_transcript
-    result["hf_error"] = hf_error
+    result["asr_error"] = asr_error
+    result["ner_error"] = ner_error
+    result["ner_ok"] = bool(clinical_data)
     st.session_state.result = result
     st.session_state.approved = False
     st.session_state.drive_error = ""
@@ -261,23 +345,25 @@ if st.session_state.result:
     st.subheader("📋 Kết quả phân tích")
 
     real_t = r.get("transcript_real", "")
-    hf_err = r.get("hf_error", "")
+    asr_err = r.get("asr_error", "")
+    ner_ok = r.get("ner_ok", False)
+    ner_err = r.get("ner_error", "")
 
     if real_t:
-        st.markdown("**🎙️ Transcript thật — PhoWhisper nghe giọng Bác sĩ**")
+        st.markdown("**🎙️ Transcript thật — Whisper nghe giọng Bác sĩ**")
         st.markdown(f'<div class="result-real">{real_t}</div>', unsafe_allow_html=True)
-        st.divider()
-        st.markdown("**📋 Form mô phỏng** *(NER production sẽ điền tự động từ transcript trên)*")
+        if ner_ok:
+            st.success("✅ Form đã được điền tự động từ giọng Bác sĩ — kiểm tra và chỉnh sửa bên dưới")
+        else:
+            if ner_err:
+                st.warning(f"⚠️ Phân tích NER lỗi: {ner_err} — form hiện dùng ví dụ minh họa")
+            else:
+                st.info("ℹ️ Form dùng ví dụ minh họa")
     else:
-        if hf_err:
-            st.warning(f"⚠️ Chưa transcribe được: **{hf_err}**")
+        if asr_err:
+            st.warning(f"⚠️ Chưa transcribe được: **{asr_err}**")
         st.markdown("**Transcript mô phỏng** *(ví dụ minh họa — chuyên khoa đã chọn)*")
-
-    st.markdown(f'<div class="result-box">{r["transcript"]}</div>', unsafe_allow_html=True)
-
-    conf = r["confidence"]
-    st.markdown(f'<div class="conf-label">Độ tin cậy mô phỏng: {int(conf*100)}%</div>', unsafe_allow_html=True)
-    st.progress(conf)
+        st.markdown(f'<div class="result-box">{r["transcript"]}</div>', unsafe_allow_html=True)
 
     st.divider()
 
