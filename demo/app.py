@@ -330,11 +330,25 @@ st.divider()
 
 # ── Ghi âm ────────────────────────────────────────────────────────────────────
 st.subheader("🎤 Ghi âm")
-st.info(
-    "💬 **Bác sĩ cứ nói tự nhiên** như đang khám thật — không cần theo form hay script.\n\n"
-    "AI tự lọc thông tin lâm sàng (sinh hiệu, chẩn đoán, đơn thuốc) và bỏ qua hội thoại thông thường.\n\n"
-    "⚕️ Sinh hiệu do trợ lý đo trước? → BS đọc lại 1 câu hoặc điền tay vào form sau khi AI ra nháp."
+
+recording_type = st.radio(
+    "Loại ghi âm",
+    ["🗒️ Script chuẩn — đọc theo kịch bản", "💬 Tự nhiên — nói như khám thật"],
+    horizontal=True,
+    help="Script chuẩn: dùng để đo baseline accuracy. Tự nhiên: dữ liệu thực tế để train.",
 )
+
+if "Tự nhiên" in recording_type:
+    st.info(
+        "💬 Cứ nói tự nhiên như đang khám thật — hỏi thăm bệnh nhân, nói tiếng địa phương, không cần theo thứ tự.\n\n"
+        "AI tự lọc thông tin lâm sàng và bỏ qua hội thoại thông thường.\n\n"
+        "⚕️ Sinh hiệu do trợ lý đo trước → đọc lại 1 câu hoặc điền tay vào form sau."
+    )
+else:
+    st.info(
+        "🗒️ Đọc theo script đã chuẩn bị — nói rõ ràng, đủ thông tin lâm sàng.\n\n"
+        "Dùng để đo accuracy baseline và so sánh với giọng tự nhiên."
+    )
 
 audio_data = st.audio_input("Nhấn để ghi âm")
 
@@ -465,6 +479,7 @@ if st.session_state.result:
                     "chuyen_khoa": r["chuyen_khoa"],
                     "audio_duration_sec": get_audio_duration(r.get("audio", b"")),
                     "device_browser": get_browser_info(),
+                    "recording_type": "script" if "Script" in recording_type else "natural",
                     "transcript_real": r.get("transcript_real", ""),
                     "transcript_mock": r["transcript"],
                     "accuracy_rating": accuracy,
