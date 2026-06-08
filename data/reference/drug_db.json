@@ -1216,7 +1216,14 @@
         "lo xar tan",
         "lô xar tan",
         "lô sa tan",
-        "loxartan"
+        "loxartan",
+        "l'occitane",
+        "loccitane",
+        "locitan",
+        "lo xi tan",
+        "lo si tan",
+        "lo xi tăng",
+        "lo xi tang"
       ],
       "forms": [
         "viên 25mg",
@@ -1387,7 +1394,13 @@
       "brands": [
         "Lipitor",
         "Atorvastatin",
-        "Torvast"
+        "Torvast",
+        "avobastatin",
+        "avo bastatin",
+        "atobastatin",
+        "a to va sta tin",
+        "atovastatin",
+        "avo va sta tin"
       ],
       "forms": [
         "viên 10mg",
@@ -3517,6 +3530,36 @@
     ],
     "lozar": [
       "Losartan"
+    ],
+    "l'occitane": [
+      "Losartan"
+    ],
+    "loccitane": [
+      "Losartan"
+    ],
+    "locitan": [
+      "Losartan"
+    ],
+    "lo xi tan": [
+      "Losartan"
+    ],
+    "lo si tan": [
+      "Losartan"
+    ],
+    "lo xi tăng": [
+      "Losartan"
+    ],
+    "avobastatin": [
+      "Atorvastatin"
+    ],
+    "avo bastatin": [
+      "Atorvastatin"
+    ],
+    "atobastatin": [
+      "Atorvastatin"
+    ],
+    "atovastatin": [
+      "Atorvastatin"
     ],
     "arb": [
       "Losartan"
