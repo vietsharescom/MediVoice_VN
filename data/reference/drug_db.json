@@ -85,7 +85,8 @@
       "Opioid nhẹ": 1
     },
     "otc_count": 38,
-    "rx_count": 72
+    "rx_count": 72,
+    "total_inn": 119
   },
   "by_inn": {
     "Paracetamol": {
@@ -465,23 +466,31 @@
     "Ciprofloxacin": {
       "inn": "Ciprofloxacin",
       "brands": [
-        "Cipro",
+        "Cifran",
+        "Ciprobay",
         "Ciprofloxacin",
-        "Cifran"
+        "cipro",
+        "ciproflo",
+        "cipro flo",
+        "cipro-flo-vaccine",
+        "cipro flo vaccine",
+        "sip ro",
+        "xi pờ rô"
       ],
       "forms": [
         "viên 250mg",
         "viên 500mg",
         "viên 750mg"
       ],
-      "typical": "500mg x 2 lần/ngày x 7-14 ngày",
-      "category": "Kháng sinh Quinolone",
+      "typical": "500mg x 2 lần/ngày",
+      "category": "Kháng sinh Fluoroquinolone",
       "otc": false,
       "keywords": [
         "ciprofloxacin",
         "cipro",
         "cifran",
-        "quinolone"
+        "ciprobay",
+        "ciproflo"
       ]
     },
     "Levofloxacin": {
@@ -2843,6 +2852,37 @@
         "rocephin",
         "tiêm kháng sinh"
       ]
+    },
+    "Oresol": {
+      "inn": "Oresol",
+      "brands": [
+        "Oresol",
+        "ORS",
+        "Hydrite",
+        "Orizone",
+        "Orezon",
+        "Orezone",
+        "Orezol",
+        "orison",
+        "orizon",
+        "bù nước miệng"
+      ],
+      "forms": [
+        "gói bột pha uống 27.9g",
+        "gói bột pha uống 5.63g"
+      ],
+      "typical": "1 gói pha 200ml nước, uống theo hướng dẫn",
+      "category": "Bù nước điện giải",
+      "otc": true,
+      "keywords": [
+        "oresol",
+        "ors",
+        "bù nước",
+        "bù điện giải",
+        "orizone",
+        "orezol",
+        "hydrite"
+      ]
     }
   },
   "keyword_index": {
@@ -4525,6 +4565,60 @@
     ],
     "xef tri a zon": [
       "Ceftriaxone"
+    ],
+    "oresol": [
+      "Oresol"
+    ],
+    "ors": [
+      "Oresol"
+    ],
+    "bù nước": [
+      "Oresol"
+    ],
+    "bù điện giải": [
+      "Oresol"
+    ],
+    "orizone": [
+      "Oresol"
+    ],
+    "orezon": [
+      "Oresol"
+    ],
+    "orezone": [
+      "Oresol"
+    ],
+    "orezol": [
+      "Oresol"
+    ],
+    "hydrite": [
+      "Oresol"
+    ],
+    "orison": [
+      "Oresol"
+    ],
+    "orizon": [
+      "Oresol"
+    ],
+    "bù nước miệng": [
+      "Oresol"
+    ],
+    "ciprobay": [
+      "Ciprofloxacin"
+    ],
+    "ciproflo": [
+      "Ciprofloxacin"
+    ],
+    "cipro flo": [
+      "Ciprofloxacin"
+    ],
+    "cipro-flo-vaccine": [
+      "Ciprofloxacin"
+    ],
+    "cipro flo vaccine": [
+      "Ciprofloxacin"
+    ],
+    "sip ro": [
+      "Ciprofloxacin"
     ]
   }
 }
