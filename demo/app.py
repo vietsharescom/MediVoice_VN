@@ -7,8 +7,33 @@ import streamlit as st
 import json
 import time
 import io
+import wave
 import requests
 from datetime import datetime
+
+
+def get_audio_duration(audio_bytes: bytes) -> float:
+    try:
+        with wave.open(io.BytesIO(audio_bytes)) as w:
+            return round(w.getnframes() / w.getframerate(), 1)
+    except Exception:
+        return round(max(0, (len(audio_bytes) - 44) / 32000), 1)
+
+
+def get_browser_info() -> str:
+    try:
+        ua = st.context.headers.get("user-agent", "")
+        if "Edg" in ua:
+            return "Edge"
+        if "Chrome" in ua:
+            return "Chrome"
+        if "Firefox" in ua:
+            return "Firefox"
+        if "Safari" in ua:
+            return "Safari"
+        return ua[:80] if ua else "unknown"
+    except Exception:
+        return "unknown"
 
 
 def transcribe_audio(audio_bytes: bytes) -> tuple[str, str]:
@@ -438,6 +463,8 @@ if st.session_state.result:
                     "cchn": r["cchn"],
                     "ten_bn_demo": r["ten_bn"],
                     "chuyen_khoa": r["chuyen_khoa"],
+                    "audio_duration_sec": get_audio_duration(r.get("audio", b"")),
+                    "device_browser": get_browser_info(),
                     "transcript_real": r.get("transcript_real", ""),
                     "transcript_mock": r["transcript"],
                     "accuracy_rating": accuracy,
