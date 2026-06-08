@@ -1,0 +1,43 @@
+SCRIPT ID: HA-002
+CHUYÊN KHOA: Nội tim mạch
+TIÊU ĐỀ: Tăng huyết áp + đái tháo đường — đa bệnh lý
+ĐỘ KHÓ: ⭐⭐⭐⭐ (khó — 5 thuốc, 2 ICD, từ chuyên môn)
+THỜI GIAN ĐỌC ƯỚC TÍNH: 60–75 giây
+
+GHI CHÚ BS:
+- 5 thuốc — nói từng cái rõ ràng, dừng giữa các thuốc
+- "Metformin" và "Perindopril" là từ khó — nói 2 lần
+- "Bisoprolol" — nói chậm: Bi-so-pro-lol
+- Sinh hiệu đọc theo thứ tự: HA → mạch → đường huyết → cân
+
+GROUND TRUTH:
+  chan_doan: Tăng huyết áp độ 3 kèm đái tháo đường type 2
+  icd: I10, E11.9
+  sinh_hieu: HA=170/105, mach=88, nhiet_do=36.8, can_nang=85
+  thuoc: Perindopril 10mg / Amlodipine 10mg / Bisoprolol 5mg / Metformin 500mg / Atorvastatin 40mg
+  tai_kham: 2 tuần (kèm xét nghiệm đường huyết lúc đói)
+
+═══════════════════════════════════════════════
+NỘI DUNG ĐỌC:
+═══════════════════════════════════════════════
+
+Bệnh nhân Trần Thị Hoa, nữ, 58 tuổi, có tiền sử tăng huyết áp 5 năm và đái tháo đường type 2 điều trị 2 năm nay.
+
+Đến khám vì huyết áp không kiểm soát tốt, đau đầu vùng chẩm, mệt mỏi.
+Uống thuốc không đều trong 2 tuần qua.
+
+Đo huyết áp 170 trên 105 milimét thủy ngân.
+Mạch 88 lần một phút. Nhiệt độ 36 phẩy 8. Cân nặng 85 kilogram.
+Đường huyết lúc đói 9 phẩy 2 milimol một lít.
+
+Chẩn đoán: tăng huyết áp độ 3 kèm đái tháo đường type 2 chưa kiểm soát tốt.
+
+Kê đơn:
+Perindopril... Perindopril... 10 milligram, 1 viên buổi sáng, 30 ngày.
+Amlodipine 10 milligram, 1 viên buổi sáng sau ăn, 30 ngày.
+Bisoprolol... Bisoprolol... 5 milligram, 1 viên buổi sáng, 30 ngày.
+Metformin... Metformin... 500 milligram, 1 viên ngày 2 lần sau ăn, 30 ngày.
+Atorvastatin 40 milligram, 1 viên buổi tối sau ăn, 30 ngày.
+
+Tái khám sau 2 tuần, kèm xét nghiệm đường huyết lúc đói.
+Dặn bệnh nhân uống thuốc đều đặn, không bỏ liều.

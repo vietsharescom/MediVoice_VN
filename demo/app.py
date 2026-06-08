@@ -435,12 +435,32 @@ else:
         "Dùng để đo accuracy baseline và so sánh với giọng tự nhiên."
     )
 
+with st.expander("💡 Tips ghi âm hiệu quả — giúp AI nhận đúng hơn", expanded=False):
+    st.markdown("""
+**Tên thuốc tiếng Anh / từ khó → nói 2–3 lần, chậm rãi:**
+> *"Atorvastatin... Atorvastatin... 20 milligram"*
+> *"Sertraline... Sertraline... 50 milligram"*
+
+**Bệnh lý dài / phức tạp → nhấn mạnh, ngắt sau từ khó:**
+> *"Thoát vị đĩa đệm... [dừng] ...thoát vị đĩa đệm cột sống thắt lưng"*
+> *"Huyết áp 145 trên 90..."* (đọc rõ "trên")
+
+**Liều lượng → đọc từng con số:**
+> *"5 milligram"* (không nói "5mg"), *"ngày 2 lần"*
+
+**Tái khám → nói cuối cùng:**
+> *"Tái khám sau 4 tuần"* — nói sau khi kê đơn xong
+
+**Sinh hiệu → đọc lần lượt:**
+> *"Huyết áp 130 trên 85 — mạch 72 — nhiệt độ 36 phẩy 7 — cân nặng 68 kilo"*
+    """)
+
 audio_data = st.audio_input("Nhấn để ghi âm")
 
 if audio_data is not None and not st.session_state.approved:
     audio_bytes = audio_data.getvalue()
 
-    with st.spinner("🔄 Đang transcribe giọng nói (Whisper)..."):
+    with st.spinner("🔄 MediVoice AI đang nhận dạng giọng nói..."):
         real_transcript, asr_error = transcribe_audio(audio_bytes)
 
     clinical_data = {}
@@ -504,7 +524,7 @@ if st.session_state.result:
 
     # ── TRANSCRIPT + đánh giá ngay bên dưới ─────────────────────────────
     if real_t:
-        st.markdown("**🎙️ Transcript thật — Whisper nghe giọng Bác sĩ**")
+        st.markdown("**🎙️ MediVoice AI nghe giọng Bác sĩ**")
         st.markdown(f'<div class="result-real">{real_t}</div>', unsafe_allow_html=True)
         if ner_ok:
             st.success("✅ Form đã được điền tự động từ giọng Bác sĩ — kiểm tra và chỉnh sửa bên dưới")

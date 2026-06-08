@@ -1,0 +1,40 @@
+SCRIPT ID: PSY-001
+CHUYÊN KHOA: Tâm thần / Nội thần kinh
+TIÊU ĐỀ: Trầm cảm nhẹ — bắt đầu SSRI
+ĐỘ KHÓ: ⭐⭐⭐⭐ (khó — Sertraline dễ bị ASR nhận sai)
+THỜI GIAN ĐỌC ƯỚC TÍNH: 45–55 giây
+
+GHI CHÚ BS:
+- "Sertraline" — ĐÂY LÀ TỪ KHÓ NHẤT
+  Nói CHẬM: Ser-tra-line... Ser-tra-line... dừng 1 giây
+  Nếu nói nhanh AI sẽ nghe thành "Cetralin" hoặc "Xetralin"
+- "PHQ-9" — nói: "P H Q 9" hoặc "pê hát cu chín"
+- Không cần đọc ICD — BS điền tay
+
+GROUND TRUTH:
+  chan_doan: Trầm cảm mức độ nhẹ đến vừa
+  icd: F32.0
+  sinh_hieu: HA=118/75, mach=68, nhiet_do=36.5, can_nang=55
+  thuoc: Sertraline 50mg
+  tai_kham: 4 tuần (kèm đánh giá PHQ-9)
+
+═══════════════════════════════════════════════
+NỘI DUNG ĐỌC:
+═══════════════════════════════════════════════
+
+Bệnh nhân Nguyễn Thị Mai, nữ, 32 tuổi, đến khám vì buồn bã, mất ngủ, mệt mỏi kéo dài 6 tuần.
+Không còn hứng thú với công việc và gia đình. Ăn uống kém, sụt 3 ký trong 1 tháng.
+Không có ý nghĩ tự hại.
+
+PHQ-9 hôm nay: 12 điểm.
+Huyết áp 118 trên 75. Mạch 68. Cân nặng 55 kilogram.
+
+Chẩn đoán: trầm cảm mức độ nhẹ đến vừa.
+
+Kê đơn:
+Sertraline... Sertraline... 50 milligram, 1 viên buổi sáng sau ăn, dùng 30 ngày.
+Bắt đầu liều thấp, sau 2 tuần đánh giá lại — có thể tăng lên 100 milligram.
+
+Tái khám sau 4 tuần, mang theo bảng PHQ-9 đã điền.
+Tư vấn: không tự ngừng thuốc đột ngột, cần dùng đủ 6 tháng dù đã thấy đỡ.
+Giới thiệu tâm lý liệu pháp hỗ trợ nếu bệnh nhân muốn.

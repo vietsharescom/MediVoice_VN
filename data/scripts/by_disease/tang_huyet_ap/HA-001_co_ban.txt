@@ -1,0 +1,39 @@
+SCRIPT ID: HA-001
+CHUYÊN KHOA: Nội tim mạch
+TIÊU ĐỀ: Tăng huyết áp đơn thuần — tái khám cơ bản
+ĐỘ KHÓ: ⭐⭐ (trung bình — 3 thuốc quen)
+THỜI GIAN ĐỌC ƯỚC TÍNH: 40–50 giây
+
+GHI CHÚ BS:
+- Đọc rõ tên 3 thuốc, mỗi thuốc nói 2 lần
+- Đọc liều lượng chậm: "5 milligram", "50 milligram", "20 milligram"
+- Huyết áp: "145 trên 95" (không nói "145/95")
+- ICD tự điền — không cần đọc trong script này
+
+GROUND TRUTH (để so sánh sau):
+  chan_doan: Tăng huyết áp độ 2 kèm rối loạn lipid máu
+  icd: I10, E78.5
+  sinh_hieu: HA=145/95, mach=82, nhiet_do=36.6, can_nang=72
+  thuoc: Amlodipine 10mg / Losartan 50mg / Atorvastatin 20mg
+  tai_kham: 4 tuần
+
+═══════════════════════════════════════════════
+NỘI DUNG ĐỌC (đọc tự nhiên, không đọc nhãn):
+═══════════════════════════════════════════════
+
+Bệnh nhân Nguyễn Văn Bình, nam, 62 tuổi, đến tái khám tăng huyết áp.
+
+Bệnh nhân than đầu nặng, chóng mặt nhẹ 2 ngày nay.
+Không đau ngực, không khó thở, không phù chân.
+
+Đo huyết áp 145 trên 95 milimét thủy ngân.
+Mạch 82 lần một phút. Nhiệt độ 36 phẩy 6 độ C. Cân nặng 72 kilogram.
+
+Chẩn đoán: tăng huyết áp độ 2 kèm rối loạn lipid máu.
+
+Kê đơn thuốc:
+Amlodipine... Amlodipine... 10 milligram, uống 1 viên buổi sáng, dùng 30 ngày.
+Losartan... Losartan... 50 milligram, uống 1 viên buổi tối, dùng 30 ngày.
+Atorvastatin... Atorvastatin... 20 milligram, uống 1 viên buổi tối sau ăn, dùng 30 ngày.
+
+Tái khám sau 4 tuần. Dặn bệnh nhân ăn nhạt, hạn chế mỡ động vật.

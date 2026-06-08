@@ -1,0 +1,37 @@
+SCRIPT ID: DM-001
+CHUYÊN KHOA: Nội tiết
+TIÊU ĐỀ: Đái tháo đường type 2 — tái khám định kỳ
+ĐỘ KHÓ: ⭐⭐⭐ (trung bình khó — thuật ngữ đường huyết, HbA1c)
+THỜI GIAN ĐỌC ƯỚC TÍNH: 50–60 giây
+
+GHI CHÚ BS:
+- "Glimepiride" — nói chậm: Gli-me-pi-ride, nhắc 2 lần
+- "HbA1c" — nói: "H B A 1 C" hoặc "hê bê a một xê"
+- "mmol/L" — nói: "milimol một lít"
+- Đọc rõ liều: "500 milligram", "2 milligram"
+
+GROUND TRUTH:
+  chan_doan: Đái tháo đường type 2 chưa kiểm soát tốt
+  icd: E11.9
+  sinh_hieu: HA=130/85, mach=76, nhiet_do=36.5, can_nang=78
+  thuoc: Metformin 500mg / Glimepiride 2mg
+  tai_kham: 3 tháng (kèm HbA1c)
+
+═══════════════════════════════════════════════
+NỘI DUNG ĐỌC:
+═══════════════════════════════════════════════
+
+Bệnh nhân Lê Văn Dũng, nam, 55 tuổi, đái tháo đường type 2 tái khám định kỳ.
+
+Bệnh nhân ăn nhiều tinh bột, ít vận động. Đường huyết lúc đói hôm nay 8 phẩy 5 milimol một lít.
+HbA1c lần trước 8 phẩy 2 phần trăm.
+
+Huyết áp 130 trên 85. Mạch 76. Nhiệt độ 36 phẩy 5. Cân nặng 78 kilogram.
+
+Chẩn đoán: đái tháo đường type 2 chưa kiểm soát tốt.
+
+Tiếp tục Metformin 500 milligram, ngày 2 lần sau ăn, dùng 90 ngày.
+Thêm Glimepiride... Glimepiride... 2 milligram, uống 1 viên buổi sáng trước ăn, dùng 90 ngày.
+
+Tư vấn chế độ ăn: giảm cơm trắng, tăng rau xanh, đi bộ 30 phút mỗi ngày.
+Tái khám sau 3 tháng, kèm xét nghiệm HbA1c và đường huyết lúc đói.

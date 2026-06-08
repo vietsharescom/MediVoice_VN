@@ -1,0 +1,57 @@
+SCRIPT ID: DRUG-DRILL-001
+TIÊU ĐỀ: Luyện phát âm thuốc khó — drilling tập trung
+ĐỘ KHÓ: ⭐⭐⭐⭐⭐ (đây là bài tập thuần túy tên thuốc)
+THỜI GIAN ĐỌC ƯỚC TÍNH: 90–120 giây
+
+MỤC ĐÍCH:
+Tạo dữ liệu training đặc biệt cho các tên thuốc tiếng Anh
+mà PhoWhisper thường nhận sai trong ngữ cảnh y tế VN.
+
+GHI CHÚ BS:
+- Mỗi thuốc: đọc đơn lẻ 2 lần → rồi trong câu 1 lần
+- Nói CHẬM hơn bình thường 30%
+- Dừng 1–2 giây giữa mỗi thuốc
+
+═══════════════════════════════════════════════
+NỘI DUNG ĐỌC:
+═══════════════════════════════════════════════
+
+[NHÓM TIM MẠCH]
+Amlodipine... Amlodipine...
+Kê Amlodipine 10 milligram ngày 1 viên.
+
+Losartan... Losartan...
+Thêm Losartan 50 milligram buổi tối.
+
+Atorvastatin... Atorvastatin...
+Atorvastatin 20 milligram mỗi tối sau ăn.
+
+Bisoprolol... Bisoprolol...
+Bisoprolol 5 milligram buổi sáng.
+
+[NHÓM TIỂU ĐƯỜNG]
+Metformin... Metformin...
+Metformin 500 milligram ngày 2 lần sau ăn.
+
+Glimepiride... Glimepiride...
+Glimepiride 2 milligram sáng trước ăn.
+
+Sitagliptin... Sitagliptin...
+Sitagliptin 100 milligram ngày 1 viên.
+
+[NHÓM THẦN KINH / TÂM THẦN]
+Sertraline... Sertraline...
+Sertraline 50 milligram buổi sáng sau ăn.
+
+Pregabalin... Pregabalin...
+Pregabalin 75 milligram buổi tối trước ngủ.
+
+Etoricoxib... Etoricoxib...
+Etoricoxib 60 milligram sau ăn khi đau.
+
+[NHÓM HÔ HẤP]
+Montelukast... Montelukast...
+Montelukast 10 milligram buổi tối.
+
+Salbutamol... Salbutamol...
+Xịt Salbutamol 2 nhát khi khó thở.

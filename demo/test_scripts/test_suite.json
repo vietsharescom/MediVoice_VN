@@ -334,6 +334,46 @@
       },
 
       "watch_for": ["Levofloxacin vs Levoflox", "Acetylcysteine vs N-acetylcysteine", "X-quang info not in form (correct)"]
+    },
+
+    {
+      "id": "W1-004",
+      "category": "W1_drug_names",
+      "title": "Cơ xương khớp — thoát vị đĩa đệm + thuốc khó",
+      "difficulty": 5,
+      "target_weakness": "Drug names: Etoricoxib, Pregabalin, Methylprednisolone + medical term: thoát vị đĩa đệm",
+      "specialty": "Cơ xương khớp",
+      "duration_target_sec": 55,
+
+      "clinical_content": "Bệnh nhân nam 45 tuổi, đau lưng lan xuống chân phải 3 tuần, tê bì mặt ngoài đùi phải. Huyết áp 125 trên 80. Mạch 72. Nhiệt độ 36.6. Cân nặng 70 kilogram. Nghiệm pháp Lasègue dương tính. Chẩn đoán thoát vị đĩa đệm cột sống thắt lưng L4-L5 gây đau thần kinh tọa. Kê Etoricoxib 60mg uống 1 viên buổi sáng sau ăn 14 ngày. Pregabalin 75mg uống 1 viên buổi tối trước ngủ 14 ngày. Methylprednisolone 4mg uống 2 viên buổi sáng sau ăn 5 ngày. Tái khám sau 2 tuần, mang phim MRI cột sống thắt lưng.",
+
+      "natural_wrapper": "Giải thích bệnh nhân về thoát vị đĩa đệm bằng ngôn ngữ đơn giản, dặn không mang vác nặng, nằm giường cứng. Hỏi công việc có phải ngồi nhiều không.",
+
+      "ground_truth": {
+        "chan_doan": "Thoát vị đĩa đệm cột sống thắt lưng L4-L5 gây đau thần kinh tọa",
+        "icd": "M51.1",
+        "sinh_hieu": {
+          "huyet_ap": "125/80",
+          "mach": 72,
+          "nhiet_do": 36.6,
+          "can_nang": 70
+        },
+        "don_thuoc": [
+          {"ten": "Etoricoxib", "ham_luong": "60mg", "lieu": "1 viên/sáng sau ăn", "ngay": "14 ngày"},
+          {"ten": "Pregabalin", "ham_luong": "75mg", "lieu": "1 viên/tối trước ngủ", "ngay": "14 ngày"},
+          {"ten": "Methylprednisolone", "ham_luong": "4mg", "lieu": "2 viên/sáng sau ăn", "ngay": "5 ngày"}
+        ],
+        "tai_kham": "2 tuần, mang phim MRI"
+      },
+
+      "watch_for": [
+        "Etoricoxib ASR (Eto-ri-cox-ib)",
+        "Pregabalin ASR (Pre-ga-ba-lin)",
+        "thoat vi dia dem captured correctly",
+        "L4-L5 level captured",
+        "3 drugs all present",
+        "MRI mention in tai_kham"
+      ]
     }
 
   ]

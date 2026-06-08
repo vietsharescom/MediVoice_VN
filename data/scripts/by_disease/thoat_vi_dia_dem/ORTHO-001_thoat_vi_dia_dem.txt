@@ -1,0 +1,39 @@
+SCRIPT ID: ORTHO-001
+CHUYÊN KHOA: Cơ xương khớp / Thần kinh
+TIÊU ĐỀ: Thoát vị đĩa đệm cột sống thắt lưng — lần đầu
+ĐỘ KHÓ: ⭐⭐⭐⭐⭐ (rất khó — nhiều từ chuyên môn, tên thuốc khó)
+THỜI GIAN ĐỌC ƯỚC TÍNH: 55–65 giây
+
+GHI CHÚ BS:
+- "Thoát vị đĩa đệm" — NHẤN MẠNH, nhắc 2 lần, dừng sau
+- "Etoricoxib" — nói chậm: E-to-ri-cox-ib, nhắc 2 lần
+- "Pregabalin" — Prê-ga-ba-lin, nhắc 2 lần
+- "L4-L5" — nói: "L4 L5" (đọc từng ký tự)
+- "MRI" — đọc từng chữ: "M R I"
+
+GROUND TRUTH:
+  chan_doan: Thoát vị đĩa đệm cột sống thắt lưng L4-L5 gây đau thần kinh tọa
+  icd: M51.1
+  sinh_hieu: HA=125/80, mach=72, nhiet_do=36.6, can_nang=70
+  thuoc: Etoricoxib 60mg / Pregabalin 75mg / Methylprednisolone 4mg
+  tai_kham: 2 tuần (kèm phim MRI nếu chưa có)
+
+═══════════════════════════════════════════════
+NỘI DUNG ĐỌC:
+═══════════════════════════════════════════════
+
+Bệnh nhân Phạm Văn Khoa, nam, 45 tuổi, đau lưng lan xuống chân phải 3 tuần nay.
+Đau tăng khi ngồi lâu, ho, hắt hơi. Tê bì mặt ngoài đùi phải và bàn chân phải.
+
+Huyết áp 125 trên 80. Mạch 72. Nhiệt độ 36 phẩy 6. Cân nặng 70 kilogram.
+Khám: giảm cảm giác mặt ngoài cẳng chân phải, nghiệm pháp Lasègue dương tính góc 40 độ.
+
+Chẩn đoán: thoát vị đĩa đệm... thoát vị đĩa đệm... cột sống thắt lưng L4 L5, gây đau thần kinh tọa.
+
+Kê đơn:
+Etoricoxib... Etoricoxib... 60 milligram, 1 viên buổi sáng sau ăn, dùng 14 ngày.
+Pregabalin... Pregabalin... 75 milligram, 1 viên buổi tối trước ngủ, dùng 14 ngày.
+Methylprednisolone 4 milligram, 2 viên buổi sáng sau ăn, dùng 5 ngày.
+
+Tái khám sau 2 tuần. Nếu chưa có MRI thì chụp M R I cột sống thắt lưng trước khi tái khám.
+Dặn bệnh nhân không mang vác nặng, nằm giường cứng, vận động nhẹ.
