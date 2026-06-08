@@ -168,7 +168,8 @@ st.divider()
 
 # ── Ghi âm ────────────────────────────────────────────────────────────────────
 st.subheader("🎤 Ghi âm")
-st.caption("Bác sĩ đọc nội dung khám bệnh tự nhiên như bình thường. Hệ thống sẽ phân tích và điền form tự động.")
+st.caption("Bác sĩ nói nội dung khám bệnh tự nhiên. Trong bản DEMO này, hệ thống sẽ hiển thị kết quả **mô phỏng** cho chuyên khoa đã chọn — không phải transcription thật từ giọng Bác sĩ.")
+st.info("ℹ️ **Mục đích ghi âm trong demo:** Thu thập giọng nói thật của BS để cải thiện AI. Kết quả phân tích bên dưới là **ví dụ minh họa**, không liên quan đến nội dung BS vừa nói.")
 
 audio_data = st.audio_input("Nhấn để ghi âm")
 
@@ -186,7 +187,8 @@ if audio_data is not None and not st.session_state.approved:
     st.session_state.result["audio"] = audio_data.getvalue()
     st.session_state.result["timestamp"] = datetime.now().isoformat()
     st.session_state.approved = False
-    st.success("✅ Phân tích xong — Bác sĩ vui lòng kiểm tra và xác nhận")
+    st.success("✅ Đã nhận âm thanh — Bên dưới là ví dụ minh họa kết quả thật sẽ như thế nào")
+    st.warning("⚠️ **LƯU Ý:** Transcript và form bên dưới là **nội dung MÔ PHỎNG** cho chuyên khoa đã chọn, KHÔNG phải phân tích từ giọng nói vừa ghi. Phiên bản thật sẽ transcribe đúng những gì BS nói.")
 
 # ── Kết quả ───────────────────────────────────────────────────────────────────
 if st.session_state.result:
@@ -195,7 +197,7 @@ if st.session_state.result:
     st.subheader("📋 Kết quả phân tích")
 
     # Transcript
-    st.markdown("**Transcript (AI nhận diện)**")
+    st.markdown("**Transcript mô phỏng** *(ví dụ minh họa — phiên bản thật sẽ transcribe đúng giọng BS)*")
     st.markdown(f'<div class="result-box">{r["transcript"]}</div>', unsafe_allow_html=True)
 
     # Confidence
