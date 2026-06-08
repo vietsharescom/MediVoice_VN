@@ -220,7 +220,7 @@ st.set_page_config(
     page_title="MediVoice VN — Demo",
     page_icon="🎙️",
     layout="centered",
-    initial_sidebar_state="auto",
+    initial_sidebar_state="expanded",
 )
 
 st.markdown("""
@@ -530,29 +530,61 @@ if st.session_state.result:
 
     st.divider()
 
-    st.subheader("💬 Đánh giá nhanh — tap ✅/❌ cho từng mục")
-    st.caption("Chỉ cần tap — không cần gõ. AI sẽ tự học từ những gì Bác sĩ vừa chỉnh trong form.")
+    st.subheader("📊 Đánh giá độ chính xác (1 → 5)")
+    st.caption("1 = Sai hoàn toàn · 3 = Gần đúng · 5 = Đúng hoàn toàn — kéo thanh như volume")
 
-    eval_col1, eval_col2 = st.columns(2)
-    with eval_col1:
-        eval_sinh_hieu = st.radio("Sinh hiệu", ["✅ Đúng", "❌ Sai"], horizontal=True, key="eval_sh")
-        eval_chan_doan = st.radio("Chẩn đoán", ["✅ Đúng", "❌ Sai"], horizontal=True, key="eval_cd")
-    with eval_col2:
-        eval_thuoc = st.radio("Đơn thuốc", ["✅ Đúng", "❌ Sai"], horizontal=True, key="eval_dt")
-        eval_tai_kham = st.radio("Tái khám", ["✅ Đúng", "❌ Sai"], horizontal=True, key="eval_tk")
+    def _s(v):
+        return {1: "1 ❌ Sai", 2: "2 🔴 Tệ", 3: "3 🟡 Tạm", 4: "4 🟢 Tốt", 5: "5 ✅ Đúng"}[v]
 
+    st.markdown("**📝 Tầng 1 — Transcript cơ bản**")
+    score_transcript = st.select_slider(
+        "Transcript nghe đúng so với BS nói", options=[1, 2, 3, 4, 5], value=5,
+        format_func=_s, key="score_transcript",
+    )
+
+    st.markdown("**👤 Tầng 2 — Thông tin cá nhân**")
+    col_p1, col_p2, col_p3 = st.columns(3)
+    with col_p1:
+        score_ten = st.select_slider("Tên BN", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_ten")
+    with col_p2:
+        score_tuoi = st.select_slider("Tuổi / Năm sinh", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_tuoi")
+    with col_p3:
+        score_ngay = st.select_slider("Ngày khám", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_ngay")
+
+    st.markdown("**⚕️ Tầng 3 — Thông tin lâm sàng (chuyên môn sâu)**")
+    col_c1, col_c2 = st.columns(2)
+    with col_c1:
+        score_sh = st.select_slider("Sinh hiệu", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_sh")
+        score_cd = st.select_slider("Chẩn đoán", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_cd")
+    with col_c2:
+        score_dt = st.select_slider("Đơn thuốc", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_dt")
+        score_tk = st.select_slider("Tái khám", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_tk")
+
+    st.markdown("**🎙️ Ghi chú môi trường & đặc điểm**")
+    note_giong = st.multiselect(
+        "Giọng vùng miền BS",
+        ["Bắc", "Trung", "Nam", "Huế", "Tây Nguyên", "Khác"],
+        key="note_giong",
+    )
+    note_noise = st.multiselect(
+        "Môi trường ghi âm",
+        ["Yên tĩnh", "Ồn quạt", "Ồn nhiều người", "Phòng vang", "Tiếng xe ngoài", "Nhiễu khác"],
+        key="note_noise",
+    )
+    note_bs = st.multiselect(
+        "Đặc điểm BS nói",
+        ["Rõ ràng", "Nói nhanh", "Giọng nhẹ", "Dùng tiếng địa phương", "Thuật ngữ đặc biệt", "Khó nghe"],
+        key="note_bs",
+    )
     correction = st.text_input(
-        "Ghi chú nhanh (không bắt buộc)",
-        placeholder="VD: sai tên thuốc, thiếu liều lượng...",
+        "Ghi chú thêm (không bắt buộc)",
+        placeholder="VD: nói 'Zempalm' Whisper ghi sai · bệnh sử đặc biệt · phòng ồn quạt...",
         key="correction_text",
     )
-    accuracy = (
-        "✅ Đúng hoàn toàn"
-        if all(v == "✅ Đúng" for v in [eval_sinh_hieu, eval_chan_doan, eval_thuoc, eval_tai_kham])
-        else "❌ Sai nhiều"
-        if all(v == "❌ Sai" for v in [eval_sinh_hieu, eval_chan_doan, eval_thuoc, eval_tai_kham])
-        else "🔶 Đúng một phần"
-    )
+
+    _all_scores = [score_transcript, score_ten, score_tuoi, score_ngay, score_sh, score_cd, score_dt, score_tk]
+    avg_score = round(sum(_all_scores) / len(_all_scores), 1)
+    accuracy = f"{avg_score}/5"
 
     st.divider()
 
@@ -577,11 +609,21 @@ if st.session_state.result:
                     "transcript_real": r.get("transcript_real", ""),
                     "transcript_mock": r["transcript"],
                     "accuracy_rating": accuracy,
+                    "avg_score": avg_score,
                     "field_eval": {
-                        "sinh_hieu": eval_sinh_hieu,
-                        "chan_doan": eval_chan_doan,
-                        "don_thuoc": eval_thuoc,
-                        "tai_kham": eval_tai_kham,
+                        "transcript": score_transcript,
+                        "ten_bn": score_ten,
+                        "tuoi": score_tuoi,
+                        "ngay_kham": score_ngay,
+                        "sinh_hieu": score_sh,
+                        "chan_doan": score_cd,
+                        "don_thuoc": score_dt,
+                        "tai_kham": score_tk,
+                    },
+                    "notes": {
+                        "giong_vung_mien": note_giong,
+                        "moi_truong": note_noise,
+                        "dac_diem_bs": note_bs,
                     },
                     "correction": correction,
                     "form_ner": r.get("form_ner", {}),
@@ -656,14 +698,19 @@ if st.session_state.result:
         with st.expander("🔍 Kiểm tra dữ liệu đã lưu", expanded=False):
             col_v1, col_v2 = st.columns(2)
             with col_v1:
-                st.markdown(f"**Accuracy:** {sd.get('accuracy_rating', '—')}")
-                st.markdown(f"**Correction:** `{sd.get('correction', '(trống)') or '(trống)'}`")
+                fe = sd.get("field_eval", {})
+                st.markdown(f"**Điểm trung bình:** {sd.get('avg_score', '—')}/5")
+                st.markdown(f"**Transcript:** {fe.get('transcript','—')}/5 · **Tên:** {fe.get('ten_bn','—')}/5 · **Tuổi:** {fe.get('tuoi','—')}/5")
+                st.markdown(f"**Sinh hiệu:** {fe.get('sinh_hieu','—')}/5 · **CĐ:** {fe.get('chan_doan','—')}/5 · **Thuốc:** {fe.get('don_thuoc','—')}/5")
+                st.markdown(f"**Correction:** `{sd.get('correction','(trống)') or '(trống)'}`")
+                nt = sd.get("notes", {})
+                if any(nt.values()):
+                    st.markdown(f"**Giọng:** {', '.join(nt.get('giong_vung_mien',[]) or ['—'])} · **Môi trường:** {', '.join(nt.get('moi_truong',[]) or ['—'])}")
+            with col_v2:
                 st.markdown(f"**Chẩn đoán:** {sd.get('form_approved', {}).get('chan_doan', '—')}")
                 st.markdown(f"**ICD:** {sd.get('form_approved', {}).get('icd', '—') or '(trống)'}")
-            with col_v2:
                 st.markdown(f"**Duration:** {sd.get('audio_duration_sec', '—')}s")
-                st.markdown(f"**Browser:** {sd.get('device_browser', '—')}")
-                st.markdown(f"**Type:** {sd.get('recording_type', '—')}")
+                st.markdown(f"**Browser:** {sd.get('device_browser', '—')} · **Type:** {sd.get('recording_type', '—')}")
                 drugs = sd.get('form_approved', {}).get('don_thuoc', [])
                 st.markdown(f"**Thuốc:** {', '.join(d.get('ten','') for d in drugs) or '—'}")
 
