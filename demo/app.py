@@ -12,27 +12,47 @@ from datetime import datetime
 
 
 def transcribe_audio(audio_bytes: bytes) -> tuple[str, str]:
-    """Returns (transcript, error_msg). error_msg="" on success."""
+    """Transcribe using Google Cloud Speech-to-Text (Vietnamese).
+    Tries WEBM_OPUS (Chrome/Edge) then OGG_OPUS (Firefox) automatically.
+    Returns (transcript, error_msg).
+    """
     try:
-        hf_token = st.secrets.get("hf_token", "")
-        if not hf_token:
-            return "", "HF_TOKEN chưa được cấu hình"
-        headers = {"Authorization": f"Bearer {hf_token}"}
-        api_url = "https://api-inference.huggingface.co/models/vinai/phowhisper-medium"
-        resp = requests.post(api_url, headers=headers, data=audio_bytes, timeout=60)
-        if resp.status_code == 200:
-            text = resp.json().get("text", "").strip()
-            if text:
-                return text, ""
-            return "", "API trả về text rỗng"
-        elif resp.status_code == 503:
-            return "", "Model đang load (503) — thử lại sau 30 giây"
-        elif resp.status_code == 401:
-            return "", f"Token sai hoặc hết hạn (401)"
-        else:
-            return "", f"HF API lỗi {resp.status_code}: {resp.text[:200]}"
+        from google.cloud import speech_v1 as speech
+        from google.oauth2 import service_account
+
+        creds = service_account.Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"],
+            scopes=["https://www.googleapis.com/auth/cloud-platform"],
+        )
+        client = speech.SpeechClient(credentials=creds)
+        audio = speech.RecognitionAudio(content=audio_bytes)
+
+        for encoding in [
+            speech.RecognitionConfig.AudioEncoding.WEBM_OPUS,
+            speech.RecognitionConfig.AudioEncoding.OGG_OPUS,
+        ]:
+            try:
+                config = speech.RecognitionConfig(
+                    encoding=encoding,
+                    language_code="vi-VN",
+                    enable_automatic_punctuation=True,
+                    model="default",
+                )
+                response = client.recognize(config=config, audio=audio)
+                texts = [
+                    r.alternatives[0].transcript
+                    for r in response.results
+                    if r.alternatives
+                ]
+                text = " ".join(texts).strip()
+                if text:
+                    return text, ""
+            except Exception:
+                continue
+
+        return "", "Không nhận diện được giọng nói — thử ghi âm lại rõ hơn"
     except Exception as e:
-        return "", f"Exception: {e}"
+        return "", f"Speech API lỗi: {e}"
 
 
 def upload_to_drive(audio_bytes: bytes, session_data: dict) -> tuple[bool, str]:
