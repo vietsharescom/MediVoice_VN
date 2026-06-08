@@ -10,6 +10,10 @@ build/
 .env
 .streamlit/secrets.toml
 demo/local_saves/
+demo/test_drive*.py
+demo/test_hf.py
+demo/find_shared_drive.py
+logs/
 *.db
 data/memory/
 data/audio/
