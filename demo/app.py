@@ -507,7 +507,11 @@ if st.session_state.result:
                 st.session_state.approved = True
                 st.session_state.session_data = session_data
 
-                if "gcp_service_account" in st.secrets:
+                # Always attempt Drive upload — log result regardless
+                if "gcp_service_account" not in st.secrets:
+                    st.session_state.drive_uploaded = False
+                    st.session_state.drive_error = "gcp_service_account không có trong Secrets"
+                else:
                     with st.spinner("📤 Đang lưu lên Google Drive..."):
                         ok, err = upload_to_drive(r.get("audio", b""), session_data)
                     st.session_state.drive_uploaded = ok
@@ -525,8 +529,11 @@ if st.session_state.result:
         sd = st.session_state.session_data
         st.markdown('<p class="approved">✅ Bệnh án đã được xác nhận</p>', unsafe_allow_html=True)
 
-        if st.session_state.drive_uploaded:
-            st.success("☁️ Đã lưu tự động lên Google Drive của MediVoice")
+        if st.session_state.get("drive_uploaded"):
+            st.success("☁️ Đã lưu lên Google Drive — cảm ơn Bác sĩ!")
+        elif st.session_state.get("drive_error"):
+            st.error(f"❌ Drive lỗi: {st.session_state.drive_error}")
+            st.warning("📩 Vui lòng tải file bên dưới và gửi về **vietshares.com@gmail.com**")
         else:
             st.info("📩 Tải file bên dưới rồi gửi về **vietshares.com@gmail.com**")
 
