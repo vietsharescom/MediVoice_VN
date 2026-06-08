@@ -1,0 +1,340 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "purpose": "Systematic ASR+NER test suite — Andy plays BS role before real pilot",
+    "total_scripts": 10,
+    "categories": ["W1_drug_names", "W2_decimals", "W3_multidrug", "W4_chitchat", "W5_dialect"]
+  },
+
+  "scripts": [
+
+    {
+      "id": "W1-001",
+      "category": "W1_drug_names",
+      "title": "Tim mạch — 3 thuốc khó phát âm",
+      "difficulty": 3,
+      "target_weakness": "Drug names: Amlodipine, Atorvastatin, Losartan",
+      "specialty": "Nội khoa tổng quát",
+      "duration_target_sec": 35,
+
+      "clinical_content": "Bệnh nhân nam 58 tuổi, tăng huyết áp + rối loạn mỡ máu tái khám. Huyết áp 145 trên 90. Mạch 78. Nhiệt độ 36.5. Cân nặng 72 kg. Chẩn đoán tăng huyết áp độ 2 kèm rối loạn lipid máu. Kê Amlodipine 5mg uống 1 viên mỗi sáng. Losartan 50mg uống 1 viên mỗi sáng. Atorvastatin 20mg uống 1 viên mỗi tối. Tái khám sau 4 tuần, nhịn ăn xét nghiệm lipid máu trước khi đến.",
+
+      "natural_wrapper": "Chèn vào: hỏi thăm sức khoẻ ('anh có đỡ chưa?'), nhận xét về thời tiết, dặn không ăn mặn, nói tiếng địa phương thoải mái.",
+
+      "ground_truth": {
+        "chan_doan": "Tăng huyết áp độ 2 kèm rối loạn lipid máu",
+        "icd": "I11.9",
+        "sinh_hieu": {
+          "huyet_ap": "145/90",
+          "mach": 78,
+          "nhiet_do": 36.5,
+          "can_nang": 72
+        },
+        "don_thuoc": [
+          {"ten": "Amlodipine", "ham_luong": "5mg", "lieu": "1 viên/sáng", "ngay": "30 ngày"},
+          {"ten": "Losartan", "ham_luong": "50mg", "lieu": "1 viên/sáng", "ngay": "30 ngày"},
+          {"ten": "Atorvastatin", "ham_luong": "20mg", "lieu": "1 viên/tối", "ngay": "30 ngày"}
+        ],
+        "tai_kham": "4 tuần, nhịn ăn xét nghiệm lipid"
+      },
+
+      "watch_for": ["Amlodipine ASR error", "Atorvastatin ASR error", "Losartan ASR error", "3 drugs all captured"]
+    },
+
+    {
+      "id": "W1-002",
+      "category": "W1_drug_names",
+      "title": "Tâm thần — thuốc nhạy cảm khó đọc",
+      "difficulty": 4,
+      "target_weakness": "Drug names: Diazepam, Sertraline, Alprazolam",
+      "specialty": "Nội khoa tổng quát",
+      "duration_target_sec": 30,
+
+      "clinical_content": "Bệnh nhân nữ 42 tuổi, rối loạn lo âu và mất ngủ. Huyết áp 118 trên 76. Mạch 82. Chẩn đoán rối loạn lo âu lan toả kèm mất ngủ. Kê Sertraline 50mg uống 1 viên mỗi sáng sau ăn. Diazepam 2mg uống 1 viên tối trước ngủ khi cần — không uống quá 2 viên mỗi tuần. Tái khám sau 2 tuần.",
+
+      "natural_wrapper": "Hỏi: 'Chị ngủ được không? Công việc căng thẳng không?', giải thích nhẹ nhàng về thuốc, dặn không uống rượu khi dùng Diazepam.",
+
+      "ground_truth": {
+        "chan_doan": "Rối loạn lo âu lan toả kèm mất ngủ",
+        "icd": "F41.1",
+        "sinh_hieu": {
+          "huyet_ap": "118/76",
+          "mach": 82,
+          "nhiet_do": 0,
+          "can_nang": 0
+        },
+        "don_thuoc": [
+          {"ten": "Sertraline", "ham_luong": "50mg", "lieu": "1 viên/sáng sau ăn", "ngay": "14 ngày"},
+          {"ten": "Diazepam", "ham_luong": "2mg", "lieu": "1 viên tối khi cần", "ngay": ""}
+        ],
+        "tai_kham": "2 tuần"
+      },
+
+      "watch_for": ["Sertraline ASR", "Diazepam ASR (Zempalm?)", "conditional dosing captured", "2 weeks follow-up"]
+    },
+
+    {
+      "id": "W2-001",
+      "category": "W2_decimals",
+      "title": "Nhi khoa — số thập phân nhiều",
+      "difficulty": 3,
+      "target_weakness": "Decimal numbers: 37.8°C, 38.2°C, 0.25mg/kg, weight decimals",
+      "specialty": "Nội khoa tổng quát",
+      "duration_target_sec": 30,
+
+      "clinical_content": "Bệnh nhân nam 7 tuổi, cân nặng 22.5 kilogram. Sốt 38.2 độ C, ho, sổ mũi 3 ngày. Huyết áp 95 trên 60. Mạch 95. Chẩn đoán nhiễm siêu vi đường hô hấp trên. Kê Paracetamol 250mg uống khi sốt trên 38.5 độ, cách nhau ít nhất 4 giờ. Ambroxol 15mg siro uống 5ml ngày 3 lần sau ăn. Nước muối sinh lý nhỏ mũi 3 lần mỗi ngày. Tái khám sau 5 ngày hoặc ngay nếu sốt trên 39 độ.",
+
+      "natural_wrapper": "Hỏi phụ huynh: 'Con ăn được không? Ngủ sao?', dặn cho con uống nhiều nước, nghỉ học 2 ngày.",
+
+      "ground_truth": {
+        "chan_doan": "Nhiễm siêu vi đường hô hấp trên",
+        "icd": "J06.9",
+        "sinh_hieu": {
+          "huyet_ap": "95/60",
+          "mach": 95,
+          "nhiet_do": 38.2,
+          "can_nang": 22.5
+        },
+        "don_thuoc": [
+          {"ten": "Paracetamol", "ham_luong": "250mg", "lieu": "khi sốt >38.5°C, cách 4 giờ", "ngay": ""},
+          {"ten": "Ambroxol", "ham_luong": "15mg siro", "lieu": "5ml x 3/ngày sau ăn", "ngay": "5 ngày"},
+          {"ten": "Natri Clorid", "ham_luong": "0.9%", "lieu": "nhỏ mũi 3 lần/ngày", "ngay": "5 ngày"}
+        ],
+        "tai_kham": "5 ngày hoặc ngay nếu sốt >39°C"
+      },
+
+      "watch_for": ["22.5kg decimal", "38.2 vs 38 captured", "38.5 threshold in dosing", "39 degree threshold"]
+    },
+
+    {
+      "id": "W3-001",
+      "category": "W3_multidrug",
+      "title": "Đái tháo đường + THA — 4 thuốc phức tạp",
+      "difficulty": 4,
+      "target_weakness": "4 drugs, different schedules: sáng/tối/sau ăn/trước ăn",
+      "specialty": "Nội tiết – Đái tháo đường",
+      "duration_target_sec": 40,
+
+      "clinical_content": "Bệnh nhân nam 62 tuổi, đái tháo đường type 2 kèm tăng huyết áp tái khám định kỳ. Huyết áp 138 trên 88. Mạch 74. Nhiệt độ 36.6. Cân nặng 80 kilogram. Đường huyết đói hôm nay 9.2 mmol trên lít. Chẩn đoán đái tháo đường type 2 chưa kiểm soát tốt kèm tăng huyết áp. Kê Metformin 1000mg uống 1 viên ngày 2 lần sau ăn sáng và sau ăn tối. Glipizide 5mg uống 1 viên mỗi sáng trước ăn 30 phút. Amlodipine 5mg uống 1 viên mỗi sáng. Aspirin 81mg uống 1 viên mỗi tối sau ăn. Tái khám sau 6 tuần, nhịn ăn xét nghiệm đường huyết và HbA1c.",
+
+      "natural_wrapper": "Hỏi: 'Anh ăn uống có kiêng không? Đi bộ được không?', nhắc tác dụng phụ của Metformin (buồn nôn lúc đầu), dặn không bỏ thuốc.",
+
+      "ground_truth": {
+        "chan_doan": "Đái tháo đường type 2 chưa kiểm soát tốt kèm tăng huyết áp",
+        "icd": "E11.9",
+        "sinh_hieu": {
+          "huyet_ap": "138/88",
+          "mach": 74,
+          "nhiet_do": 36.6,
+          "can_nang": 80
+        },
+        "don_thuoc": [
+          {"ten": "Metformin", "ham_luong": "1000mg", "lieu": "1 viên x 2/ngày sau ăn", "ngay": "42 ngày"},
+          {"ten": "Glipizide", "ham_luong": "5mg", "lieu": "1 viên/sáng trước ăn 30'", "ngay": "42 ngày"},
+          {"ten": "Amlodipine", "ham_luong": "5mg", "lieu": "1 viên/sáng", "ngay": "42 ngày"},
+          {"ten": "Aspirin", "ham_luong": "81mg", "lieu": "1 viên/tối sau ăn", "ngay": "42 ngày"}
+        ],
+        "tai_kham": "6 tuần, nhịn ăn xét nghiệm đường huyết + HbA1c"
+      },
+
+      "watch_for": ["4 drugs all captured", "Metformin 2x/day schedule", "Glipizide before meal", "Aspirin 81mg vs 81 viên"]
+    },
+
+    {
+      "id": "W3-002",
+      "category": "W3_multidrug",
+      "title": "Viêm phế quản — 5 thuốc đa dạng",
+      "difficulty": 5,
+      "target_weakness": "5 drugs, mixed oral/inhaler/nebulizer",
+      "specialty": "Hô hấp",
+      "duration_target_sec": 40,
+
+      "clinical_content": "Bệnh nhân nữ 35 tuổi, ho có đờm vàng xanh 7 ngày, sốt 38.4, khó thở nhẹ khi gắng sức. Huyết áp 118 trên 75. Mạch 92. Nhiệt độ 38.4 độ C. SpO2 96 phần trăm. Nghe phổi có ran ẩm rải rác. Chẩn đoán viêm phế quản cấp có bội nhiễm. Kê Amoxicillin-Clavulanate 625mg uống 1 viên ngày 2 lần sau ăn trong 7 ngày. Bromhexine 8mg uống 1 viên ngày 3 lần. Salbutamol 2mg uống 1 viên ngày 3 lần khi khó thở. Paracetamol 500mg uống khi sốt trên 38.5 độ. Vitamin C 500mg uống 1 viên mỗi ngày. Tái khám sau 7 ngày hoặc ngay nếu khó thở nhiều hơn.",
+
+      "natural_wrapper": "Hỏi về công việc, môi trường làm việc có bụi không, nhắc không hút thuốc lá, dặn uống nhiều nước ấm, nghỉ ngơi.",
+
+      "ground_truth": {
+        "chan_doan": "Viêm phế quản cấp có bội nhiễm",
+        "icd": "J20.9",
+        "sinh_hieu": {
+          "huyet_ap": "118/75",
+          "mach": 92,
+          "nhiet_do": 38.4,
+          "can_nang": 0
+        },
+        "don_thuoc": [
+          {"ten": "Amoxicillin/Clavulanate", "ham_luong": "625mg", "lieu": "1 viên x 2/ngày sau ăn", "ngay": "7 ngày"},
+          {"ten": "Bromhexine", "ham_luong": "8mg", "lieu": "1 viên x 3/ngày", "ngay": "7 ngày"},
+          {"ten": "Salbutamol", "ham_luong": "2mg", "lieu": "1 viên x 3/ngày khi khó thở", "ngay": "7 ngày"},
+          {"ten": "Paracetamol", "ham_luong": "500mg", "lieu": "khi sốt >38.5°C", "ngay": ""},
+          {"ten": "Vitamin C", "ham_luong": "500mg", "lieu": "1 viên/ngày", "ngay": "7 ngày"}
+        ],
+        "tai_kham": "7 ngày hoặc ngay nếu khó thở tăng"
+      },
+
+      "watch_for": ["5 drugs all captured", "Amoxicillin-Clavulanate full name", "Salbutamol conditional use", "SpO2 96% captured?"]
+    },
+
+    {
+      "id": "W4-001",
+      "category": "W4_chitchat",
+      "title": "Da liễu — 50% hội thoại, 50% lâm sàng",
+      "difficulty": 4,
+      "target_weakness": "NER robustness — extract clinical info from heavy chitchat",
+      "specialty": "Da liễu",
+      "duration_target_sec": 45,
+
+      "clinical_content": "Bệnh nhân nữ 28 tuổi, nổi mẩn đỏ ngứa toàn thân sau ăn hải sản 1 ngày. Huyết áp 110 trên 70. Mạch 84. Nhiệt độ 36.8. Không phù mặt, không khó thở. Chẩn đoán mề đay cấp do dị ứng thức ăn. Kê Loratadine 10mg uống 1 viên mỗi ngày. Methylprednisolone 4mg uống 1 viên ngày 2 lần sau ăn trong 3 ngày. Tránh hải sản và thức ăn tanh ít nhất 2 tuần. Tái khám ngay nếu khó thở hoặc phù mặt.",
+
+      "natural_wrapper": "NHIỀU HỘI THOẠI: hỏi chị ăn tiệc ở đâu, hỏi chị có hay bị dị ứng không, kể về thời tiết nóng, hỏi nghề nghiệp, dặn dò kỹ về chế độ ăn, chuyện về ăn uống mùa hè. Mục tiêu: hội thoại chiếm ít nhất 50% thời lượng.",
+
+      "ground_truth": {
+        "chan_doan": "Mề đay cấp do dị ứng thức ăn",
+        "icd": "L50.0",
+        "sinh_hieu": {
+          "huyet_ap": "110/70",
+          "mach": 84,
+          "nhiet_do": 36.8,
+          "can_nang": 0
+        },
+        "don_thuoc": [
+          {"ten": "Loratadine", "ham_luong": "10mg", "lieu": "1 viên/ngày", "ngay": "7 ngày"},
+          {"ten": "Methylprednisolone", "ham_luong": "4mg", "lieu": "1 viên x 2/ngày sau ăn", "ngay": "3 ngày"}
+        ],
+        "tai_kham": "Ngay nếu khó thở hoặc phù mặt"
+      },
+
+      "watch_for": ["Diagnosis extracted despite chitchat", "Methylprednisolone vs Prednisolone", "conditional follow-up"]
+    },
+
+    {
+      "id": "W4-002",
+      "category": "W4_chitchat",
+      "title": "Tổng quát — 70% hội thoại (hard case)",
+      "difficulty": 5,
+      "target_weakness": "Extreme chitchat — can NER still extract anything?",
+      "specialty": "Nội khoa tổng quát",
+      "duration_target_sec": 50,
+
+      "clinical_content": "Bệnh nhân nam 45 tuổi, đau đầu vùng chẩm 2 ngày, huyết áp 158 trên 96. Mạch 80. Nhiệt độ 36.5. Chẩn đoán tăng huyết áp độ 2 chưa điều trị. Kê Amlodipine 5mg uống 1 viên mỗi sáng. Tái khám sau 2 tuần theo dõi huyết áp tại nhà.",
+
+      "natural_wrapper": "HỘI THOẠI NHIỀU NHẤT CÓ THỂ: nói chuyện về công việc văn phòng, stress, hỏi thăm gia đình, bàn về chế độ ăn nhạt, khuyên bỏ thuốc lá nếu có, hỏi về giấc ngủ, nói về tập thể dục, bàn về thời tiết Sài Gòn, nhắc uống nước. Thông tin lâm sàng nằm rải rác giữa các hội thoại.",
+
+      "ground_truth": {
+        "chan_doan": "Tăng huyết áp độ 2 chưa điều trị",
+        "icd": "I10",
+        "sinh_hieu": {
+          "huyet_ap": "158/96",
+          "mach": 80,
+          "nhiet_do": 36.5,
+          "can_nang": 0
+        },
+        "don_thuoc": [
+          {"ten": "Amlodipine", "ham_luong": "5mg", "lieu": "1 viên/sáng", "ngay": "14 ngày"}
+        ],
+        "tai_kham": "2 tuần, theo dõi HA tại nhà"
+      },
+
+      "watch_for": ["HA 158/96 extracted despite noise", "Amlodipine captured", "only 1 drug not duplicated"]
+    },
+
+    {
+      "id": "W5-001",
+      "category": "W5_dialect",
+      "title": "Tiêu hoá — tiếng Nam thuần, không chuẩn",
+      "difficulty": 4,
+      "target_weakness": "Southern dialect + informal terms throughout",
+      "specialty": "Tiêu hóa",
+      "duration_target_sec": 35,
+
+      "clinical_content": "Bệnh nhân nam 50 tuổi, đau bụng trên rốn, ợ chua, buồn nôn 2 tuần. Huyết áp 125 trên 80. Mạch 76. Không nôn ra máu, không phân đen. Chẩn đoán viêm dạ dày trào ngược. Kê Omeprazole 20mg uống 1 viên mỗi sáng trước ăn 30 phút. Domperidone 10mg uống 1 viên ngày 3 lần trước ăn 15 phút. Tái khám sau 4 tuần, nội soi nếu không đỡ.",
+
+      "natural_wrapper": "TIẾNG NAM: dùng 'hỏng' thay 'không', 'cổ' thay 'cô', 'ổng' thay 'ông', 'vô' thay 'vào', 'kiếm' thay 'tìm', 'hỏi thăm' kiểu miền Nam. Hỏi anh ăn cay nhiều không, uống cà phê nhiều không, làm ca đêm không. Nói nhanh, giọng Sài Gòn.",
+
+      "ground_truth": {
+        "chan_doan": "Viêm dạ dày trào ngược",
+        "icd": "K29.7",
+        "sinh_hieu": {
+          "huyet_ap": "125/80",
+          "mach": 76,
+          "nhiet_do": 0,
+          "can_nang": 0
+        },
+        "don_thuoc": [
+          {"ten": "Omeprazole", "ham_luong": "20mg", "lieu": "1 viên/sáng trước ăn 30'", "ngay": "28 ngày"},
+          {"ten": "Domperidone", "ham_luong": "10mg", "lieu": "1 viên x 3/ngày trước ăn 15'", "ngay": "28 ngày"}
+        ],
+        "tai_kham": "4 tuần, nội soi nếu không đỡ"
+      },
+
+      "watch_for": ["Omeprazole timing captured", "Domperidone vs Domperidol", "before-meal timing preserved"]
+    },
+
+    {
+      "id": "W2-002",
+      "category": "W2_decimals",
+      "title": "Cấp cứu — sinh hiệu bất thường, nhiều số",
+      "difficulty": 3,
+      "target_weakness": "Abnormal vitals with decimals: SpO2, nhiệt độ cao, mạch nhanh",
+      "specialty": "Nội khoa tổng quát",
+      "duration_target_sec": 30,
+
+      "clinical_content": "Bệnh nhân nữ 70 tuổi, sốt cao 39.8 độ C, mệt nhiều, tiêu chảy 8 lần hôm qua. Huyết áp 95 trên 60, mạch 110 lần phút, SpO2 97 phần trăm. Cân nặng 55 kilogram. Dấu hiệu mất nước nhẹ đến trung bình. Chẩn đoán viêm dạ dày ruột cấp kèm mất nước. Truyền dịch Lactated Ringer 500ml trong 2 giờ. Metronidazole 500mg uống 1 viên ngày 3 lần trong 5 ngày. Oresol pha uống liên tục theo hướng dẫn. Tái khám ngay nếu không tiểu được hoặc sốt cao hơn.",
+
+      "natural_wrapper": "Hỏi thăm bà cụ: ăn gì hôm qua, đi du lịch không, chăm sóc kiểu Việt Nam ('bà uống nước dừa đi'), lo lắng về tuổi tác, hỏi con cái đi cùng.",
+
+      "ground_truth": {
+        "chan_doan": "Viêm dạ dày ruột cấp kèm mất nước",
+        "icd": "A09",
+        "sinh_hieu": {
+          "huyet_ap": "95/60",
+          "mach": 110,
+          "nhiet_do": 39.8,
+          "can_nang": 55
+        },
+        "don_thuoc": [
+          {"ten": "Ringer Lactate", "ham_luong": "500ml", "lieu": "truyền TM trong 2 giờ", "ngay": ""},
+          {"ten": "Metronidazole", "ham_luong": "500mg", "lieu": "1 viên x 3/ngày", "ngay": "5 ngày"},
+          {"ten": "Oresol", "ham_luong": "", "lieu": "pha uống theo hướng dẫn", "ngay": ""}
+        ],
+        "tai_kham": "Ngay nếu không tiểu hoặc sốt cao hơn"
+      },
+
+      "watch_for": ["39.8 decimal captured", "SpO2 97% captured?", "mạch 110 (tachycardia)", "Oresol vs Orizone"]
+    },
+
+    {
+      "id": "W1-003",
+      "category": "W1_drug_names",
+      "title": "Kháng sinh khó — Azithromycin + Levofloxacin",
+      "difficulty": 4,
+      "target_weakness": "Long antibiotic names: Azithromycin, Levofloxacin, Cefuroxime",
+      "specialty": "Hô hấp",
+      "duration_target_sec": 30,
+
+      "clinical_content": "Bệnh nhân nam 55 tuổi, ho kéo dài 10 ngày, đờm vàng, sốt 38.5. Huyết áp 130 trên 82. Mạch 88. Nhiệt độ 38.5 độ C. X-quang phổi thấm nhiễm thuỳ dưới phải. Chẩn đoán viêm phổi cộng đồng mức độ nhẹ đến trung bình. Kê Levofloxacin 500mg uống 1 viên mỗi ngày trong 7 ngày. Acetylcysteine 200mg uống 1 gói ngày 3 lần pha với nước ấm. Paracetamol 500mg uống khi sốt. Tái khám sau 3 ngày để đánh giá đáp ứng.",
+
+      "natural_wrapper": "Hỏi anh làm gì, có hút thuốc không, nhà có máy lạnh không, giải thích X-quang đơn giản, dặn uống thuốc đủ liệu trình không bỏ dở.",
+
+      "ground_truth": {
+        "chan_doan": "Viêm phổi cộng đồng mức độ nhẹ-trung bình",
+        "icd": "J18.9",
+        "sinh_hieu": {
+          "huyet_ap": "130/82",
+          "mach": 88,
+          "nhiet_do": 38.5,
+          "can_nang": 0
+        },
+        "don_thuoc": [
+          {"ten": "Levofloxacin", "ham_luong": "500mg", "lieu": "1 viên/ngày", "ngay": "7 ngày"},
+          {"ten": "Acetylcysteine", "ham_luong": "200mg", "lieu": "1 gói x 3/ngày pha nước ấm", "ngay": "7 ngày"},
+          {"ten": "Paracetamol", "ham_luong": "500mg", "lieu": "khi sốt", "ngay": ""}
+        ],
+        "tai_kham": "3 ngày để đánh giá đáp ứng điều trị"
+      },
+
+      "watch_for": ["Levofloxacin vs Levoflox", "Acetylcysteine vs N-acetylcysteine", "X-quang info not in form (correct)"]
+    }
+
+  ]
+}

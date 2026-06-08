@@ -9,7 +9,48 @@ import time
 import io
 import wave
 import requests
+import os
 from datetime import datetime
+
+# ── Load test scripts ────────────────────────────────────────────────────────
+@st.cache_data
+def load_test_suite():
+    path = os.path.join(os.path.dirname(__file__), "test_scripts", "test_suite.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return None
+
+def auto_score(form_approved: dict, ground_truth: dict) -> dict:
+    """Compare NER output vs ground truth. Returns per-field scores."""
+    scores = {}
+    # Chẩn đoán
+    gt_cd = ground_truth.get("chan_doan", "").lower().strip()
+    ap_cd = form_approved.get("chan_doan", "").lower().strip()
+    scores["chan_doan"] = "✅" if gt_cd and ap_cd and (gt_cd in ap_cd or ap_cd in gt_cd) else "❌"
+    # ICD
+    gt_icd = ground_truth.get("icd", "").strip()
+    ap_icd = form_approved.get("icd", "").strip()
+    scores["icd"] = "✅" if gt_icd and ap_icd and gt_icd == ap_icd else ("⚠️" if not ap_icd else "❌")
+    # Sinh hiệu
+    gt_sh = ground_truth.get("sinh_hieu", {})
+    ap_sh = form_approved.get("sinh_hieu", {})
+    sh_ok = all(
+        str(gt_sh.get(k, 0)) == str(ap_sh.get(k, 0))
+        for k in ["huyet_ap", "mach"]
+        if gt_sh.get(k)
+    )
+    scores["sinh_hieu"] = "✅" if sh_ok else "❌"
+    # Thuốc — đếm % tên thuốc đúng
+    gt_drugs = {d["ten"].lower() for d in ground_truth.get("don_thuoc", [])}
+    ap_drugs = {d["ten"].lower() for d in form_approved.get("don_thuoc", [])}
+    if gt_drugs:
+        matched = sum(1 for g in gt_drugs if any(g in a or a in g for a in ap_drugs))
+        scores["don_thuoc"] = f"✅ {matched}/{len(gt_drugs)}" if matched == len(gt_drugs) else f"⚠️ {matched}/{len(gt_drugs)}"
+    else:
+        scores["don_thuoc"] = "N/A"
+    return scores
 
 
 def get_audio_duration(audio_bytes: bytes) -> float:
@@ -179,7 +220,7 @@ st.set_page_config(
     page_title="MediVoice VN — Demo",
     page_icon="🎙️",
     layout="centered",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="auto",
 )
 
 st.markdown("""
@@ -309,6 +350,33 @@ st.markdown("""
 🔒 DEMO: Vui lòng KHÔNG nhập tên/thông tin bệnh nhân thật
 </div>
 """, unsafe_allow_html=True)
+
+# ── Test Mode Sidebar ────────────────────────────────────────────────────────
+test_suite = load_test_suite()
+active_script = None
+if test_suite:
+    with st.sidebar:
+        st.markdown("## 🧪 Test Mode — Andy Only")
+        st.caption("Chọn script để test systematic. Ground truth tự động so sánh sau khi lưu.")
+        script_options = {
+            f"{s['id']} · {s['title']}": s
+            for s in test_suite["scripts"]
+        }
+        selected = st.selectbox("Script", ["— Không dùng (demo thường) —"] + list(script_options.keys()))
+        if selected != "— Không dùng (demo thường) —":
+            active_script = script_options[selected]
+            s = active_script
+            st.markdown(f"**Weakness:** `{s['target_weakness']}`")
+            st.markdown(f"**Difficulty:** {'⭐' * s['difficulty']}")
+            st.markdown(f"**Target duration:** ~{s['duration_target_sec']}s")
+            st.divider()
+            st.markdown("**📋 Nội dung lâm sàng cần truyền đạt:**")
+            st.info(s["clinical_content"])
+            st.markdown("**💬 Cách nói tự nhiên:**")
+            st.warning(s["natural_wrapper"])
+            st.markdown("**👀 Watch for:**")
+            for w in s["watch_for"]:
+                st.markdown(f"- {w}")
 
 st.divider()
 
@@ -531,7 +599,17 @@ if st.session_state.result:
                         "don_thuoc": r["don_thuoc"],
                     },
                     "confidence": r["confidence"],
+                    "test_script_id": active_script["id"] if active_script else None,
+                    "ground_truth": active_script["ground_truth"] if active_script else None,
                 }
+                # Auto-score nếu đang chạy test script
+                if active_script:
+                    form_app = {
+                        "chan_doan": chan_doan, "icd": icd,
+                        "sinh_hieu": {"huyet_ap": huyet_ap, "mach": mach},
+                        "don_thuoc": r["don_thuoc"],
+                    }
+                    session_data["auto_score"] = auto_score(form_app, active_script["ground_truth"])
                 st.session_state.approved = True
                 st.session_state.session_data = session_data
 
@@ -565,8 +643,17 @@ if st.session_state.result:
         else:
             st.info("📩 Tải file bên dưới rồi gửi về **vietshares.com@gmail.com**")
 
+        # Auto-score nếu có test script
+        if sd.get("auto_score"):
+            sc = sd["auto_score"]
+            st.markdown(f"### 🎯 Auto-score — Script `{sd.get('test_script_id')}`")
+            sc_cols = st.columns(4)
+            for i, (field, score) in enumerate(sc.items()):
+                sc_cols[i % 4].metric(field, score)
+            st.divider()
+
         # Hiển thị xác nhận dữ liệu đã lưu
-        with st.expander("🔍 Kiểm tra dữ liệu đã lưu", expanded=True):
+        with st.expander("🔍 Kiểm tra dữ liệu đã lưu", expanded=False):
             col_v1, col_v2 = st.columns(2)
             with col_v1:
                 st.markdown(f"**Accuracy:** {sd.get('accuracy_rating', '—')}")
