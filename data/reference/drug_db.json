@@ -8,7 +8,7 @@
       "VietMed-NER DRUGCHEMICAL analysis + clinical VN OB/GYN (2026-06-09)",
       "DRUG-ALIAS-001: PhoWhisper phonetic variants for Glimepiride/Colchicine/Etoricoxib/Vitamin B/Metformin/Omeprazole (2026-06-10)"
     ],
-    "total_drugs": 118,
+    "total_drugs": 119,
     "version": "0.3.0",
     "categories": {
       "Giảm đau": 3,
@@ -57,6 +57,7 @@
       "Tiểu đường DPP-4 inhibitor": 1,
       "Thần kinh": 2,
       "Chống trầm cảm TCA": 1,
+      "Chống trầm cảm SSRI": 1,
       "Benzodiazepine": 2,
       "Điều trị migraine": 1,
       "Chóng mặt": 2,
@@ -86,7 +87,7 @@
     },
     "otc_count": 38,
     "rx_count": 72,
-    "total_inn": 119
+    "total_inn": 120
   },
   "by_inn": {
     "Paracetamol": {
@@ -1769,6 +1770,37 @@
         "tryptanol",
         "trầm cảm",
         "đau mãn"
+      ]
+    },
+    "Sertraline": {
+      "inn": "Sertraline",
+      "brands": [
+        "Zoloft",
+        "Lustral",
+        "Sertraline",
+        "Serdep",
+        "cetralin",
+        "xetralin",
+        "cetraline",
+        "setralin",
+        "se tra lin",
+        "xê tra lin"
+      ],
+      "forms": [
+        "viên 50mg",
+        "viên 100mg"
+      ],
+      "typical": "50-200mg/ngày (1 lần/ngày, buổi sáng hoặc tối)",
+      "category": "Chống trầm cảm SSRI",
+      "otc": false,
+      "keywords": [
+        "sertraline",
+        "zoloft",
+        "lustral",
+        "cetralin",
+        "xetralin",
+        "trầm cảm ssri",
+        "lo âu"
       ]
     },
     "Diazepam": {
@@ -3845,6 +3877,33 @@
     ],
     "đau mãn": [
       "Amitriptyline"
+    ],
+    "sertraline": [
+      "Sertraline"
+    ],
+    "zoloft": [
+      "Sertraline"
+    ],
+    "lustral": [
+      "Sertraline"
+    ],
+    "cetralin": [
+      "Sertraline"
+    ],
+    "xetralin": [
+      "Sertraline"
+    ],
+    "cetraline": [
+      "Sertraline"
+    ],
+    "setralin": [
+      "Sertraline"
+    ],
+    "se tra lin": [
+      "Sertraline"
+    ],
+    "xê tra lin": [
+      "Sertraline"
     ],
     "diazepam": [
       "Diazepam"

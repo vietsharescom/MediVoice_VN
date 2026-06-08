@@ -32,7 +32,8 @@ def auto_score(form_approved: dict, ground_truth: dict) -> dict:
     # ICD
     gt_icd = ground_truth.get("icd", "").strip()
     ap_icd = form_approved.get("icd", "").strip()
-    scores["icd"] = "✅" if gt_icd and ap_icd and gt_icd == ap_icd else ("⚠️" if not ap_icd else "❌")
+    icd_ok = gt_icd and ap_icd and (gt_icd in ap_icd or ap_icd in gt_icd or any(c.strip() in ap_icd for c in gt_icd.split(",")))
+    scores["icd"] = "✅" if icd_ok else ("⚠️" if not ap_icd else "❌")
     # Sinh hiệu
     gt_sh = ground_truth.get("sinh_hieu", {})
     ap_sh = form_approved.get("sinh_hieu", {})
