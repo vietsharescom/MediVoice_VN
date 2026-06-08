@@ -386,7 +386,8 @@ if st.session_state.result:
         huyet_ap = st.text_input("Huyết áp (mmHg)", value=sh.get("huyet_ap", ""))
         mach = st.number_input("Mạch (lần/phút)", value=int(sh.get("mach", 0)), min_value=0, max_value=200)
     with col2:
-        nhiet_do = st.number_input("Nhiệt độ (°C)", value=float(sh.get("nhiet_do", 36.5)), min_value=34.0, max_value=42.0, step=0.1)
+        _nd = float(sh.get("nhiet_do", 0) or 0)
+        nhiet_do = st.number_input("Nhiệt độ (°C)", value=_nd if 34.0 <= _nd <= 42.0 else 36.5, min_value=34.0, max_value=42.0, step=0.1)
         can_nang = st.number_input("Cân nặng (kg)", value=float(sh.get("can_nang", 0)), min_value=0.0, max_value=200.0, step=0.1)
 
     ly_do = st.text_area("Lý do khám", value=r.get("ly_do", ""), height=60)
