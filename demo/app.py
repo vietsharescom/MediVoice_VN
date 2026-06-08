@@ -458,11 +458,13 @@ if st.session_state.result:
         "Transcript AI có khớp với những gì Bác sĩ nói không?",
         ["✅ Đúng hoàn toàn", "🔶 Đúng một phần", "❌ Sai nhiều"],
         horizontal=True,
+        key="accuracy_rating",
     )
     correction = st.text_area(
         "Bác sĩ ghi lại nội dung THỰC TẾ (nếu khác với transcript)",
         placeholder="Nếu AI nhận diện sai, ghi lại nội dung đúng ở đây để cải thiện hệ thống...",
         height=80,
+        key="correction_text",
     )
 
     st.divider()
@@ -536,6 +538,21 @@ if st.session_state.result:
             st.warning("📩 Vui lòng tải file bên dưới và gửi về **vietshares.com@gmail.com**")
         else:
             st.info("📩 Tải file bên dưới rồi gửi về **vietshares.com@gmail.com**")
+
+        # Hiển thị xác nhận dữ liệu đã lưu
+        with st.expander("🔍 Kiểm tra dữ liệu đã lưu", expanded=True):
+            col_v1, col_v2 = st.columns(2)
+            with col_v1:
+                st.markdown(f"**Accuracy:** {sd.get('accuracy_rating', '—')}")
+                st.markdown(f"**Correction:** `{sd.get('correction', '(trống)') or '(trống)'}`")
+                st.markdown(f"**Chẩn đoán:** {sd.get('form_approved', {}).get('chan_doan', '—')}")
+                st.markdown(f"**ICD:** {sd.get('form_approved', {}).get('icd', '—') or '(trống)'}")
+            with col_v2:
+                st.markdown(f"**Duration:** {sd.get('audio_duration_sec', '—')}s")
+                st.markdown(f"**Browser:** {sd.get('device_browser', '—')}")
+                st.markdown(f"**Type:** {sd.get('recording_type', '—')}")
+                drugs = sd.get('form_approved', {}).get('don_thuoc', [])
+                st.markdown(f"**Thuốc:** {', '.join(d.get('ten','') for d in drugs) or '—'}")
 
         col_dl1, col_dl2 = st.columns(2)
         with col_dl1:
