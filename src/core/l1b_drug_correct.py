@@ -382,7 +382,10 @@ def correct_drug_names_v2(
 
         # ── Layer 2: Fuzzy match ──────────────────────────────────────────
         token_normalized = _normalize(words[i])
-        if len(token_normalized) >= 3:
+        # Min length per n: single word ≥6 chars, 2-word ≥9 chars, 3-word ≥12 chars
+        # Prevents common Vietnamese words (3-5 chars) from matching drug names
+        _min_len = {1: 6, 2: 9, 3: 12}
+        if len(token_normalized) >= 6:
             # Try multi-word token (2-3 words) first
             for n in (3, 2, 1):
                 if i + n > len(words):
@@ -395,6 +398,9 @@ def correct_drug_names_v2(
                 ):
                     continue
                 multi_token = _normalize(" ".join(words[i:i+n]))
+                # Enforce minimum length by n to avoid random phrase false positives
+                if len(multi_token.replace(" ", "")) < _min_len[n]:
+                    continue
                 fuzzy_map = alias_map if alias_map else full_alias
                 fuzz_inn, fuzz_conf, is_ambiguous = _fuzzy_match(multi_token, fuzzy_map)
                 if fuzz_inn is not None and fuzz_conf >= DRUG_FUZZY_CUTOFF_FLAG / 100:

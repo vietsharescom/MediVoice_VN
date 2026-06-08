@@ -88,12 +88,20 @@ def get_browser_info() -> str:
         return "unknown"
 
 
+def _secret(key: str, default: str = "") -> str:
+    """Safe secrets access — returns default if secrets.toml missing."""
+    try:
+        return st.secrets.get(key, default)
+    except Exception:
+        return default
+
+
 def transcribe_audio(audio_bytes: bytes) -> tuple[str, str]:
     """Transcribe using Groq Whisper Large V3 (free tier, Vietnamese).
     Returns (transcript, error_msg).
     """
     try:
-        api_key = st.secrets.get("groq_api_key", "")
+        api_key = _secret("groq_api_key")
         if not api_key:
             return "", "groq_api_key chưa được cấu hình trong Secrets"
         headers = {"Authorization": f"Bearer {api_key}"}
@@ -122,7 +130,7 @@ def extract_clinical_data(transcript: str) -> tuple[dict, str]:
     Returns (data_dict, error_msg).
     """
     try:
-        api_key = st.secrets.get("groq_api_key", "")
+        api_key = _secret("groq_api_key")
         if not api_key or not transcript:
             return {}, "Không có transcript hoặc API key"
         prompt = f"""Bạn là AI phân tích bệnh án y tế tiếng Việt, chuyên xử lý lời nói tự nhiên của bác sĩ trong phòng khám.
@@ -477,7 +485,7 @@ if audio_data is not None and not st.session_state.approved:
     ner_error = ""
     drug_flags = []
     if real_transcript:
-        api_key = st.secrets.get("groq_api_key", "")
+        api_key = _secret("groq_api_key")
         if _RAG_OK and api_key:
             with st.spinner("🧠 MediVoice AI đang phân tích lâm sàng (RAG pipeline)..."):
                 clinical_data, ner_error, drug_flags = _rag_extract(real_transcript, api_key)
@@ -512,9 +520,13 @@ if audio_data is not None and not st.session_state.approved:
     result["ner_error"] = ner_error
     result["ner_ok"] = bool(clinical_data)
     result["benh_nhan_ner"] = clinical_data.get("benh_nhan", {}) if clinical_data else {}
+    # Only surface high-confidence uncertain matches (≥0.85) — avoids noise from
+    # common Vietnamese words scoring 0.6-0.80 against drug names via fuzzy.
+    # DOSE_OUT_OF_RANGE always shown regardless of confidence.
     result["drug_flags"] = [
         {"inn": m.inn, "original": m.original_text, "reason": m.flag_reason, "confidence": round(m.confidence, 2)}
-        for m in drug_flags if m.flagged_for_review
+        for m in drug_flags
+        if m.flagged_for_review and (m.confidence >= 0.85 or m.flag_reason == "DOSE_OUT_OF_RANGE")
     ] if drug_flags else []
     result["form_ner"] = {
         "ly_do": clinical_data.get("ly_do", "") if clinical_data else "",
@@ -753,9 +765,25 @@ if st.session_state.result:
                 st.session_state.session_data = session_data
 
                 # Always attempt Drive upload — log result regardless
-                if "gcp_service_account" not in st.secrets:
-                    st.session_state.drive_uploaded = False
-                    st.session_state.drive_error = "gcp_service_account không có trong Secrets"
+                try:
+                    _has_gcp = "gcp_service_account" in st.secrets
+                except Exception:
+                    _has_gcp = False
+                if not _has_gcp:
+                    # Local mode: save JSON to demo/local_saves/
+                    _save_dir = Path(__file__).parent / "local_saves"
+                    _save_dir.mkdir(exist_ok=True)
+                    _save_path = _save_dir / f"session_{session_data['session_id']}.json"
+                    try:
+                        _save_path.write_text(
+                            json.dumps(session_data, ensure_ascii=False, indent=2),
+                            encoding="utf-8",
+                        )
+                        st.session_state.drive_uploaded = False
+                        st.session_state.drive_error = f"Local mode — đã lưu: demo/local_saves/{_save_path.name}"
+                    except Exception as _e:
+                        st.session_state.drive_uploaded = False
+                        st.session_state.drive_error = f"Local save lỗi: {_e}"
                 else:
                     with st.spinner("📤 Đang lưu lên Google Drive..."):
                         ok, err = upload_to_drive(r.get("audio", b""), session_data)

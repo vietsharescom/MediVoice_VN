@@ -1,6 +1,19 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.8.5] — 2026-06-08 — Demo app local mode + L1b false positive fix · 473 tests
+
+### Demo App — Local Mode
+- fix(demo): `demo/app.py` — safe secrets wrapper `_secret()` — không còn StreamlitSecretNotFoundError khi chạy local
+- feat(demo): `demo/local_saves/` — local JSON fallback khi không có GCP (local mode tự lưu session data)
+- fix(demo): drug_flags display filter — chỉ hiện flags có confidence ≥ 0.85 hoặc DOSE_OUT_OF_RANGE
+- chore(demo): `.streamlit/secrets.toml` template cho local dev (gitignored)
+
+### L1b Drug Correction — False Positive Fix
+- fix(L1b): `src/core/l1b_drug_correct.py` — minimum token length cho Layer 2 fuzzy: n=1≥6chars, n=2≥9chars, n=3≥12chars
+  - Trước: "Vân","cám","mỗi","theo" (3-5 chars) bị match Valsartan/Amoxicillin/Meloxicam/Theophylline
+  - Sau: 0 false positives trên từ thường tiếng Việt | Metformin/Glibenclamide vẫn Layer 1 exact
+
 ## [v0.8.4] — 2026-06-12 — Audio Data Map Analysis + 57 clips transcribed · 473 tests
 
 ### Tools & Eval [SES-20260612]

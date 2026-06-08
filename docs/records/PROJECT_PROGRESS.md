@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-12 | v0.8.4
+# Cập nhật: 2026-06-08 | v0.8.5
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -24,7 +24,7 @@
 | | **▼ START** | | | | | |
 | | | | | | | |
 | **P0** | **══════════════** | | | | | |
-| **P0** | **PHASE 0 — MVP** | BS nói → Mẫu 15/BV-01 → PDF | 🔵 | — | — | 6/7 milestones done |
+| **P0** | **PHASE 0 — MVP** | BS nói → Mẫu 15/BV-01 → PDF | 🔵 | — | — | Demo app local OK · LangChain RAG deployed · L1b FP fix |
 | **P0** | **══════════════** | | | | | |
 | | | | | | | |
 | P0.1 | ├─ 🟢 **Design** | VISION, BRS, PROJECT_KICKOFF S1-S9, 32 decisions locked | 🟢 | — | SES-20260603 | Andy ký S10 còn treo |

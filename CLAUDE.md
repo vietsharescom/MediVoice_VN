@@ -249,8 +249,8 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.8.4 |
-| Status | **57 real BS clips transcribed → GT review pending · Drug mishear patterns documented · eval_ref_voices.py NER bug fixed** |
+| Version | v0.8.5 |
+| Status | **Demo app local mode · L1b false positive fix (0 FP từ thường VN) · local_saves + secrets wrapper** |
 | Tests | **473/473 PASS** · bandit 0 HIGH/MEDIUM · conftest.py SKIP_QWEN |
 | Pending | **BENCH-002b GT review** (Andy điền `data/eval/ref_voice_transcripts_review.txt`) · **PA-007** (ChatGPT corpus) · **VIETMED-FIX-001** (HF_TOKEN) · **VBEE_TOKEN** |
 | Next task | **Andy GT review** Clip2+Clip3 → BENCH-002b CEER thật · **PA-007** ChatGPT corpus · **DRUG-DB-002** mở rộng 150 thuốc |
