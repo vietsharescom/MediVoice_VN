@@ -365,16 +365,21 @@ if audio_data is not None and not st.session_state.approved:
             clinical_data, ner_error = extract_clinical_data(real_transcript)
 
     # Start from mock structure, override with real extracted data
-    result = MOCK_CASES[chuyen_khoa].copy()
-    if clinical_data:
-        result.update({
-            "ly_do": clinical_data.get("ly_do") or result["ly_do"],
-            "chan_doan": clinical_data.get("chan_doan") or result["chan_doan"],
-            "icd": clinical_data.get("icd") or result["icd"],
-            "sinh_hieu": clinical_data.get("sinh_hieu") or result["sinh_hieu"],
-            "don_thuoc": clinical_data.get("don_thuoc") or result["don_thuoc"],
-            "tai_kham": clinical_data.get("tai_kham") or result["tai_kham"],
-        })
+    # Khi có real transcript: dùng NER data hoàn toàn, KHÔNG fallback mock
+    # (mock có thể sai chuyên khoa → chẩn đoán/ICD sai nguy hiểm)
+    if real_transcript and clinical_data:
+        result = {
+            "transcript": MOCK_CASES[chuyen_khoa]["transcript"],  # giữ mock transcript để tham khảo
+            "confidence": MOCK_CASES[chuyen_khoa]["confidence"],
+            "ly_do": clinical_data.get("ly_do", ""),
+            "chan_doan": clinical_data.get("chan_doan", ""),
+            "icd": clinical_data.get("icd", ""),
+            "sinh_hieu": clinical_data.get("sinh_hieu", {"nhiet_do": 0, "huyet_ap": "", "mach": 0, "can_nang": 0}),
+            "don_thuoc": clinical_data.get("don_thuoc", []),
+            "tai_kham": clinical_data.get("tai_kham", ""),
+        }
+    else:
+        result = MOCK_CASES[chuyen_khoa].copy()
     result["chuyen_khoa"] = chuyen_khoa
     result["ten_bn"] = ten_bn_demo or "Bệnh nhân Demo"
     result["cchn"] = cchn or "DEMO"
