@@ -389,6 +389,15 @@ if audio_data is not None and not st.session_state.approved:
     result["asr_error"] = asr_error
     result["ner_error"] = ner_error
     result["ner_ok"] = bool(clinical_data)
+    # Lưu NER output gốc để auto-diff với form_approved sau khi BS chỉnh
+    result["form_ner"] = {
+        "ly_do": clinical_data.get("ly_do", "") if clinical_data else "",
+        "chan_doan": clinical_data.get("chan_doan", "") if clinical_data else "",
+        "icd": clinical_data.get("icd", "") if clinical_data else "",
+        "sinh_hieu": clinical_data.get("sinh_hieu", {}) if clinical_data else {},
+        "don_thuoc": clinical_data.get("don_thuoc", []) if clinical_data else [],
+        "tai_kham": clinical_data.get("tai_kham", "") if clinical_data else "",
+    }
     st.session_state.result = result
     st.session_state.approved = False
     st.session_state.drive_error = ""
@@ -453,18 +462,28 @@ if st.session_state.result:
 
     st.divider()
 
-    st.subheader("💬 Phản hồi chất lượng")
-    accuracy = st.radio(
-        "Transcript AI có khớp với những gì Bác sĩ nói không?",
-        ["✅ Đúng hoàn toàn", "🔶 Đúng một phần", "❌ Sai nhiều"],
-        horizontal=True,
-        key="accuracy_rating",
-    )
-    correction = st.text_area(
-        "Bác sĩ ghi lại nội dung THỰC TẾ (nếu khác với transcript)",
-        placeholder="Nếu AI nhận diện sai, ghi lại nội dung đúng ở đây để cải thiện hệ thống...",
-        height=80,
+    st.subheader("💬 Đánh giá nhanh — tap ✅/❌ cho từng mục")
+    st.caption("Chỉ cần tap — không cần gõ. AI sẽ tự học từ những gì Bác sĩ vừa chỉnh trong form.")
+
+    eval_col1, eval_col2 = st.columns(2)
+    with eval_col1:
+        eval_sinh_hieu = st.radio("Sinh hiệu", ["✅ Đúng", "❌ Sai"], horizontal=True, key="eval_sh")
+        eval_chan_doan = st.radio("Chẩn đoán", ["✅ Đúng", "❌ Sai"], horizontal=True, key="eval_cd")
+    with eval_col2:
+        eval_thuoc = st.radio("Đơn thuốc", ["✅ Đúng", "❌ Sai"], horizontal=True, key="eval_dt")
+        eval_tai_kham = st.radio("Tái khám", ["✅ Đúng", "❌ Sai"], horizontal=True, key="eval_tk")
+
+    correction = st.text_input(
+        "Ghi chú nhanh (không bắt buộc)",
+        placeholder="VD: sai tên thuốc, thiếu liều lượng...",
         key="correction_text",
+    )
+    accuracy = (
+        "✅ Đúng hoàn toàn"
+        if all(v == "✅ Đúng" for v in [eval_sinh_hieu, eval_chan_doan, eval_thuoc, eval_tai_kham])
+        else "❌ Sai nhiều"
+        if all(v == "❌ Sai" for v in [eval_sinh_hieu, eval_chan_doan, eval_thuoc, eval_tai_kham])
+        else "🔶 Đúng một phần"
     )
 
     st.divider()
@@ -490,7 +509,14 @@ if st.session_state.result:
                     "transcript_real": r.get("transcript_real", ""),
                     "transcript_mock": r["transcript"],
                     "accuracy_rating": accuracy,
+                    "field_eval": {
+                        "sinh_hieu": eval_sinh_hieu,
+                        "chan_doan": eval_chan_doan,
+                        "don_thuoc": eval_thuoc,
+                        "tai_kham": eval_tai_kham,
+                    },
                     "correction": correction,
+                    "form_ner": r.get("form_ner", {}),
                     "form_approved": {
                         "ly_do": ly_do,
                         "chan_doan": chan_doan,
