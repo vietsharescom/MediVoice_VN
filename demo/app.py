@@ -49,8 +49,13 @@ def extract_clinical_data(transcript: str) -> tuple[dict, str]:
         if not api_key or not transcript:
             return {}, "Không có transcript hoặc API key"
         prompt = f"""Bạn là AI phân tích bệnh án y tế tiếng Việt.
-Từ transcript sau của bác sĩ, trích xuất thông tin lâm sàng và trả về JSON hợp lệ.
-Chỉ trả về JSON, không giải thích thêm.
+Từ transcript sau của bác sĩ (có thể chứa lỗi nhận dạng giọng nói), hãy trích xuất thông tin lâm sàng.
+
+QUY TẮC QUAN TRỌNG:
+1. Tên thuốc: chuẩn hóa về tên INN quốc tế đúng chính tả (VD: "Zempalm"→"Diazepam", "Omeprazone"→"Omeprazole", "Ampicilin"→"Ampicillin")
+2. Mã ICD-10: chỉ điền nếu chắc chắn đúng với chẩn đoán — KHÔNG đoán mò. Ví dụ: rối loạn lo âu→F41.1, viêm họng→J02.9, tăng HA→I10, tiểu đường type2→E11.9
+3. "ngay" để trống ("") nếu BS không nói số ngày cụ thể (VD: "dùng khi cần", "khi sốt")
+4. Chỉ trả về JSON, không giải thích
 
 TRANSCRIPT:
 {transcript}
@@ -59,7 +64,7 @@ FORMAT JSON:
 {{
   "ly_do": "lý do khám ngắn gọn",
   "chan_doan": "chẩn đoán chính",
-  "icd": "mã ICD-10 nếu biết (VD: J06.9), để trống nếu không chắc",
+  "icd": "mã ICD-10 chắc chắn đúng, hoặc để trống",
   "sinh_hieu": {{
     "nhiet_do": 36.5,
     "huyet_ap": "120/80",
@@ -67,7 +72,7 @@ FORMAT JSON:
     "can_nang": 0
   }},
   "don_thuoc": [
-    {{"ten": "tên thuốc", "ham_luong": "hàm lượng", "lieu": "cách dùng", "ngay": "số ngày/lần dùng"}}
+    {{"ten": "tên thuốc INN chuẩn", "ham_luong": "hàm lượng", "lieu": "cách dùng", "ngay": ""}}
   ],
   "tai_kham": "hướng dẫn tái khám hoặc dặn dò"
 }}"""
@@ -384,8 +389,13 @@ if st.session_state.result:
 
     st.markdown("**Đơn thuốc**")
     for drug in r.get("don_thuoc", []):
+        parts = [f'<b>{drug.get("ten","")}</b> {drug.get("ham_luong","")}']
+        if drug.get("lieu"):
+            parts.append(drug["lieu"])
+        if drug.get("ngay"):
+            parts.append(drug["ngay"])
         st.markdown(
-            f'<div class="drug-card">💊 <b>{drug["ten"]}</b> {drug["ham_luong"]} — {drug["lieu"]} — {drug["ngay"]}</div>',
+            f'<div class="drug-card">💊 {" — ".join(parts)}</div>',
             unsafe_allow_html=True,
         )
 
