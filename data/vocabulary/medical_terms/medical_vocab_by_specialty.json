@@ -1,0 +1,268 @@
+{
+  "_meta": {
+    "purpose": "Medical terminology dictionary by specialty — for NER boosting and ASR correction",
+    "version": "0.1.0",
+    "note": "asr_variants = how these compound terms get broken/misspelled by ASR. symptom_context = nearby words that confirm this entity.",
+    "icd_hint": "common ICD codes associated with this term — helps NER suggest ICD"
+  },
+
+  "specialties": {
+
+    "gastroenterology": {
+      "display": "Tiêu hóa",
+      "terms": {
+        "thượng vị": {
+          "standard": "thượng vị",
+          "english": "epigastric",
+          "type": "anatomy_region",
+          "asr_variants": ["thướng vị", "thương vị", "thương vi", "thượng vi"],
+          "symptom_context": ["đau", "vùng", "cơn đau", "rát", "nóng", "khó chịu"],
+          "icd_hint": ["K25", "K21", "K30", "K29"],
+          "note": "KHÔNG nhầm với 'thượng vị' trong bối cảnh nói về tim (không liên quan)"
+        },
+        "trào ngược dạ dày thực quản": {
+          "standard": "trào ngược dạ dày thực quản",
+          "english": "GERD",
+          "type": "diagnosis",
+          "asr_variants": [
+            "trào ngược dạ dầy thực quản", "trào ngược", "GERD",
+            "trào ngượt", "trào ngươc", "trào ngui"
+          ],
+          "symptom_context": ["ợ chua", "nóng rát", "sau xương ức", "ợ hơi"],
+          "icd_hint": ["K21.0", "K21.9"]
+        },
+        "viêm loét dạ dày": {
+          "standard": "viêm loét dạ dày",
+          "english": "gastric ulcer",
+          "type": "diagnosis",
+          "asr_variants": ["viêm loét dạ dầy", "viêm loét", "loét dạ dày", "viêm loê dạ dày"],
+          "symptom_context": ["đau thượng vị", "HP", "Helicobacter"],
+          "icd_hint": ["K25", "K26", "K27"]
+        }
+      }
+    },
+
+    "orthopedics": {
+      "display": "Cơ xương khớp",
+      "terms": {
+        "thoát vị đĩa đệm": {
+          "standard": "thoát vị đĩa đệm",
+          "english": "herniated disc / disc herniation",
+          "type": "diagnosis",
+          "asr_variants": [
+            "thoát vị đĩa đệm", "thoát vị dia đệm", "thoát vị đĩa đêm",
+            "thoát bị đĩa đệm", "thoát vi đĩa đệm", "thoắt vị đĩa",
+            "thoát vị dia đêm", "thoát vị"
+          ],
+          "compound_parts": ["thoát vị", "đĩa đệm"],
+          "location_modifiers": ["cột sống thắt lưng", "cổ", "cột sống cổ", "L4-L5", "L5-S1", "C5-C6"],
+          "symptom_context": ["đau lưng", "đau lan", "tê bì", "Lasègue", "thần kinh tọa"],
+          "icd_hint": ["M51.1", "M50.1", "M51.0"],
+          "note": "4 âm tiết — ASR hay tách hoặc sai 'đĩa' thành 'dia'"
+        },
+        "đau thần kinh tọa": {
+          "standard": "đau thần kinh tọa",
+          "english": "sciatica",
+          "type": "symptom",
+          "asr_variants": ["đau thần kinh toa", "đau thần kinh tọa", "thần kinh tọ", "đau dây thần kinh tọa"],
+          "symptom_context": ["lan", "chân", "mông", "đùi", "tê bì"],
+          "icd_hint": ["M54.3", "M54.4"]
+        },
+        "viêm khớp dạng thấp": {
+          "standard": "viêm khớp dạng thấp",
+          "english": "rheumatoid arthritis",
+          "type": "diagnosis",
+          "asr_variants": ["viêm khớp dạng thấp", "viêm khớp rô", "viêm khớp RA", "RA"],
+          "symptom_context": ["cứng khớp buổi sáng", "đối xứng", "bàn tay"],
+          "icd_hint": ["M05", "M06"]
+        },
+        "thoái hóa khớp": {
+          "standard": "thoái hóa khớp",
+          "english": "osteoarthritis",
+          "type": "diagnosis",
+          "asr_variants": ["thoái hóa khớp", "thoái hoá khớp", "thoái hóa", "OA"],
+          "location_modifiers": ["gối", "háng", "cột sống"],
+          "icd_hint": ["M15", "M16", "M17"]
+        }
+      }
+    },
+
+    "respiratory": {
+      "display": "Hô hấp",
+      "terms": {
+        "thở khè": {
+          "standard": "thở khè",
+          "english": "wheezing",
+          "type": "symptom",
+          "asr_variants": ["thở khê", "thở khề", "thở khèo", "thở có tiếng rít", "thở rít"],
+          "symptom_context": ["khó thở", "hen", "phế quản", "về đêm"],
+          "icd_hint": ["J45", "J44"],
+          "note": "onomatopoeia — 'khè' là âm thanh, không có trong từ điển chuẩn"
+        },
+        "u tức lồng ngực": {
+          "standard": "u tức lồng ngực",
+          "english": "chest tightness / chest pressure",
+          "type": "symptom",
+          "asr_variants": [
+            "u tức lồng ngực", "tức lồng ngực", "u tức ngực",
+            "nặng lồng ngực", "khó thở tức ngực", "tức ngực"
+          ],
+          "danger_flag": "KHÔNG nhầm 'u tức' (cảm giác) với 'u' (khối u tumor) — context cần 'lồng ngực'",
+          "symptom_context": ["tức", "nặng", "khó thở", "bóp"],
+          "icd_hint": ["R07.3", "R07.1", "I20"]
+        },
+        "viêm phổi cộng đồng": {
+          "standard": "viêm phổi cộng đồng",
+          "english": "community-acquired pneumonia / CAP",
+          "type": "diagnosis",
+          "asr_variants": ["viêm phổi cộng đồng", "viêm phổi cồng đồng", "CAP", "viêm phổi"],
+          "severity": ["nhẹ", "trung bình", "nặng"],
+          "icd_hint": ["J18.9", "J18.0", "J15"]
+        },
+        "hen phế quản": {
+          "standard": "hen phế quản",
+          "english": "bronchial asthma",
+          "type": "diagnosis",
+          "asr_variants": ["hen phế quản", "hen suyễn", "suyễn", "asthma", "hen"],
+          "icd_hint": ["J45.0", "J45.1", "J45.9"]
+        }
+      }
+    },
+
+    "cardiology": {
+      "display": "Tim mạch",
+      "terms": {
+        "tăng huyết áp": {
+          "standard": "tăng huyết áp",
+          "english": "hypertension",
+          "type": "diagnosis",
+          "asr_variants": [
+            "tăng huyết áp", "tăng huết áp", "huyết áp cao",
+            "cao huyết áp", "tăng HA", "THA"
+          ],
+          "degree": ["độ 1", "độ 2", "độ 3"],
+          "icd_hint": ["I10", "I11", "I12", "I13"]
+        },
+        "rối loạn lipid máu": {
+          "standard": "rối loạn lipid máu",
+          "english": "dyslipidemia",
+          "type": "diagnosis",
+          "asr_variants": [
+            "rối loạn lipid máu", "rối loạn mỡ máu", "mỡ máu cao",
+            "lipid máu cao", "rối loạn li pit", "cholesterol cao"
+          ],
+          "icd_hint": ["E78.5", "E78.0", "E78.1"]
+        },
+        "nhịp tim": {
+          "standard": "nhịp tim",
+          "english": "heart rate",
+          "type": "vital_sign",
+          "asr_variants": ["nhịp tim", "mạch", "nhịp mạch", "tần số tim"],
+          "unit": "lần/phút",
+          "normal_range": "60-100"
+        }
+      }
+    },
+
+    "endocrinology": {
+      "display": "Nội tiết",
+      "terms": {
+        "đái tháo đường type 2": {
+          "standard": "đái tháo đường type 2",
+          "english": "type 2 diabetes mellitus",
+          "type": "diagnosis",
+          "asr_variants": [
+            "đái tháo đường type 2", "đái tháo đường típ 2",
+            "tiểu đường type 2", "tiểu đường típ 2",
+            "ĐTĐ type 2", "đái đường"
+          ],
+          "icd_hint": ["E11.9", "E11.0", "E11.65"]
+        },
+        "đường huyết lúc đói": {
+          "standard": "đường huyết lúc đói",
+          "english": "fasting blood glucose",
+          "type": "lab_value",
+          "asr_variants": ["đường huyết lúc đói", "glucose lúc đói", "FBG", "đường huyết đói"],
+          "unit": "mmol/L hoặc mg/dL",
+          "normal": "< 5.6 mmol/L"
+        },
+        "HbA1c": {
+          "standard": "HbA1c",
+          "english": "glycated hemoglobin",
+          "type": "lab_value",
+          "asr_variants": [
+            "HbA1c", "H B A 1 C", "hê bê a một xê",
+            "hê bê a xê", "a1c", "hba", "glycated hemoglobin"
+          ],
+          "unit": "%",
+          "target_diabetic": "< 7%"
+        }
+      }
+    },
+
+    "dentistry": {
+      "display": "Nha khoa",
+      "terms": {
+        "viêm nha chu": {
+          "standard": "viêm nha chu",
+          "english": "periodontitis",
+          "type": "diagnosis",
+          "asr_variants": ["viêm nha chu", "viêm nha cầu", "nha chu", "viêm lợi"],
+          "icd_hint": ["K05.3", "K05.2"]
+        },
+        "cao vôi": {
+          "standard": "cao vôi",
+          "english": "dental calculus / tartar",
+          "type": "finding",
+          "asr_variants": ["cao vôi", "vôi răng", "tartar"],
+          "procedure": "cạo cao vôi"
+        },
+        "mất bám dính": {
+          "standard": "mất bám dính",
+          "english": "clinical attachment loss",
+          "type": "finding",
+          "asr_variants": ["mất bám dính", "mất bám", "tụt lợi"]
+        },
+        "sâu răng": {
+          "standard": "sâu răng",
+          "english": "dental caries",
+          "type": "diagnosis",
+          "asr_variants": ["sâu răng", "sâu", "caries"],
+          "location": ["mặt nhai", "mặt bên", "cổ răng"],
+          "icd_hint": ["K02"]
+        }
+      }
+    },
+
+    "psychiatry": {
+      "display": "Tâm thần",
+      "terms": {
+        "rối loạn lo âu lan tỏa": {
+          "standard": "rối loạn lo âu lan tỏa",
+          "english": "generalized anxiety disorder / GAD",
+          "type": "diagnosis",
+          "asr_variants": [
+            "rối loạn lo âu lan tỏa", "rối loạn lo âu",
+            "lo âu lan tỏa", "GAD", "lo âu mãn tính"
+          ],
+          "icd_hint": ["F41.1"]
+        },
+        "trầm cảm": {
+          "standard": "trầm cảm",
+          "english": "depression",
+          "type": "diagnosis",
+          "asr_variants": ["trầm cảm", "trâm cảm", "tram cảm", "depressed", "depression"],
+          "degree": ["nhẹ", "vừa", "nặng"],
+          "icd_hint": ["F32.0", "F32.1", "F32.2", "F33"]
+        },
+        "PHQ-9": {
+          "standard": "PHQ-9",
+          "english": "Patient Health Questionnaire-9",
+          "type": "assessment_tool",
+          "asr_variants": ["PHQ-9", "P H Q 9", "pê hát cu chín", "bộ câu hỏi PHQ"],
+          "scoring": "0-27, ≥10 = moderate depression"
+        }
+      }
+    }
+  }
+}

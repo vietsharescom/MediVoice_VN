@@ -1,0 +1,142 @@
+{
+  "_meta": {
+    "purpose": "Vietnamese regional dialect normalization for medical speech",
+    "version": "0.1.0",
+    "strategy": "Map dialect words to standard VN BEFORE NER processing. Keep original transcript, add normalized_text.",
+    "regions": ["central", "southern", "northern"],
+    "note": "Focus on Central VN first — Andy's Đà Nẵng pilot. Southern second (Sài Gòn pilot)."
+  },
+
+  "central": {
+    "region_name": "Miền Trung / Huế / Đà Nẵng",
+    "description": "Giọng Trung đặc trưng: hỉ mô răng rứa, âm 'l/r' lẫn lộn, âm ngắn hơn",
+    "example_phrase": "'anh đau răng rứa hỉ?' = 'anh đau gì vậy phải không?'",
+
+    "word_map": {
+      "răng": {"standard": "gì / sao", "type": "interrogative", "example": "đau răng? → đau gì?"},
+      "rứa": {"standard": "vậy", "type": "adverb", "example": "tái khám rứa → tái khám vậy"},
+      "hỉ": {"standard": "phải không / nhỉ", "type": "particle", "example": "uống thuốc hỉ? → uống thuốc phải không?"},
+      "mô": {"standard": "đâu / chỗ nào", "type": "interrogative", "example": "đau mô? → đau đâu?"},
+      "chi": {"standard": "gì", "type": "interrogative", "example": "có chi không? → có gì không?"},
+      "ni": {"standard": "này", "type": "demonstrative", "example": "thuốc ni → thuốc này"},
+      "nớ": {"standard": "đó / kia", "type": "demonstrative", "example": "chỗ nớ → chỗ đó"},
+      "tề": {"standard": "kìa / đấy", "type": "demonstrative", "example": "uống tề → uống đấy"},
+      "ri": {"standard": "này / thế này", "type": "demonstrative", "example": "như ri → như này"},
+      "rứa ri": {"standard": "vậy này / như vậy", "type": "combined"},
+      "o": {"standard": "cô / bà", "type": "address", "example": "o ơi → cô ơi", "medical_context": "khi gọi bệnh nhân nữ lớn tuổi"},
+      "ôn": {"standard": "ông", "type": "address", "example": "ôn ơi → ông ơi"},
+      "tui": {"standard": "tôi", "type": "pronoun"},
+      "bọ": {"standard": "bố / cha", "type": "address"},
+      "mi": {"standard": "mày / bạn", "type": "pronoun", "note": "thân mật — BS dùng với BN quen"}
+    },
+
+    "phonetic_shifts": {
+      "l_to_r": {
+        "description": "Một số người Trung: 'l' → 'r' hoặc ngược lại",
+        "examples": {
+          "losartan": "có thể nghe: 'rosartan'",
+          "levofloxacin": "có thể nghe: 'revofloxacin'",
+          "loratadine": "có thể nghe: 'roratadine'"
+        }
+      },
+      "final_consonant_change": {
+        "description": "Âm cuối hay thay đổi",
+        "examples": {
+          "-inh → -in": "uống → uốn, milligram → miligam",
+          "-ăng → -ang": "phân → phăn"
+        }
+      },
+      "tone_flattening": {
+        "description": "Thanh điệu hay bị phẳng hơn tiếng Bắc",
+        "note": "Hỏi/Ngã hay nhầm nhau. Ảnh hưởng một số thuật ngữ."
+      }
+    },
+
+    "medical_dialect_phrases": {
+      "đau mô?": "đau ở đâu? / đau chỗ nào?",
+      "đau chi rứa?": "đau gì vậy?",
+      "uống thuốc ni": "uống thuốc này",
+      "tái khám chỗ ni hỉ?": "tái khám chỗ này phải không?",
+      "kê thuốc rứa thôi hỉ?": "chỉ kê thuốc vậy thôi phải không?",
+      "nặng không chi?": "có nặng không?",
+      "có mô bệnh nữa không?": "còn bệnh gì nữa không?",
+      "lo chi mô": "đừng lo gì cả"
+    }
+  },
+
+  "southern": {
+    "region_name": "Miền Nam / Sài Gòn / ĐBSCL",
+    "description": "Giọng Nam: nói nhanh, nuốt âm cuối, 'v' đôi khi thành 'b'",
+    "example_phrase": "'anh uống thuốc hen, tái khám sau đó nghen' = 'uống thuốc nhé, tái khám sau đó nhé'",
+
+    "word_map": {
+      "hen": {"standard": "nhé / nhá", "type": "particle", "example": "uống thuốc hen → uống thuốc nhé"},
+      "nghen": {"standard": "nhé / nha", "type": "particle", "example": "tái khám nghen → tái khám nhé"},
+      "nè": {"standard": "này / đây", "type": "demonstrative", "example": "thuốc nè → thuốc này"},
+      "đó nghen": {"standard": "đó nhé", "type": "combined"},
+      "vậy nè": {"standard": "vậy này", "type": "combined"},
+      "chời": {"standard": "trời ơi", "type": "exclamation"},
+      "mình": {"standard": "bạn / anh / chị", "type": "pronoun", "note": "thân mật"},
+      "tui": {"standard": "tôi", "type": "pronoun"},
+      "ổng": {"standard": "ông ấy / anh ấy", "type": "pronoun"},
+      "bả": {"standard": "bà ấy / chị ấy", "type": "pronoun"},
+      "thôi ha": {"standard": "thôi nhé", "type": "particle"}
+    },
+
+    "phonetic_shifts": {
+      "final_consonant_deletion": {
+        "description": "Nuốt âm cuối -t, -c, -ch, -p",
+        "medical_examples": {
+          "huyết áp": "hay nghe: 'huết ép' hoặc 'huế áp'",
+          "thuốc": "hay nghe: 'thuốt'",
+          "chẩn đoán": "hay nghe: 'chẩn đoan'",
+          "mạch": "hay nghe: 'mạ'"
+        }
+      },
+      "v_to_b": {
+        "description": "Một số từ: 'v' → 'b' (đặc biệt đầu từ)",
+        "examples": {
+          "viêm": "hay nghe: 'biêm'",
+          "vùng": "ít gặp nhưng có"
+        }
+      }
+    },
+
+    "medical_dialect_phrases": {
+      "đau chỗ nào nè?": "đau ở đâu?",
+      "uống thuốc đúng giờ nghen": "uống thuốc đúng giờ nhé",
+      "tái khám tuần sau ha": "tái khám tuần sau nhé",
+      "kê thuốc vậy thôi nè": "chỉ kê thuốc vậy thôi",
+      "sao lại đau vậy?": "tại sao lại đau vậy?",
+      "có gì không ổn thì ghé lại nghen": "nếu có gì không ổn thì ghé lại nhé"
+    }
+  },
+
+  "northern": {
+    "region_name": "Miền Bắc / Hà Nội",
+    "description": "Giọng Bắc: chuẩn nhất so với văn bản, nhưng một số âm địa phương",
+
+    "word_map": {
+      "nhỉ": {"standard": "phải không / nhỉ", "type": "particle"},
+      "thế": {"standard": "vậy / như vậy", "type": "adverb"},
+      "này nhỉ": {"standard": "này phải không", "type": "combined"}
+    },
+
+    "phonetic_shifts": {
+      "z_vs_y": {
+        "description": "Người Bắc: 'd/gi' → [z], người Nam: 'd/gi' → [y]",
+        "medical_examples": {
+          "dị ứng": "Bắc: [zị ứng], Nam: [yị ứng]",
+          "điều trị": "Bắc: [điều zị], Nam: [điều yị]"
+        }
+      }
+    }
+  },
+
+  "normalization_rules": {
+    "priority_order": ["central", "southern", "northern"],
+    "algorithm": "1. Detect region from pilot metadata OR from detected dialect words. 2. Replace dialect words with standard. 3. Keep original transcript. 4. Add normalized_text field.",
+    "confidence_threshold": "If >2 dialect markers detected → apply regional normalization",
+    "medical_safety": "Never normalize drug names or medical terms — only social/conversational words"
+  }
+}

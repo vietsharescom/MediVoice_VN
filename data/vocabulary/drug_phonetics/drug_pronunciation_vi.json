@@ -1,0 +1,186 @@
+{
+  "_meta": {
+    "purpose": "Vietnamese phonetic variants for drug names — ASR error correction",
+    "version": "0.1.0",
+    "note": "asr_variants = what Whisper/PhoWhisper actually returns for each drug. Extend from pilot data.",
+    "regional_notes": {
+      "central": "giọng Trung: âm 'l' thành 'r', 'n' thành 'ng', nuốt âm cuối, tăng giảm điệu khác",
+      "southern": "giọng Nam: nuốt âm cuối 'ch/t/c/p', 'v' thành 'b' đôi khi, nói nhanh hơn",
+      "northern": "giọng Bắc: chuẩn nhất nhưng dấu hỏi/ngã khác nhau"
+    }
+  },
+
+  "drugs": {
+    "Amlodipine": {
+      "phonetic_vi": "am-lô-đi-pin",
+      "syllables": ["am", "lo", "di", "pin"],
+      "asr_variants": [
+        "amlodipine", "amlo", "am lo", "amlodiphine",
+        "am lo di phi", "âm lô đi phi", "am lô đi pin",
+        "amlodiphin", "am lo di phin", "amlodipin",
+        "a lo di pin", "am lo din"
+      ],
+      "central_variants": ["am lô ri pin", "am lô đi pinh", "am lô tê pin"],
+      "southern_variants": ["am lô đi pin", "âm lô", "a lô đi pin"],
+      "notes": "Âm 'd' dễ bị nghe thành 'r' giọng Trung. Hay bị cắt ngắn thành 'amlo'"
+    },
+
+    "Atorvastatin": {
+      "phonetic_vi": "a-to-va-sta-tin",
+      "syllables": ["a", "tor", "va", "sta", "tin"],
+      "asr_variants": [
+        "atorvastatin", "avobastatin", "avo bastatin", "atobastatin",
+        "a to va sta tin", "ato va ta tin", "a tor ba ta tin",
+        "atovastatin", "avo va sta tin", "a to va ta",
+        "ato ba sta", "a to ba", "a tô ba"
+      ],
+      "central_variants": ["a tô ba ta tin", "a tô va ta tinh", "a to roa ta tin"],
+      "southern_variants": ["a tô va ta tin", "avô ba ta"],
+      "notes": "'r' trong 'tor' rất khó với người VN. Hay thành 'b' hoặc bị xóa hoàn toàn"
+    },
+
+    "Losartan": {
+      "phonetic_vi": "lô-sa-tan",
+      "syllables": ["lo", "sar", "tan"],
+      "asr_variants": [
+        "losartan", "l'occitane", "loccitane", "locitan",
+        "lo xi tan", "lo si tan", "lo xi tăng", "lo sa tang",
+        "lo xa tan", "lo sar tăng", "lo sa tân"
+      ],
+      "central_variants": ["lo rá tang", "lo sá tăng", "lô rá tang", "lo rặt tang"],
+      "southern_variants": ["lo sa tan", "lo xi tan"],
+      "notes": "Whisper hay nhầm thành thương hiệu nước hoa L'Occitane. Giọng Trung 'r' thay 's'"
+    },
+
+    "Bisoprolol": {
+      "phonetic_vi": "bi-so-pro-lol",
+      "syllables": ["bi", "so", "pro", "lol"],
+      "asr_variants": [
+        "bisoprolol", "bisoprolo", "bi so pro lol",
+        "biso pro lol", "bisoprolo", "bi xo pro lô",
+        "bisopro", "biso polo", "biso pro lo"
+      ],
+      "central_variants": ["bi sô rô lô", "bi so ro lô"],
+      "southern_variants": ["bi so pro lol", "bi xô pro lol"],
+      "notes": "Chữ 'r' trong 'pro' thường bị nuốt. Giọng Trung hay thành 'ro'"
+    },
+
+    "Metformin": {
+      "phonetic_vi": "mét-pho-min",
+      "syllables": ["met", "for", "min"],
+      "asr_variants": [
+        "metformin", "met pho min", "mét pho min",
+        "metfomin", "met pho minh", "metfor min",
+        "mét po min", "met fo min", "mêt pho"
+      ],
+      "central_variants": ["mét pho minh", "mét phô ming"],
+      "southern_variants": ["mét pho min", "mét fo min"],
+      "notes": "'f' trong metFormin nhiều người VN đọc là 'ph'"
+    },
+
+    "Sertraline": {
+      "phonetic_vi": "sé-tra-lin",
+      "syllables": ["ser", "tra", "line"],
+      "asr_variants": [
+        "sertraline", "cetralin", "xetralin", "cetraline",
+        "setralin", "se tra lin", "xê tra lin",
+        "ser tra lin", "sét tra linh", "xét ra lin",
+        "se tờ ranh", "xê tra linh"
+      ],
+      "central_variants": ["sét rờ linh", "xê tra rinh", "sét roa linh"],
+      "southern_variants": ["xê tra lin", "sê tra lin"],
+      "notes": "SSRI — rất dễ bị nhầm. Âm đầu 'ser' không có phoneme VN tự nhiên"
+    },
+
+    "Pregabalin": {
+      "phonetic_vi": "prê-ga-ba-lin",
+      "syllables": ["pre", "ga", "ba", "lin"],
+      "asr_variants": [
+        "pregabalin", "pre ga ba lin", "prê ga ba lin",
+        "pregabolin", "pre ga bo lin", "pré ga ba",
+        "pờ ré ga ba", "pre ga banh", "pregablin"
+      ],
+      "central_variants": ["pờ rê ga ba linh", "pờ re ga ba rinh"],
+      "southern_variants": ["prê ga ba lin", "pờ re ga ba lin"],
+      "notes": "Âm 'pr' đầu từ khó với người VN — thêm âm đệm 'pờ'"
+    },
+
+    "Etoricoxib": {
+      "phonetic_vi": "ê-to-ri-cok-xíp",
+      "syllables": ["e", "to", "ri", "cox", "ib"],
+      "asr_variants": [
+        "etoricoxib", "e to ri cox ib", "eto ri cok xip",
+        "etoricoxip", "eto rikox ib", "e to ri kok sip",
+        "eto ko xip", "ê tô ri cốc", "etori coxip"
+      ],
+      "central_variants": ["ê tô ri cốc xíp", "ê tô ri cộc"],
+      "southern_variants": ["ê tô ri cốc xíp", "eto ri kop"],
+      "notes": "Cuối '-xib' rất khó. Hay bị mất. COX-2 inhibitor — ít gặp nên ASR ít training data"
+    },
+
+    "Glimepiride": {
+      "phonetic_vi": "gli-me-pi-rit",
+      "syllables": ["gli", "me", "pi", "ride"],
+      "asr_variants": [
+        "glimepiride", "gli me pi ride", "glimepirid",
+        "gly me pi rit", "gli me pi rit", "glime piride",
+        "gli mê pi rích", "gli me bi rit", "gờ li me pi rit"
+      ],
+      "central_variants": ["gờ li mê pi rít", "gli mê pi rịt"],
+      "southern_variants": ["gli me pi rit", "gli me pi ride"],
+      "notes": "'gl' cluster không tự nhiên trong VN. Nhiều người thêm âm 'gờ' trước"
+    },
+
+    "Perindopril": {
+      "phonetic_vi": "pe-rin-đo-pril",
+      "syllables": ["per", "in", "do", "pril"],
+      "asr_variants": [
+        "perindopril", "pe rin do pril", "perindo pril",
+        "pê rin đô pril", "pe rin dô", "pe rindo",
+        "pê rindo", "pe rin do pờ ril", "peringdo"
+      ],
+      "central_variants": ["pê rinh đô pờ rịl", "pê rin đô pờ rinh"],
+      "southern_variants": ["pe rin do pril", "pê rin do"],
+      "notes": "ACE inhibitor — cluster 'pril' cuối rất khó"
+    },
+
+    "Levofloxacin": {
+      "phonetic_vi": "lê-vô-phlo-xa-xin",
+      "syllables": ["le", "vo", "flo", "xa", "cin"],
+      "asr_variants": [
+        "levofloxacin", "le vo flo xa cin", "levo flox acin",
+        "le vô phlô xa xin", "le fo xa xin", "levofloxasin",
+        "le bô phlo xa", "lê vô flo", "lê vô pha xa"
+      ],
+      "central_variants": ["lê bô phờ lô xa xinh", "lê vô phờ lô xa"],
+      "southern_variants": ["lê vô flo xa xin", "lê bô flo"],
+      "notes": "Quinolone kháng sinh — 'fl' cluster khó. Giọng Nam hay thành 'f' hoặc 'ph'"
+    },
+
+    "Azithromycin": {
+      "phonetic_vi": "a-zít-rô-mai-xin",
+      "syllables": ["a", "zith", "ro", "my", "cin"],
+      "asr_variants": [
+        "azithromycin", "a zit ro my cin", "azitro my xin",
+        "a zi rô mai xin", "azithro my cin", "a zít rô mai",
+        "a xi rô mai xin", "a si tờ ro my", "a zi trô"
+      ],
+      "central_variants": ["a xít rô mai xinh", "a zịt rô mai"],
+      "southern_variants": ["a zít rô mai xin", "a xi trô mai"],
+      "notes": "'zith' cluster gần như không có trong VN. 'z' hay thành 'x' hoặc 's'"
+    },
+
+    "Salbutamol": {
+      "phonetic_vi": "san-bu-ta-mol",
+      "syllables": ["sal", "bu", "ta", "mol"],
+      "asr_variants": [
+        "salbutamol", "san bu ta mol", "sal bu ta mol",
+        "xan bu ta mol", "sao bu ta", "xan buta",
+        "salbu tamol", "san bu tà môn", "ventorin"
+      ],
+      "central_variants": ["xăng bu ta môn", "xan bu ta môl"],
+      "southern_variants": ["xan bu ta mol", "san buta"],
+      "notes": "Hay được gọi tên biệt dược 'Ventolin' — cần map cả tên biệt dược"
+    }
+  }
+}
