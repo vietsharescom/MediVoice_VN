@@ -1,6 +1,33 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.8.4] — 2026-06-12 — Audio Data Map Analysis + 57 clips transcribed · 473 tests
+
+### Tools & Eval [SES-20260612]
+- fix(tools): `tools/eval_ref_voices.py` line 102 — `corrected, _ = correct_drug_names()` → `corrected = correct_drug_names()` (function returns str not tuple)
+- feat(eval): 57 real BS clips transcribed → `data/eval/ref_voice_transcripts_review.txt` + `data/eval/ref_voice_transcripts.json`
+  - 3 BS × 8 bệnh nhân × 3 clips (HN 9 / DN 24 / SG 24) | 26.8 phút tổng
+  - RTF: 1.1–1.9x CPU (PhoWhisper-medium)
+  - 12+ chuyên khoa: tim mạch, hô hấp, GI, tiết niệu, nội tiết, nhi, sản khoa, da liễu
+  - Drug mishear patterns thật: Amoxicillin→amosicilin, Metformin→mek fốc binh, Amlodipine→ong lau đi pin, Loratadine→lông nata din
+- data(eval): Audio Data Map documented — 3 doc types × 3 audio strategies:
+  - `docs/dev/SEMI_SYNTHETIC_DATA_PLAN.md` → `data/audio/corpus/semi_synthetic/` (calibration, 40 WAV, 35.1 min)
+  - `docs/dev/SYNTHETIC_AUDIO_REQUIREMENTS.md` → `data/synthetic_audio/` (train augmentation, 60 WAV now, 1100 target)
+  - `docs/dev/REFERENCE_VOICE_GUIDE.md` → `data/audio/reference_voices/` (real BS audio, BENCH-002b + TRAIN-001, 57 WAV)
+
+## [v0.8.3] — 2026-06-11 — CE-103: DrugCorrectionEngine v2 Safety Fixes · 473 tests
+
+### Drug Correction Safety [CE-103]
+- fix(L1b): `src/core/l1b_drug_correct.py` — 3 safety bug fixes DrugCorrectionEngine v2
+  - Fix 1: 2-syllable phonetic alias filter (ga ba → Gabapentin FP eliminated)
+  - Fix 2: STRICT threshold 82→88 (soát→Iron silent FP eliminated)
+  - Fix 3: Greedy window guard (ghi kê Paracetamol → Layer 1 exact match restored)
+  - Trade-off: Drug Recall 99.5%→96.9% | Silent FP 0.0% maintained | Safety Catch 100%
+- test: 2 tests updated for 3-syllable phonetic variants | 473/473 PASS
+- bench(BENCH-002a-v2): Re-run BENCH-002a với DrugCorrectionEngine v2
+  - CEER Overall: Drug=0.989🔴 | Diag=0.667🔴 | Vital=0.272⚠️ | Fup=0.400🔴
+  - Root cause xác nhận: ASR bottleneck — PhoWhisper mangling drug names trên real speech
+
 ## [v0.8.2] — 2026-06-10 — CONS-002-EVAL: Drug Correction Eval Dataset + Script · 473 tests
 
 ### Drug Correction Evaluation [CONS-002-EVAL]

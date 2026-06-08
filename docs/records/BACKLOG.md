@@ -23,6 +23,10 @@
   - Baseline lâm sàng synthetic (2026-06-08): 10/10 files | Vitals=0.033✅ Diag=0.1✅ Drug=0.9🔴
   - Template lâm sàng: `data/audio/ground_truth_lam_sang_template.json`
   - Template dental: `data/audio/dental/ground_truth_dental_template.json`
+  - ✅ 57 clips BS thật đã transcribed (2026-06-12): `data/eval/ref_voice_transcripts_review.txt` + `.json`
+  - 12+ chuyên khoa: tim mạch, hô hấp, GI, tiết niệu, nội tiết, nhi, sản khoa, da liễu, ung thư...
+  - Drug mishear patterns thật: Amoxicillin→amosicilin, Metformin→mek fốc binh, Amlodipine→ong lau đi pin
+  - ⏳ **Chờ Andy**: điền GT vào `data/eval/ref_voice_transcripts_review.txt` (Clip2+Clip3 ưu tiên)
 - [x] **GAP-002** ✅ Unit tests PII scan — tests/unit/test_pii_scan.py 27 tests PASS (2026-06-06)
 - [x] **GAP-003** ✅ Unit tests L8 error handler — `tests/unit/test_l8_error_handler.py` 20 tests PASS (2026-06-08) | P0.2.L8
 - [x] **GAP-004** ✅ Unit tests L9a PDF export — `tests/unit/test_l9a_pdf_export.py` 15 tests PASS (2026-06-08) | P0.2.L9a

@@ -249,11 +249,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.8.3 |
-| Status | **BENCH-002a v2 re-run 🔴 Drug=0.989 Vital=0.272 — ASR bottleneck xác nhận · CE-103 fixes 473/473 PASS** |
+| Version | v0.8.4 |
+| Status | **57 real BS clips transcribed → GT review pending · Drug mishear patterns documented · eval_ref_voices.py NER bug fixed** |
 | Tests | **473/473 PASS** · bandit 0 HIGH/MEDIUM · conftest.py SKIP_QWEN |
-| Pending | **PA-007** (ChatGPT corpus) · **BENCH-002b** pilot Đà Nẵng · **VIETMED-FIX-001** (HF_TOKEN) |
-| Next task | **BENCH-002b** pilot Đà Nẵng thật · **PA-007** ChatGPT corpus · **CONS-002-SPRINT6** TTS CONDITIONAL-GO |
+| Pending | **BENCH-002b GT review** (Andy điền `data/eval/ref_voice_transcripts_review.txt`) · **PA-007** (ChatGPT corpus) · **VIETMED-FIX-001** (HF_TOKEN) · **VBEE_TOKEN** |
+| Next task | **Andy GT review** Clip2+Clip3 → BENCH-002b CEER thật · **PA-007** ChatGPT corpus · **DRUG-DB-002** mở rộng 150 thuốc |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` |
 
 ---

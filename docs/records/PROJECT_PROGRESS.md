@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-10c | v0.8.2
+# Cập nhật: 2026-06-12 | v0.8.4
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
