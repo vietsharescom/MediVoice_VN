@@ -10,23 +10,33 @@ import io
 import requests
 from datetime import datetime
 
-# Transcription thật qua HuggingFace Inference API (PhoWhisper-medium)
-def transcribe_audio(audio_bytes: bytes) -> str:
+
+def transcribe_audio(audio_bytes: bytes) -> tuple[str, str]:
+    """Returns (transcript, error_msg). error_msg="" on success."""
     try:
         hf_token = st.secrets.get("hf_token", "")
         if not hf_token:
-            return ""
+            return "", "HF_TOKEN chưa được cấu hình"
         headers = {"Authorization": f"Bearer {hf_token}"}
         api_url = "https://api-inference.huggingface.co/models/vinai/phowhisper-medium"
         resp = requests.post(api_url, headers=headers, data=audio_bytes, timeout=60)
         if resp.status_code == 200:
-            return resp.json().get("text", "").strip()
-        return ""
-    except Exception:
-        return ""
+            text = resp.json().get("text", "").strip()
+            if text:
+                return text, ""
+            return "", "API trả về text rỗng"
+        elif resp.status_code == 503:
+            return "", "Model đang load (503) — thử lại sau 30 giây"
+        elif resp.status_code == 401:
+            return "", f"Token sai hoặc hết hạn (401)"
+        else:
+            return "", f"HF API lỗi {resp.status_code}: {resp.text[:200]}"
+    except Exception as e:
+        return "", f"Exception: {e}"
 
-# Google Drive upload (chỉ chạy khi có secrets)
-def upload_to_drive(audio_bytes: bytes, session_data: dict) -> bool:
+
+def upload_to_drive(audio_bytes: bytes, session_data: dict) -> tuple[bool, str]:
+    """Returns (success, error_msg)."""
     try:
         from google.oauth2 import service_account
         from googleapiclient.discovery import build
@@ -40,21 +50,23 @@ def upload_to_drive(audio_bytes: bytes, session_data: dict) -> bool:
         folder_id = st.secrets["drive_folder_id"]
         ts = session_data["session_id"]
 
-        # Upload audio WAV
         audio_meta = {"name": f"medivoice_audio_{ts}.wav", "parents": [folder_id]}
         audio_media = MediaIoBaseUpload(io.BytesIO(audio_bytes), mimetype="audio/wav")
-        service.files().create(body=audio_meta, media_body=audio_media, supportsAllDrives=True).execute()
+        service.files().create(
+            body=audio_meta, media_body=audio_media, supportsAllDrives=True
+        ).execute()
 
-        # Upload JSON metadata
         json_bytes = json.dumps(session_data, ensure_ascii=False, indent=2).encode("utf-8")
         json_meta = {"name": f"medivoice_session_{ts}.json", "parents": [folder_id]}
         json_media = MediaIoBaseUpload(io.BytesIO(json_bytes), mimetype="application/json")
-        service.files().create(body=json_meta, media_body=json_media, supportsAllDrives=True).execute()
+        service.files().create(
+            body=json_meta, media_body=json_media, supportsAllDrives=True
+        ).execute()
 
-        return True
+        return True, ""
     except Exception as e:
-        st.error(f"Drive upload lỗi: {e}")
-        return False
+        return False, str(e)
+
 
 st.set_page_config(
     page_title="MediVoice VN — Demo",
@@ -63,7 +75,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ── CSS ──────────────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
   .main { max-width: 640px; margin: 0 auto; }
@@ -76,8 +87,11 @@ st.markdown("""
     background: #e8f0fe; border-radius: 8px; padding: 1rem;
     border: 1px solid #c5cae9; font-size: 0.9rem; white-space: pre-wrap;
   }
+  .result-real {
+    background: #e8f5e9; border-radius: 8px; padding: 1rem;
+    border: 2px solid #2e7d32; font-size: 0.9rem; white-space: pre-wrap;
+  }
   .conf-label { font-size: 0.8rem; color: #555; margin-bottom: 4px; }
-  .field-label { font-size: 0.78rem; color: #777; margin-bottom: 2px; }
   .drug-card {
     background: #f5f5f5; border-radius: 8px;
     padding: 0.5rem 0.75rem; margin-bottom: 0.4rem;
@@ -92,7 +106,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ── Mock clinical cases (by specialty) ───────────────────────────────────────
 MOCK_CASES = {
     "Nội khoa tổng quát": {
         "transcript": "Bệnh nhân nam 45 tuổi, đau đầu vùng chẩm 3 ngày, không sốt, không nôn. Huyết áp đo được 155 trên 95. Nhịp tim 80 lần phút. Không tiền sử bệnh tim mạch. Chẩn đoán tăng huyết áp độ 1. Kê Amlodipine 5 milligram uống sáng, tái khám sau 4 tuần, theo dõi huyết áp tại nhà.",
@@ -174,10 +187,9 @@ MOCK_CASES = {
 }
 
 # ── Session state ─────────────────────────────────────────────────────────────
-if "result" not in st.session_state:
-    st.session_state.result = None
-if "approved" not in st.session_state:
-    st.session_state.approved = False
+for k, v in [("result", None), ("approved", False), ("drive_error", ""), ("drive_uploaded", False)]:
+    if k not in st.session_state:
+        st.session_state[k] = v
 if "session_id" not in st.session_state:
     st.session_state.session_id = datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -197,11 +209,7 @@ st.divider()
 st.subheader("👤 Thông tin phiên khám")
 col1, col2 = st.columns(2)
 with col1:
-    chuyen_khoa = st.selectbox(
-        "Chuyên khoa",
-        list(MOCK_CASES.keys()),
-        index=0,
-    )
+    chuyen_khoa = st.selectbox("Chuyên khoa", list(MOCK_CASES.keys()), index=0)
 with col2:
     cchn = st.text_input("Mã CCHN (demo)", placeholder="VD: CCHN-012345")
 
@@ -214,20 +222,19 @@ ten_bn_demo = st.text_input(
 st.divider()
 
 # ── Ghi âm ────────────────────────────────────────────────────────────────────
-st.subheader("🎤 Ghi âm")
-st.caption("Bác sĩ nói nội dung khám bệnh tự nhiên. Trong bản DEMO này, hệ thống sẽ hiển thị kết quả **mô phỏng** cho chuyên khoa đã chọn — không phải transcription thật từ giọng Bác sĩ.")
-st.info("ℹ️ **Mục đích ghi âm trong demo:** Thu thập giọng nói thật của BS để cải thiện AI. Kết quả phân tích bên dưới là **ví dụ minh họa**, không liên quan đến nội dung BS vừa nói.")
+st.subheader("🎤 Ghi âm — Bác sĩ đọc ca lâm sàng tự nhiên")
+st.caption("AI sẽ transcribe giọng BS bằng PhoWhisper. Form bên dưới là ví dụ minh họa NER — phiên bản production sẽ điền tự động từ transcript thật.")
 
 audio_data = st.audio_input("Nhấn để ghi âm")
 
 if audio_data is not None and not st.session_state.approved:
     audio_bytes = audio_data.getvalue()
 
-    with st.spinner("🔄 Đang transcribe giọng nói thật (PhoWhisper-medium)..."):
-        real_transcript = transcribe_audio(audio_bytes)
+    with st.spinner("🔄 Đang transcribe giọng nói (PhoWhisper-medium)..."):
+        real_transcript, hf_error = transcribe_audio(audio_bytes)
 
-    with st.spinner("🧠 Đang nhận diện thực thể y tế (NER mô phỏng)..."):
-        time.sleep(1.0)
+    with st.spinner("🧠 Đang nhận diện thực thể y tế..."):
+        time.sleep(0.8)
 
     result = MOCK_CASES[chuyen_khoa].copy()
     result["chuyen_khoa"] = chuyen_khoa
@@ -236,14 +243,11 @@ if audio_data is not None and not st.session_state.approved:
     result["audio"] = audio_bytes
     result["timestamp"] = datetime.now().isoformat()
     result["transcript_real"] = real_transcript
+    result["hf_error"] = hf_error
     st.session_state.result = result
     st.session_state.approved = False
-
-    if real_transcript:
-        st.success("✅ Transcription hoàn tất — Bác sĩ kiểm tra kết quả bên dưới")
-    else:
-        st.success("✅ Đã nhận âm thanh — Bên dưới là ví dụ minh họa")
-        st.warning("⚠️ Transcript mô phỏng — thêm HF_TOKEN vào secrets để transcribe thật")
+    st.session_state.drive_error = ""
+    st.session_state.drive_uploaded = False
 
 # ── Kết quả ───────────────────────────────────────────────────────────────────
 if st.session_state.result:
@@ -251,27 +255,28 @@ if st.session_state.result:
     st.divider()
     st.subheader("📋 Kết quả phân tích")
 
-    # Transcript thật (nếu có HF_TOKEN)
     real_t = r.get("transcript_real", "")
+    hf_err = r.get("hf_error", "")
+
     if real_t:
-        st.markdown("**🎙️ Transcript thật (PhoWhisper nghe giọng BS)**")
-        st.markdown(f'<div class="result-box">{real_t}</div>', unsafe_allow_html=True)
+        st.markdown("**🎙️ Transcript thật — PhoWhisper nghe giọng Bác sĩ**")
+        st.markdown(f'<div class="result-real">{real_t}</div>', unsafe_allow_html=True)
         st.divider()
-        st.markdown("**📋 Form mô phỏng** *(NER sẽ tự điền từ transcript thật — demo dùng ví dụ)*")
+        st.markdown("**📋 Form mô phỏng** *(NER production sẽ điền tự động từ transcript trên)*")
     else:
-        st.markdown("**Transcript mô phỏng** *(chưa có HF_TOKEN — đây là ví dụ minh họa)*")
+        if hf_err:
+            st.warning(f"⚠️ Chưa transcribe được: **{hf_err}**")
+        st.markdown("**Transcript mô phỏng** *(ví dụ minh họa — chuyên khoa đã chọn)*")
+
     st.markdown(f'<div class="result-box">{r["transcript"]}</div>', unsafe_allow_html=True)
 
-    # Confidence
     conf = r["confidence"]
-    st.markdown(f'<div class="conf-label">Độ tin cậy: {int(conf*100)}%</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="conf-label">Độ tin cậy mô phỏng: {int(conf*100)}%</div>', unsafe_allow_html=True)
     st.progress(conf)
 
     st.divider()
 
-    # Form fields — BS có thể chỉnh
     st.subheader("📝 Nháp bệnh án (có thể chỉnh sửa)")
-
     col1, col2 = st.columns(2)
     sh = r.get("sinh_hieu", {})
     with col1:
@@ -286,17 +291,15 @@ if st.session_state.result:
     icd = st.text_input("Mã ICD-10-VN", value=r.get("icd", ""))
     tai_kham = st.text_input("Tái khám", value=r.get("tai_kham", ""))
 
-    # Đơn thuốc
     st.markdown("**Đơn thuốc**")
     for drug in r.get("don_thuoc", []):
         st.markdown(
             f'<div class="drug-card">💊 <b>{drug["ten"]}</b> {drug["ham_luong"]} — {drug["lieu"]} — {drug["ngay"]}</div>',
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
 
     st.divider()
 
-    # Feedback — so sánh với thực tế BS nói
     st.subheader("💬 Phản hồi chất lượng")
     accuracy = st.radio(
         "Transcript AI có khớp với những gì Bác sĩ nói không?",
@@ -311,20 +314,23 @@ if st.session_state.result:
 
     st.divider()
 
-    # Action buttons
+    # Drive error hiện ở đây (persistent qua rerun)
+    if st.session_state.drive_error:
+        st.error(f"☁️ Drive upload lỗi: {st.session_state.drive_error}")
+
     col_approve, col_reject = st.columns(2)
 
     with col_approve:
         if st.button("✅ Xác nhận & Lưu", type="primary", use_container_width=True):
             if not st.session_state.approved:
-                # Build session data for download
                 session_data = {
                     "session_id": st.session_state.session_id,
                     "timestamp": r["timestamp"],
                     "cchn": r["cchn"],
                     "ten_bn_demo": r["ten_bn"],
                     "chuyen_khoa": r["chuyen_khoa"],
-                    "transcript_asr": r["transcript"],
+                    "transcript_real": r.get("transcript_real", ""),
+                    "transcript_mock": r["transcript"],
                     "accuracy_rating": accuracy,
                     "correction": correction,
                     "form_approved": {
@@ -345,12 +351,11 @@ if st.session_state.result:
                 st.session_state.approved = True
                 st.session_state.session_data = session_data
 
-                # Auto-upload to Google Drive nếu có secrets
                 if "gcp_service_account" in st.secrets:
                     with st.spinner("📤 Đang lưu lên Google Drive..."):
-                        ok = upload_to_drive(r.get("audio", b""), session_data)
-                    if ok:
-                        st.session_state.drive_uploaded = True
+                        ok, err = upload_to_drive(r.get("audio", b""), session_data)
+                    st.session_state.drive_uploaded = ok
+                    st.session_state.drive_error = err
                 st.rerun()
 
     with col_reject:
@@ -360,12 +365,11 @@ if st.session_state.result:
             st.session_state.approved = False
             st.rerun()
 
-    # Approved state
     if st.session_state.approved and hasattr(st.session_state, "session_data"):
         sd = st.session_state.session_data
         st.markdown('<p class="approved">✅ Bệnh án đã được xác nhận</p>', unsafe_allow_html=True)
 
-        if st.session_state.get("drive_uploaded"):
+        if st.session_state.drive_uploaded:
             st.success("☁️ Đã lưu tự động lên Google Drive của MediVoice")
         else:
             st.info("📩 Tải file bên dưới rồi gửi về **vietshares.com@gmail.com**")
@@ -394,6 +398,8 @@ if st.session_state.result:
         if st.button("🔄 Khám bệnh nhân tiếp theo"):
             st.session_state.result = None
             st.session_state.approved = False
+            st.session_state.drive_error = ""
+            st.session_state.drive_uploaded = False
             if hasattr(st.session_state, "session_data"):
                 del st.session_state.session_data
             st.rerun()
