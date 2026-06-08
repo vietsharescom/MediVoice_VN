@@ -48,33 +48,36 @@ def extract_clinical_data(transcript: str) -> tuple[dict, str]:
         api_key = st.secrets.get("groq_api_key", "")
         if not api_key or not transcript:
             return {}, "Không có transcript hoặc API key"
-        prompt = f"""Bạn là AI phân tích bệnh án y tế tiếng Việt.
-Từ transcript sau của bác sĩ (có thể chứa lỗi nhận dạng giọng nói), hãy trích xuất thông tin lâm sàng.
+        prompt = f"""Bạn là AI phân tích bệnh án y tế tiếng Việt, chuyên xử lý lời nói tự nhiên của bác sĩ trong phòng khám.
 
-QUY TẮC QUAN TRỌNG:
-1. Tên thuốc: chuẩn hóa về tên INN quốc tế đúng chính tả (VD: "Zempalm"→"Diazepam", "Omeprazone"→"Omeprazole", "Ampicilin"→"Ampicillin")
-2. Mã ICD-10: chỉ điền nếu chắc chắn đúng với chẩn đoán — KHÔNG đoán mò. Ví dụ: rối loạn lo âu→F41.1, viêm họng→J02.9, tăng HA→I10, tiểu đường type2→E11.9
-3. "ngay" để trống ("") nếu BS không nói số ngày cụ thể (VD: "dùng khi cần", "khi sốt")
-4. Chỉ trả về JSON, không giải thích
+QUY TẮC:
+1. BỎ QUA hoàn toàn: chào hỏi ("bác khoẻ không", "tên gì", "bao nhiêu tuổi"), câu chuyện phiếm, tiếng ừ/à/hmm, khoảng lặng
+2. CHỈ trích xuất: triệu chứng, sinh hiệu, chẩn đoán, thuốc, tái khám
+3. Sinh hiệu: nếu không đề cập → để 0 hoặc "" (không điền mặc định)
+4. Tên thuốc: chuẩn hóa về INN quốc tế ("Zempalm"→"Diazepam", "Omeprazone"→"Omeprazole", "Paradon"→"Paracetamol")
+5. ICD-10: chỉ điền khi chắc chắn (tăng HA→I10, lo âu→F41.1, viêm họng→J02.9, tiểu đường type2→E11.9) — để trống nếu không chắc
+6. "ngay" để "" nếu BS nói "khi cần", "khi sốt" hoặc không nói số ngày
+7. Transcript có thể có lỗi ASR — suy luận từ ngữ cảnh y tế
+8. Chỉ trả về JSON, không giải thích thêm
 
-TRANSCRIPT:
+TRANSCRIPT (lời BS nói tự nhiên, có thể lẫn hội thoại với bệnh nhân):
 {transcript}
 
-FORMAT JSON:
+JSON OUTPUT:
 {{
-  "ly_do": "lý do khám ngắn gọn",
-  "chan_doan": "chẩn đoán chính",
-  "icd": "mã ICD-10 chắc chắn đúng, hoặc để trống",
+  "ly_do": "triệu chứng chính bệnh nhân than phiền",
+  "chan_doan": "chẩn đoán bác sĩ kết luận",
+  "icd": "",
   "sinh_hieu": {{
-    "nhiet_do": 36.5,
-    "huyet_ap": "120/80",
-    "mach": 75,
+    "nhiet_do": 0,
+    "huyet_ap": "",
+    "mach": 0,
     "can_nang": 0
   }},
   "don_thuoc": [
-    {{"ten": "tên thuốc INN chuẩn", "ham_luong": "hàm lượng", "lieu": "cách dùng", "ngay": ""}}
+    {{"ten": "tên INN chuẩn", "ham_luong": "", "lieu": "", "ngay": ""}}
   ],
-  "tai_kham": "hướng dẫn tái khám hoặc dặn dò"
+  "tai_kham": ""
 }}"""
         resp = requests.post(
             "https://api.groq.com/openai/v1/chat/completions",
@@ -301,8 +304,12 @@ ten_bn_demo = st.text_input(
 st.divider()
 
 # ── Ghi âm ────────────────────────────────────────────────────────────────────
-st.subheader("🎤 Ghi âm — Bác sĩ đọc ca lâm sàng tự nhiên")
-st.caption("AI sẽ transcribe giọng BS bằng PhoWhisper. Form bên dưới là ví dụ minh họa NER — phiên bản production sẽ điền tự động từ transcript thật.")
+st.subheader("🎤 Ghi âm")
+st.info(
+    "💬 **Bác sĩ cứ nói tự nhiên** như đang khám thật — không cần theo form hay script.\n\n"
+    "AI tự lọc thông tin lâm sàng (sinh hiệu, chẩn đoán, đơn thuốc) và bỏ qua hội thoại thông thường.\n\n"
+    "⚕️ Sinh hiệu do trợ lý đo trước? → BS đọc lại 1 câu hoặc điền tay vào form sau khi AI ra nháp."
+)
 
 audio_data = st.audio_input("Nhấn để ghi âm")
 
