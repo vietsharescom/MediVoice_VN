@@ -477,11 +477,15 @@ if st.session_state.result:
     st.divider()
     st.subheader("📋 Kết quả phân tích")
 
+    def _s(v):
+        return {1: "1 ❌", 2: "2 🔴", 3: "3 🟡", 4: "4 🟢", 5: "5 ✅"}[v]
+
     real_t = r.get("transcript_real", "")
     asr_err = r.get("asr_error", "")
     ner_ok = r.get("ner_ok", False)
     ner_err = r.get("ner_error", "")
 
+    # ── TRANSCRIPT + đánh giá ngay bên dưới ─────────────────────────────
     if real_t:
         st.markdown("**🎙️ Transcript thật — Whisper nghe giọng Bác sĩ**")
         st.markdown(f'<div class="result-real">{real_t}</div>', unsafe_allow_html=True)
@@ -498,11 +502,16 @@ if st.session_state.result:
         st.markdown("**Transcript mô phỏng** *(ví dụ minh họa — chuyên khoa đã chọn)*")
         st.markdown(f'<div class="result-box">{r["transcript"]}</div>', unsafe_allow_html=True)
 
-    st.divider()
+    score_transcript = st.select_slider(
+        "Transcript nghe đúng", options=[1, 2, 3, 4, 5], value=5,
+        format_func=_s, key="score_transcript",
+        help="1=Sai hoàn toàn · 3=Gần đúng · 5=Đúng hoàn toàn",
+    )
 
+    st.divider()
     st.subheader("📝 Nháp bệnh án — Mẫu 15/BV-01")
 
-    # ── 1. CHẨN ĐOÁN (quan trọng nhất — BS xem đầu tiên) ─────────────────
+    # ── CHẨN ĐOÁN + đánh giá ngay bên dưới ─────────────────────────────
     st.markdown("#### 🏥 Chẩn đoán *(ưu tiên #1 — BS xác nhận)*")
     chan_doan = st.text_input(
         "Chẩn đoán chính ★",
@@ -512,18 +521,18 @@ if st.session_state.result:
     )
     col_icd, col_tk = st.columns(2)
     with col_icd:
-        icd = st.text_input(
-            "Mã ICD-10-VN ★",
-            value=r.get("icd", ""),
-            placeholder="VD: J20.9 / I10 / E11.9",
-            help="Bắt buộc kèm chẩn đoán. Tra tại QĐ5837.",
-        )
+        icd = st.text_input("Mã ICD-10-VN ★", value=r.get("icd", ""), placeholder="VD: J20.9 / I10 / E11.9")
     with col_tk:
         tai_kham = st.text_input("Tái khám", value=r.get("tai_kham", ""), placeholder="VD: 7 ngày / 1 tháng")
+    col_cd_ev, col_tk_ev = st.columns(2)
+    with col_cd_ev:
+        score_cd = st.select_slider("Chẩn đoán đúng không", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_cd")
+    with col_tk_ev:
+        score_tk = st.select_slider("Tái khám đúng không", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_tk")
 
     st.divider()
 
-    # ── 2. ĐƠN THUỐC ─────────────────────────────────────────────────────
+    # ── ĐƠN THUỐC + đánh giá ngay bên dưới ─────────────────────────────
     st.markdown("#### 💊 Đơn thuốc *(chuyên môn sâu — kiểm tra kỹ)*")
     for drug in r.get("don_thuoc", []):
         parts = [f'<b>{drug.get("ten","")}</b> {drug.get("ham_luong","")}']
@@ -531,19 +540,16 @@ if st.session_state.result:
             parts.append(drug["lieu"])
         if drug.get("ngay"):
             parts.append(drug["ngay"])
-        st.markdown(
-            f'<div class="drug-card">💊 {" — ".join(parts)}</div>',
-            unsafe_allow_html=True,
-        )
+        st.markdown(f'<div class="drug-card">💊 {" — ".join(parts)}</div>', unsafe_allow_html=True)
     if not r.get("don_thuoc"):
         st.caption("*(Không phát hiện đơn thuốc trong giọng nói)*")
+    score_dt = st.select_slider("Đơn thuốc đúng không", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_dt")
 
     st.divider()
 
-    # ── 3. LÝ DO KHÁM ────────────────────────────────────────────────────
+    # ── LÝ DO + SINH HIỆU + đánh giá sinh hiệu bên trong expander ───────
     ly_do = st.text_area("Lý do khám / Triệu chứng chính", value=r.get("ly_do", ""), height=60)
 
-    # ── 4. SINH HIỆU (thường do staff/trợ lý điền trước) ─────────────────
     with st.expander("📊 Sinh hiệu *(thường do trợ lý đo trước — mở để xem/chỉnh)*", expanded=False):
         sh = r.get("sinh_hieu", {})
         col1, col2 = st.columns(2)
@@ -554,22 +560,12 @@ if st.session_state.result:
             _nd = float(sh.get("nhiet_do", 0) or 0)
             nhiet_do = st.number_input("Nhiệt độ (°C)", value=_nd if 34.0 <= _nd <= 42.0 else 36.5, min_value=34.0, max_value=42.0, step=0.1)
             can_nang = st.number_input("Cân nặng (kg)", value=float(sh.get("can_nang", 0)), min_value=0.0, max_value=200.0, step=0.1)
+        score_sh = st.select_slider("Sinh hiệu đúng không", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_sh")
 
     st.divider()
 
-    st.subheader("📊 Đánh giá độ chính xác (1 → 5)")
-    st.caption("1 = Sai hoàn toàn · 3 = Gần đúng · 5 = Đúng hoàn toàn — kéo thanh như volume")
-
-    def _s(v):
-        return {1: "1 ❌ Sai", 2: "2 🔴 Tệ", 3: "3 🟡 Tạm", 4: "4 🟢 Tốt", 5: "5 ✅ Đúng"}[v]
-
-    st.markdown("**📝 Tầng 1 — Transcript cơ bản**")
-    score_transcript = st.select_slider(
-        "Transcript nghe đúng so với BS nói", options=[1, 2, 3, 4, 5], value=5,
-        format_func=_s, key="score_transcript",
-    )
-
-    st.markdown("**👤 Tầng 2 — Thông tin cá nhân**")
+    # ── THÔNG TIN CÁ NHÂN — 3 cột compact ───────────────────────────────
+    st.markdown("**👤 Thông tin cá nhân BN**")
     col_p1, col_p2, col_p3 = st.columns(3)
     with col_p1:
         score_ten = st.select_slider("Tên BN", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_ten")
@@ -578,36 +574,17 @@ if st.session_state.result:
     with col_p3:
         score_ngay = st.select_slider("Ngày khám", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_ngay")
 
-    st.markdown("**⚕️ Tầng 3 — Thông tin lâm sàng (chuyên môn sâu)**")
-    col_c1, col_c2 = st.columns(2)
-    with col_c1:
-        score_sh = st.select_slider("Sinh hiệu", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_sh")
-        score_cd = st.select_slider("Chẩn đoán", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_cd")
-    with col_c2:
-        score_dt = st.select_slider("Đơn thuốc", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_dt")
-        score_tk = st.select_slider("Tái khám", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_tk")
+    st.divider()
 
+    # ── GHI CHÚ MÔI TRƯỜNG — 2 cột ngang ────────────────────────────────
     st.markdown("**🎙️ Ghi chú môi trường & đặc điểm**")
-    note_giong = st.multiselect(
-        "Giọng vùng miền BS",
-        ["Bắc", "Trung", "Nam", "Huế", "Tây Nguyên", "Khác"],
-        key="note_giong",
-    )
-    note_noise = st.multiselect(
-        "Môi trường ghi âm",
-        ["Yên tĩnh", "Ồn quạt", "Ồn nhiều người", "Phòng vang", "Tiếng xe ngoài", "Nhiễu khác"],
-        key="note_noise",
-    )
-    note_bs = st.multiselect(
-        "Đặc điểm BS nói",
-        ["Rõ ràng", "Nói nhanh", "Giọng nhẹ", "Dùng tiếng địa phương", "Thuật ngữ đặc biệt", "Khó nghe"],
-        key="note_bs",
-    )
-    correction = st.text_input(
-        "Ghi chú thêm (không bắt buộc)",
-        placeholder="VD: nói 'Zempalm' Whisper ghi sai · bệnh sử đặc biệt · phòng ồn quạt...",
-        key="correction_text",
-    )
+    col_n1, col_n2 = st.columns(2)
+    with col_n1:
+        note_giong = st.multiselect("Giọng vùng miền", ["Bắc", "Trung", "Nam", "Huế", "Tây Nguyên", "Khác"], key="note_giong")
+        note_noise = st.multiselect("Môi trường ghi âm", ["Yên tĩnh", "Ồn quạt", "Ồn nhiều người", "Phòng vang", "Tiếng xe ngoài", "Nhiễu khác"], key="note_noise")
+    with col_n2:
+        note_bs = st.multiselect("Đặc điểm BS nói", ["Rõ ràng", "Nói nhanh", "Giọng nhẹ", "Dùng tiếng địa phương", "Thuật ngữ đặc biệt", "Khó nghe"], key="note_bs")
+        correction = st.text_input("Ghi chú thêm", placeholder="VD: 'L'Occitane' → Losartan · ồn quạt · giọng Nam...", key="correction_text")
 
     _all_scores = [score_transcript, score_ten, score_tuoi, score_ngay, score_sh, score_cd, score_dt, score_tk]
     avg_score = round(sum(_all_scores) / len(_all_scores), 1)
