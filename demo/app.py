@@ -5,9 +5,40 @@ Data collection: audio + corrections (no real PII)
 """
 import streamlit as st
 import json
-import random
 import time
+import io
 from datetime import datetime
+
+# Google Drive upload (chỉ chạy khi có secrets)
+def upload_to_drive(audio_bytes: bytes, session_data: dict) -> bool:
+    try:
+        from google.oauth2 import service_account
+        from googleapiclient.discovery import build
+        from googleapiclient.http import MediaIoBaseUpload
+
+        creds = service_account.Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"],
+            scopes=["https://www.googleapis.com/auth/drive"],
+        )
+        service = build("drive", "v3", credentials=creds, cache_discovery=False)
+        folder_id = st.secrets["drive_folder_id"]
+        ts = session_data["session_id"]
+
+        # Upload audio WAV
+        audio_meta = {"name": f"medivoice_audio_{ts}.wav", "parents": [folder_id]}
+        audio_media = MediaIoBaseUpload(io.BytesIO(audio_bytes), mimetype="audio/wav")
+        service.files().create(body=audio_meta, media_body=audio_media).execute()
+
+        # Upload JSON metadata
+        json_bytes = json.dumps(session_data, ensure_ascii=False, indent=2).encode("utf-8")
+        json_meta = {"name": f"medivoice_session_{ts}.json", "parents": [folder_id]}
+        json_media = MediaIoBaseUpload(io.BytesIO(json_bytes), mimetype="application/json")
+        service.files().create(body=json_meta, media_body=json_media).execute()
+
+        return True
+    except Exception as e:
+        st.error(f"Drive upload lỗi: {e}")
+        return False
 
 st.set_page_config(
     page_title="MediVoice VN — Demo",
@@ -282,6 +313,13 @@ if st.session_state.result:
                 }
                 st.session_state.approved = True
                 st.session_state.session_data = session_data
+
+                # Auto-upload to Google Drive nếu có secrets
+                if "gcp_service_account" in st.secrets:
+                    with st.spinner("📤 Đang lưu lên Google Drive..."):
+                        ok = upload_to_drive(r.get("audio", b""), session_data)
+                    if ok:
+                        st.session_state.drive_uploaded = True
                 st.rerun()
 
     with col_reject:
@@ -295,6 +333,11 @@ if st.session_state.result:
     if st.session_state.approved and hasattr(st.session_state, "session_data"):
         sd = st.session_state.session_data
         st.markdown('<p class="approved">✅ Bệnh án đã được xác nhận</p>', unsafe_allow_html=True)
+
+        if st.session_state.get("drive_uploaded"):
+            st.success("☁️ Đã lưu tự động lên Google Drive của MediVoice")
+        else:
+            st.info("📩 Tải file bên dưới rồi gửi về **vietshares.com@gmail.com**")
 
         col_dl1, col_dl2 = st.columns(2)
         with col_dl1:
