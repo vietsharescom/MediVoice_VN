@@ -27,13 +27,13 @@ def upload_to_drive(audio_bytes: bytes, session_data: dict) -> bool:
         # Upload audio WAV
         audio_meta = {"name": f"medivoice_audio_{ts}.wav", "parents": [folder_id]}
         audio_media = MediaIoBaseUpload(io.BytesIO(audio_bytes), mimetype="audio/wav")
-        service.files().create(body=audio_meta, media_body=audio_media).execute()
+        service.files().create(body=audio_meta, media_body=audio_media, supportsAllDrives=True).execute()
 
         # Upload JSON metadata
         json_bytes = json.dumps(session_data, ensure_ascii=False, indent=2).encode("utf-8")
         json_meta = {"name": f"medivoice_session_{ts}.json", "parents": [folder_id]}
         json_media = MediaIoBaseUpload(io.BytesIO(json_bytes), mimetype="application/json")
-        service.files().create(body=json_meta, media_body=json_media).execute()
+        service.files().create(body=json_meta, media_body=json_media, supportsAllDrives=True).execute()
 
         return True
     except Exception as e:
