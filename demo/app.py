@@ -500,23 +500,31 @@ if st.session_state.result:
 
     st.divider()
 
-    st.subheader("📝 Nháp bệnh án (có thể chỉnh sửa)")
-    col1, col2 = st.columns(2)
-    sh = r.get("sinh_hieu", {})
-    with col1:
-        huyet_ap = st.text_input("Huyết áp (mmHg)", value=sh.get("huyet_ap", ""))
-        mach = st.number_input("Mạch (lần/phút)", value=int(sh.get("mach", 0)), min_value=0, max_value=200)
-    with col2:
-        _nd = float(sh.get("nhiet_do", 0) or 0)
-        nhiet_do = st.number_input("Nhiệt độ (°C)", value=_nd if 34.0 <= _nd <= 42.0 else 36.5, min_value=34.0, max_value=42.0, step=0.1)
-        can_nang = st.number_input("Cân nặng (kg)", value=float(sh.get("can_nang", 0)), min_value=0.0, max_value=200.0, step=0.1)
+    st.subheader("📝 Nháp bệnh án — Mẫu 15/BV-01")
 
-    ly_do = st.text_area("Lý do khám", value=r.get("ly_do", ""), height=60)
-    chan_doan = st.text_input("Chẩn đoán", value=r.get("chan_doan", ""))
-    icd = st.text_input("Mã ICD-10-VN", value=r.get("icd", ""))
-    tai_kham = st.text_input("Tái khám", value=r.get("tai_kham", ""))
+    # ── 1. CHẨN ĐOÁN (quan trọng nhất — BS xem đầu tiên) ─────────────────
+    st.markdown("#### 🏥 Chẩn đoán *(ưu tiên #1 — BS xác nhận)*")
+    chan_doan = st.text_input(
+        "Chẩn đoán chính ★",
+        value=r.get("chan_doan", ""),
+        placeholder="VD: Viêm phế quản cấp / Tăng huyết áp độ 1 / Đái tháo đường type 2",
+        help="Bắt buộc theo TT32/2023. BS chịu trách nhiệm hoàn toàn.",
+    )
+    col_icd, col_tk = st.columns(2)
+    with col_icd:
+        icd = st.text_input(
+            "Mã ICD-10-VN ★",
+            value=r.get("icd", ""),
+            placeholder="VD: J20.9 / I10 / E11.9",
+            help="Bắt buộc kèm chẩn đoán. Tra tại QĐ5837.",
+        )
+    with col_tk:
+        tai_kham = st.text_input("Tái khám", value=r.get("tai_kham", ""), placeholder="VD: 7 ngày / 1 tháng")
 
-    st.markdown("**Đơn thuốc**")
+    st.divider()
+
+    # ── 2. ĐƠN THUỐC ─────────────────────────────────────────────────────
+    st.markdown("#### 💊 Đơn thuốc *(chuyên môn sâu — kiểm tra kỹ)*")
     for drug in r.get("don_thuoc", []):
         parts = [f'<b>{drug.get("ten","")}</b> {drug.get("ham_luong","")}']
         if drug.get("lieu"):
@@ -527,6 +535,25 @@ if st.session_state.result:
             f'<div class="drug-card">💊 {" — ".join(parts)}</div>',
             unsafe_allow_html=True,
         )
+    if not r.get("don_thuoc"):
+        st.caption("*(Không phát hiện đơn thuốc trong giọng nói)*")
+
+    st.divider()
+
+    # ── 3. LÝ DO KHÁM ────────────────────────────────────────────────────
+    ly_do = st.text_area("Lý do khám / Triệu chứng chính", value=r.get("ly_do", ""), height=60)
+
+    # ── 4. SINH HIỆU (thường do staff/trợ lý điền trước) ─────────────────
+    with st.expander("📊 Sinh hiệu *(thường do trợ lý đo trước — mở để xem/chỉnh)*", expanded=False):
+        sh = r.get("sinh_hieu", {})
+        col1, col2 = st.columns(2)
+        with col1:
+            huyet_ap = st.text_input("Huyết áp (mmHg)", value=sh.get("huyet_ap", ""), placeholder="VD: 120/80")
+            mach = st.number_input("Mạch (lần/phút)", value=int(sh.get("mach", 0)), min_value=0, max_value=200)
+        with col2:
+            _nd = float(sh.get("nhiet_do", 0) or 0)
+            nhiet_do = st.number_input("Nhiệt độ (°C)", value=_nd if 34.0 <= _nd <= 42.0 else 36.5, min_value=34.0, max_value=42.0, step=0.1)
+            can_nang = st.number_input("Cân nặng (kg)", value=float(sh.get("can_nang", 0)), min_value=0.0, max_value=200.0, step=0.1)
 
     st.divider()
 
