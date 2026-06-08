@@ -117,11 +117,11 @@ def extract_clinical_data(transcript: str) -> tuple[dict, str]:
         prompt = f"""Bạn là AI phân tích bệnh án y tế tiếng Việt, chuyên xử lý lời nói tự nhiên của bác sĩ trong phòng khám.
 
 QUY TẮC:
-1. BỎ QUA hoàn toàn: chào hỏi ("bác khoẻ không", "tên gì", "bao nhiêu tuổi"), câu chuyện phiếm, tiếng ừ/à/hmm, khoảng lặng
-2. CHỈ trích xuất: triệu chứng, sinh hiệu, chẩn đoán, thuốc, tái khám
+1. BỎ QUA: chào hỏi xã giao, câu chuyện phiếm, tiếng ừ/à/hmm
+2. Thông tin BN: trích xuất tên, tuổi, giới nếu BS đề cập ("bệnh nhân nữ 42 tuổi", "anh Nam")
 3. Sinh hiệu: nếu không đề cập → để 0 hoặc "" (không điền mặc định)
-4. Tên thuốc: chuẩn hóa về INN quốc tế ("Zempalm"→"Diazepam", "Omeprazone"→"Omeprazole", "Paradon"→"Paracetamol")
-5. ICD-10: chỉ điền khi chắc chắn (tăng HA→I10, lo âu→F41.1, viêm họng→J02.9, tiểu đường type2→E11.9) — để trống nếu không chắc
+4. Tên thuốc: chuẩn hóa về INN quốc tế ("Zempalm"→"Diazepam", "Cetralin"→"Sertraline", "L'Occitane"→"Losartan", "Avobastatin"→"Atorvastatin")
+5. ICD-10: chỉ điền khi chắc chắn (tăng HA→I10, lo âu→F41.1, viêm họng→J02.9, tiểu đường type2→E11.9)
 6. "ngay" để "" nếu BS nói "khi cần", "khi sốt" hoặc không nói số ngày
 7. Transcript có thể có lỗi ASR — suy luận từ ngữ cảnh y tế
 8. Chỉ trả về JSON, không giải thích thêm
@@ -131,6 +131,12 @@ TRANSCRIPT (lời BS nói tự nhiên, có thể lẫn hội thoại với bện
 
 JSON OUTPUT:
 {{
+  "benh_nhan": {{
+    "ten": "họ tên nếu BS đề cập, để trống nếu không rõ",
+    "tuoi": 0,
+    "gioi": "Nam/Nữ/Không rõ",
+    "nam_sinh": ""
+  }},
   "ly_do": "triệu chứng chính bệnh nhân than phiền",
   "chan_doan": "chẩn đoán bác sĩ kết luận",
   "icd": "",
@@ -457,7 +463,7 @@ if audio_data is not None and not st.session_state.approved:
     result["asr_error"] = asr_error
     result["ner_error"] = ner_error
     result["ner_ok"] = bool(clinical_data)
-    # Lưu NER output gốc để auto-diff với form_approved sau khi BS chỉnh
+    result["benh_nhan_ner"] = clinical_data.get("benh_nhan", {}) if clinical_data else {}
     result["form_ner"] = {
         "ly_do": clinical_data.get("ly_do", "") if clinical_data else "",
         "chan_doan": clinical_data.get("chan_doan", "") if clinical_data else "",
@@ -511,6 +517,38 @@ if st.session_state.result:
     st.divider()
     st.subheader("📝 Nháp bệnh án — Mẫu 15/BV-01")
 
+    # ── THÔNG TIN HÀNH CHÍNH BỆNH NHÂN ──────────────────────────────────
+    st.markdown("#### 👤 Thông tin bệnh nhân *(Mẫu 15/BV-01 — Phần I)*")
+    _bn = r.get("benh_nhan_ner", {})
+    col_bn1, col_bn2, col_bn3 = st.columns(3)
+    with col_bn1:
+        bn_ten = st.text_input("Họ tên BN", value=_bn.get("ten", "") or ten_bn_demo or "", placeholder="VD: Nguyễn Văn A (demo)")
+    with col_bn2:
+        _tuoi_val = int(_bn.get("tuoi", 0) or 0)
+        bn_tuoi = st.number_input("Tuổi", value=_tuoi_val, min_value=0, max_value=120, step=1)
+    with col_bn3:
+        _gioi_opts = ["Không rõ", "Nam", "Nữ"]
+        _gioi_idx = _gioi_opts.index(_bn.get("gioi", "Không rõ")) if _bn.get("gioi") in _gioi_opts else 0
+        bn_gioi = st.selectbox("Giới tính", _gioi_opts, index=_gioi_idx)
+    col_bn4, col_bn5, col_bn6 = st.columns(3)
+    with col_bn4:
+        bn_nam_sinh = st.text_input("Năm sinh", value=_bn.get("nam_sinh", "") or "", placeholder="VD: 1982")
+    with col_bn5:
+        bn_sdt = st.text_input("Số điện thoại", placeholder="VD: 090xxx (demo)")
+    with col_bn6:
+        bn_cccd = st.text_input("Số CCCD/CMND", placeholder="Để trống cho demo")
+    bn_dia_chi = st.text_input("Địa chỉ", placeholder="VD: Q.Hải Châu, Đà Nẵng (demo)")
+
+    col_bn_ev1, col_bn_ev2, col_bn_ev3 = st.columns(3)
+    with col_bn_ev1:
+        score_ten = st.select_slider("Tên BN", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_ten")
+    with col_bn_ev2:
+        score_tuoi = st.select_slider("Tuổi / Năm sinh", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_tuoi")
+    with col_bn_ev3:
+        score_ngay = st.select_slider("Ngày khám", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_ngay")
+
+    st.divider()
+
     # ── CHẨN ĐOÁN + đánh giá ngay bên dưới ─────────────────────────────
     st.markdown("#### 🏥 Chẩn đoán *(ưu tiên #1 — BS xác nhận)*")
     chan_doan = st.text_input(
@@ -549,6 +587,7 @@ if st.session_state.result:
 
     # ── LÝ DO + SINH HIỆU + đánh giá sinh hiệu bên trong expander ───────
     ly_do = st.text_area("Lý do khám / Triệu chứng chính", value=r.get("ly_do", ""), height=60)
+    score_ly_do = st.select_slider("Lý do khám đúng không", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_ly_do")
 
     with st.expander("📊 Sinh hiệu *(thường do trợ lý đo trước — mở để xem/chỉnh)*", expanded=False):
         sh = r.get("sinh_hieu", {})
@@ -564,18 +603,6 @@ if st.session_state.result:
 
     st.divider()
 
-    # ── THÔNG TIN CÁ NHÂN — 3 cột compact ───────────────────────────────
-    st.markdown("**👤 Thông tin cá nhân BN**")
-    col_p1, col_p2, col_p3 = st.columns(3)
-    with col_p1:
-        score_ten = st.select_slider("Tên BN", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_ten")
-    with col_p2:
-        score_tuoi = st.select_slider("Tuổi / Năm sinh", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_tuoi")
-    with col_p3:
-        score_ngay = st.select_slider("Ngày khám", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_ngay")
-
-    st.divider()
-
     # ── GHI CHÚ MÔI TRƯỜNG — 2 cột ngang ────────────────────────────────
     st.markdown("**🎙️ Ghi chú môi trường & đặc điểm**")
     col_n1, col_n2 = st.columns(2)
@@ -586,7 +613,7 @@ if st.session_state.result:
         note_bs = st.multiselect("Đặc điểm BS nói", ["Rõ ràng", "Nói nhanh", "Giọng nhẹ", "Dùng tiếng địa phương", "Thuật ngữ đặc biệt", "Khó nghe"], key="note_bs")
         correction = st.text_input("Ghi chú thêm", placeholder="VD: 'L'Occitane' → Losartan · ồn quạt · giọng Nam...", key="correction_text")
 
-    _all_scores = [score_transcript, score_ten, score_tuoi, score_ngay, score_sh, score_cd, score_dt, score_tk]
+    _all_scores = [score_transcript, score_ten, score_tuoi, score_ngay, score_sh, score_cd, score_dt, score_tk, score_ly_do]
     avg_score = round(sum(_all_scores) / len(_all_scores), 1)
     accuracy = f"{avg_score}/5"
 
@@ -614,11 +641,17 @@ if st.session_state.result:
                     "transcript_mock": r["transcript"],
                     "accuracy_rating": accuracy,
                     "avg_score": avg_score,
+                    "benh_nhan": {
+                        "ten": bn_ten, "tuoi": bn_tuoi, "gioi": bn_gioi,
+                        "nam_sinh": bn_nam_sinh, "sdt": bn_sdt,
+                        "cccd": bn_cccd, "dia_chi": bn_dia_chi,
+                    },
                     "field_eval": {
                         "transcript": score_transcript,
                         "ten_bn": score_ten,
                         "tuoi": score_tuoi,
                         "ngay_kham": score_ngay,
+                        "ly_do": score_ly_do,
                         "sinh_hieu": score_sh,
                         "chan_doan": score_cd,
                         "don_thuoc": score_dt,
