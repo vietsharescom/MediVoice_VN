@@ -1106,65 +1106,112 @@ TÍCH HỢP AUTO [Gói 3, Phase 2]:
 ## 15. AI PIPELINE KỸ THUẬT (L0→L10)
 
 ### Dành cho ai: Kỹ thuật
+### Version: v2.0 — Cập nhật 2026-06-09 | FID-VN-010 | BENCH-002b evidence
+
+> **v2.0 RATIONALE:** BENCH-002b evidence (2026-06-08): Drug Recall local pipeline = 13–18% vs Cloud LLM = 78%.
+> Root causes: Drug OOV hallucination + No clinical domain bias ở ASR + Fixed chunk cắt giữa câu + Dialect gap.
+> FID: `fids/FID-VN-010.md` | Consultation: `docs/records/consultations/CONS-20260608-002.md`
 
 ```
 INPUT: Giọng nói bác sĩ (WAV/MP3/M4A/WEBM)
 
-[L0] NORMALIZE
-  Chuẩn hoá về 16kHz mono PCM
-  Phát hiện silence (VAD) — từ chối nếu > 95% im lặng
-  Hash SHA-256 để đảm bảo bất biến
-  XÓA audio gốc sau khi xử lý (Privacy by Design — NĐ13/2023)
+[L0] NORMALIZE (v2 — VAD-aware)
+  a. Chuẩn hoá về 16kHz mono PCM
+  b. VAD silence-aware chunking [v2 NEW — silero-vad]
+       → chunk theo điểm im lặng tự nhiên (thay fixed 10s)
+       → max chunk = 20s để Whisper không truncate
+       → giữ drug+dose trong cùng 1 chunk
+  c. Hash SHA-256 để đảm bảo bất biến
+  d. XÓA audio gốc sau khi xử lý (Privacy by Design — NĐ13/2023)
 
-[L1a] ASR — NHẬN DẠNG GIỌNG NÓI
-  Model: PhoWhisper-small (vinai/PhoWhisper-small, BSD-3-Clause)
+[L1a] ASR — NHẬN DẠNG GIỌNG NÓI (v2 — domain-primed)
+  Model: PhoWhisper-medium (vinai/PhoWhisper-medium, BSD-3-Clause)
+         [upgraded từ PhoWhisper-small theo BENCH-001/002 evidence]
   Chạy: 100% offline, không network call
-  Chunk: 10 giây + 2 giây overlap (tránh cắt giữa câu)
-  Output: transcript tiếng Việt
+  Chunking: VAD silence-aware (L0b) — không cắt giữa câu [v2]
+  [v2 NEW] Prompt Injection — initial_prompt với drug list:
+    → Inject top 30 drugs theo specialty vào Whisper decoder
+    → Bias acoustic model về medical vocabulary
+    → Expected: +10–25% drug recall cho drugs có phonetic overlap
+  Output: transcript tiếng Việt thô
 
-[L1b] DRUG NAME CORRECTION
-  Sửa tên thuốc về INN chuẩn (drug_db.json — 110+ thuốc)
-  Ví dụ: "amoxiciline" → "Amoxicillin"
-  KHÔNG dịch tên thuốc INN sang tiếng Việt (an toàn BN)
-  Match: n-gram 3/2/1 + alias map
+[POST-ASR TEXT NORMALIZATION] [v2 NEW]
+  a. Dialect normalization — src/core/dialect_norm.py:
+       Miền Trung: mô→đâu | rứa→vậy | hỉ→nhỉ | răng→sao | ni→này
+       Miền Nam: hổng→không | dzô→vào | tui→tôi
+       ⚠️ Region-aware: "ốm" = bệnh (Trung) ≠ gầy (Nam)
+       Nguồn region: facility.region config khi BS đăng ký
+  b. Abbreviation expansion — cùng file:
+       ha→huyết áp | bn→bệnh nhân | tk→tái khám
+       xn→xét nghiệm | sa→siêu âm | xq→x-quang
+       đtđ→đái tháo đường | tha→tăng huyết áp
+
+[L1b] DRUG CORRECTION (v2 — multi-layer)
+  Layer 1: Exact alias match (existing, fast)
+  Layer 2: Fuzzy match RapidFuzz token_sort_ratio (cutoff ~85%)
+  Layer 3: Phonetic prefix + diagnosis context
+  Layer 4: Safety Rule Engine — hard dose validation, ambiguity → flag
+  [v2 NEW] Layer 5: Drug Vector RAG (Chroma + multilingual MiniLM):
+    → Query: distorted drug token + diagnosis context
+    → Store: drug_db_v200 (146 INN, phonetic_variants, drug_class)
+    → Recover: "glibizi" + "đái tháo đường" → Glipizide
+    → Threshold: score ≥ 0.80 để auto-suggest; < 0.80 → flagged_for_review
+  DB: drug_db_v200.json — 146 INN, 100% phonetic_variants, 3 vùng miền
 
 [L1c] NER — NHẬN DẠNG THỰC THỂ Y TẾ
-  Extract từ transcript tiếng Việt:
+  Extract từ transcript tiếng Việt đã normalize:
     VITAL: huyết áp, mạch, nhiệt độ, nhịp thở, cân nặng, SpO2
     SYMPTOM: triệu chứng, lý do khám
     MEDICATION: thuốc + liều + tần suất + số ngày + đường dùng
     HISTORY: tiền sử bệnh, dị ứng
     FOLLOWUP: lịch tái khám
-  Phase 0: rule-based regex (nhanh, reliable)
-  Phase 1: nâng lên PhoBERT + CRF (chính xác hơn)
+  Phase 0: rule-based regex (nhanh, reliable) — CURRENT
+  [FID-VN-009] PhoBERT + CRF SHADOW mode — OFF by default
+    → Bật khi BENCH-002b GO criteria đạt (≥50 GT transcripts)
+    → Shadow = log only, không merge vào production output
+    → GO requires: F1 ≥ 0.85 trên real audio, BS correction rate -10%
 
 [L1d] ICD-10-VN LOOKUP
-  Tra mã tự động từ text chẩn đoán
+  Tra mã tự động từ text chẩn đoán (đã dialect-normalized)
   Database: 15,026 mã (icd10vn.json — QĐ5837/QĐ-BYT)
+  [v2] ICD-10 Vector RAG — LangChain (Phase 0.5):
+    → Semantic lookup thay substring search
+    → Handle synonyms: "đái tháo đường" = "tiểu đường" = T90
   Output: mã ICD-10-VN + tên tiếng Việt
 
-[L2] VALIDATE
+[L2] VALIDATE (v2 — confidence per field)
   Tính confidence score cho từng field (0.0–1.0)
   Overall confidence = weighted score
-  Flag low confidence < 0.3 → cảnh báo BS
+  [v2] Per-field confidence hiển thị ở L4 UI:
+    don_thuoc[i]: 0.61 ⚠️ → BS phải confirm bằng tap
+  Flag low confidence < 0.3 → cảnh báo BS + block approve
 
 [L3] ROUTE
   Phân loại từ keywords trong transcript:
     lam_sang (default) → Mẫu 15/BV-01
     cdha (siêu âm, x-quang, CT, MRI) → báo cáo CĐHA [M8]
     nha_khoa (răng, nha, nướu) → Mẫu 16/BV-01 [M8]
+  LangChain orchestration (Phase 0.5): 4 chains parallel:
+    Chain-A: Drug normalization | Chain-B: ICD-10 lookup
+    Chain-C: Dialect context | Chain-D: Form fill + validation
+    LLM: Groq LLaMA-3.3-70B (Phase 0) → Qwen2.5-7B LoRA local (Phase 2)
 
-[L4] HUMAN GATE
+[L4] HUMAN GATE (v2 — per-drug mandatory confirm)
   Status → PENDING_REVIEW
-  BS phải review và phê duyệt rõ ràng
+  [v2 SAFETY REDESIGN — FID-VN-010]:
+    KHÔNG batch approve toàn form
+    Mỗi thuốc: BS phải tap [✓ Xác nhận: Amlodipine 5mg/sáng]
+    Thuốc flagged (confidence < 0.80): [⚠️ AI chưa chắc — xác nhận?]
+    Chỉ khi tất cả drugs confirmed → unlock [Approve & Sign]
+    Hiển thị confidence bar cho từng field
   KHÔNG bypass, KHÔNG auto-save (Luật KCB 2023 Điều 62)
+  Evidence: Session 174116 — Losartan→Atorvastatin, BS chấm 5/5 không phát hiện
 
 [L5] PII SCAN
   Quét thông tin nhạy cảm trong transcript:
     CCCD 12 số, CMND 9 số
     Số điện thoại (0[3-9]xxxxxxxx)
-    Số thẻ BHYT
-    Email
+    Số thẻ BHYT | Email
   Flag nếu phát hiện → BS được thông báo
 
 [L6] BRANCH — TẠO FORM
@@ -1177,7 +1224,6 @@ INPUT: Giọng nói bác sĩ (WAV/MP3/M4A/WEBM)
       ICD → kham_benh.ma_icd10
       FOLLOWUP → don_thuoc.tai_kham
     (Không qua SOAP — trực tiếp từ NER entities)
-
   cdha / nha_khoa → plugin riêng [Phase 1, M8]
 
 [L7] STORAGE
@@ -1202,9 +1248,34 @@ INPUT: Giọng nói bác sĩ (WAV/MP3/M4A/WEBM)
   Append-only — không thể sửa/xoá
   Lưu trữ 10+ năm (TT32/2023)
   Nội dung: stage, actor, timestamp, action, hash
+  [v2] Ghi thêm: dialect_substitutions, drug_rag_candidates, confidence_scores
   verify_chain() — kiểm tra tính toàn vẹn hàng tuần
 
 OUTPUT: BenhAnNgoaiTru + PDF Mẫu 15/BV-01 + Audit entry
+
+REAL-TIME UI LAYER (parallel với tất cả layers):
+  Drug suggestion chips — top 3 candidates + pronunciation VN
+  Dialect badge — "Giọng Trung: mô→đâu, rứa→vậy" (dismissible)
+  Specialty terminology sidebar — thuật ngữ hay dùng theo chuyên khoa
+  Transcript live display — streaming từng utterance
+```
+
+### Performance benchmarks (BENCH-002b, 2026-06-08)
+
+| Metric | v1.0 local pipeline | Target v2.0 | Cloud LLM (ref) |
+|---|---|---|---|
+| Drug Recall | 13–18% | ≥ 40% (Phase 0) / ≥ 70% (Phase 1) | 78% |
+| WER PhoWhisper | 47–89% (real) | ≤ 35% Phase 0 / ≤ 20% Phase 1 | — |
+| NER F1 | unknown (real) | ≥ 0.85 (Phase 1) | — |
+| don_thuoc accuracy | ~25% (N=1) | ≥ 70% (Phase 0.5) | — |
+
+### Roadmap phases (FID-VN-010)
+
+```
+Phase 0  (2 tuần)   — A1+A2+A3+L4-REDESIGN: không cần data mới
+Phase 0.5 (1 tháng) — RAG-001+UI-001: drug vector store + suggestion chips
+Phase 1  (3 tháng)  — PhoBERT production + LangChain 4 chains + ICD RAG
+Phase 2  (9 tháng)  — LoRA PhoWhisper + Qwen2.5-7B local (thay Groq)
 ```
 
 ---

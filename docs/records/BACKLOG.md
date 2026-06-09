@@ -27,6 +27,48 @@
   - 12+ chuyên khoa: tim mạch, hô hấp, GI, tiết niệu, nội tiết, nhi, sản khoa, da liễu, ung thư...
   - Drug mishear patterns thật: Amoxicillin→amosicilin, Metformin→mek fốc binh, Amlodipine→ong lau đi pin
   - ⏳ **Chờ Andy**: điền GT vào `data/eval/ref_voice_transcripts_review.txt` (Clip2+Clip3 ưu tiên)
+
+### FID-VN-010 PIPELINE REDESIGN — Phase 0 [IMMEDIATE, sau BENCH-002b pending]
+> Evidence: BENCH-002b 2026-06-08 | FID: `fids/FID-VN-010.md` | Prerequisite: A1+A2+A3 trước khi bật bất kỳ ML layer mới
+
+- [ ] **A1-PROMPT-INJECT** 🔴 Whisper prompt injection — bias PhoWhisper decoder về drug vocabulary
+  - File: `src/core/l1a_asr.py` — thêm `build_initial_prompt(drug_db, specialty)`
+  - Inject top 30 drugs by specialty vào `initial_prompt`
+  - Expected: +10–25% drug recall cho drugs có phonetic overlap
+  - Effort: 4h | Risk: Thấp (rollback = xóa initial_prompt parameter)
+- [ ] **A2-VAD-CHUNK** 🔴 VAD silence-aware chunking — thay fixed 10s chunk
+  - File: `src/core/l0_normalize.py` — thêm `vad_chunk_audio()`
+  - Library: `silero-vad` (MIT, ~1MB, CPU fast)
+  - Max chunk = 20s, gap_ms = 500ms, split nếu > max
+  - Expected: WER giảm 5–15%, giữ drug+dose trong cùng 1 chunk
+  - Effort: 1 ngày | Risk: Thấp
+- [ ] **A3-DIALECT-NORM** 🔴 Dialect normalization + abbreviation expansion
+  - File mới: `src/core/dialect_norm.py`
+  - Dict 200+ entries: Trung (mô/rứa/hỉ/răng/ni) + Nam (hổng/dzô/tui) + medical_abbrev
+  - ⚠️ Region-aware: "ốm" = bệnh (Trung) ≠ gầy (Nam) — đọc `facility.region`
+  - Unit test 50 cases, dialect badge output cho UI
+  - Effort: 2 ngày | Risk: Thấp
+- [ ] **L4-REDESIGN-001** 🔴 Per-drug mandatory confirm UI — safety critical
+  - Files: `demo/app.py` + `demo/static/js/` + `demo/static/index.html`
+  - KHÔNG batch approve: mỗi drug phải tap xác nhận riêng
+  - Confidence bar per field, flagged drugs require explicit confirm
+  - Evidence: Session 174116 Losartan→Atorvastatin safety failure
+  - Effort: 3 ngày | Risk: Thấp | Impact: SAFETY CRITICAL
+- [ ] **RAG-001-DRUG-VECTOR** 🟡 Drug Vector Store — Chroma + multilingual MiniLM
+  - File mới: `src/core/drug_rag.py`
+  - Build từ `data/reference/drug_db_v200.json` (146 INN, phonetic_variants)
+  - Persist: `data/drug_vectorstore/` (gitignored)
+  - API: `query_drug_rag(distorted_token, diagnosis_context, k=3)`
+  - Effort: 3 ngày | Risk: Medium | Prerequisite: A1+A2+A3 done
+- [ ] **UI-SUGGEST-001** 🟡 Real-time suggestion UI — drug chips + dialect badge + terminology sidebar
+  - File mới: `demo/static/js/suggestions.js`
+  - New endpoints: GET `/api/drug-candidates`, GET `/api/terms`, POST `/api/dialect-check`
+  - Drug chips: top 3 candidates + pronunciation VN
+  - Dialect badge: dismissible, hiện substitutions made
+  - Effort: 5 ngày | Risk: Medium | Prerequisite: A3-DIALECT-NORM + RAG-001
+- [ ] **BENCH-GT-001** 🔴 Fill GT labels — ANDY TASK: điền 54/57 còn lại trong `data/eval/ref_voice_transcripts_review.txt`
+  - Clip2+Clip3 ưu tiên (BS Đà Nẵng/SG real voice)
+  - Cần để: đo BENCH-002b CEER thật + PhoBERT GO criteria
 - [x] **GAP-002** ✅ Unit tests PII scan — tests/unit/test_pii_scan.py 27 tests PASS (2026-06-06)
 - [x] **GAP-003** ✅ Unit tests L8 error handler — `tests/unit/test_l8_error_handler.py` 20 tests PASS (2026-06-08) | P0.2.L8
 - [x] **GAP-004** ✅ Unit tests L9a PDF export — `tests/unit/test_l9a_pdf_export.py` 15 tests PASS (2026-06-08) | P0.2.L9a
