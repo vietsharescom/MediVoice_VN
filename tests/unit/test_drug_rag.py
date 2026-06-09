@@ -70,6 +70,9 @@ if "src.core.drug_rag" in sys.modules:
 from src.core.drug_rag import (
     _build_doc,
     _doc_id,
+    _build_phonetic_index,
+    _fuzzy_phonetic_search,
+    hybrid_query_drug,
     build_drug_vectorstore,
     load_drug_vectorstore,
     query_drug_rag,
@@ -409,6 +412,212 @@ class TestQueryDrugRag:
         }
         results = query_drug_rag("test", "context", _mock_collection, _mock_st_model, k=10)
         assert len(results) == 2
+
+
+# ===========================================================================
+# _build_phonetic_index tests
+# ===========================================================================
+
+class TestBuildPhoneticIndex:
+    def test_returns_list(self):
+        idx = _build_phonetic_index(MINIMAL_DRUG_DB)
+        assert isinstance(idx, list)
+
+    def test_contains_inn_entries(self):
+        idx = _build_phonetic_index(MINIMAL_DRUG_DB)
+        inns = {e[0] for e in idx}
+        assert "Paracetamol" in inns
+        assert "Metformin" in inns
+        assert "Amlodipine" in inns
+
+    def test_contains_phonetic_variants(self):
+        idx = _build_phonetic_index(MINIMAL_DRUG_DB)
+        variants = {e[1] for e in idx}
+        assert "mek foc binh" in variants  # Metformin south phonetic
+        assert "ong lau di pin" in variants  # Amlodipine south phonetic
+
+    def test_contains_brands(self):
+        idx = _build_phonetic_index(MINIMAL_DRUG_DB)
+        variants = {e[1] for e in idx}
+        assert "Panadol" in variants
+        assert "Norvasc" in variants
+
+    def test_contains_keywords(self):
+        idx = _build_phonetic_index(MINIMAL_DRUG_DB)
+        variants = {e[1] for e in idx}
+        assert "para" in variants
+        assert "hạ sốt" in variants
+
+    def test_tuple_structure(self):
+        idx = _build_phonetic_index(MINIMAL_DRUG_DB)
+        for entry in idx:
+            assert len(entry) == 3  # (inn, variant, drug_class)
+
+    def test_drug_class_preserved(self):
+        idx = _build_phonetic_index(MINIMAL_DRUG_DB)
+        metformin_entries = [(inn, v, dc) for inn, v, dc in idx if inn == "Metformin"]
+        assert all(dc == "biguanide" for _, _, dc in metformin_entries)
+
+    def test_empty_db_returns_empty(self):
+        idx = _build_phonetic_index({"by_inn": {}})
+        assert idx == []
+
+    def test_no_by_inn_returns_empty(self):
+        idx = _build_phonetic_index({})
+        assert idx == []
+
+
+# ===========================================================================
+# _fuzzy_phonetic_search tests
+# ===========================================================================
+
+class TestFuzzyPhoneticSearch:
+    def setup_method(self):
+        self.idx = _build_phonetic_index(MINIMAL_DRUG_DB)
+
+    def test_returns_list(self):
+        results = _fuzzy_phonetic_search("para", self.idx)
+        assert isinstance(results, list)
+
+    def test_paracetamol_from_variant(self):
+        results = _fuzzy_phonetic_search("pa ra xe ta mol", self.idx)
+        inns = [r["inn"] for r in results]
+        assert "Paracetamol" in inns
+
+    def test_metformin_from_south_phonetic(self):
+        # "mek foc binh" is exact south phonetic for Metformin — should rank #1
+        results = _fuzzy_phonetic_search("mek foc binh", self.idx)
+        assert results
+        assert results[0]["inn"] == "Metformin"
+
+    def test_amlodipine_from_south_phonetic(self):
+        results = _fuzzy_phonetic_search("ong lau di pin", self.idx)
+        inns = [r["inn"] for r in results]
+        assert "Amlodipine" in inns
+
+    def test_result_has_required_fields(self):
+        results = _fuzzy_phonetic_search("para", self.idx)
+        if results:
+            r = results[0]
+            assert "inn" in r
+            assert "score" in r
+            assert "drug_class" in r
+
+    def test_score_between_0_and_1(self):
+        results = _fuzzy_phonetic_search("paracetamol", self.idx)
+        for r in results:
+            assert 0.0 <= r["score"] <= 1.0
+
+    def test_sorted_descending(self):
+        results = _fuzzy_phonetic_search("metformin", self.idx)
+        scores = [r["score"] for r in results]
+        assert scores == sorted(scores, reverse=True)
+
+    def test_top_n_respected(self):
+        results = _fuzzy_phonetic_search("para", self.idx, top_n=1)
+        assert len(results) <= 1
+
+    def test_empty_token_returns_empty(self):
+        results = _fuzzy_phonetic_search("", self.idx)
+        assert results == []
+
+    def test_no_match_below_cutoff_returns_empty(self):
+        results = _fuzzy_phonetic_search("xyzxyzxyz999", self.idx)
+        assert results == []
+
+    def test_deduplication_by_inn(self):
+        # Multiple variants for same drug → each INN appears only once
+        results = _fuzzy_phonetic_search("pa ra", self.idx)
+        inns = [r["inn"] for r in results]
+        assert len(inns) == len(set(inns))
+
+
+# ===========================================================================
+# hybrid_query_drug tests
+# ===========================================================================
+
+class TestHybridQueryDrug:
+    def setup_method(self):
+        _mock_collection.count.return_value = 3
+        _mock_collection.query.return_value = {
+            "ids": [["paracetamol", "metformin", "amlodipine"]],
+            "documents": [[
+                "Tên thuốc INN: Paracetamol\n",
+                "Tên thuốc INN: Metformin\n",
+                "Tên thuốc INN: Amlodipine\n",
+            ]],
+            "metadatas": [[
+                {"inn": "Paracetamol", "drug_class": "analgesic_antipyretic", "category": "", "otc": "true"},
+                {"inn": "Metformin", "drug_class": "biguanide", "category": "", "otc": "false"},
+                {"inn": "Amlodipine", "drug_class": "calcium_channel_blocker", "category": "", "otc": "false"},
+            ]],
+            "distances": [[0.1, 0.4, 0.5]],
+        }
+
+    def test_returns_list(self):
+        r = hybrid_query_drug("para", "", _mock_collection, MINIMAL_DRUG_DB, _mock_st_model)
+        assert isinstance(r, list)
+
+    def test_empty_token_returns_empty(self):
+        r = hybrid_query_drug("", "", _mock_collection, MINIMAL_DRUG_DB, _mock_st_model)
+        assert r == []
+
+    def test_k_limits_results(self):
+        r = hybrid_query_drug("paracetamol", "", _mock_collection, MINIMAL_DRUG_DB, _mock_st_model, k=1)
+        assert len(r) <= 1
+
+    def test_result_has_score_field(self):
+        r = hybrid_query_drug("para", "", _mock_collection, MINIMAL_DRUG_DB, _mock_st_model)
+        assert all("score" in item for item in r)
+
+    def test_result_has_fuzzy_score_field(self):
+        r = hybrid_query_drug("para", "", _mock_collection, MINIMAL_DRUG_DB, _mock_st_model)
+        assert all("fuzzy_score" in item for item in r)
+
+    def test_result_has_rag_score_field(self):
+        r = hybrid_query_drug("para", "", _mock_collection, MINIMAL_DRUG_DB, _mock_st_model)
+        assert all("rag_score" in item for item in r)
+
+    def test_sorted_descending(self):
+        r = hybrid_query_drug("para", "", _mock_collection, MINIMAL_DRUG_DB, _mock_st_model)
+        scores = [item["score"] for item in r]
+        assert scores == sorted(scores, reverse=True)
+
+    def test_metformin_south_phonetic_ranked(self):
+        # "mek foc binh" → fuzzy should strongly match Metformin
+        r = hybrid_query_drug("mek foc binh", "tiểu đường", _mock_collection, MINIMAL_DRUG_DB, _mock_st_model)
+        inns = [item["inn"] for item in r]
+        assert "Metformin" in inns
+
+    def test_amlodipine_south_phonetic_ranked(self):
+        r = hybrid_query_drug("ong lau di pin", "tăng huyết áp", _mock_collection, MINIMAL_DRUG_DB, _mock_st_model)
+        inns = [item["inn"] for item in r]
+        assert "Amlodipine" in inns
+
+    def test_score_is_weighted_combination(self):
+        r = hybrid_query_drug("mek foc binh", "tiểu đường", _mock_collection, MINIMAL_DRUG_DB, _mock_st_model)
+        for item in r:
+            expected = round(0.65 * item["fuzzy_score"] + 0.35 * item["rag_score"], 4)
+            assert abs(item["score"] - expected) < 1e-3
+
+    def test_custom_weights(self):
+        r = hybrid_query_drug("para", "", _mock_collection, MINIMAL_DRUG_DB, _mock_st_model,
+                              fuzzy_weight=1.0, rag_weight=0.0)
+        for item in r:
+            assert abs(item["score"] - item["fuzzy_score"]) < 1e-4
+
+    def test_null_collection_still_uses_fuzzy(self):
+        r = hybrid_query_drug("mek foc binh", "", None, MINIMAL_DRUG_DB, _mock_st_model)
+        inns = [item["inn"] for item in r]
+        assert "Metformin" in inns
+
+    def test_result_has_inn_field(self):
+        r = hybrid_query_drug("para", "", _mock_collection, MINIMAL_DRUG_DB, _mock_st_model)
+        assert all("inn" in item for item in r)
+
+    def test_result_has_drug_class_field(self):
+        r = hybrid_query_drug("para", "", _mock_collection, MINIMAL_DRUG_DB, _mock_st_model)
+        assert all("drug_class" in item for item in r)
 
 
 # ===========================================================================

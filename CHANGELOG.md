@@ -1,6 +1,38 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.9.0] — 2026-06-09 — FID-VN-010 Complete: RAG-001+Hybrid+UI-SUGGEST-001+L4-PWA · 755 tests
+
+### FID-VN-010 Phase 0 — RAG + Hybrid + UI + L4 PWA [SES-20260609c]
+- feat(rag): `src/core/drug_rag.py` — ChromaDB + paraphrase-multilingual-MiniLM-L12-v2
+  - build_drug_vectorstore() + load_drug_vectorstore() + query_drug_rag() + query_drug_rag_from_file()
+  - Document: INN + phonetic_variants (3 regions) + brands + keywords + drug_class + diagnoses
+  - Cosine space: score = 1.0 - distance, sorted desc
+  - `tests/unit/test_drug_rag.py` — 80 tests PASS
+- feat(rag-hybrid): `src/core/drug_rag.py` — Hybrid fuzzy 65% + RAG 35% (RAG-001-FIX)
+  - _build_phonetic_index() — flat list (inn, variant, drug_class) từ all phonetic_variants + brands + keywords
+  - _fuzzy_phonetic_search() — RapidFuzz token_set_ratio, dedup by INN, sorted desc
+  - hybrid_query_drug() — merge fuzzy+RAG by INN, combined score = 0.65f + 0.35r
+  - hybrid_query_drug_from_file() — convenience wrapper
+  - Fix RC-A (MiniLM not phonetic) + RC-C (missing variants): "mek foc binh"→Metformin✅ "ong lau di pin"→Amlodipine✅
+  - +31 tests: TestBuildPhoneticIndex(9) + TestFuzzyPhoneticSearch(11) + TestHybridQueryDrug(13)
+- feat(ui): `src/api/static/js/suggestions.js` — UI-SUGGEST-001 Suggestions module
+  - onTranscriptReady() — parallel drug candidates + dialect check
+  - onSpecialtyChange() — reload term sidebar với cache
+  - Renders: drug chips (.drug-chip), dialect badge (.dialect-badge), term sidebar (.term-chip)
+- feat(api): `src/api/main.py` — 3 endpoints UI-SUGGEST-001
+  - GET /api/drug-candidates — hybrid_query_drug (nếu RAG có) fallback fuzzy_fallback
+  - GET /api/terms — 8 specialties × 10-20 entries ICD coded
+  - POST /api/dialect-check — normalize_text() + detect_region() → substitutions
+  - `tests/unit/test_api_suggestions.py` — 43 tests PASS
+- feat(l4-pwa): `src/api/static/index.html` — per-drug confirm L4-REDESIGN-001 trong PWA
+  - .drug-confirm-row CSS (unconfirmed=amber, confirmed=green) + .drug-confirm-progress
+  - renderDrugConfirmList() — individual checkbox per drug, không thể batch approve
+  - onDrugConfirmChange() — track state, cập nhật progress counter
+  - updateApproveButton() — #btn-approve disabled/opacity cho đến khi tất cả ✓
+  - approveRecord() L4 safety guard: block nếu _drugConfirmCount < _drugTotal (Luật KCB 2023 Đ.62)
+- chore: requirements.txt + requirements-prod.txt — thêm chromadb==0.5.3 + sentence-transformers==3.0.1
+
 ## [v0.8.6] — 2026-06-09 — FID-VN-010 Phase 0: A1+A2+A3+L4-REDESIGN · 678 tests
 
 ### FID-VN-010 Phase 0 Implementation [SES-20260609b]

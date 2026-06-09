@@ -1,5 +1,5 @@
 # BACKLOG.md — MediVoice VN
-# v0.8.6 — Updated 2026-06-09
+# v0.9.0 — Updated 2026-06-09
 # Single source of truth cho tasks.
 
 ---
@@ -51,19 +51,24 @@
   - `demo/app.py` — per-drug `st.checkbox` + `_all_drugs_confirmed` gate + `disabled=not _all_drugs_confirmed`
   - Flagged drugs (L1b drug_flags): hiện `st.warning` + confidence % thay vì static card
   - Reset drug_confirm keys khi new result / Từ chối / Khám BN tiếp theo
-  - 678/678 tests PASS | Evidence: Session 174116 Losartan→Atorvastatin safety failure
-- [ ] **RAG-001-DRUG-VECTOR** 🟡 Drug Vector Store — Chroma + multilingual MiniLM
-  - File mới: `src/core/drug_rag.py`
+  - **PWA update (2026-06-09)**: `src/api/static/index.html` — `.drug-confirm-row` per-drug checkbox + `updateApproveButton()` disabled until all ✓ + L4 safety guard trong `approveRecord()`
+  - 755/755 tests PASS | Evidence: Session 174116 Losartan→Atorvastatin safety failure
+- [x] **RAG-001-DRUG-VECTOR** ✅ Drug Vector Store — Chroma + multilingual MiniLM (2026-06-09)
+  - `src/core/drug_rag.py` — `build_drug_vectorstore()` + `query_drug_rag()` + `query_drug_rag_from_file()`
   - Build từ `data/reference/drug_db_v200.json` (146 INN, phonetic_variants)
   - Persist: `data/drug_vectorstore/` (gitignored)
-  - API: `query_drug_rag(distorted_token, diagnosis_context, k=3)`
-  - Effort: 3 ngày | Risk: Medium | Prerequisite: A1+A2+A3 done
-- [ ] **UI-SUGGEST-001** 🟡 Real-time suggestion UI — drug chips + dialect badge + terminology sidebar
-  - File mới: `demo/static/js/suggestions.js`
-  - New endpoints: GET `/api/drug-candidates`, GET `/api/terms`, POST `/api/dialect-check`
-  - Drug chips: top 3 candidates + pronunciation VN
-  - Dialect badge: dismissible, hiện substitutions made
-  - Effort: 5 ngày | Risk: Medium | Prerequisite: A3-DIALECT-NORM + RAG-001
+  - `tests/unit/test_drug_rag.py` — 80 tests PASS | Total: 721/721
+- [x] **RAG-001-FIX** ✅ Hybrid fuzzy+RAG query — fix phonetic recall (2026-06-09)
+  - `src/core/drug_rag.py` — `_build_phonetic_index()` + `_fuzzy_phonetic_search()` + `hybrid_query_drug()` + `hybrid_query_drug_from_file()`
+  - Score: 0.65 × RapidFuzz token_set_ratio + 0.35 × RAG cosine similarity
+  - Fix RC-A (MiniLM not phonetic) và RC-C (missing phonetic variants)
+  - `src/api/main.py` `/api/drug-candidates` endpoint → dùng `hybrid_query_drug()`
+  - +31 new tests (TestBuildPhoneticIndex 9 + TestFuzzyPhoneticSearch 11 + TestHybridQueryDrug 13) | Total: 755/755
+- [x] **UI-SUGGEST-001** ✅ Real-time suggestion UI — drug chips + dialect badge + terminology sidebar (2026-06-09)
+  - `src/api/static/js/suggestions.js` — Suggestions module: onTranscriptReady + onSpecialtyChange + init
+  - `src/api/main.py` — GET `/api/drug-candidates`, GET `/api/terms`, POST `/api/dialect-check`
+  - `src/api/static/index.html` — drug chips panel + dialect badge + term sidebar + specialty selector
+  - `tests/unit/test_api_suggestions.py` — 43 tests PASS | Total: 755/755
 - [ ] **BENCH-GT-001** 🔴 Fill GT labels — ANDY TASK: điền 54/57 còn lại trong `data/eval/ref_voice_transcripts_review.txt`
   - Clip2+Clip3 ưu tiên (BS Đà Nẵng/SG real voice)
   - Cần để: đo BENCH-002b CEER thật + PhoBERT GO criteria

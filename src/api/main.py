@@ -9,10 +9,12 @@ import os
 import tempfile
 import json
 from pathlib import Path
+from functools import lru_cache
 
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 from ..core import l0_normalize, l1a_asr, l1b_drug_correct, l1c_ner
 from ..core import l1d_icd_lookup, l2_validate, l3_route
@@ -349,3 +351,229 @@ async def submit_feedback(
 @app.get("/api/health")
 async def health():
     return {"status": "ok", "version": "0.3.0"}
+
+
+# ── UI-SUGGEST-001: Drug candidates, Terms, Dialect check ─────────────────
+# FID-VN-010 — Prerequisite: A3 + RAG-001 done
+
+# ─── Specialty term reference (load-time constant) ────────────────────────
+
+_SPECIALTY_TERMS: dict[str, list[dict]] = {
+    "noi_khoa": [
+        {"term": "Tăng huyết áp", "icd": "I10", "common": "cao huyết áp"},
+        {"term": "Đái tháo đường type 2", "icd": "E11.9", "common": "tiểu đường type 2"},
+        {"term": "Rối loạn lipid máu", "icd": "E78.5", "common": "mỡ máu cao"},
+        {"term": "Suy tim", "icd": "I50.9", "common": "suy tim"},
+        {"term": "Nhồi máu cơ tim cấp", "icd": "I21.9", "common": "đau tim cấp"},
+        {"term": "Đau thắt ngực ổn định", "icd": "I20.8", "common": "đau ngực khi gắng sức"},
+        {"term": "Trào ngược dạ dày thực quản", "icd": "K21.0", "common": "GERD / ợ chua"},
+        {"term": "Viêm dạ dày mạn", "icd": "K29.5", "common": "đau dạ dày"},
+        {"term": "Nhiễm khuẩn tiết niệu", "icd": "N39.0", "common": "nhiễm trùng đường tiểu"},
+        {"term": "Thiếu máu", "icd": "D64.9", "common": "thiếu máu"},
+        {"term": "Tăng acid uric máu", "icd": "E79.0", "common": "gout / tống phong"},
+        {"term": "Viêm phổi cộng đồng", "icd": "J18.9", "common": "viêm phổi"},
+        {"term": "Bệnh phổi tắc nghẽn mạn tính", "icd": "J44.9", "common": "COPD"},
+        {"term": "Đau cột sống thắt lưng", "icd": "M54.5", "common": "đau lưng dưới"},
+        {"term": "Suy giáp nguyên phát", "icd": "E03.9", "common": "suy tuyến giáp"},
+        {"term": "Cường giáp (Basedow)", "icd": "E05.0", "common": "cường giáp / Basedow"},
+        {"term": "Viêm khớp dạng thấp", "icd": "M05.9", "common": "thấp khớp RA"},
+        {"term": "Hội chứng chuyển hóa", "icd": "E88.81", "common": "béo phì + ĐTĐ + THA"},
+        {"term": "Đái tháo đường type 1", "icd": "E10.9", "common": "tiểu đường type 1"},
+        {"term": "Tâm phế mạn", "icd": "I27.9", "common": "tim phổi mạn"},
+    ],
+    "ho_hap": [
+        {"term": "Viêm phế quản cấp", "icd": "J20.9", "common": "viêm phế quản"},
+        {"term": "Viêm phổi cộng đồng", "icd": "J18.9", "common": "viêm phổi"},
+        {"term": "Hen phế quản", "icd": "J45.9", "common": "hen suyễn / asthma"},
+        {"term": "Bệnh phổi tắc nghẽn mạn tính", "icd": "J44.9", "common": "COPD"},
+        {"term": "Viêm mũi dị ứng", "icd": "J30.4", "common": "dị ứng mũi"},
+        {"term": "Viêm xoang cấp", "icd": "J01.9", "common": "viêm xoang"},
+        {"term": "Lao phổi AFB (+)", "icd": "A15.0", "common": "lao phổi"},
+        {"term": "Tràn dịch màng phổi", "icd": "J90", "common": "tràn dịch màng phổi"},
+        {"term": "Đợt cấp COPD", "icd": "J44.1", "common": "COPD đợt cấp"},
+        {"term": "COVID-19", "icd": "U07.1", "common": "COVID / corona"},
+        {"term": "Tràn khí màng phổi", "icd": "J93.9", "common": "tràn khí màng phổi"},
+        {"term": "Suy hô hấp cấp", "icd": "J96.0", "common": "suy thở cấp"},
+    ],
+    "tieu_hoa": [
+        {"term": "Viêm dạ dày cấp", "icd": "K29.1", "common": "đau dạ dày cấp"},
+        {"term": "Loét dạ dày tá tràng", "icd": "K27.9", "common": "loét dạ dày"},
+        {"term": "Trào ngược dạ dày thực quản", "icd": "K21.0", "common": "GERD / ợ chua"},
+        {"term": "Hội chứng ruột kích thích", "icd": "K58.9", "common": "IBS / đại tràng kích thích"},
+        {"term": "Viêm đại tràng mạn", "icd": "K52.9", "common": "viêm đại tràng"},
+        {"term": "Tiêu chảy cấp", "icd": "A09", "common": "tiêu chảy cấp"},
+        {"term": "Táo bón mạn", "icd": "K59.0", "common": "táo bón"},
+        {"term": "Viêm gan B mạn", "icd": "B18.1", "common": "viêm gan B"},
+        {"term": "Xơ gan", "icd": "K74.6", "common": "xơ gan"},
+        {"term": "Sỏi mật", "icd": "K80.2", "common": "sỏi túi mật"},
+        {"term": "Viêm ruột thừa cấp", "icd": "K35.9", "common": "đau ruột thừa"},
+        {"term": "Tắc ruột", "icd": "K56.7", "common": "tắc ruột"},
+    ],
+    "noi_tiet": [
+        {"term": "Đái tháo đường type 2", "icd": "E11.9", "common": "tiểu đường type 2"},
+        {"term": "Đái tháo đường type 1", "icd": "E10.9", "common": "tiểu đường type 1"},
+        {"term": "Suy giáp nguyên phát", "icd": "E03.9", "common": "suy giáp"},
+        {"term": "Cường giáp (Basedow)", "icd": "E05.0", "common": "cường giáp"},
+        {"term": "Đái tháo đường thai kỳ", "icd": "O24.4", "common": "tiểu đường thai kỳ"},
+        {"term": "Béo phì", "icd": "E66.9", "common": "béo phì / thừa cân"},
+        {"term": "Tăng acid uric máu", "icd": "E79.0", "common": "gout / hyperuricemia"},
+        {"term": "Hạ đường huyết", "icd": "E16.0", "common": "tụt đường huyết"},
+        {"term": "Rối loạn lipid máu", "icd": "E78.5", "common": "mỡ máu cao"},
+        {"term": "Hội chứng buồng trứng đa nang", "icd": "E28.2", "common": "PCOS"},
+        {"term": "Suy thượng thận", "icd": "E27.4", "common": "suy thượng thận"},
+        {"term": "Cường aldosterone nguyên phát", "icd": "E26.0", "common": "Conn / cường aldosteron"},
+    ],
+    "tai_mui_hong": [
+        {"term": "Viêm amidan cấp có mủ", "icd": "J03.9", "common": "viêm amidan mủ"},
+        {"term": "Viêm họng cấp", "icd": "J02.9", "common": "đau họng / viêm họng"},
+        {"term": "Viêm mũi dị ứng", "icd": "J30.4", "common": "dị ứng mũi / hắt hơi"},
+        {"term": "Viêm xoang cấp", "icd": "J01.9", "common": "viêm xoang"},
+        {"term": "Viêm tai giữa cấp", "icd": "H66.0", "common": "viêm tai giữa cấp"},
+        {"term": "Viêm mũi xuất tiết cấp", "icd": "J06.9", "common": "sổ mũi / cảm lạnh"},
+        {"term": "Polyp mũi", "icd": "J33.9", "common": "polyp mũi"},
+        {"term": "Ù tai mạn", "icd": "H93.1", "common": "ù tai"},
+        {"term": "Chóng mặt lành tính (BPPV)", "icd": "H81.1", "common": "chóng mặt tư thế"},
+        {"term": "Viêm thanh quản cấp", "icd": "J04.0", "common": "viêm thanh quản / khàn tiếng"},
+        {"term": "Dị vật đường thở", "icd": "T17.9", "common": "dị vật họng"},
+    ],
+    "da_lieu": [
+        {"term": "Mề đay cấp", "icd": "L50.0", "common": "nổi mề đay / dị ứng nổi mẩn"},
+        {"term": "Viêm da cơ địa", "icd": "L20.9", "common": "chàm / eczema"},
+        {"term": "Viêm da tiếp xúc", "icd": "L25.9", "common": "dị ứng tiếp xúc"},
+        {"term": "Nấm da", "icd": "B35.9", "common": "nấm da / hắc lào"},
+        {"term": "Viêm nang lông", "icd": "L73.9", "common": "mụn nhọt / viêm nang lông"},
+        {"term": "Vẩy nến", "icd": "L40.9", "common": "vẩy nến / psoriasis"},
+        {"term": "Trứng cá (acne)", "icd": "L70.0", "common": "mụn trứng cá"},
+        {"term": "Zona thần kinh", "icd": "B02.9", "common": "giời leo / zona"},
+        {"term": "Bệnh ghẻ", "icd": "B86", "common": "ghẻ ngứa"},
+        {"term": "Nấm móng", "icd": "B35.1", "common": "nấm móng tay / chân"},
+        {"term": "Rụng tóc từng mảng", "icd": "L63.9", "common": "rụng tóc mảng"},
+    ],
+    "co_xuong_khop": [
+        {"term": "Viêm khớp dạng thấp", "icd": "M05.9", "common": "thấp khớp RA"},
+        {"term": "Thoái hóa khớp gối", "icd": "M17.9", "common": "thoái hóa gối"},
+        {"term": "Gout cấp", "icd": "M10.0", "common": "gout / tống phong cấp"},
+        {"term": "Thoát vị đĩa đệm cột sống thắt lưng", "icd": "M51.1", "common": "thoát vị đĩa đệm"},
+        {"term": "Đau cột sống cổ", "icd": "M54.2", "common": "đau cổ / thoái hóa cổ"},
+        {"term": "Loãng xương", "icd": "M81.0", "common": "loãng xương"},
+        {"term": "Hội chứng ống cổ tay", "icd": "G56.0", "common": "đau tê bàn tay"},
+        {"term": "Viêm bao gân", "icd": "M65.9", "common": "viêm gân"},
+        {"term": "Lupus ban đỏ hệ thống", "icd": "M32.9", "common": "SLE / lupus"},
+        {"term": "Fibromyalgia", "icd": "M79.7", "common": "đau cơ mạn tính"},
+    ],
+    "nhi_khoa": [
+        {"term": "Viêm họng cấp", "icd": "J02.9", "common": "đau họng trẻ em"},
+        {"term": "Sốt xuất huyết Dengue", "icd": "A97.9", "common": "sốt xuất huyết"},
+        {"term": "Viêm phế quản cấp", "icd": "J20.9", "common": "viêm phế quản trẻ"},
+        {"term": "Tiêu chảy cấp", "icd": "A09", "common": "tiêu chảy trẻ em"},
+        {"term": "Viêm tai giữa cấp", "icd": "H66.0", "common": "viêm tai giữa trẻ"},
+        {"term": "Tay chân miệng", "icd": "B08.4", "common": "tay chân miệng"},
+        {"term": "Thủy đậu", "icd": "B01.9", "common": "trái rạ / thủy đậu"},
+        {"term": "Hen phế quản", "icd": "J45.9", "common": "hen suyễn trẻ em"},
+        {"term": "Sốt không rõ nguyên nhân", "icd": "R50.9", "common": "sốt NRN"},
+        {"term": "Còi xương — thiếu vitamin D", "icd": "E55.0", "common": "còi xương"},
+    ],
+}
+
+
+class DialectCheckRequest(BaseModel):
+    text: str
+    region: str = "auto"
+
+
+@lru_cache(maxsize=1)
+def _get_drug_inn_list() -> list[str]:
+    from ..core.l1b_drug_correct import _load_drug_db
+    db = _load_drug_db()
+    return list(db.get("by_inn", {}).keys())
+
+
+def _fuzzy_drug_candidates(q: str, n: int = 3) -> list[dict]:
+    """Fallback drug search when RAG vectorstore not available."""
+    from rapidfuzz import process as rf_process
+    inn_list = _get_drug_inn_list()
+    results = rf_process.extract(q, inn_list, limit=n, score_cutoff=25)
+    return [
+        {"inn": r[0], "drug_class": "", "score": round(r[1] / 100, 3), "doc_snippet": r[0]}
+        for r in results
+    ]
+
+
+@app.get("/api/drug-candidates")
+async def get_drug_candidates(
+    q: str = Query(..., description="Distorted ASR token"),
+    diagnosis: str = Query(default="", description="Diagnosis context"),
+    n: int = Query(default=3, ge=1, le=10),
+):
+    """
+    Query drug candidates cho distorted ASR token + diagnosis context.
+    Dùng RAG vector store nếu đã build; fallback về fuzzy match nếu chưa.
+    FID-VN-010 UI-SUGGEST-001.
+    """
+    if not q.strip():
+        return {"candidates": [], "source": "empty_query"}
+
+    from ..core.drug_rag import load_drug_vectorstore, hybrid_query_drug, _DEPS_AVAILABLE
+
+    if not _DEPS_AVAILABLE:
+        candidates = _fuzzy_drug_candidates(q, n)
+        return {"candidates": candidates, "source": "fuzzy_fallback"}
+
+    collection = load_drug_vectorstore()
+    if collection is None:
+        candidates = _fuzzy_drug_candidates(q, n)
+        return {"candidates": candidates, "source": "fuzzy_fallback"}
+
+    from ..core.l1b_drug_correct import _load_drug_db
+    drug_db = _load_drug_db()
+    from sentence_transformers import SentenceTransformer as _ST
+    model = _ST("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+    candidates = hybrid_query_drug(
+        q, diagnosis, collection, drug_db, embed_model_instance=model, k=n
+    )
+    return {"candidates": candidates, "source": "hybrid"}
+
+
+@app.get("/api/terms")
+async def get_terms(
+    specialty: str = Query(default="noi_khoa", description="Specialty key"),
+    n: int = Query(default=20, ge=1, le=50),
+):
+    """
+    Lấy danh sách thuật ngữ y khoa theo chuyên khoa.
+    Dùng để hiện sidebar gợi ý thuật ngữ trong UI.
+    FID-VN-010 UI-SUGGEST-001.
+    """
+    terms = _SPECIALTY_TERMS.get(specialty, [])[:n]
+    return {
+        "specialty": specialty,
+        "terms": terms,
+        "count": len(terms),
+        "available_specialties": list(_SPECIALTY_TERMS.keys()),
+    }
+
+
+@app.post("/api/dialect-check")
+async def dialect_check(req: DialectCheckRequest):
+    """
+    Normalize dialect text + trả về substitutions đã thực hiện.
+    Dùng để hiện dialect badge trong UI (FID-VN-010 UI-SUGGEST-001).
+    Region: central | southern | northern | auto (auto-detect default).
+    """
+    from ..core.dialect_norm import normalize_text
+
+    if not req.text.strip():
+        return {"normalized": "", "substitutions": [], "region": req.region}
+
+    normalized, subs = normalize_text(req.text, req.region)
+
+    # detect_region để trả về region thật khi auto
+    from ..core.dialect_norm import detect_region
+    resolved_region = detect_region(req.text) if req.region == "auto" else req.region
+
+    return {
+        "normalized": normalized,
+        "substitutions": subs,
+        "region": resolved_region,
+        "changed": len(subs) > 0,
+    }

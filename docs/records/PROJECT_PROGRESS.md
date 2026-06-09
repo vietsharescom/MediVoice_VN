@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-09 | v0.8.6
+# Cập nhật: 2026-06-09 | v0.9.0
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -132,13 +132,14 @@
 | P0.6.6d | │  └─ FID-VN-010 DRAFT | AI Pipeline Redesign v2.0 — A1+A2+A3+RAG+UI+L4-redesign | 🔵 | FID-VN-010 | SES-20260609 | `fids/FID-VN-010.md` · Phase 0 A1✅A2✅A3✅L4✅ · RAG-001+UI-SUGGEST-001 còn lại |
 | | │ | | | | | |
 | | │ | | | | | |
-| **P0.6.7** | **├─ 🔵 FID-VN-010 Phase 0** | **A1+A2+A3+L4-REDESIGN implement · 678 tests** | **🔵** | **FID-VN-010** | SES-20260609b | A1✅ A2✅ A3✅ L4✅ · RAG-001 + UI-SUGGEST-001 còn lại |
+| **P0.6.7** | **├─ 🟢 FID-VN-010 Phase 0** | **A1+A2+A3+L4+RAG+UI+Hybrid — 755 tests** | **🟢** | **FID-VN-010** | SES-20260609c | A1✅ A2✅ A3✅ L4✅ RAG-001✅ RAG-FIX✅ UI-SUGGEST-001✅ |
 | P0.6.7a | │  ├─ A1-PROMPT-INJECT | PhoWhisper initial_prompt drug list per specialty | 🟢 | A1 | SES-20260609b | `src/core/l1a_asr.py` · 23 tests |
 | P0.6.7b | │  ├─ A2-VAD-CHUNK | silero-vad chunking tại silence tự nhiên, max 20s | 🟢 | A2 | SES-20260609b | `src/core/l0_normalize.py` · 18 tests |
 | P0.6.7c | │  ├─ A3-DIALECT-NORM | 200+ entries Trung/Nam/abbrev, region-aware | 🟢 | A3 | SES-20260609b | `src/core/dialect_norm.py` · 49 tests |
-| P0.6.7d | │  ├─ L4-REDESIGN-001 | Per-drug mandatory confirm — Session 174116 safety fix | 🟢 | L4 | SES-20260609b | `demo/app.py` · disabled until all ✓ |
-| P0.6.7e | │  ├─ RAG-001-DRUG-VECTOR | Chroma + MiniLM drug vector store | ⏳ | RAG-001 | — | `src/core/drug_rag.py` |
-| P0.6.7f | │  └─ UI-SUGGEST-001 | Drug chips + dialect badge + terminology sidebar | ⏳ | UI-001 | — | Chờ RAG-001 |
+| P0.6.7d | │  ├─ L4-REDESIGN-001 | Per-drug mandatory confirm — demo/app.py + PWA index.html | 🟢 | L4 | SES-20260609c | `src/api/static/index.html` — `.drug-confirm-row` + `updateApproveButton()` · disabled until all ✓ |
+| P0.6.7e | │  ├─ RAG-001-DRUG-VECTOR | Chroma + MiniLM drug vector store — 80 tests | 🟢 | RAG-001 | SES-20260609c | `src/core/drug_rag.py` · 80 tests |
+| P0.6.7f | │  ├─ RAG-001-FIX Hybrid | Hybrid 0.65×fuzzy + 0.35×RAG — fix RC-A/RC-C | 🟢 | RAG-FIX | SES-20260609c | `_build_phonetic_index` + `hybrid_query_drug` · +31 tests |
+| P0.6.7g | │  └─ UI-SUGGEST-001 | Drug chips + dialect badge + terminology sidebar — 43 tests | 🟢 | UI-001 | SES-20260609c | `src/api/static/js/suggestions.js` · `src/api/main.py` 3 endpoints |
 | | │ | | | | | |
 | **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
 | P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |

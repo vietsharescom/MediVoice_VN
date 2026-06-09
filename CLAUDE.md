@@ -249,11 +249,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.8.6 |
-| Status | **FID-VN-010 Phase 0 IN PROGRESS** — A1✅ A2✅ A3✅ L4-REDESIGN✅ · RAG-001 + UI-SUGGEST-001 còn lại |
-| Tests | **678/678 PASS** · bandit 0 HIGH/MEDIUM · conftest.py SKIP_QWEN |
-| Pending | **PA-010** approve FID-VN-010 · **PA-009** fill GT 54/57 clips `data/eval/ref_voice_transcripts_review.txt` · **PA-011** chốt Q1+Q3 CONS-20260610-003 PhoBERT · **VIETMED-FIX-001** (HF_TOKEN) |
-| Next task | **RAG-001-DRUG-VECTOR** (Chroma + MiniLM) → `src/core/drug_rag.py` |
+| Version | v0.9.0 |
+| Status | **FID-VN-010 COMPLETE** — A1✅ A2✅ A3✅ RAG-001✅ RAG-001-FIX(hybrid)✅ UI-SUGGEST-001✅ L4-PWA✅ |
+| Tests | **755/755 PASS** · bandit 0 HIGH/0 MEDIUM (new code) · conftest.py SKIP_QWEN |
+| Pending | **PA-009** fill GT 54/57 clips `data/eval/ref_voice_transcripts_review.txt` · **PA-010** approve FID-VN-010 retroactive · **PA-011** chốt Q1+Q3 CONS-20260610-003 PhoBERT · **VIETMED-FIX-001** (HF_TOKEN) |
+| Next task | **BENCH-GT-001** Andy fill GT clips → **BENCH-002b** CEER thật → **TRAIN-001** fine-tune PhoWhisper |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.0) · FID: `fids/FID-VN-010.md` |
 
 ---

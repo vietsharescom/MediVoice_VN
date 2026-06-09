@@ -114,10 +114,22 @@
   .field-item .lbl { color: var(--text-secondary); font-size: 0.75rem; }
   .field-item .val { font-weight: 500; }
 
-  /* Drug table */
-  .drug-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-  .drug-table th { background: #e3f2fd; padding: 0.4rem 0.5rem; text-align: left; font-weight: 600; }
-  .drug-table td { padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--border); }
+  /* L4-REDESIGN-001: per-drug confirm rows */
+  .drug-confirm-list { display: flex; flex-direction: column; gap: 0.45rem; margin-top: 0.35rem; }
+  .drug-confirm-row {
+    border: 1.5px solid #ffe082; border-radius: 8px;
+    padding: 0.55rem 0.7rem;
+    display: flex; align-items: center; gap: 0.5rem;
+    background: #fffde7; transition: border-color 0.15s, background 0.15s;
+  }
+  .drug-confirm-row.confirmed { border-color: var(--success); background: #f1f8e9; }
+  .drug-confirm-info { flex: 1; min-width: 0; }
+  .drug-confirm-info .drug-name { font-weight: 600; font-size: 0.87rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .drug-confirm-info .drug-detail { font-size: 0.76rem; color: var(--text-secondary); margin-top: 0.1rem; }
+  .drug-confirm-check { display: flex; align-items: center; gap: 0.3rem; flex-shrink: 0; font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); }
+  .drug-confirm-check input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--success); }
+  .drug-confirm-check.is-confirmed { color: var(--success); }
+  .drug-confirm-progress { font-size: 0.78rem; color: var(--text-secondary); text-align: center; margin-top: 0.4rem; }
 
   /* Action buttons */
   .btn { padding: 0.7rem 1.2rem; border: none; border-radius: 8px; font-size: 0.9rem;
@@ -160,6 +172,51 @@
     color: var(--text-secondary); margin-bottom: 0.4rem;
   }
   .timer { font-size: 1rem; font-variant-numeric: tabular-nums; color: white; }
+
+  /* ── UI-SUGGEST-001: Drug chips, Dialect badge, Term sidebar ── */
+  .suggest-panel {
+    background: #f3f8ff; border-radius: 8px;
+    padding: 0.6rem 0.75rem; border: 1px solid #c5cae9;
+    margin-top: 0.75rem;
+  }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem; }
+  .drug-chip {
+    background: #e3f2fd; border: 1px solid #90caf9; color: #0d47a1;
+    border-radius: 20px; padding: 0.3rem 0.8rem;
+    font-size: 0.8rem; cursor: pointer; transition: background 0.15s;
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    line-height: 1.3;
+  }
+  .drug-chip:hover { background: #bbdefb; }
+  .chip-score { font-size: 0.68rem; color: #546e7a; }
+  .dialect-badge {
+    background: #fff8e1; border-left: 3px solid #f9a825;
+    padding: 0.4rem 0.75rem; border-radius: 4px;
+    font-size: 0.78rem; color: #5d4037;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 0.5rem;
+  }
+  .badge-dismiss {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-secondary); font-size: 1.1rem; padding: 0 0.2rem;
+    line-height: 1;
+  }
+  .term-chip-row { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.5rem; }
+  .term-chip {
+    background: #e8f5e9; border: 1px solid #a5d6a7; color: #1b5e20;
+    border-radius: 16px; padding: 0.25rem 0.65rem;
+    font-size: 0.76rem; cursor: pointer; transition: background 0.15s;
+    white-space: nowrap;
+  }
+  .term-chip:hover { background: #c8e6c9; }
+  .term-icd {
+    font-size: 0.68rem; color: #388e3c; margin-left: 0.3rem;
+    background: rgba(0,0,0,0.07); border-radius: 8px; padding: 0 4px;
+  }
+  .btn-toggle-terms {
+    background: none; border: none; cursor: pointer;
+    font-size: 0.85rem; color: var(--primary); float: right;
+  }
 </style>
 </head>
 <body>
@@ -185,6 +242,28 @@
       <label>Tên bệnh nhân</label>
       <input type="text" id="patient-name" placeholder="Họ và tên">
     </div>
+    <div class="form-row">
+      <label>Chuyên khoa</label>
+      <select id="specialty-select" onchange="Suggestions.onSpecialtyChange(this.value)">
+        <option value="noi_khoa">Nội khoa tổng quát</option>
+        <option value="ho_hap">Hô hấp</option>
+        <option value="tieu_hoa">Tiêu hóa</option>
+        <option value="noi_tiet">Nội tiết – Đái tháo đường</option>
+        <option value="tai_mui_hong">Tai mũi họng</option>
+        <option value="da_lieu">Da liễu</option>
+        <option value="co_xuong_khop">Cơ xương khớp</option>
+        <option value="nhi_khoa">Nhi khoa</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Terminology sidebar card (UI-SUGGEST-001) -->
+  <div class="card hidden" id="suggest-term-sidebar">
+    <h2>
+      📋 Thuật ngữ <span id="suggest-term-specialty"></span>
+      <button class="btn-toggle-terms" onclick="Suggestions.toggleTermList()" title="Thu gọn">▼</button>
+    </h2>
+    <div id="suggest-term-list" class="term-chip-row"></div>
   </div>
 
   <!-- Record card -->
@@ -204,6 +283,18 @@
     <div class="conf-bar-wrap hidden" id="conf-wrap">
       <div class="conf-label">Độ tin cậy: <span id="conf-pct">0</span>%</div>
       <div class="conf-bar"><div class="conf-bar-fill" id="conf-fill" style="width:0%"></div></div>
+    </div>
+
+    <!-- Drug suggestion chips (UI-SUGGEST-001) -->
+    <div class="suggest-panel hidden" id="suggest-drug-panel">
+      <div class="section-title">💊 Gợi ý thuốc (tap để xem)</div>
+      <div id="suggest-drug-chips" class="chip-row"></div>
+    </div>
+
+    <!-- Dialect badge (UI-SUGGEST-001) -->
+    <div class="dialect-badge hidden" id="suggest-dialect-badge">
+      <span id="dialect-badge-text"></span>
+      <button class="badge-dismiss" onclick="Suggestions.dismissDialectBadge()" title="Đóng">×</button>
     </div>
   </div>
 
@@ -263,7 +354,7 @@
       Sau khi kiểm tra nháp bệnh án, Bác sĩ xác nhận hoặc từ chối lưu hồ sơ.
     </p>
     <div class="btn-row" style="margin-bottom:0.5rem">
-      <button class="btn btn-approve" onclick="approveRecord()">✅ Xác nhận & Lưu</button>
+      <button class="btn btn-approve" id="btn-approve" onclick="approveRecord()" disabled style="opacity:0.5;cursor:not-allowed">✅ Xác nhận & Lưu</button>
       <button class="btn btn-reject" onclick="showRejectModal()">❌ Từ chối</button>
     </div>
     <button class="btn btn-pdf hidden" id="btn-pdf" onclick="downloadPDF()" style="margin-top:0.5rem">
@@ -296,6 +387,8 @@ let timerInterval = null;
 let seconds = 0;
 let currentRecordId = null;
 let currentFormData = null;
+let _drugTotal = 0;
+let _drugConfirmCount = 0;
 
 async function toggleRecord() {
   if (isRecording) {
@@ -414,19 +507,8 @@ function displayDraft(data) {
   document.getElementById('f-icd').value = fd.icd_code || '';
   document.getElementById('f-tai-kham').value = fd.tai_kham || '';
 
-  // Drug list
-  const drugList = document.getElementById('drug-list');
-  const drugs = fd.don_thuoc || [];
-  if (drugs.length > 0) {
-    let html = '<table class="drug-table"><thead><tr><th>Thuốc</th><th>Hàm lượng</th><th>Liều</th><th>Ngày</th></tr></thead><tbody>';
-    drugs.forEach(d => {
-      html += `<tr><td>${d.inn||'---'}</td><td>${d.ham_luong||'---'}</td><td>${d.so_lan_ngay||'---'}</td><td>${d.so_ngay||'---'}</td></tr>`;
-    });
-    html += '</tbody></table>';
-    drugList.innerHTML = html;
-  } else {
-    drugList.innerHTML = '<p style="font-size:0.82rem;color:var(--text-secondary)">(Không có thuốc được kê)</p>';
-  }
+  // Drug list — L4-REDESIGN-001: per-drug confirm (Luật KCB 2023 Đ.62)
+  renderDrugConfirmList(fd.don_thuoc || []);
 
   // PII warning
   if (data.pii_detected && data.pii_detected.length > 0) {
@@ -441,7 +523,96 @@ function displayDraft(data) {
 
   resetRecordBtn();
   showToast('Đã xử lý xong — Bác sĩ vui lòng kiểm tra nháp');
+
+  // UI-SUGGEST-001: drug chips + dialect badge sau khi có transcript
+  const chanDoan = (data.form_data || {}).chan_doan || '';
+  if (window.Suggestions) {
+    Suggestions.onTranscriptReady(data.transcript || '', chanDoan);
+  }
 }
+
+// ── L4-REDESIGN-001: per-drug confirm ────────────────────────────────────────
+
+function _escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderDrugConfirmList(drugs) {
+  _drugTotal = drugs.length;
+  _drugConfirmCount = 0;
+  const drugList = document.getElementById('drug-list');
+
+  if (drugs.length === 0) {
+    drugList.innerHTML = '<p style="font-size:0.82rem;color:var(--text-secondary)">(Không có thuốc được kê)</p>';
+    updateApproveButton();
+    return;
+  }
+
+  let html = '<div class="drug-confirm-list">';
+  drugs.forEach((d, i) => {
+    const parts = [
+      d.ham_luong || '',
+      d.so_lan_ngay || '',
+      d.so_ngay ? d.so_ngay + ' ngày' : '',
+    ].filter(Boolean);
+    const detail = parts.join(' — ') || '---';
+    html += `
+      <div class="drug-confirm-row" id="drug-row-${i}">
+        <div class="drug-confirm-info">
+          <div class="drug-name">${_escHtml(d.inn || '---')}</div>
+          <div class="drug-detail">${_escHtml(detail)}</div>
+        </div>
+        <label class="drug-confirm-check" id="drug-chk-lbl-${i}">
+          <input type="checkbox" id="drug-chk-${i}" onchange="onDrugConfirmChange(${i})">
+          <span>Xác nhận</span>
+        </label>
+      </div>`;
+  });
+  html += '</div>';
+  html += `<div class="drug-confirm-progress" id="drug-confirm-progress">Cần xác nhận từng thuốc — 0/${drugs.length} đã xác nhận</div>`;
+
+  drugList.innerHTML = html;
+  updateApproveButton();
+}
+
+function onDrugConfirmChange(idx) {
+  const chk = document.getElementById('drug-chk-' + idx);
+  const row = document.getElementById('drug-row-' + idx);
+  const lbl = document.getElementById('drug-chk-lbl-' + idx);
+  const span = lbl ? lbl.querySelector('span') : null;
+  if (chk.checked) {
+    row.classList.add('confirmed');
+    lbl.classList.add('is-confirmed');
+    if (span) span.textContent = '✓ Đã xác nhận';
+    _drugConfirmCount++;
+  } else {
+    row.classList.remove('confirmed');
+    lbl.classList.remove('is-confirmed');
+    if (span) span.textContent = 'Xác nhận';
+    _drugConfirmCount--;
+  }
+  const prog = document.getElementById('drug-confirm-progress');
+  if (prog) {
+    if (_drugConfirmCount >= _drugTotal) {
+      prog.textContent = '✅ Tất cả ' + _drugTotal + ' thuốc đã xác nhận';
+    } else {
+      prog.textContent = 'Cần xác nhận từng thuốc — ' + _drugConfirmCount + '/' + _drugTotal + ' đã xác nhận';
+    }
+  }
+  updateApproveButton();
+}
+
+function updateApproveButton() {
+  const btn = document.getElementById('btn-approve');
+  if (!btn) return;
+  const allDone = _drugTotal === 0 || _drugConfirmCount >= _drugTotal;
+  btn.disabled = !allDone;
+  btn.style.opacity = allDone ? '1' : '0.5';
+  btn.style.cursor = allDone ? 'pointer' : 'not-allowed';
+  btn.title = allDone ? '' : 'Cần xác nhận ' + (_drugTotal - _drugConfirmCount) + ' thuốc nữa';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 function buildEditedFormData() {
   const fd = Object.assign({}, currentFormData || {});
@@ -474,6 +645,11 @@ async function approveRecord() {
   if (!currentRecordId) return;
   const cchn = document.getElementById('doctor-cchn').value.trim();
   if (!cchn) { showToast('Cần nhập CCHN để xác nhận'); return; }
+  // L4 safety guard — không bypass per-drug confirm (Luật KCB 2023 Đ.62)
+  if (_drugTotal > 0 && _drugConfirmCount < _drugTotal) {
+    showToast('Vui lòng xác nhận từng thuốc trước khi lưu (' + _drugConfirmCount + '/' + _drugTotal + ')');
+    return;
+  }
 
   const editedForm = buildEditedFormData();
   const form = new FormData();
@@ -531,6 +707,14 @@ function resetRecordBtn() {
   document.getElementById('record-label').textContent = 'Ghi âm lượt tiếp theo';
 }
 
+// UI-SUGGEST-001: init terminology sidebar on page load
+window.addEventListener('DOMContentLoaded', () => {
+  if (window.Suggestions) {
+    const sel = document.getElementById('specialty-select');
+    Suggestions.init(sel ? sel.value : 'noi_khoa');
+  }
+});
+
 let toastTimeout = null;
 function showToast(msg) {
   const existing = document.querySelector('.toast');
@@ -543,5 +727,6 @@ function showToast(msg) {
   toastTimeout = setTimeout(() => el.remove(), 3500);
 }
 </script>
+<script src="/static/js/suggestions.js"></script>
 </body>
 </html>
