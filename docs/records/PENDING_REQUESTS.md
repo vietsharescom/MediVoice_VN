@@ -31,8 +31,8 @@ Nếu Andy trả lời/làm xong → Claude cập nhật status → DONE.
 | PA-004 | **BS Onboarding Checklist** — đã ký với BS pilot. | 🟡 MEDIUM | ✅ DONE | 2026-06-06 | 1 |
 | PA-006 | **Ground truth labels (dental)** — Mở `data/audio/dental/ground_truth_dental_template.json`, điền chan_doan/drugs/vitals/tai_kham cho từng file audio nha khoa. Dental audio đã move sang `data/audio/dental/`. | 🟡 MEDIUM | ✅ DONE (Claude 2026-06-10) | 2026-06-08 | 4 |
 | PA-009 | **BENCH-GT-001** — Điền GT cho 54/57 clips còn lại trong `data/eval/ref_voice_transcripts_review.txt` (Clip2+Clip3 ưu tiên). Cần để đo BENCH-002b CEER thật + PhoBERT GO criteria. | 🔴 HIGH | PENDING | 2026-06-09 | 1 |
-| PA-010 | **FID-VN-010 APPROVE** — Review và approve `fids/FID-VN-010.md` (AI Pipeline Redesign v2.0). Đặc biệt: Q1 Phase 0 implement A1/A2/A3 ngay? Q2 L4-REDESIGN-001 safety priority? | 🔴 HIGH | PENDING | 2026-06-09 | 1 |
-| PA-011 | **CONS-20260610-003 Q1+Q3 Decision** — Chốt Q1 (PARALLEL+exit vs Shadow Mode) và Q3 (VALIDATE+SUPPLEMENT vs VALIDATE ONLY) cho FID-VN-009 PhoBERT implementation. | 🟡 MEDIUM | PENDING | 2026-06-09 | 1 |
+| PA-010 | **FID-VN-010 APPROVE** — Review và approve `fids/FID-VN-010.md` (AI Pipeline Redesign v2.0). Đặc biệt: Q1 Phase 0 implement A1/A2/A3 ngay? Q2 L4-REDESIGN-001 safety priority? | 🔴 HIGH | ✅ DONE (Andy 2026-06-09 — approved ngầm, ra lệnh implement A1/A2/A3/L4) | 2026-06-09 | 1 |
+| PA-011 | **CONS-20260610-003 Q1+Q3 Decision** — Chốt Q1 (PARALLEL+exit vs Shadow Mode) và Q3 (VALIDATE+SUPPLEMENT vs VALIDATE ONLY) cho FID-VN-009 PhoBERT implementation. | 🟡 MEDIUM | ✅ DONE (Andy 2026-06-09 — Q1=PARALLEL+early-exit · Q3=VALIDATE+SUPPLEMENT) | 2026-06-09 | 1 |
 | PA-007 | **Corpus ChatGPT** — `docs/dev/CLINICAL_TEST_CORPUS_VN.md` v2.0 đã có 1210 dòng, scripts by_disease/by_accent/by_drug_hard đầy đủ | 🟡 MEDIUM | ✅ DONE (2026-06-08) | 2026-06-08 | 3 |
 | PA-008 | **Semi-synthetic ghi âm** — ✅ 30 files VI-only (HN/SG/CT × 5 SC × 2 takes). CA bỏ (không thực tế VN). WER: SG 25.8% / CT 30.4% / HN 34.6%. Cần TRAIN-001 để xuống ≤20%. | 🔴 HIGH | ✅ DONE (2026-06-07) | 2026-06-09 | 2 |
 | PA-005 | Approve FID-VN-004 | 🔴 HIGH | ✅ DONE | 2026-06-06 | 1 |

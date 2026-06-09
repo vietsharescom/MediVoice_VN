@@ -1,6 +1,29 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.8.6] — 2026-06-09 — FID-VN-010 Phase 0: A1+A2+A3+L4-REDESIGN · 678 tests
+
+### FID-VN-010 Phase 0 Implementation [SES-20260609b]
+- feat(A1): `src/core/l1a_asr.py` — Whisper prompt injection (A1-PROMPT-INJECT)
+  - SPECIALTY_DRUG_CLASSES + get_drugs_by_specialty() + build_initial_prompt()
+  - transcribe/transcribe_file/transcribe_chunks nhận drug_db + specialty params
+  - Graceful fallback khi transformers version không support initial_prompt
+  - `tests/unit/test_l1a_prompt_inject.py` — 23 tests PASS
+- feat(A2): `src/core/l0_normalize.py` — VAD silence-aware chunking (A2-VAD-CHUNK)
+  - _merge_short_gaps() + vad_chunk_audio() (silero-vad==6.2.1)
+  - Max 20s hard cap, gap_ms 500ms, midpoint split nếu vượt, fallback fixed chunk
+  - `tests/unit/test_l0_vad_chunk.py` — 18 tests PASS
+- feat(A3): `src/core/dialect_norm.py` — Dialect normalization (A3-DIALECT-NORM)
+  - DIALECT_MAP 200+ entries: central (mô→đâu), southern (tui→tôi), medical abbrev (ha→huyết áp)
+  - detect_region() + normalize_dialect() + expand_abbreviations() + normalize_text()
+  - Region-aware: "ốm"=bệnh (central) ≠ gầy (southern)
+  - `tests/unit/test_l1a_dialect_norm.py` — 49 tests PASS
+- feat(l4-redesign): `demo/app.py` — Per-drug mandatory confirm UI (L4-REDESIGN-001)
+  - Per-drug st.checkbox + _all_drugs_confirmed gate + disabled=not _all_drugs_confirmed
+  - Flagged drugs (L1b drug_flags): st.warning + confidence % thay static card
+  - Reset drug_confirm keys khi new result / Từ chối / Khám BN tiếp theo
+  - Evidence: Session 174116 Losartan→Atorvastatin substitution BS 5/5 không phát hiện
+
 ## [v0.8.5] — 2026-06-09 — FID-VN-010 AI Pipeline Redesign v2.0 · DESIGN_REPORT §15 update · 473 tests
 
 ### Architecture Design [SES-20260609]

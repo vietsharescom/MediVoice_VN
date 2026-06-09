@@ -24,6 +24,11 @@ pydub==0.25.1
 # PhoBERT + CRF (Phase 1 — Phase 0 uses rule-based NER)
 # transformers already included above
 
+# ── RAG-001 Drug Vector Store ─────────────────────────────────
+chromadb==0.5.3                # ChromaDB vector store (Apache-2.0)
+sentence-transformers==3.0.1   # paraphrase-multilingual-MiniLM-L12-v2 (Apache-2.0)
+# Model: ~120MB, CPU-fast, multilingual VN support, downloaded on first use
+
 # ── Database + Security ───────────────────────────────────────
 cryptography==42.0.8          # Fernet encryption
 

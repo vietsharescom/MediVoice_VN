@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-09 | v0.8.5
+# Cập nhật: 2026-06-09 | v0.8.6
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -41,7 +41,7 @@
 | P0.2.L1d | │  ├─ L1d ICD-10-VN | Auto-lookup 15,026 mã (QĐ5837/BYT) | 🟢 | — | SES-20260604 | |
 | P0.2.L2 | │  ├─ L2 Validate | Confidence scoring, weighted fields | 🟢 | — | SES-20260604 | |
 | P0.2.L3 | │  ├─ L3 Route | lam_sang/cdha/nha_khoa + transcript fallback | 🟢 | — | SES-20260606 | Bug fix: transcript fallback |
-| P0.2.L4 | │  ├─ L4 Human Gate | BS approve bắt buộc — không bypass | 🔵 | L4-REDESIGN-001 | SES-20260604 | Luật KCB Đ.62 · ⚠️ Safety issue: Session 174116 Losartan→Atorvastatin, BS 5/5 không phát hiện → FID-VN-010 L4-REDESIGN |
+| P0.2.L4 | │  ├─ L4 Human Gate | BS approve bắt buộc — per-drug mandatory confirm | 🟢 | L4-REDESIGN-001 | SES-20260609b | Luật KCB Đ.62 · ✅ L4-REDESIGN-001 DONE — per-drug st.checkbox gate, disabled until all confirmed |
 | P0.2.L5 | │  ├─ L5 PII Scan | CCCD/SĐT/BHYT/email — NĐ13/2023 | 🟢 | GAP-002 | SES-20260604 | 27 unit tests ✅ |
 | P0.2.L6 | │  ├─ L6 Form Gen | NER → BenhAnNgoaiTru (Mẫu 15/BV-01) | 🟢 | FID-VN-004 | SES-20260607 | VN NER direct mapping |
 | P0.2.L7 | │  ├─ L7 Storage | SQLite + WAL + Fernet encryption | 🟢 | — | SES-20260604 | |
@@ -129,7 +129,16 @@
 | P0.6.6a | │  ├─ Drive session analysis | 9 JSON+WAV sessions 2026-06-08 afternoon · 5 scripted + 4 real voice | 🟢 | — | SES-20260609 | `data/drive-download-20260609T031416Z-3-001/` |
 | P0.6.6b | │  ├─ CONS-20260608-002 rewrite | Full consultation: 8 data sections + 4 root causes + Options A-G + prioritized roadmap | 🟢 | — | SES-20260609 | `docs/records/consultations/CONS-20260608-002.md` (644 dòng) |
 | P0.6.6c | │  ├─ CONS-20260610-003 update | 6 AI reviews: ChatGPT + Grok + Copilot independent reviews saved | 🟢 | — | SES-20260609 | `docs/records/consultations/CONS-20260610-003.md` (852 dòng) |
-| P0.6.6d | │  └─ FID-VN-010 DRAFT | AI Pipeline Redesign v2.0 — A1+A2+A3+RAG+UI+L4-redesign | 🔵 | FID-VN-010 | SES-20260609 | `fids/FID-VN-010.md` — **Chờ Andy APPROVE** |
+| P0.6.6d | │  └─ FID-VN-010 DRAFT | AI Pipeline Redesign v2.0 — A1+A2+A3+RAG+UI+L4-redesign | 🔵 | FID-VN-010 | SES-20260609 | `fids/FID-VN-010.md` · Phase 0 A1✅A2✅A3✅L4✅ · RAG-001+UI-SUGGEST-001 còn lại |
+| | │ | | | | | |
+| | │ | | | | | |
+| **P0.6.7** | **├─ 🔵 FID-VN-010 Phase 0** | **A1+A2+A3+L4-REDESIGN implement · 678 tests** | **🔵** | **FID-VN-010** | SES-20260609b | A1✅ A2✅ A3✅ L4✅ · RAG-001 + UI-SUGGEST-001 còn lại |
+| P0.6.7a | │  ├─ A1-PROMPT-INJECT | PhoWhisper initial_prompt drug list per specialty | 🟢 | A1 | SES-20260609b | `src/core/l1a_asr.py` · 23 tests |
+| P0.6.7b | │  ├─ A2-VAD-CHUNK | silero-vad chunking tại silence tự nhiên, max 20s | 🟢 | A2 | SES-20260609b | `src/core/l0_normalize.py` · 18 tests |
+| P0.6.7c | │  ├─ A3-DIALECT-NORM | 200+ entries Trung/Nam/abbrev, region-aware | 🟢 | A3 | SES-20260609b | `src/core/dialect_norm.py` · 49 tests |
+| P0.6.7d | │  ├─ L4-REDESIGN-001 | Per-drug mandatory confirm — Session 174116 safety fix | 🟢 | L4 | SES-20260609b | `demo/app.py` · disabled until all ✓ |
+| P0.6.7e | │  ├─ RAG-001-DRUG-VECTOR | Chroma + MiniLM drug vector store | ⏳ | RAG-001 | — | `src/core/drug_rag.py` |
+| P0.6.7f | │  └─ UI-SUGGEST-001 | Drug chips + dialect badge + terminology sidebar | ⏳ | UI-001 | — | Chờ RAG-001 |
 | | │ | | | | | |
 | **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
 | P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |
@@ -188,24 +197,14 @@
 
 ## PHIÊN TIẾP THEO — LÀM GÌ?
 
-### ⚡ NGAY BÂY GIỜ — Andy quyết định trước
+### ⚡ NGAY BÂY GIỜ — Phase 0 còn lại
 
 | # | Task | Ai | Điều kiện |
 |---|---|---|---|
-| 1 | **PA-010 Approve FID-VN-010** — Review `fids/FID-VN-010.md` → approve để implement A1/A2/A3 | Andy | ← ĐÂY TRƯỚC |
-| 2 | **PA-009 Fill GT** — Điền 54/57 GT còn lại `data/eval/ref_voice_transcripts_review.txt` (Clip2+Clip3 trước) | Andy | Song song |
-| 3 | **PA-011 CONS Q1+Q3** — Chốt FID-VN-009 PhoBERT mode (PARALLEL+exit vs Shadow) | Andy | Song song |
-
-### ⚡ CLAUDE LÀM NGAY KHI FID-VN-010 APPROVED
-
-| # | Task ID | Mô tả | Effort |
-|---|---|---|---|
-| 1 | **A1-PROMPT-INJECT** | `src/core/l1a_asr.py` — build_initial_prompt() + tests | 4h |
-| 2 | **A2-VAD-CHUNK** | `src/core/l0_normalize.py` — vad_chunk_audio() silero-vad | 1 ngày |
-| 3 | **A3-DIALECT-NORM** | `src/core/dialect_norm.py` — dialect dict 200 entries + abbrev | 2 ngày |
-| 4 | **L4-REDESIGN-001** | Per-drug mandatory confirm UI + confidence bar | 3 ngày |
-| 5 | **RAG-001-DRUG-VECTOR** | `src/core/drug_rag.py` — Chroma + MiniLM drug store | 3 ngày |
-| 6 | **UI-SUGGEST-001** | Drug chips + dialect badge + terminology sidebar | 5 ngày |
+| 1 | **RAG-001-DRUG-VECTOR** — `src/core/drug_rag.py` Chroma + MiniLM | Claude | Không chờ — bắt đầu ngay |
+| 2 | **UI-SUGGEST-001** — Drug chips + dialect badge | Claude | Chờ RAG-001 xong |
+| 3 | **PA-009 Fill GT** — Điền 54/57 GT còn lại `data/eval/ref_voice_transcripts_review.txt` | Andy | Song song với RAG-001 |
+| 4 | **PA-010 Approve FID-VN-010** — Retroactive approve (Phase 0 đã implement xong) | Andy | Khi rảnh |
 
 ### 🟡 BENCHMARK (sau khi Andy fill GT)
 
@@ -216,11 +215,11 @@
 
 ---
 
-## METRICS HIỆN TẠI (2026-06-09)
+## METRICS HIỆN TẠI (2026-06-09 · v0.8.6)
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | **473/473** | 🟢 |
+| Tests PASS | 100% | **678/678** | 🟢 |
 | bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
 | Vital extraction (TC audio) | >0% | bench tc_001/tc_002: vital=True | 🟢 fixed FID-VN-005 |
 | WER semi-synthetic | <30% | SG 25.8% · CT 30.4% · HN 34.6% | 🟡 cần fine-tune |
@@ -238,7 +237,7 @@
 | **Phonetic Recall (CONS-002-EVAL)** | **≥85%** | **98.7%** | **✅ GO** |
 | **Drug Recall real BS voice (local pipeline)** | **≥70%** | **13–18%** | **🔴 CRITICAL GAP** |
 | **Drug Recall real BS voice (Cloud LLM ref)** | — | 78% | 🟡 Cloud masks local weakness |
-| **L4 Human Gate safety (real)** | 0 drug substitution | Losartan→Atorvastatin BS 5/5 | 🔴 FID-VN-010 L4-REDESIGN |
+| **L4 Human Gate safety** | 0 drug substitution | Per-drug confirm gate ✅ DONE | 🟢 L4-REDESIGN-001 SES-20260609b |
 | BS approve rate | >85% | ❓ chưa pilot | ⏳ |
 | NPS | >7/10 | ❓ chưa pilot | ⏳ |
 | Paying users | ≥5 | 0 | ⏳ |
@@ -267,8 +266,9 @@
 | SES-20260610 | 2026-06-10 | v0.7.2 | TRAIN-002 overnight started · ner_semantic_test · wer_clinical_test tools committed |
 | SES-20260610b | 2026-06-10 | v0.7.2 | TRAIN-002 ✅ DONE F1=99.44% · BUG-K2+BUG-N fix · 409/409 · Drug corpus analysis · Canadian MedVoice benchmark |
 | SES-20260609 | 2026-06-09 | v0.8.5 | Real voice testing 9 sessions Drive · CONS-20260608-002 rewrite (644 dòng) · CONS-20260610-003 6 AI reviews · FID-VN-010 DRAFT (AI Pipeline Redesign v2.0) · DESIGN_REPORT §15 → v2.0 |
+| SES-20260609b | 2026-06-09 | v0.8.5→v0.8.6 | FID-VN-010 Phase 0: A1✅ A2✅ A3✅ L4-REDESIGN✅ · 473→678 tests (+205) |
 
 ---
 
-*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.5 | 2026-06-09*
+*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.6 | 2026-06-09*
 *Cập nhật mỗi phiên đóng. Đọc cùng BACKLOG.md + PENDING_REQUESTS.md*
