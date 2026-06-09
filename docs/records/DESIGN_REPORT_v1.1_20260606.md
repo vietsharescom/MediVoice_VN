@@ -1546,10 +1546,14 @@ PHASE 0 — MVP ✅ KỸ THUẬT HOÀN THÀNH (2026-06-09 · v0.10.1)
   ✅ Phase 0 AI enhancements: A1 Prompt Injection + A2 VAD + A3 Dialect — DONE
   ✅ Phase 0.5 RAG: drug_rag.py hybrid + UI-SUGGEST-001 + FID-VN-011 — DONE
 
-  Phase 0.6 — NEXT (FID-VN-012 DVP):
-  ⏳ DVP Layer 1: DoctorProfile (region + specialty metadata)
-  ⏳ DVP Layer 2: 12 specialty vocab packs (link vào A1+A3)
-  ⏳ DVP Layer 3: Personal drug alias (passive từ L4 corrections)
+  Phase 0.6 — DVP Layer 1+2 ✅ DONE (FID-VN-012 v0.11.0 · 2026-06-09):
+  ✅ DVP Layer 1: DoctorProfile (region + specialty metadata) — src/models/doctor_profile.py
+  ✅ DVP Layer 2: 12 specialty vocab packs (link vào A1+A3) — SPECIALTY_DRUG_CLASSES l1a_asr.py
+  ✅ DB: doctor_profiles + doctor_aliases tables — l7_storage.py CRUD
+  ✅ Pipeline: specialty→L1a A1 + region→A3 dialect norm per doctor
+  ✅ API: POST /api/doctors · GET · aliases/pending · aliases/confirm
+  ✅ Layer 3 schema: dvp_alias.py (promote logic) — pilot-gated
+  ⏳ DVP Layer 3: Personal alias passive learning — cần ≥5 sessions pilot data
 
   KPIs Phase 0 (đo sau pilot):
     WER actual: 18.4% ✅ (target <30%) | Drug Recall: 55.6%LB 🔴 (target ≥70%)
@@ -1708,6 +1712,7 @@ PHASE 3 — Platform (2027–2028)
 | v1.1 | 2026-06-06 | **Major update từ session design review:**<br>• Thêm Queue Management System + TTS loa<br>• Thêm 2 chế độ vận hành (Mode A/B/C)<br>• Thêm Doctor Pre-visit Briefing<br>• Thêm Post-care CRM (D+2/D+4/D+7)<br>• Thêm Referral 2 chiều + Retest flow<br>• Thêm Staff Confirm Gate<br>• Cập nhật kênh liên lạc (Zalo/Email phân tách)<br>• Thêm Email auto-processor + điều kiện 3 lớp<br>• Thêm Booking engine chuẩn (7 states + buffer)<br>• Thêm Integration Gateway + adapter pattern<br>• Cập nhật M5 commission tracking đúng luật<br>• Thêm Website widget + REST API booking<br>• Thêm kế toán API gateway<br>• Làm rõ data compliance 3 lớp bảo vệ |
 | v2.0 | 2026-06-09 | **§15 AI Pipeline rewrite — FID-VN-010 + BENCH-002b:**<br>• L0: VAD silence-aware chunking (silero-vad)<br>• L1a: Prompt Injection (initial_prompt drug list per specialty)<br>• Post-ASR: Dialect normalization (200+ entries, region-aware)<br>• L1b: "Layer 5 RAG" concept draft (thresholds chưa calibrated)<br>• L4: Per-drug mandatory confirm safety redesign<br>• Performance benchmarks từ BENCH-002b evidence |
 | v2.1 | 2026-06-09 | **§15 sync với code thật — FID-VN-011 + DRUG-DB-002 + FID-VN-009:**<br>• L1b: Layer 5 → **Layer 3b** (tên đúng với code)<br>• L1b: Threshold 0.80 → **0.68 accept / 0.55 flag** (calibrated)<br>• L1b: Hybrid query **0.65×fuzzy + 0.35×RAG** (logic thật)<br>• L1b: Model preload singleton (_embed_model + _drug_collection startup)<br>• L1b: drug_db_v200 **154 INN** (DRUG-DB-002 +8 drugs)<br>• L1c: PhoBERT **PARALLEL + early-exit** (thay shadow mode)<br>• Benchmarks: cập nhật v2.1 actual từ BENCH-002b real voice<br>• Roadmap: Phase 0 ✅ + Phase 0.5 ✅ đánh dấu DONE với file paths |
+| v2.2 | 2026-06-09 | **§15+§19 DVP Layer 1+2 DONE — FID-VN-012 v0.11.0:**<br>• Roadmap: Phase 0.6 DVP L1+2 ✅ DONE (⏳→✅)<br>• DVP: DoctorProfile model · doctor_profiles+doctor_aliases tables<br>• DVP: SPECIALTY_DRUG_CLASSES 12 canonical (cdha/mat/noi_tiet/than_tiet_nieu mới)<br>• DVP: Pipeline injection specialty→L1a + region→A3 per doctor<br>• DVP Layer 3: dvp_alias.py schema (pilot-gated, ⏳ cần ≥5 sessions)<br>• VIETMED-FIX-001: download_vietmed.py trust_remote_code → HF_TOKEN |
 
 ---
 

@@ -3,10 +3,12 @@
 # Dataset: doof-ferb/VietMed (MIT license, ~16h labeled Vietnamese medical speech)
 # Output: data/vietmed/
 # Usage: python scripts/download_vietmed.py [--split train|validation|test|all]
+# Requires: HF_TOKEN env var — huggingface.co/settings/tokens (read token)
 
 import argparse
 import json
 import logging
+import os
 import sys
 from pathlib import Path
 
@@ -42,6 +44,16 @@ def main():
         log.error("datasets not installed: pip install datasets")
         sys.exit(1)
 
+    hf_token = os.environ.get("HF_TOKEN")
+    if not hf_token:
+        log.warning(
+            "HF_TOKEN not set — doof-ferb/VietMed is a gated dataset.\n"
+            "  1. Đăng nhập huggingface.co → Settings → Access Tokens → New token (Read)\n"
+            "  2. Chấp nhận license tại huggingface.co/datasets/doof-ferb/VietMed\n"
+            "  3. Chạy: set HF_TOKEN=hf_xxx  (Windows) hoặc export HF_TOKEN=hf_xxx (Linux)\n"
+            "Tiếp tục thử không dùng token (sẽ fail nếu dataset chưa public)..."
+        )
+
     splits = ["train", "validation", "test"] if args.split == "all" else [args.split]
 
     for split in splits:
@@ -51,11 +63,14 @@ def main():
                 DATASET_ID,
                 split=split,
                 cache_dir=args.cache_dir,
-                trust_remote_code=True,
+                token=hf_token,
             )
         except Exception as e:
-            log.warning(f"  {split}: {e} — trying without trust_remote_code")
-            ds = load_dataset(DATASET_ID, split=split, cache_dir=args.cache_dir)
+            log.error(
+                f"  {split}: {e}\n"
+                "  Nếu lỗi 401/403: set HF_TOKEN=<token> trước khi chạy lại."
+            )
+            continue
 
         log.info(f"  {split}: {len(ds)} samples — features: {list(ds.features.keys())}")
 
