@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-09 | v0.11.0
+# Cập nhật: 2026-06-09 | v0.11.1
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -155,6 +155,13 @@
 | P0.6.9d | │  └─ TEST-E2E-001 | `tests/integration/test_e2e_pipeline.py` 22 tests · pipeline L1b→L10 real | 🟢 | TEST-E2E-001 | SES-20260609f | Structure/NER/L4Gate/PDF/PII/Routing · 794/794 PASS |
 | | │ | | | | | |
 | **P0.6.10** | **├─ 🟢 FID-VN-012 DVP Layer 1+2** | **Doctor Voice Profile — 12 specialties · 4 endpoints · 23 tests · 817 PASS** | **🟢** | **FID-VN-012** | SES-20260609g | v0.10.1→v0.11.0 · Drug Recall 55.6%→65-75% predicted |
+| | │ | | | | | |
+| **P0.6.11** | **├─ 🟢 DEMO-002 Demo App v2.1** | **Header Block A/B/C · drug card fixes · button visibility** | **🟢** | **DEMO-002** | SES-20260609h | v0.11.0→v0.11.1 · UX fixes cho pilot |
+| P0.6.11a | │  ├─ Header Block A/B/C | BS info (ten/coso/cchn) · DVP (chuyen_khoa/vung_mien/lang) · BN pre-fill | 🟢 | DEMO-002 | SES-20260609h | commit `19334a0` |
+| P0.6.11b | │  ├─ Drug card HTML bold | `<b>name</b>` thay vì `**name**` trong div — markdown không render trong HTML | 🟢 | DEMO-002 | SES-20260609h | commit `1d5dd96` |
+| P0.6.11c | │  ├─ Skip empty drug entries | `if not _name.strip(): continue` — LLM blank entries | 🟢 | DEMO-002 | SES-20260609h | commit `1d5dd96` |
+| P0.6.11d | │  ├─ Checkbox default True | `value=True` — thuốc pre-confirmed, BS bỏ tick để từ chối | 🟢 | DEMO-002 | SES-20260609h | commit `1d5dd96` |
+| P0.6.11e | │  └─ Button visibility | Phê duyệt & Lưu moved inside container right after drug section | 🟢 | DEMO-002 | SES-20260609h | commit `1d5dd96` |
 | P0.6.10a | │  ├─ DoctorProfile model | `src/models/doctor_profile.py` — 12 specialties, 3 regions, DoctorAlias schema | 🟢 | FID-VN-012 | SES-20260609g | VALID_SPECIALTIES + SPECIALTY_DISPLAY |
 | P0.6.10b | │  ├─ l7_storage DVP CRUD | doctor_profiles + doctor_aliases tables · save/load/alias full CRUD | 🟢 | FID-VN-012 | SES-20260609g | Migration-safe CREATE TABLE IF NOT EXISTS |
 | P0.6.10c | │  ├─ SPECIALTY_DRUG_CLASSES 12 | `src/core/l1a_asr.py` — 12 canonical + 6 legacy aliases | 🟢 | FID-VN-012 | SES-20260609g | cdha=None · mat/noi_tiet/than_tiet_nieu new |
@@ -219,7 +226,7 @@
 
 ## PHIÊN TIẾP THEO — LÀM GÌ?
 
-### ⚡ NGAY BÂY GIỜ — v0.11.0 · DVP L1+2 deployed
+### ⚡ NGAY BÂY GIỜ — v0.11.1 · Demo App v2.1 deployed
 
 | # | Task | Ai | Điều kiện |
 |---|---|---|---|
@@ -238,7 +245,7 @@
 
 ---
 
-## METRICS HIỆN TẠI (2026-06-09 · v0.10.1)
+## METRICS HIỆN TẠI (2026-06-09 · v0.11.1)
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
@@ -295,6 +302,7 @@
 | SES-20260609e | 2026-06-09 | v0.9.1→v0.10.0 | FID-VN-011 ✅ L1b Layer 3b RAG + preload · DRUG-DB-002 ✅ 154 INNs · 772 tests |
 | SES-20260609f | 2026-06-09 | v0.10.0→v0.10.1 | TEST-E2E-001 ✅ 22 E2E integration tests · pipeline L1b→L10 real · 794/794 PASS |
 | SES-20260609g | 2026-06-09 | v0.10.1→v0.11.0 | FID-VN-012 ✅ DVP Layer 1+2 · 12 specialties · 4 endpoints · 23 tests · 817/817 PASS |
+| SES-20260609h | 2026-06-09 | v0.11.0→v0.11.1 | DEMO-002 ✅ Demo App v2.1 · Header Block A/B/C · drug card HTML bold · checkbox True · button visibility fix |
 
 ---
 

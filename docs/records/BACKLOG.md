@@ -95,6 +95,14 @@
   - Localhost: `demo_start.bat` → `http://localhost:8501` + localtunnel global URL
   - Secrets (gitignored): `.streamlit/secrets.toml` — add manually in Streamlit Cloud dashboard
   - Design doc: `docs/records/DESIGN_REPORT_v1.1_20260606.md` §21 Demo App (added 2026-06-09)
+- [x] **DEMO-002** ✅ Demo App v2.1 — Bug fixes + UX header redesign (2026-06-09 SES-20260609h)
+  - **Header Block A/B/C**: Thông tin BS · DVP settings (chuyên khoa + vùng miền + ngôn ngữ) · BN pre-fill
+  - **Bug: empty drug** — skip LLM-generated blank `ten` entries (`if not _name.strip(): continue`)
+  - **Bug: `**Amoxicillin**`** — markdown bold → `<b>name</b>` HTML trong drug card div
+  - **Bug: checkbox default False** → `value=True` (thuốc pre-confirmed, bỏ tick để từ chối)
+  - **UX: nút Phê duyệt** — moved inside container right after drug section (không cần scroll)
+  - Handler reads `note_giong/noise/bs/correction` từ `st.session_state.get(...)` (defined below)
+  - Commit: `1d5dd96` | 817/817 tests PASS (no new tests — demo-only fixes)
 - [x] **FID-VN-012** ✅ Doctor Voice Profile (DVP) Layer 1+2 — 2026-06-09
   - `src/models/doctor_profile.py` — DoctorProfile + DoctorAlias (12 specialties, 3 regions)
   - `src/core/l7_storage.py` — doctor_profiles + doctor_aliases tables + full CRUD

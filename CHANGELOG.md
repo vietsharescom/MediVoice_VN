@@ -1,6 +1,17 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.1] — 2026-06-09 — Demo App v2.1: header redesign + drug card fixes + button visibility
+
+### Demo App UX fixes [SES-20260609h]
+- fix(demo): `demo/app.py` — header Block A/B/C (BS info · DVP settings · BN pre-fill)
+- fix(demo): language selector (VI/EN) + dialect selector (auto/SG/DN/HN) in Block B
+- fix(demo): skip empty drug entries (LLM blank `ten` field)
+- fix(demo): HTML `<b>name</b>` instead of markdown `**name**` in drug card divs
+- fix(demo): drug checkbox default `value=True` (pre-confirmed, uncheck to reject)
+- fix(demo): move Phê duyệt & Lưu button inside container right after drug section (no scroll needed)
+- fix(demo): handler reads `note_giong/noise/bs/correction` from `st.session_state.get(...)` since training notes render below button
+
 ## [v0.11.0] — 2026-06-09 — FID-VN-012 DVP Layer 1+2: 12 specialties · 817/817 PASS
 
 ### FID-VN-012 — Doctor Voice Profile Layer 1+2 [SES-20260609g]
