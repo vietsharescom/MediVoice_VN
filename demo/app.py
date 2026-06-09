@@ -417,6 +417,7 @@ if audio_data is not None and not st.session_state.approved:
         # Clean drug confirm keys
         for _k in [k for k in st.session_state.keys() if k.startswith("drug_confirm_")]:
             del st.session_state[_k]
+        st.rerun()  # force re-render from new state — form will show on next pass
 
 # ── Kết quả — MẪU 15/BV-01 layout ────────────────────────────────────────────
 if st.session_state.result:
