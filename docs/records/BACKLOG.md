@@ -85,6 +85,14 @@
   - Coverage: pipeline structure (6) · NER extraction (5) · L4 gate (4) · PDF (3) · PII (2) · routing (2)
   - Mock L1a ASR with `ground_truth_lam_sang_template.json`; all downstream layers run real
   - Total: 794/794 PASS
+- [x] **FID-VN-012** ✅ Doctor Voice Profile (DVP) Layer 1+2 — 2026-06-09
+  - `src/models/doctor_profile.py` — DoctorProfile + DoctorAlias (12 specialties, 3 regions)
+  - `src/core/l7_storage.py` — doctor_profiles + doctor_aliases tables + full CRUD
+  - `src/core/l1a_asr.py` — SPECIALTY_DRUG_CLASSES 12 canonical + 6 legacy
+  - `src/core/dvp_alias.py` — alias promotion logic (Layer 3 schema, pilot-gated)
+  - `src/api/main.py` — pipeline injection (specialty→L1a, region→A3) + 4 DVP endpoints
+  - `tests/unit/test_dvp.py` — 23 tests AC-001→AC-010 PASS | Total: 817/817
+  - Predicted Drug Recall: 55.6% → 65-75% (Layer 1+2), 80-90% (Layer 3 mature)
 - [ ] **TRAIN-001** ⏳ Fine-tune PhoWhisper trên 50-100h real clinical audio — cần audio thật từ pilot
 - [x] **GAP-002** ✅ Unit tests PII scan — tests/unit/test_pii_scan.py 27 tests PASS (2026-06-06)
 - [x] **GAP-003** ✅ Unit tests L8 error handler — `tests/unit/test_l8_error_handler.py` 20 tests PASS (2026-06-08) | P0.2.L8

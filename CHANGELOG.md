@@ -1,6 +1,25 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.0] — 2026-06-09 — FID-VN-012 DVP Layer 1+2: 12 specialties · 817/817 PASS
+
+### FID-VN-012 — Doctor Voice Profile Layer 1+2 [SES-20260609g]
+- feat(dvp): `src/models/doctor_profile.py` — DoctorProfile + DoctorAlias dataclasses,
+  VALID_SPECIALTIES (12), VALID_REGIONS, SPECIALTY_DISPLAY
+- feat(dvp): `src/core/l7_storage.py` — doctor_profiles + doctor_aliases tables (migration-safe),
+  save_doctor_profile / load_doctor_profile / alias CRUD (save/get_pending/confirm/get_active)
+- feat(dvp): `src/core/l1a_asr.py` — SPECIALTY_DRUG_CLASSES 12 canonical FID-VN-012 + 6 legacy
+  (noi_khoa/tim_mach/chan_thuong_chinh_hinh/tai_mui_hong/san_phu_khoa/nhi/cdha/ngoai/da_lieu/mat/noi_tiet/than_tiet_nieu)
+- feat(dvp): `src/core/dvp_alias.py` — Layer 3 alias promotion logic (check_and_promote,
+  apply_active_aliases, record_correction) — pilot-gated, schema ready
+- feat(dvp): `src/api/main.py` — DVP pipeline injection:
+  - load_doctor_profile(cchn) at transcribe start → specialty → L1a, region → A3 dialect norm
+  - POST /api/doctors · GET /api/doctors/{cchn}
+  - GET /api/doctors/{cchn}/aliases/pending · POST /api/doctors/{cchn}/aliases/{id}/confirm
+- tests: `tests/unit/test_dvp.py` — 23 tests AC-001→AC-010 PASS
+- **Total: 817/817 PASS** (+23 từ 794, 0 regression)
+- Performance prediction: Drug Recall 55.6% → 65-75% (L1+2), 80-90% (L3 mature)
+
 ## [v0.10.1] — 2026-06-09 — TEST-E2E-001: 22 E2E integration tests · 794/794 PASS
 
 ### TEST-E2E-001 — End-to-end pipeline integration tests [SES-20260609f]

@@ -2,43 +2,39 @@
 # Ghi đè mỗi phiên — git history lưu lịch sử cũ tự động
 # ISO/IEC 42001:2023 Cl.9.1 (Performance evaluation)
 
-## Mã phiên: SES-20260609f
+## Mã phiên: SES-20260609g
 ## Thời gian: 2026-06-09
-## Version: v0.10.0 → v0.10.1
+## Version: v0.10.1 → v0.11.0
 
 ---
 
 ## Trạng thái đầu → cuối
-v0.10.0 | 772 tests PASS → v0.10.1 | 794 tests PASS (+22)
+v0.10.1 | 794 tests → v0.11.0 | 817 tests
 
 ## Đã hoàn thành
-
-- [TEST-E2E-001 DONE] `tests/integration/test_e2e_pipeline.py` — 22 E2E integration tests PASS
-  - Mock L1a ASR với `transcript_reference` từ `data/audio/ground_truth_lam_sang_template.json`
-  - Tất cả downstream layers (L1b→L10) chạy thật
-  - 6 nhóm test: Structure/NER/L4Gate/PDF/PII/Routing
-  - Phát hiện: vitals nested trong `sinh_hieu`, approve/reject dùng `Form(...)` không phải JSON
+- [FID-VN-012] Doctor Voice Profile Layer 1+2 — IMPLEMENTED (PA-012 Andy approved "TRIỂN KHAI NGAY")
+  - `src/models/doctor_profile.py` — DoctorProfile + DoctorAlias · VALID_SPECIALTIES (12) · VALID_REGIONS
+  - `src/core/l7_storage.py` — doctor_profiles + doctor_aliases tables (migration-safe) + full CRUD
+  - `src/core/l1a_asr.py` — SPECIALTY_DRUG_CLASSES 12 canonical FID-VN-012 + 6 legacy aliases
+  - `src/core/dvp_alias.py` — Layer 3 alias promotion logic (pilot-gated schema)
+  - `src/api/main.py` — pipeline injection: specialty→L1a A1, region→A3 dialect norm
+    + POST /api/doctors · GET /api/doctors/{cchn}
+    + GET /api/doctors/{cchn}/aliases/pending · POST /api/doctors/{cchn}/aliases/{id}/confirm
+  - `tests/unit/test_dvp.py` — 23 tests AC-001→AC-010 PASS
+- Commits: `e6d9dc1` (FID-VN-012 DRAFT + WIN2 docs) · `a3b733a` (DVP L1+2 implementation)
 
 ## Kết quả đo được
-
-- Tests: 794/794 PASS (+22 từ 772)
-- ISO audit: ✅ ALL GOOD (không có pending, không có NC mở)
-- Phân tích tiến độ: 3 ngày từ design → +584 tests (210→794), pipeline E2E hoàn chỉnh
-- PA-009 turning point: BENCH-002b evidence → FID-VN-010/011 đúng hướng
-- WER thật: ALL=18.4% · DN/SG=16.3%✅ · HN=29.3%⚠️
+- Tests: 817/817 PASS (794→817, +23 DVP, 0 regressions)
+- Pipeline injection: dvp_specialty + dvp_region trả về trong /api/transcribe response
+- DB: doctor_profiles + doctor_aliases tables live trong medivoice.db
+- AC-001→AC-010 đủ 100%
 
 ## Blocker / Phụ thuộc bên ngoài
-
-- [TRAIN-001] Fine-tune PhoWhisper cần 50-100h audio thật → chờ pilot deploy Đà Nẵng
-- [TP-002] CONS-20260610-004 DVP — Andy cần trả lời O1/O2/O3/O4 để Claude viết FID-VN-012
-- [VIETMED-FIX-001] `scripts/download_vietmed.py` cần HF_TOKEN + bỏ trust_remote_code
+- [TRAIN-001] Cần audio thật từ pilot — BS phải cài install.bat tại phòng khám thật
+- [DVP-L3] Layer 3 alias passive learning — cần ≥5 sessions pilot data để test promote
 
 ## Phiên tiếp theo — làm ngay theo thứ tự
-
-1. **DESIGN REVIEW toàn bộ** — Xem lại + bổ sung `docs/records/DESIGN_REPORT_v1.1_20260606.md`
-   - Đọc toàn bộ thiết kế, xác định gaps sau 3 ngày implement (FID-VN-010/011, RAG, drug_db, E2E)
-   - Bổ sung sections còn thiếu hoặc outdated
-   - Mục tiêu: DESIGN_REPORT phản ánh đúng v0.10.1 state
-2. [FID-VN-012] TBD — sau khi Andy chốt DVP (TP-002) hoặc xác định priority mới
-3. [VIETMED-FIX-001] Fix download script — làm ngay, nhỏ
-4. [Pilot Đà Nẵng] Cài install.bat thật → thu audio → unlock TRAIN-001
+1. [VIETMED-FIX-001] Fix `scripts/download_vietmed.py` — remove trust_remote_code + HF_TOKEN (~5 LOC, làm ngay)
+2. [DESIGN-REVIEW] Cập nhật `docs/records/DESIGN_REPORT_v1.1_20260606.md` §15 thêm DVP section
+3. [PILOT] Andy cài install.bat tại phòng khám Đà Nẵng → thu audio → TRAIN-001
+4. [DVP-L3] Sau pilot: implement alias passive learning (promote từ corrections)

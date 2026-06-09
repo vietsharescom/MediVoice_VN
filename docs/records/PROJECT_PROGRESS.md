@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-09 | v0.10.1
+# Cập nhật: 2026-06-09 | v0.11.0
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -154,6 +154,14 @@
 | P0.6.9c | │  ├─ DRUG-DB-002 | `data/reference/drug_db_v200.json` 146→154 INNs · 9 phonetic variants/drug | 🟢 | DRUG-DB-002 | SES-20260609e | +Erythromycin/AlPO4/Betamethasone/Clindamycin/Lisinopril/Digoxin/Nystatin/Ketoconazole |
 | P0.6.9d | │  └─ TEST-E2E-001 | `tests/integration/test_e2e_pipeline.py` 22 tests · pipeline L1b→L10 real | 🟢 | TEST-E2E-001 | SES-20260609f | Structure/NER/L4Gate/PDF/PII/Routing · 794/794 PASS |
 | | │ | | | | | |
+| **P0.6.10** | **├─ 🟢 FID-VN-012 DVP Layer 1+2** | **Doctor Voice Profile — 12 specialties · 4 endpoints · 23 tests · 817 PASS** | **🟢** | **FID-VN-012** | SES-20260609g | v0.10.1→v0.11.0 · Drug Recall 55.6%→65-75% predicted |
+| P0.6.10a | │  ├─ DoctorProfile model | `src/models/doctor_profile.py` — 12 specialties, 3 regions, DoctorAlias schema | 🟢 | FID-VN-012 | SES-20260609g | VALID_SPECIALTIES + SPECIALTY_DISPLAY |
+| P0.6.10b | │  ├─ l7_storage DVP CRUD | doctor_profiles + doctor_aliases tables · save/load/alias full CRUD | 🟢 | FID-VN-012 | SES-20260609g | Migration-safe CREATE TABLE IF NOT EXISTS |
+| P0.6.10c | │  ├─ SPECIALTY_DRUG_CLASSES 12 | `src/core/l1a_asr.py` — 12 canonical + 6 legacy aliases | 🟢 | FID-VN-012 | SES-20260609g | cdha=None · mat/noi_tiet/than_tiet_nieu new |
+| P0.6.10d | │  ├─ dvp_alias.py Layer 3 | check_and_promote · apply_active_aliases · record_correction (pilot-gated) | 🟢 | FID-VN-012 | SES-20260609g | `src/core/dvp_alias.py` |
+| P0.6.10e | │  ├─ Pipeline injection | main.py: specialty→L1a A1 + region→A3 dialect + dvp_specialty/dvp_region in response | 🟢 | FID-VN-012 | SES-20260609g | 4 new endpoints: POST /api/doctors + GET + aliases pending + confirm |
+| P0.6.10f | │  └─ test_dvp.py | 23 tests AC-001→AC-010 · DB schema · CRUD · pipeline · alias Human Gate | 🟢 | FID-VN-012 | SES-20260609g | 817/817 PASS · 0 regressions |
+| | │ | | | | | |
 | **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
 | P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |
 | P0.7b |    ├─ DPA ký | Hợp đồng xử lý dữ liệu | 🟡 | PA-003 | — | Luật sư review xong → ký |
@@ -211,15 +219,15 @@
 
 ## PHIÊN TIẾP THEO — LÀM GÌ?
 
-### ⚡ NGAY BÂY GIỜ — v0.10.1 · Pipeline E2E hoàn chỉnh
+### ⚡ NGAY BÂY GIỜ — v0.11.0 · DVP L1+2 deployed
 
 | # | Task | Ai | Điều kiện |
 |---|---|---|---|
-| 1 | **DESIGN REVIEW toàn bộ** — Xem lại thiết kế `docs/records/DESIGN_REPORT_v1.1_20260606.md` + bổ sung gaps sau 3 ngày implement | Claude + Andy | Phiên tới |
-| 2 | **FID-VN-012** — TBD sau khi chốt DVP (TP-002) hoặc Andy xác định priority mới | Claude | Sau Andy review design |
-| 3 | **TP-002 CONS-20260610-004** — Andy trả lời O1/O2/O3/O4 → Doctor Voice Profile FID | Andy | `docs/records/consultations/CONS-20260610-004.md` |
-| 4 | **VIETMED-FIX-001** — Fix `scripts/download_vietmed.py` remove trust_remote_code + HF_TOKEN | Claude | Làm được ngay |
-| 5 | **Pilot Đà Nẵng** — Cài install.bat thật tại phòng khám → thu audio → TRAIN-001 | Andy | Code sẵn sàng |
+| 1 | **VIETMED-FIX-001** — Fix `scripts/download_vietmed.py` remove `trust_remote_code` + HF_TOKEN (~5 LOC) | Claude | Làm được ngay |
+| 2 | **DESIGN REVIEW** — Xem lại `docs/records/DESIGN_REPORT_v1.1_20260606.md` bổ sung DVP section | Claude + Andy | Phiên tới |
+| 3 | **Pilot Đà Nẵng** — Cài install.bat thật tại phòng khám → thu audio → TRAIN-001 | Andy | Code sẵn sàng · DVP needs real doctor CCHN |
+| 4 | **TRAIN-001** — Fine-tune PhoWhisper trên 50-100h audio thật | Andy + Claude | Cần audio pilot trước |
+| 5 | **DVP Layer 3** — Alias passive learning promote sau ≥5 sessions pilot | Claude | Sau pilot có data |
 
 ### 🟡 BENCHMARK TIẾP THEO
 
@@ -234,7 +242,7 @@
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | **794/794** | 🟢 |
+| Tests PASS | 100% | **817/817** | 🟢 |
 | bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
 | Vital extraction (TC audio) | >0% | bench tc_001/tc_002: vital=True | 🟢 fixed FID-VN-005 |
 | WER semi-synthetic | <30% | SG 25.8% · CT 30.4% · HN 34.6% | 🟡 cần fine-tune |
@@ -286,6 +294,7 @@
 | SES-20260609d | 2026-06-09 | v0.9.0→v0.9.1 | BENCH-002b ✅ — 57 clips real BS voice WER=18.4% Drug=55.6%LB · tools/bench_002b.py |
 | SES-20260609e | 2026-06-09 | v0.9.1→v0.10.0 | FID-VN-011 ✅ L1b Layer 3b RAG + preload · DRUG-DB-002 ✅ 154 INNs · 772 tests |
 | SES-20260609f | 2026-06-09 | v0.10.0→v0.10.1 | TEST-E2E-001 ✅ 22 E2E integration tests · pipeline L1b→L10 real · 794/794 PASS |
+| SES-20260609g | 2026-06-09 | v0.10.1→v0.11.0 | FID-VN-012 ✅ DVP Layer 1+2 · 12 specialties · 4 endpoints · 23 tests · 817/817 PASS |
 
 ---
 
