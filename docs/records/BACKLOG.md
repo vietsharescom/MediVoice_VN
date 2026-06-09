@@ -80,6 +80,11 @@
 - [x] **DRUG-DB-002** ✅ drug_db_v200.json 146 → 154 INNs — 2026-06-09
   - +8: Erythromycin · Aluminium phosphate · Betamethasone · Clindamycin · Lisinopril · Digoxin · Nystatin · Ketoconazole
   - 9 phonetic variants/drug (3 regions) | `scripts/add_drugs_002.py`
+- [x] **TEST-E2E-001** ✅ End-to-end pipeline tests — 2026-06-09
+  - `tests/integration/test_e2e_pipeline.py` — 22 tests PASS
+  - Coverage: pipeline structure (6) · NER extraction (5) · L4 gate (4) · PDF (3) · PII (2) · routing (2)
+  - Mock L1a ASR with `ground_truth_lam_sang_template.json`; all downstream layers run real
+  - Total: 794/794 PASS
 - [ ] **TRAIN-001** ⏳ Fine-tune PhoWhisper trên 50-100h real clinical audio — cần audio thật từ pilot
 - [x] **GAP-002** ✅ Unit tests PII scan — tests/unit/test_pii_scan.py 27 tests PASS (2026-06-06)
 - [x] **GAP-003** ✅ Unit tests L8 error handler — `tests/unit/test_l8_error_handler.py` 20 tests PASS (2026-06-08) | P0.2.L8

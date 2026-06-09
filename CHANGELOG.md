@@ -1,6 +1,19 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.10.1] — 2026-06-09 — TEST-E2E-001: 22 E2E integration tests · 794/794 PASS
+
+### TEST-E2E-001 — End-to-end pipeline integration tests [SES-20260609f]
+- tests: `tests/integration/test_e2e_pipeline.py` — 22 tests
+  - `TestE2EPipelineStructure` (6): 200/form_data/record_id/confidence/status/disclaimer
+  - `TestE2ENERExtraction` (5): chan_doan HN · drugs Hải Phòng · vitals sinh_hieu · icd_code · gout Colchicine
+  - `TestE2EL4Gate` (4): approve flow · approve record_id · reject flow · nonexistent 404
+  - `TestE2EPDF` (3): PDF after approve · content-type · PDF before approve → error
+  - `TestE2EPII` (2): CCCD flagged · clean transcript
+  - `TestE2ERouting` (2): lam_sang default · cdha keywords
+- Mock: `patch("src.core.l1a_asr.transcribe")` with GT transcript_reference; L1b→L10 run for real
+- **Total: 794/794 PASS** (+22 từ 772)
+
 ## [v0.10.0] — 2026-06-09 — FID-VN-011 L1b Layer 3b RAG + DRUG-DB-002 154 INNs · 772 tests
 
 ### FID-VN-011 — L1b Layer 3b RAG fallback + Model Preload [SES-20260609e]

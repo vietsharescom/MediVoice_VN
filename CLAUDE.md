@@ -249,11 +249,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.10.0 |
-| Status | **FID-VN-011✅ DRUG-DB-002✅** — RAG L3b + preload · 154 INNs · 772 tests |
-| Tests | **772/772 PASS** · bandit 0 HIGH/0 MEDIUM (new code) · conftest.py SKIP_QWEN |
+| Version | v0.10.1 |
+| Status | **TEST-E2E-001✅ FID-VN-011✅ DRUG-DB-002✅** — 22 E2E tests · RAG L3b + preload · 154 INNs |
+| Tests | **794/794 PASS** · bandit 0 HIGH/0 MEDIUM (new code) · conftest.py SKIP_QWEN |
 | Pending | **PA-010** approve FID-VN-010 retroactive · **VIETMED-FIX-001** (HF_TOKEN) |
-| Next task | **TEST-E2E-001** end-to-end test → **TRAIN-001** fine-tune PhoWhisper (cần audio thật từ pilot) |
+| Next task | **TRAIN-001** fine-tune PhoWhisper (cần audio thật từ pilot) → **FID-VN-012** (TBD) |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.0) · FID: `fids/FID-VN-011.md` |
 
 ---
