@@ -8,9 +8,10 @@
       "VietMed-NER DRUGCHEMICAL analysis + clinical VN OB/GYN (2026-06-09)",
       "DRUG-ALIAS-001: PhoWhisper phonetic variants for Glimepiride/Colchicine/Etoricoxib/Vitamin B/Metformin/Omeprazole (2026-06-10)",
       "CONS-20260610-001 + CONS-20260610-002: phonetic_variants + drug_class + dose_range (2026-06-10)",
-      "DRUG-DB-002: SGLT-2/DPP-4/ARB/CCB/PPI/neuropathy additions (2026-06-10)"
+      "DRUG-DB-002: SGLT-2/DPP-4/ARB/CCB/PPI/neuropathy additions (2026-06-10)",
+      "DRUG-DB-002: Erythromycin/AluminiumPhosphate/Betamethasone/Clindamycin/Lisinopril/Digoxin/Nystatin/Ketoconazole (2026-06-09)"
     ],
-    "total_drugs": 146,
+    "total_drugs": 154,
     "version": "2.0.0",
     "categories": {
       "Giảm đau": 3,
@@ -18,7 +19,7 @@
       "Chống viêm COX-2": 2,
       "Kháng sinh Penicillin": 1,
       "Kháng sinh Penicillin + ức chế beta-lactamase": 1,
-      "Kháng sinh Macrolide": 2,
+      "Kháng sinh Macrolide": 3,
       "Kháng sinh Cephalosporin 1G": 1,
       "Kháng sinh Cephalosporin 2G": 1,
       "Kháng sinh Cephalosporin 3G": 1,
@@ -32,7 +33,7 @@
       "Giãn phế quản Xanthine": 1,
       "Chống dị ứng": 1,
       "Kháng histamine thế hệ 2": 4,
-      "Corticosteroid": 2,
+      "Corticosteroid": 3,
       "Ức chế bơm proton": 3,
       "Kháng H2": 2,
       "Prokinetic": 2,
@@ -44,7 +45,7 @@
       "Chống co thắt ruột": 2,
       "Hạ áp Calcium antagonist": 1,
       "Hạ áp ARB": 2,
-      "Hạ áp ACE inhibitor": 2,
+      "Hạ áp ACE inhibitor": 3,
       "Beta-blocker": 2,
       "Lợi tiểu quai Henle": 1,
       "Lợi tiểu Thiazide": 1,
@@ -84,7 +85,12 @@
       "Corticosteroid tiêm": 1,
       "NSAIDs tiêm": 1,
       "NSAIDs mạnh": 1,
-      "Opioid nhẹ": 1
+      "Opioid nhẹ": 1,
+      "Bảo vệ niêm mạc dạ dày": 1,
+      "Kháng sinh Lincosamide": 1,
+      "Tim mạch glycoside": 1,
+      "Chống nấm Polyene": 1,
+      "Chống nấm Azole toàn thân": 1
     },
     "otc_count": 38,
     "rx_count": 72,
@@ -6955,6 +6961,471 @@
         "đái tháo đường type 2"
       ],
       "inn": "Acarbose"
+    },
+    "Erythromycin": {
+      "inn": "Erythromycin",
+      "brands": [
+        "Erythromycin",
+        "E-mycin",
+        "Ery-tab",
+        "Ilosone",
+        "Erythro",
+        "ê ri tho my xin",
+        "e ri thro",
+        "ery tho my"
+      ],
+      "forms": [
+        "viên 250mg",
+        "viên 500mg",
+        "siro 200mg/5mL"
+      ],
+      "typical": "500mg x 4 lần/ngày x 5-7 ngày",
+      "category": "Kháng sinh Macrolide",
+      "otc": false,
+      "keywords": [
+        "erythromycin",
+        "e-mycin",
+        "ery-tab",
+        "ilosone",
+        "macrolide"
+      ],
+      "phonetic_variants": {
+        "north": [
+          "ê ri thơ my xin",
+          "ê ri tho my xin",
+          "ê ri thơ mi xin"
+        ],
+        "central": [
+          "e ri thro mi cin",
+          "ê ri thơ mi cin",
+          "ê ri tro mi xin"
+        ],
+        "south": [
+          "ê ri tho my cin",
+          "ê ri tho my",
+          "e ri tho mi cin"
+        ]
+      },
+      "valid_doses_mg": [
+        250,
+        500
+      ],
+      "dose_range": {
+        "min": 250,
+        "max": 4000
+      },
+      "drug_class": "macrolide",
+      "compatible_diagnoses": [
+        "viêm họng",
+        "viêm phổi nhẹ",
+        "nhiễm trùng da",
+        "viêm phế quản"
+      ]
+    },
+    "Aluminium phosphate": {
+      "inn": "Aluminium phosphate",
+      "brands": [
+        "Phosphalugel",
+        "Nhôm phosphate",
+        "Phophalugel sachets",
+        "phot pha lu gen",
+        "phos pha lu",
+        "nhom phot phat"
+      ],
+      "forms": [
+        "gói 8g/20mL"
+      ],
+      "typical": "1 gói x 2-3 lần/ngày sau bữa ăn",
+      "category": "Bảo vệ niêm mạc dạ dày",
+      "otc": true,
+      "keywords": [
+        "phosphalugel",
+        "nhôm phosphate",
+        "antacid",
+        "nhom phot phat",
+        "phos pha lu gen"
+      ],
+      "phonetic_variants": {
+        "north": [
+          "phot pha lu gen",
+          "nhôm phot phat",
+          "a lu mi ni phot phat"
+        ],
+        "central": [
+          "phot pha lu gen",
+          "nhom phot phat",
+          "phot pha lu"
+        ],
+        "south": [
+          "phot pha lu gen",
+          "phot pha luc",
+          "nhom phot fa"
+        ]
+      },
+      "valid_doses_mg": [
+        8000
+      ],
+      "dose_range": {
+        "min": 0,
+        "max": 0
+      },
+      "drug_class": "antacid",
+      "compatible_diagnoses": [
+        "đau dạ dày",
+        "trào ngược dạ dày",
+        "viêm dạ dày",
+        "loét dạ dày"
+      ]
+    },
+    "Betamethasone": {
+      "inn": "Betamethasone",
+      "brands": [
+        "Celestone",
+        "Betnovate",
+        "Diprospan",
+        "Betaderm",
+        "Bethasone",
+        "bê ta met",
+        "bê ta me ta"
+      ],
+      "forms": [
+        "viên 0.5mg",
+        "kem 0.05%",
+        "tiêm 4mg/mL"
+      ],
+      "typical": "0.5-1mg/ngày uống",
+      "category": "Corticosteroid",
+      "otc": false,
+      "keywords": [
+        "betamethasone",
+        "betnovate",
+        "celestone",
+        "diprospan",
+        "corticoid"
+      ],
+      "phonetic_variants": {
+        "north": [
+          "bê ta me tha son",
+          "bê ta met a son",
+          "bê ta me ta xon"
+        ],
+        "central": [
+          "bê ta me tha xon",
+          "bê ta mê tha son",
+          "bê ta me ta"
+        ],
+        "south": [
+          "bê ta mê ta son",
+          "bê ta met",
+          "bê ta me tha"
+        ]
+      },
+      "valid_doses_mg": [
+        0.5,
+        1,
+        2,
+        4
+      ],
+      "dose_range": {
+        "min": 0.25,
+        "max": 8
+      },
+      "drug_class": "corticosteroid",
+      "compatible_diagnoses": [
+        "viêm da",
+        "dị ứng",
+        "viêm khớp",
+        "viêm phế quản"
+      ]
+    },
+    "Clindamycin": {
+      "inn": "Clindamycin",
+      "brands": [
+        "Dalacin C",
+        "Cleocin",
+        "Clindacin",
+        "Clindamycin",
+        "klin đa my",
+        "clin đa my xin"
+      ],
+      "forms": [
+        "viên 150mg",
+        "viên 300mg",
+        "kem 1%"
+      ],
+      "typical": "300mg x 4 lần/ngày x 7 ngày",
+      "category": "Kháng sinh Lincosamide",
+      "otc": false,
+      "keywords": [
+        "clindamycin",
+        "dalacin",
+        "cleocin",
+        "lincosamide"
+      ],
+      "phonetic_variants": {
+        "north": [
+          "klin đa my xin",
+          "clin đa my xin",
+          "klin đa mi xin"
+        ],
+        "central": [
+          "clin đa mi cin",
+          "klin đa mi cin",
+          "clin đa my"
+        ],
+        "south": [
+          "klin đa mi cin",
+          "clin đa mi",
+          "klin da my xin"
+        ]
+      },
+      "valid_doses_mg": [
+        150,
+        300,
+        450,
+        600
+      ],
+      "dose_range": {
+        "min": 150,
+        "max": 4800
+      },
+      "drug_class": "lincosamide",
+      "compatible_diagnoses": [
+        "nhiễm trùng da",
+        "nhiễm trùng răng",
+        "viêm phổi",
+        "áp xe"
+      ]
+    },
+    "Lisinopril": {
+      "inn": "Lisinopril",
+      "brands": [
+        "Zestril",
+        "Prinivil",
+        "Lisinopril",
+        "Lisiprol",
+        "li xi no pril",
+        "li si nô prin"
+      ],
+      "forms": [
+        "viên 5mg",
+        "viên 10mg",
+        "viên 20mg"
+      ],
+      "typical": "10mg x 1 lần/ngày",
+      "category": "Hạ áp ACE inhibitor",
+      "otc": false,
+      "keywords": [
+        "lisinopril",
+        "zestril",
+        "prinivil",
+        "ace inhibitor"
+      ],
+      "phonetic_variants": {
+        "north": [
+          "li xi nô pơ rin",
+          "li si nô prin",
+          "li xi no pril"
+        ],
+        "central": [
+          "li xi no pril",
+          "li si no pril",
+          "li xi nô prin"
+        ],
+        "south": [
+          "li si no prin",
+          "li xi no prin",
+          "li si no prit"
+        ]
+      },
+      "valid_doses_mg": [
+        2.5,
+        5,
+        10,
+        20,
+        40
+      ],
+      "dose_range": {
+        "min": 2.5,
+        "max": 80
+      },
+      "drug_class": "ace_inhibitor",
+      "compatible_diagnoses": [
+        "tăng huyết áp",
+        "suy tim",
+        "bệnh thận tiểu đường"
+      ]
+    },
+    "Digoxin": {
+      "inn": "Digoxin",
+      "brands": [
+        "Lanoxin",
+        "Digoxin",
+        "di goc xin",
+        "đi gốc"
+      ],
+      "forms": [
+        "viên 0.0625mg",
+        "viên 0.125mg",
+        "viên 0.25mg",
+        "tiêm 0.5mg/2mL"
+      ],
+      "typical": "0.125-0.25mg/ngày",
+      "category": "Tim mạch glycoside",
+      "otc": false,
+      "keywords": [
+        "digoxin",
+        "lanoxin",
+        "glycoside",
+        "tim"
+      ],
+      "phonetic_variants": {
+        "north": [
+          "đi gôc xin",
+          "đi goc xin",
+          "di goc sin"
+        ],
+        "central": [
+          "đi goc xin",
+          "di goc sin",
+          "đi goc"
+        ],
+        "south": [
+          "đi gốc xin",
+          "đi gốc",
+          "di goc xin"
+        ]
+      },
+      "valid_doses_mg": [
+        0.0625,
+        0.125,
+        0.25,
+        0.5
+      ],
+      "dose_range": {
+        "min": 0.0625,
+        "max": 0.5
+      },
+      "drug_class": "cardiac_glycoside",
+      "compatible_diagnoses": [
+        "suy tim",
+        "rung nhĩ",
+        "nhịp tim nhanh"
+      ]
+    },
+    "Nystatin": {
+      "inn": "Nystatin",
+      "brands": [
+        "Mycostatin",
+        "Nilstat",
+        "Nystatin",
+        "Nystat",
+        "ny xta tin",
+        "ni xta"
+      ],
+      "forms": [
+        "viên 500000 IU",
+        "hỗn dịch 100000 IU/mL",
+        "kem 100000 IU/g"
+      ],
+      "typical": "500000 IU x 4 lần/ngày x 5-7 ngày",
+      "category": "Chống nấm Polyene",
+      "otc": true,
+      "keywords": [
+        "nystatin",
+        "mycostatin",
+        "candida",
+        "nấm"
+      ],
+      "phonetic_variants": {
+        "north": [
+          "ny xta tin",
+          "ni xta tin",
+          "ny xta tinh"
+        ],
+        "central": [
+          "ni xta tin",
+          "ny xta",
+          "ni xta tinh"
+        ],
+        "south": [
+          "ny xta tin",
+          "nì xta tin",
+          "ni xta"
+        ]
+      },
+      "valid_doses_mg": [
+        500000,
+        1000000
+      ],
+      "dose_range": {
+        "min": 100000,
+        "max": 4000000
+      },
+      "drug_class": "polyene_antifungal",
+      "compatible_diagnoses": [
+        "nhiễm nấm miệng",
+        "nhiễm nấm âm đạo",
+        "nhiễm nấm da"
+      ]
+    },
+    "Ketoconazole": {
+      "inn": "Ketoconazole",
+      "brands": [
+        "Nizoral",
+        "Ketomed",
+        "Ketoconazole",
+        "kê to co na zon",
+        "ni do ral",
+        "kê to con"
+      ],
+      "forms": [
+        "viên 200mg",
+        "dầu gội 2%",
+        "kem 2%"
+      ],
+      "typical": "200-400mg/ngày uống",
+      "category": "Chống nấm Azole toàn thân",
+      "otc": false,
+      "keywords": [
+        "ketoconazole",
+        "nizoral",
+        "ketomed",
+        "azole",
+        "nấm"
+      ],
+      "phonetic_variants": {
+        "north": [
+          "kê to co na zol",
+          "kê to co na dôn",
+          "kê to con a zon"
+        ],
+        "central": [
+          "kê to co na zon",
+          "kê to co na zol",
+          "kê to cô na"
+        ],
+        "south": [
+          "kê to co na zon",
+          "ni do ral",
+          "kê to co na"
+        ]
+      },
+      "valid_doses_mg": [
+        200,
+        400
+      ],
+      "dose_range": {
+        "min": 200,
+        "max": 400
+      },
+      "drug_class": "azole_antifungal",
+      "compatible_diagnoses": [
+        "nhiễm nấm da",
+        "nấm tóc",
+        "nấm móng",
+        "viêm da tiết bã"
+      ]
     }
   },
   "keyword_index": {
@@ -8981,6 +9452,61 @@
     ],
     "glu co bê": [
       "Acarbose"
-    ]
+    ],
+    "erythromycin": "Erythromycin",
+    "e-mycin": "Erythromycin",
+    "ery-tab": "Erythromycin",
+    "ilosone": "Erythromycin",
+    "macrolide": "Erythromycin",
+    "erythro": "Erythromycin",
+    "ê ri tho my xin": "Erythromycin",
+    "e ri thro": "Erythromycin",
+    "ery tho my": "Erythromycin",
+    "antacid": "Aluminium phosphate",
+    "nhom phot phat": "Aluminium phosphate",
+    "phos pha lu gen": "Aluminium phosphate",
+    "phophalugel sachets": "Aluminium phosphate",
+    "phos pha lu": "Aluminium phosphate",
+    "betamethasone": "Betamethasone",
+    "betnovate": "Betamethasone",
+    "celestone": "Betamethasone",
+    "diprospan": "Betamethasone",
+    "betaderm": "Betamethasone",
+    "bethasone": "Betamethasone",
+    "bê ta met": "Betamethasone",
+    "bê ta me ta": "Betamethasone",
+    "clindamycin": "Clindamycin",
+    "dalacin": "Clindamycin",
+    "cleocin": "Clindamycin",
+    "lincosamide": "Clindamycin",
+    "dalacin c": "Clindamycin",
+    "clindacin": "Clindamycin",
+    "klin đa my": "Clindamycin",
+    "clin đa my xin": "Clindamycin",
+    "lisinopril": "Lisinopril",
+    "zestril": "Lisinopril",
+    "prinivil": "Lisinopril",
+    "lisiprol": "Lisinopril",
+    "li xi no pril": "Lisinopril",
+    "li si nô prin": "Lisinopril",
+    "digoxin": "Digoxin",
+    "lanoxin": "Digoxin",
+    "glycoside": "Digoxin",
+    "tim": "Digoxin",
+    "di goc xin": "Digoxin",
+    "đi gốc": "Digoxin",
+    "nystatin": "Nystatin",
+    "mycostatin": "Nystatin",
+    "nilstat": "Nystatin",
+    "nystat": "Nystatin",
+    "ny xta tin": "Nystatin",
+    "ni xta": "Nystatin",
+    "ketoconazole": "Ketoconazole",
+    "nizoral": "Ketoconazole",
+    "ketomed": "Ketoconazole",
+    "azole": "Ketoconazole",
+    "kê to co na zon": "Ketoconazole",
+    "ni do ral": "Ketoconazole",
+    "kê to con": "Ketoconazole"
   }
 }

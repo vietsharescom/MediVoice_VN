@@ -73,10 +73,13 @@
   - `src/api/static/index.html` — drug chips panel + dialect badge + term sidebar + specialty selector
   - `tests/unit/test_api_suggestions.py` — 43 tests PASS | Total: 755/755
 - [x] **BENCH-GT-001** ✅ Andy điền 57/57 GT clips `data/eval/ref_voice_transcripts_review.txt` — 2026-06-09
-- [ ] **FID-VN-011** 🔵 DRAFT — L1b Layer 3 RAG + model preload lifecycle — chờ Andy approve
-  - `fids/FID-VN-011.md` — DRAFT 2026-06-09
-  - Q1: Approve implement? Q2: Threshold 0.68 OK?
-  - Khi approve: ~140 LOC — `main.py` preload + `l1b_drug_correct.py` Layer 3 fallback
+- [x] **FID-VN-011** ✅ L1b Layer 3b RAG fallback + model preload — 2026-06-09
+  - `src/api/main.py` — startup singleton preload `_embed_model` + `_drug_collection`
+  - `src/core/l1b_drug_correct.py` — `_rag_fallback_match()` + Layer 3b (score≥0.68 accept)
+  - `tests/unit/test_l1b_rag_layer3.py` — 17 tests | Total: 772/772 PASS
+- [x] **DRUG-DB-002** ✅ drug_db_v200.json 146 → 154 INNs — 2026-06-09
+  - +8: Erythromycin · Aluminium phosphate · Betamethasone · Clindamycin · Lisinopril · Digoxin · Nystatin · Ketoconazole
+  - 9 phonetic variants/drug (3 regions) | `scripts/add_drugs_002.py`
 - [ ] **TRAIN-001** ⏳ Fine-tune PhoWhisper trên 50-100h real clinical audio — cần audio thật từ pilot
 - [x] **GAP-002** ✅ Unit tests PII scan — tests/unit/test_pii_scan.py 27 tests PASS (2026-06-06)
 - [x] **GAP-003** ✅ Unit tests L8 error handler — `tests/unit/test_l8_error_handler.py` 20 tests PASS (2026-06-08) | P0.2.L8

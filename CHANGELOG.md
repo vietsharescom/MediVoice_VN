@@ -1,6 +1,35 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.10.0] — 2026-06-09 — FID-VN-011 L1b Layer 3b RAG + DRUG-DB-002 154 INNs · 772 tests
+
+### FID-VN-011 — L1b Layer 3b RAG fallback + Model Preload [SES-20260609e]
+- feat(VN-L1b): `src/core/l1b_drug_correct.py` — Layer 3b RAG fallback
+  - `_rag_fallback_match()` — hybrid_query_drug wrapper; returns (inn, score) or (None, 0.0)
+  - `correct_drug_names_v2()` new params: `rag_collection=None, embed_model=None` (keyword-only)
+  - Layer 3b fires when: token ≥6 chars + Layer 1+2+prefix miss + RAG singletons available
+  - score ≥ 0.68 → auto-accept LOW_CONFIDENCE (BS confirms via L4); 0.55-0.68 → flag
+  - RAG_ACCEPT_THRESHOLD=0.68 · RAG_FLAG_THRESHOLD=0.55 — calibrate via pilot
+- feat(api): `src/api/main.py` — startup preload singleton
+  - `_embed_model` + `_drug_collection` module globals; preloaded once at startup
+  - `startup()` event loads SentenceTransformer + Chroma vectorstore (graceful skip if deps missing)
+  - `/api/drug-candidates` uses preloaded singletons (no cold start per API call)
+  - `/api/transcribe` pipeline: `correct_drug_names_v2()` with RAG injection
+- tests: `tests/unit/test_l1b_rag_layer3.py` — 17 tests PASS (AC-003→AC-008)
+- **Total: 772/772 PASS** (+17 từ 755)
+
+### DRUG-DB-002 — drug_db_v200.json 146 → 154 INNs [SES-20260609e]
+- data: `data/reference/drug_db_v200.json` — +8 drugs với 9 phonetic variants/drug (3 regions)
+  - Erythromycin (Kháng sinh Macrolide)
+  - Aluminium phosphate / Phosphalugel (Bảo vệ niêm mạc dạ dày)
+  - Betamethasone (Corticosteroid — Celestone/Betnovate/Diprospan)
+  - Clindamycin / Dalacin C (Kháng sinh Lincosamide)
+  - Lisinopril / Zestril (Hạ áp ACE inhibitor)
+  - Digoxin / Lanoxin (Tim mạch glycoside)
+  - Nystatin / Mycostatin (Chống nấm Polyene)
+  - Ketoconazole / Nizoral (Chống nấm Azole toàn thân)
+- scripts: `scripts/add_drugs_002.py` — idempotent add script
+
 ## [v0.9.1] — 2026-06-09 — BENCH-002b Real Voice: WER 18.4% · Drug 55.6% · tools/bench_002b.py
 
 ### BENCH-002b Real Voice Results [SES-20260609d]
