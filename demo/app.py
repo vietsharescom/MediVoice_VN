@@ -303,7 +303,7 @@ with c2:
 
 c3, c4, c5 = st.columns(3)
 with c3:
-    cchn = st.text_input("Mã CCHN ★", placeholder="CCHN-012345")
+    cchn = st.text_input("Mã CCHN ★", placeholder="CCHN-012345", key="cchn")
 with c4:
     SPECIALTIES = [
         "Nội khoa tổng quát", "Tim mạch", "Hô hấp", "Tiêu hóa",
@@ -311,16 +311,24 @@ with c4:
         "Cơ xương khớp", "Nhi", "Sản phụ khoa", "Ngoại",
         "Chẩn đoán hình ảnh",
     ]
-    chuyen_khoa = st.selectbox("Chuyên khoa", SPECIALTIES)
+    chuyen_khoa = st.selectbox("Chuyên khoa", SPECIALTIES, key="chuyen_khoa")
 with c5:
     ngay_kham_str = datetime.now().strftime("%d/%m/%Y")
     st.text_input("Ngày khám", value=ngay_kham_str, disabled=True)
 
-ten_bn_demo = st.text_input(
-    "Tên bệnh nhân *(dùng tên giả cho demo)*",
-    placeholder="Bệnh nhân A / Nguyễn Văn Demo...",
-    help="Không nhập tên thật trong bản demo",
-)
+_pf1, _pf2, _pf3 = st.columns([3, 1, 1])
+with _pf1:
+    ten_bn_demo = st.text_input(
+        "Tên bệnh nhân *(dùng tên giả cho demo)*",
+        placeholder="Bệnh nhân A / Nguyễn Văn Demo...",
+        help="Không nhập tên thật trong bản demo",
+        key="ten_bn_demo",
+    )
+with _pf2:
+    tuoi_bn_demo = st.number_input("Tuổi BN", min_value=0, max_value=120, value=0, key="tuoi_bn_demo")
+with _pf3:
+    _gioi_pre_opts = ["Không rõ", "Nam", "Nữ"]
+    gioi_bn_demo = st.selectbox("Giới tính", _gioi_pre_opts, key="gioi_bn_demo")
 
 st.divider()
 
@@ -481,15 +489,20 @@ if st.session_state.result:
         # ── I. Thông tin hành chính ───────────────────────────────────────────
         st.markdown('<div class="section-label">I. Thông tin bệnh nhân</div>', unsafe_allow_html=True)
         _bn = r.get("benh_nhan_ner", {})
+        # Fallback: use pre-filled values from top-of-page inputs when NER didn't extract them
+        _ten_fallback  = _bn.get("ten","") or st.session_state.get("ten_bn_demo","")
+        _tuoi_fallback = int(_bn.get("tuoi",0) or 0) or int(st.session_state.get("tuoi_bn_demo",0) or 0)
+        _gioi_fallback = _bn.get("gioi","") or st.session_state.get("gioi_bn_demo","Không rõ")
+
         c1, c2, c3 = st.columns(3)
         with c1:
-            bn_ten = st.text_input("Họ tên BN", value=_bn.get("ten","") or ten_bn_demo or "", placeholder="(Demo)")
+            bn_ten = st.text_input("Họ tên BN", value=_ten_fallback, placeholder="(Demo)")
         with c2:
-            bn_tuoi = st.number_input("Tuổi", value=int(_bn.get("tuoi",0) or 0), min_value=0, max_value=120)
+            bn_tuoi = st.number_input("Tuổi", value=_tuoi_fallback, min_value=0, max_value=120)
         with c3:
             _gioi_opts = ["Không rõ","Nam","Nữ"]
             bn_gioi = st.selectbox("Giới tính", _gioi_opts,
-                index=_gioi_opts.index(_bn.get("gioi","Không rõ")) if _bn.get("gioi") in _gioi_opts else 0)
+                index=_gioi_opts.index(_gioi_fallback) if _gioi_fallback in _gioi_opts else 0)
 
         c4, c5, c6 = st.columns(3)
         with c4:
