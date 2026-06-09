@@ -476,7 +476,20 @@ if audio_data is not None and not st.session_state.approved:
         st.session_state.approved = False
         st.session_state.drive_error = ""
         st.session_state.drive_uploaded = False
-        # Clean drug confirm keys
+        # Pre-initialize form field session keys so approve handler can read them above the form
+        _sh = result.get("sinh_hieu", {})
+        for _fk, _fv in [
+            ("f_ly_do",      result.get("ly_do", "")),
+            ("f_chan_doan",  result.get("chan_doan", "")),
+            ("f_icd",        result.get("icd", "")),
+            ("f_tai_kham",   result.get("tai_kham", "")),
+            ("f_ha",         _sh.get("huyet_ap", "")),
+            ("f_mach",       int(_sh.get("mach", 0) or 0)),
+            ("f_nhiet_do",   float(_sh.get("nhiet_do", 36.5) or 36.5)),
+            ("f_can_nang",   float(_sh.get("can_nang", 0.0) or 0.0)),
+        ]:
+            st.session_state[_fk] = _fv
+        # Clean drug confirm keys (will re-default to True on next render)
         for _k in [k for k in st.session_state.keys() if k.startswith("drug_confirm_")]:
             del st.session_state[_k]
         st.rerun()  # force re-render from new state — form will show on next pass
@@ -638,11 +651,13 @@ if st.session_state.result:
         _drug_confirmed = []
         for _i, _drug in enumerate(_don_thuoc):
             _name = _drug.get("ten", "")
+            if not _name.strip():
+                continue
             _hl = _drug.get("ham_luong","")
             _lieu = _drug.get("lieu","")
             _ngay = _drug.get("ngay","")
             _flag = _flag_for(_name)
-            _label_parts = [f"**{_name}** {_hl}".strip()]
+            _label_parts = [f"<b>{_name}</b> {_hl}".strip()]
             if _lieu: _label_parts.append(_lieu)
             if _ngay: _label_parts.append(_ngay)
             _label = " · ".join(p for p in _label_parts if p.strip())
@@ -650,12 +665,12 @@ if st.session_state.result:
             dc1, dc2 = st.columns([5,1])
             with dc1:
                 if _flag:
-                    st.warning(f"⚠️ {_label}  |  AI nghe: *{_flag['original']}*  |  {_flag['confidence']:.0%}")
+                    st.warning(f"⚠️ {_name} {_hl}  |  AI nghe: *{_flag['original']}*  |  {_flag['confidence']:.0%}")
                 else:
                     st.markdown(f'<div class="drug-card">💊 {_label}</div>', unsafe_allow_html=True)
             with dc2:
-                _confirmed = st.checkbox("✓", key=f"drug_confirm_{_i}",
-                                          help=f"Xác nhận {_name}: tên, liều, số ngày đúng")
+                _confirmed = st.checkbox("✓", key=f"drug_confirm_{_i}", value=True,
+                                          help=f"Bỏ tick nếu {_name} sai tên/liều")
                 _drug_confirmed.append(_confirmed)
 
         if not _don_thuoc:
@@ -671,6 +686,106 @@ if st.session_state.result:
 
         score_dt = st.select_slider("Đơn thuốc đúng chưa?", [1,2,3,4,5], 5, _s, key="score_dt")
 
+        st.divider()
+
+        # ── Action buttons — ngay sau đơn thuốc, không cần scroll ─────────────
+        _scores_all = [score_transcript, score_ten, score_tuoi, score_ngay, score_sh, score_cd, score_dt, score_tk, score_ly_do]
+        avg_score = round(sum(_scores_all) / len(_scores_all), 1)
+
+        if st.session_state.drive_error:
+            if "local_saves" in st.session_state.drive_error:
+                st.info(f"💾 {st.session_state.drive_error}")
+            else:
+                st.error(f"☁️ Drive: {st.session_state.drive_error}")
+
+        _ba1, _ba2 = st.columns(2)
+        with _ba1:
+            if not _all_confirmed and _drug_confirmed:
+                st.warning("⚠️ Bỏ tick thuốc sai trước khi lưu")
+            if st.button("✅ Phê duyệt & Lưu", type="primary",
+                          use_container_width=True, disabled=not _all_confirmed,
+                          key="btn_approve"):
+                if not st.session_state.approved:
+                    session_data = {
+                        "session_id": st.session_state.session_id,
+                        "timestamp": r["timestamp"],
+                        "ngay_kham": ngay_kham_str,
+                        "ten_bs": ten_bs,
+                        "co_so": co_so,
+                        "cchn": r["cchn"],
+                        "ten_bn_demo": r["ten_bn"],
+                        "chuyen_khoa": chuyen_khoa,
+                        "vung_mien": r.get("vung_mien", st.session_state.get("vung_mien", "auto")),
+                        "lang_output": r.get("lang_output", "vi"),
+                        "audio_duration_sec": get_audio_duration(r.get("audio", b"")),
+                        "device_browser": get_browser_info(),
+                        "recording_type": "script" if "Script" in recording_type else "natural",
+                        "transcript_real": r.get("transcript_real",""),
+                        "accuracy_rating": f"{avg_score}/5",
+                        "avg_score": avg_score,
+                        "benh_nhan": {
+                            "ten": bn_ten, "tuoi": bn_tuoi, "gioi": bn_gioi,
+                            "nam_sinh": bn_nam_sinh, "sdt": bn_sdt, "cccd": bn_cccd,
+                        },
+                        "field_eval": {
+                            "transcript": score_transcript, "ten_bn": score_ten,
+                            "tuoi": score_tuoi, "ngay_kham": score_ngay,
+                            "ly_do": score_ly_do, "sinh_hieu": score_sh,
+                            "chan_doan": score_cd, "don_thuoc": score_dt, "tai_kham": score_tk,
+                        },
+                        "notes": {
+                            "giong_vung_mien": st.session_state.get("note_giong", []),
+                            "moi_truong": st.session_state.get("note_noise", []),
+                            "dac_diem_bs": st.session_state.get("note_bs", []),
+                        },
+                        "correction": st.session_state.get("correction_text", ""),
+                        "form_ner": r.get("form_ner", {}),
+                        "form_approved": {
+                            "ly_do": ly_do,
+                            "chan_doan": chan_doan,
+                            "icd": icd,
+                            "tai_kham": tai_kham,
+                            "sinh_hieu": {"huyet_ap": huyet_ap, "mach": mach, "nhiet_do": nhiet_do, "can_nang": can_nang},
+                            "don_thuoc": _don_thuoc,
+                        },
+                        "test_script_id": active_script["id"] if active_script else None,
+                        "ground_truth": active_script["ground_truth"] if active_script else None,
+                    }
+                    if active_script:
+                        session_data["auto_score"] = auto_score(
+                            {"chan_doan": chan_doan, "icd": icd,
+                             "sinh_hieu": {"huyet_ap": huyet_ap, "mach": mach},
+                             "don_thuoc": _don_thuoc},
+                            active_script["ground_truth"],
+                        )
+                    st.session_state.approved = True
+                    st.session_state.session_data = session_data
+                    try:
+                        _has_gcp = "gcp_service_account" in st.secrets
+                    except Exception:
+                        _has_gcp = False
+                    if _has_gcp:
+                        with st.spinner("📤 Đang lưu lên Google Drive..."):
+                            ok, err = upload_to_drive(r.get("audio", b""), session_data)
+                        st.session_state.drive_uploaded = ok
+                        st.session_state.drive_error = err
+                    else:
+                        _save_dir = Path(__file__).parent / "local_saves"
+                        _save_dir.mkdir(exist_ok=True)
+                        _path = _save_dir / f"session_{session_data['session_id']}.json"
+                        try:
+                            _path.write_text(json.dumps(session_data, ensure_ascii=False, indent=2), encoding="utf-8")
+                            st.session_state.drive_error = f"Local mode — đã lưu: demo/local_saves/{_path.name}"
+                        except Exception as _e:
+                            st.session_state.drive_error = f"Local save lỗi: {_e}"
+                    st.rerun()
+        with _ba2:
+            if st.button("❌ Từ chối", use_container_width=True, key="btn_reject"):
+                st.session_state.result = None
+                st.session_state.approved = False
+                st.session_state._audio_hash = None
+                st.rerun()
+
     st.divider()
 
     # ── Ghi chú môi trường ────────────────────────────────────────────────────
@@ -685,109 +800,8 @@ if st.session_state.result:
         note_bs = st.multiselect("Đặc điểm BS",
             ["Rõ ràng","Nói nhanh","Giọng nhẹ","Tiếng địa phương","Thuật ngữ đặc biệt"], key="note_bs")
         correction = st.text_input("Ghi chú sửa lỗi AI",
-            placeholder="VD: 'L'Occitane'→Losartan · ồn quạt · giọng Nam",
+            placeholder="VD: Amoxicillin → nghe thành Augmentin · giọng Nam",
             key="correction_text")
-
-    _scores = [score_transcript, score_ten, score_tuoi, score_ngay, score_sh, score_cd, score_dt, score_tk, score_ly_do]
-    avg_score = round(sum(_scores)/len(_scores), 1)
-
-    st.divider()
-
-    # ── Drive error display ───────────────────────────────────────────────────
-    if st.session_state.drive_error:
-        if "local_saves" in st.session_state.drive_error:
-            st.info(f"💾 {st.session_state.drive_error}")
-        else:
-            st.error(f"☁️ Drive: {st.session_state.drive_error}")
-
-    # ── Action buttons ────────────────────────────────────────────────────────
-    ba1, ba2 = st.columns(2)
-    with ba1:
-        if not _all_confirmed and _drug_confirmed:
-            st.warning("⚠️ Tick ✓ xác nhận từng thuốc")
-        if st.button("✅ Phê duyệt & Lưu", type="primary",
-                      use_container_width=True, disabled=not _all_confirmed):
-            if not st.session_state.approved:
-                session_data = {
-                    "session_id": st.session_state.session_id,
-                    "timestamp": r["timestamp"],
-                    "ngay_kham": ngay_kham_str,
-                    "ten_bs": ten_bs,
-                    "co_so": co_so,
-                    "cchn": r["cchn"],
-                    "ten_bn_demo": r["ten_bn"],
-                    "chuyen_khoa": chuyen_khoa,
-                    "vung_mien": r.get("vung_mien", st.session_state.get("vung_mien", "auto")),
-                    "lang_output": r.get("lang_output", "vi"),
-                    "audio_duration_sec": get_audio_duration(r.get("audio", b"")),
-                    "device_browser": get_browser_info(),
-                    "recording_type": "script" if "Script" in recording_type else "natural",
-                    "transcript_real": r.get("transcript_real",""),
-                    "accuracy_rating": f"{avg_score}/5",
-                    "avg_score": avg_score,
-                    "benh_nhan": {
-                        "ten": bn_ten, "tuoi": bn_tuoi, "gioi": bn_gioi,
-                        "nam_sinh": bn_nam_sinh, "sdt": bn_sdt, "cccd": bn_cccd,
-                    },
-                    "field_eval": {
-                        "transcript": score_transcript, "ten_bn": score_ten,
-                        "tuoi": score_tuoi, "ngay_kham": score_ngay,
-                        "ly_do": score_ly_do, "sinh_hieu": score_sh,
-                        "chan_doan": score_cd, "don_thuoc": score_dt, "tai_kham": score_tk,
-                    },
-                    "notes": {"giong_vung_mien": note_giong, "moi_truong": note_noise, "dac_diem_bs": note_bs},
-                    "correction": correction,
-                    "form_ner": r.get("form_ner", {}),
-                    "form_approved": {
-                        "ly_do": ly_do,
-                        "chan_doan": chan_doan,
-                        "icd": icd,
-                        "tai_kham": tai_kham,
-                        "sinh_hieu": {"huyet_ap": huyet_ap, "mach": mach, "nhiet_do": nhiet_do, "can_nang": can_nang},
-                        "don_thuoc": r["don_thuoc"],
-                    },
-                    "test_script_id": active_script["id"] if active_script else None,
-                    "ground_truth": active_script["ground_truth"] if active_script else None,
-                }
-                if active_script:
-                    session_data["auto_score"] = auto_score(
-                        {"chan_doan": chan_doan, "icd": icd,
-                         "sinh_hieu": {"huyet_ap": huyet_ap, "mach": mach},
-                         "don_thuoc": r["don_thuoc"]},
-                        active_script["ground_truth"],
-                    )
-                st.session_state.approved = True
-                st.session_state.session_data = session_data
-
-                # Upload
-                try:
-                    _has_gcp = "gcp_service_account" in st.secrets
-                except Exception:
-                    _has_gcp = False
-
-                if _has_gcp:
-                    with st.spinner("📤 Đang lưu lên Google Drive..."):
-                        ok, err = upload_to_drive(r.get("audio", b""), session_data)
-                    st.session_state.drive_uploaded = ok
-                    st.session_state.drive_error = err
-                else:
-                    _save_dir = Path(__file__).parent / "local_saves"
-                    _save_dir.mkdir(exist_ok=True)
-                    _path = _save_dir / f"session_{session_data['session_id']}.json"
-                    try:
-                        _path.write_text(json.dumps(session_data, ensure_ascii=False, indent=2), encoding="utf-8")
-                        st.session_state.drive_error = f"Local mode — đã lưu: demo/local_saves/{_path.name}"
-                    except Exception as _e:
-                        st.session_state.drive_error = f"Local save lỗi: {_e}"
-
-                st.rerun()
-
-    with ba2:
-        if st.button("❌ Từ chối", use_container_width=True):
-            st.session_state.result = None
-            st.session_state.approved = False
-            st.session_state._audio_hash = None
-            st.rerun()
 
     # ── Approved state ────────────────────────────────────────────────────────
     if st.session_state.approved and hasattr(st.session_state, "session_data"):
