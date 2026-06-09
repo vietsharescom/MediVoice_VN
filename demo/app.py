@@ -16,6 +16,14 @@ from pathlib import Path
 import requests
 import streamlit as st
 
+# set_page_config MUST be the first Streamlit call — before @st.cache_data
+st.set_page_config(
+    page_title="MediVoice VN",
+    page_icon="🎙️",
+    layout="centered",
+    initial_sidebar_state="expanded",
+)
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 try:
@@ -196,14 +204,6 @@ def auto_score(form_approved: dict, ground_truth: dict) -> dict:
     return scores
 
 
-# ── Page config ───────────────────────────────────────────────────────────────
-
-st.set_page_config(
-    page_title="MediVoice VN",
-    page_icon="🎙️",
-    layout="centered",
-    initial_sidebar_ebar="expanded",
-)
 
 st.markdown("""
 <style>
