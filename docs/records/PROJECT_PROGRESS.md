@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-09 | v0.9.1
+# Cập nhật: 2026-06-09 | v0.10.1
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -148,6 +148,12 @@
 | P0.6.8d | │  ├─ Missed drugs | Ciprofloxacin · Paracetamol · Vitamin B1 · Folic acid | 🔴 | BENCH-002b | SES-20260609d | Add phonetic_variants to drug_db.json |
 | P0.6.8e | │  └─ bench_002b_results.json | Full per-clip results: wer, gt_drugs, pred_drugs, ceer | 🟢 | BENCH-002b | SES-20260609d | `data/eval/bench_002b_results.json` |
 | | │ | | | | | |
+| **P0.6.9** | **├─ 🟢 FID-VN-011 + DRUG-DB-002 + TEST-E2E-001** | **L1b RAG Layer 3b + preload · 154 INNs · 22 E2E tests** | **🟢** | **FID-VN-011** | SES-20260609e/f | v0.10.0→v0.10.1 · 772→794 tests |
+| P0.6.9a | │  ├─ FID-VN-011 RAG Layer 3b | `src/core/l1b_drug_correct.py` — `_rag_fallback_match()` + Layer 3b (score≥0.68) | 🟢 | FID-VN-011 | SES-20260609e | `tests/unit/test_l1b_rag_layer3.py` 17 tests |
+| P0.6.9b | │  ├─ Model preload singleton | `src/api/main.py` — `_embed_model`+`_drug_collection` preload at startup | 🟢 | FID-VN-011 | SES-20260609e | Eliminate 3-5s cold start per API call |
+| P0.6.9c | │  ├─ DRUG-DB-002 | `data/reference/drug_db_v200.json` 146→154 INNs · 9 phonetic variants/drug | 🟢 | DRUG-DB-002 | SES-20260609e | +Erythromycin/AlPO4/Betamethasone/Clindamycin/Lisinopril/Digoxin/Nystatin/Ketoconazole |
+| P0.6.9d | │  └─ TEST-E2E-001 | `tests/integration/test_e2e_pipeline.py` 22 tests · pipeline L1b→L10 real | 🟢 | TEST-E2E-001 | SES-20260609f | Structure/NER/L4Gate/PDF/PII/Routing · 794/794 PASS |
+| | │ | | | | | |
 | **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
 | P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |
 | P0.7b |    ├─ DPA ký | Hợp đồng xử lý dữ liệu | 🟡 | PA-003 | — | Luật sư review xong → ký |
@@ -205,29 +211,30 @@
 
 ## PHIÊN TIẾP THEO — LÀM GÌ?
 
-### ⚡ NGAY BÂY GIỜ — Sau BENCH-002b
+### ⚡ NGAY BÂY GIỜ — v0.10.1 · Pipeline E2E hoàn chỉnh
 
 | # | Task | Ai | Điều kiện |
 |---|---|---|---|
-| 1 | **FID-VN-011** — L1b RAG integration + model preload startup lifecycle | Claude | Viết FID trước, Andy approve |
-| 2 | **drug_db expand** — Thêm phonetic_variants Ciprofloxacin · Tamsulosin · Vitamin B1 · Folic acid | Claude | Không chờ |
-| 3 | **TRAIN-001** — PhoWhisper fine-tune pipeline chuẩn bị | Claude | Cần 50-100h audio thật — sau pilot |
-| 4 | **PA-010 Approve FID-VN-010** — Retroactive approve `fids/FID-VN-010.md` | Andy | Khi rảnh |
+| 1 | **DESIGN REVIEW toàn bộ** — Xem lại thiết kế `docs/records/DESIGN_REPORT_v1.1_20260606.md` + bổ sung gaps sau 3 ngày implement | Claude + Andy | Phiên tới |
+| 2 | **FID-VN-012** — TBD sau khi chốt DVP (TP-002) hoặc Andy xác định priority mới | Claude | Sau Andy review design |
+| 3 | **TP-002 CONS-20260610-004** — Andy trả lời O1/O2/O3/O4 → Doctor Voice Profile FID | Andy | `docs/records/consultations/CONS-20260610-004.md` |
+| 4 | **VIETMED-FIX-001** — Fix `scripts/download_vietmed.py` remove trust_remote_code + HF_TOKEN | Claude | Làm được ngay |
+| 5 | **Pilot Đà Nẵng** — Cài install.bat thật tại phòng khám → thu audio → TRAIN-001 | Andy | Code sẵn sàng |
 
 ### 🟡 BENCHMARK TIẾP THEO
 
 | # | Task |
 |---|---|
-| BENCH-003 | Re-run sau FID-VN-011 + drug_db expand → đo Drug Recall improvement |
+| BENCH-003 | Re-run sau FID-VN-011 + drug_db 154 INNs → đo Drug Recall improvement vs 55.6%LB |
 | BENCH-PILOT | Record 50-100h audio thật → CEER thật → GO criteria cho TRAIN-001 |
 
 ---
 
-## METRICS HIỆN TẠI (2026-06-09 · v0.9.1)
+## METRICS HIỆN TẠI (2026-06-09 · v0.10.1)
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | **755/755** | 🟢 |
+| Tests PASS | 100% | **794/794** | 🟢 |
 | bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
 | Vital extraction (TC audio) | >0% | bench tc_001/tc_002: vital=True | 🟢 fixed FID-VN-005 |
 | WER semi-synthetic | <30% | SG 25.8% · CT 30.4% · HN 34.6% | 🟡 cần fine-tune |
@@ -277,8 +284,10 @@
 | SES-20260609b | 2026-06-09 | v0.8.5→v0.8.6 | FID-VN-010 Phase 0: A1✅ A2✅ A3✅ L4-REDESIGN✅ · 473→678 tests (+205) |
 | SES-20260609c | 2026-06-09 | v0.8.6→v0.9.0 | RAG-001-FIX Hybrid ✅ · UI-SUGGEST-001 ✅ · L4-PWA ✅ · 678→755 tests (+77) |
 | SES-20260609d | 2026-06-09 | v0.9.0→v0.9.1 | BENCH-002b ✅ — 57 clips real BS voice WER=18.4% Drug=55.6%LB · tools/bench_002b.py |
+| SES-20260609e | 2026-06-09 | v0.9.1→v0.10.0 | FID-VN-011 ✅ L1b Layer 3b RAG + preload · DRUG-DB-002 ✅ 154 INNs · 772 tests |
+| SES-20260609f | 2026-06-09 | v0.10.0→v0.10.1 | TEST-E2E-001 ✅ 22 E2E integration tests · pipeline L1b→L10 real · 794/794 PASS |
 
 ---
 
-*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.7 | 2026-06-09*
+*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.8 | 2026-06-09*
 *Cập nhật mỗi phiên đóng. Đọc cùng BACKLOG.md + PENDING_REQUESTS.md*

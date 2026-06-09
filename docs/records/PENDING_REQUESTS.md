@@ -59,7 +59,7 @@ Nếu Andy trả lời/làm xong → Claude cập nhật status → DONE.
 
 | ID | Mô tả | Priority | Status | Created |
 |---|---|---|---|---|
-| TP-001 | Không có consultation pending | - | - | - |
+| TP-002 | **CONS-20260610-004** — Doctor Voice Profile (DVP) architecture. 3/3 responses received (ChatGPT ✅ + Grok ✅ + Copilot ✅). 4-AI synthesis hoàn thành. Chờ Andy trả lời O1/O2/O3/O4 → FID-VN-DVP-001. File: `docs/records/consultations/CONS-20260610-004.md` | 🟡 MEDIUM | IN_PROGRESS | 2026-06-09 |
 
 ---
 
