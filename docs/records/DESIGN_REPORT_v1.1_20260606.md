@@ -1226,6 +1226,15 @@ INPUT: Giọng nói bác sĩ (WAV/MP3/M4A/WEBM)
   KHÔNG bypass, KHÔNG auto-save (Luật KCB 2023 Điều 62)
   Evidence: Session 174116 — Losartan→Atorvastatin, BS chấm 5/5 không phát hiện
 
+  [L4 CORRECTION CAPTURE — FID-VN-006, v2]:
+    Ghi diff AI→BS corrections vào data/corrections/{clinic_id}.jsonl:
+      {session_id, drug_ai, drug_bs, confidence_before, timestamp, specialty}
+    Chạy tự động mỗi approve — không làm chậm flow
+    Source chính cho DVP Layer 3 (personal alias — FID-VN-012):
+      ≥3 corrections cùng alias trong ≥2 sessions → promote candidate
+      Human Gate: BS confirm YES/NO trước khi alias activate
+    Tool phân tích: scripts/analyze_corrections.py
+
 [L5] PII SCAN
   Quét thông tin nhạy cảm trong transcript:
     CCCD 12 số, CMND 9 số
@@ -1269,6 +1278,18 @@ INPUT: Giọng nói bác sĩ (WAV/MP3/M4A/WEBM)
   Nội dung: stage, actor, timestamp, action, hash
   [v2] Ghi thêm: dialect_substitutions, drug_rag_candidates, confidence_scores
   verify_chain() — kiểm tra tính toàn vẹn hàng tuần
+
+[MODEL LIFECYCLE — FID-VN-011]
+  Embedding model + ChromaDB collection preloaded tại app startup (1 lần):
+    _embed_model:      SentenceTransformer singleton (paraphrase-multilingual-MiniLM-L12-v2)
+    _drug_collection:  ChromaDB collection singleton (data/drug_vectorstore/)
+  Startup flow (src/api/main.py):
+    → startup() gọi load_drug_vectorstore() + SentenceTransformer()
+    → ~3–5 giây lúc khởi động (chấp nhận được)
+    → Inject vào pipeline: correct_drug_names_v2(rag_collection=_drug_col, embed_model=_emb)
+  Per-request latency: +0ms (model đã load sẵn)
+  Fallback: nếu sentence-transformers / chromadb chưa install
+    → warning log, skip RAG, L1b hoạt động Layer 1+2+3 như v1 (backward compat)
 
 OUTPUT: BenhAnNgoaiTru + PDF Mẫu 15/BV-01 + Audit entry
 
@@ -1509,26 +1530,30 @@ Không sửa core system.
 ### Dành cho ai: Ban lãnh đạo, Kinh doanh, Kỹ thuật
 
 ```
-PHASE 0 — MVP (Hiện tại — 2026 Q2/Q3)
+PHASE 0 — MVP ✅ KỸ THUẬT HOÀN THÀNH (2026-06-09 · v0.10.1)
   Mục tiêu: 5 BS trả tiền
   Pilot: Đà Nẵng (Andy) + Sài Gòn (BS partner)
 
-  Kỹ thuật hoàn thành:
-  ✅ AI Pipeline L0→L10 (165 tests PASS)
-  ✅ Mẫu 15/BV-01 (lam_sang route)
+  Kỹ thuật đã hoàn thành (794/794 tests PASS):
+  ✅ AI Pipeline L0→L10 (794 tests PASS — E2E tested)
+  ✅ Mẫu 15/BV-01 (lam_sang route) — VN-ROUTER-001 + VN-NER-002 DONE
   ✅ M1 cơ bản, M3 thu chi, PDF
   ✅ Queue management + TTS
   ✅ Mode A (BS làm một mình)
+  ✅ VN-ROUTER-001: NER→Mẫu 15/BV-01 direct — DONE (FID-VN-004)
+  ✅ BENCH-002b: WER=18.4%ALL / 16.3%DN+SG / 29.3%HN — DONE 2026-06-09
+  ✅ DEPLOY-001: install.bat + start.bat + check_env — DONE
+  ✅ Phase 0 AI enhancements: A1 Prompt Injection + A2 VAD + A3 Dialect — DONE
+  ✅ Phase 0.5 RAG: drug_rag.py hybrid + UI-SUGGEST-001 + FID-VN-011 — DONE
 
-  Cần hoàn thiện Phase 0:
-  ⏳ VN-ROUTER-001: NER→Mẫu 15/BV-01 direct (FID cần viết)
-  ⏳ BENCH-002: CEER thực tế từ audio Đà Nẵng
-  ⏳ DEPLOY-001: Windows installer cho BS install
+  Phase 0.6 — NEXT (FID-VN-012 DVP):
+  ⏳ DVP Layer 1: DoctorProfile (region + specialty metadata)
+  ⏳ DVP Layer 2: 12 specialty vocab packs (link vào A1+A3)
+  ⏳ DVP Layer 3: Personal drug alias (passive từ L4 corrections)
 
-  KPIs Phase 0:
-    CEER < 5% | WER < 30% | Latency < 5s
-    BS approve rate > 85% | NPS > 7/10
-    5 BS paying users
+  KPIs Phase 0 (đo sau pilot):
+    WER actual: 18.4% ✅ (target <30%) | Drug Recall: 55.6%LB 🔴 (target ≥70%)
+    BS approve rate > 85% | NPS > 7/10 | 5 BS paying users
 
 ─────────────────────────────────────────────────────
 
