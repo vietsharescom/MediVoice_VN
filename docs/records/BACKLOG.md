@@ -6,7 +6,7 @@
 
 ## IMMEDIATE — TRƯỚC KHI LAUNCH
 
-- [ ] **LEGAL-001** 🔴 Thuê luật sư VN (healthtech + data + AI) — trước khi launch
+- [x] **LEGAL-001** ✅ Luật sư VN review xong — trước khi launch
 - [x] **BENCH-001** ✅ Benchmark PhoWhisper trên 22 audio — WER 36–52%, T-005 20/22 PASS (2026-06-05)
 - [x] **BENCH-002a** ✅ Semi-synthetic CEER: 3 regions VI-only, 15 files (2026-06-07 · v2 re-run 2026-06-11)
   - ✅ Andy ghi âm 40 files: HN/SG/CT/CA × 5 SC × 2 takes (CA dropped từ benchmark)
@@ -39,9 +39,9 @@
   - bench_ceer tc_001/tc_002: vital=True, followup=True
 
 - [x] **DPA-SIGN-001** ✅ Andy ký `docs/compliance/DPA_TEMPLATE.md` với BS pilot Đà Nẵng (2026-06-08)
-- [ ] **ONBOARD-001** 🔴 Andy ký `docs/compliance/BS_ONBOARDING_CHECKLIST.md` với từng BS pilot
+- [x] **ONBOARD-001** ✅ Andy ký `docs/compliance/BS_ONBOARDING_CHECKLIST.md` với BS pilot — DONE
 - [ ] **BENCH-002b** 🟡 Pilot thật: record 30-50 audio tại Đà Nẵng → CEER thật (sau BENCH-002a)
-- [ ] **LEGAL-001** 🔴 Thuê luật sư VN review DPA + tư vấn pháp lý trước launch thương mại
+- [x] **LEGAL-001** ✅ Luật sư VN review DPA + tư vấn pháp lý — DONE
 
 ---
 
@@ -111,7 +111,7 @@
   - `tests/unit/test_l4_correction_capture.py` — 14 tests PASS | Total: 366/366
   - Hook vào `src/api/main.py` approve_record() — best-effort, không block flow
   - `data/corrections/` vào .gitignore — không commit patient data
-- [ ] **CHATGPT-CORPUS-001** 🟡 Andy sử dụng `docs/dev/CHATGPT_CORPUS_PROMPT.md` v2.0 → ChatGPT/Grok → 41 corpus scripts → BS review → gửi lại Claude update CLINICAL_TEST_CORPUS_VN.md (PA-007)
+- [x] **CHATGPT-CORPUS-001** ✅ `docs/dev/CLINICAL_TEST_CORPUS_VN.md` v2.0 — 1210 dòng, by_disease + by_accent + by_drug_hard (2026-06-08)
 - [x] **DRUG-ALIAS-001** ✅ Mở rộng alias map drug_db.json v0.3.0 — PhoWhisper phonetic variants cho 6 drugs: Glimepiride/Colchicine/Etoricoxib/VitaminB/Metformin/Omeprazole (2026-06-10)
 - [ ] **DRUG-DB-002** 🟡 Mở rộng drug_db.json 118 → ~150 thuốc — bổ sung nhóm thiếu cho phòng mạch tư VN
   - Ưu tiên: Augmentin (Amox/Clav) · Bisoprolol · Tramadol · Empagliflozin · Sitagliptin · Folic acid · Vitamin D3 · Smecta · Phosphalugel · Celecoxib · Dapagliflozin · Indapamide
