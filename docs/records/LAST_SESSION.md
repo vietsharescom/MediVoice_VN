@@ -2,53 +2,46 @@
 # Ghi đè mỗi phiên — git history lưu lịch sử cũ tự động
 # ISO/IEC 42001:2023 Cl.9.1 (Performance evaluation)
 
-## Mã phiên: SES-20260608B
-## Thời gian: 2026-06-08
-## Version: v0.8.4 → v0.8.5
+## Mã phiên: SES-20260609
+## Thời gian: 2026-06-09 (đêm)
+## Version: v0.8.5 → v0.8.5 (docs only, no code change)
 
 ---
 
 ## Trạng thái đầu → cuối
-v0.8.4 | 473 tests → v0.8.5 | 473 tests
+v0.8.5 | 473 tests → v0.8.5 | 473 tests (không thay đổi code)
 
 ## Đã hoàn thành
-
-- [RAG-DEPLOY-001] LangChain RAG pipeline deploy lên Streamlit Cloud (commit `b1eb136`)
-  - `demo/rag_chain.py`: L1b drug correction → LangChain NER (ChatGroq + JsonOutputParser + retry) → L1d ICD
-  - `demo/requirements.txt`: thêm langchain-groq, langchain-core, rapidfuzz
-  - `data/reference/drug_db_v200.json`: 11 drugs cập nhật ASR variants trong name_variants
-  - Spinner: "🧠 MediVoice AI đang phân tích lâm sàng (RAG pipeline)..."
-
-- [LOCAL-SETUP-001] Local dev setup hoàn chỉnh — chạy app tại localhost:8501
-  - `demo/local_saves/` — local JSON fallback khi không có GCP
-  - `.streamlit/secrets.toml` — template với groq_api_key (gitignored)
-  - `.gitignore`: thêm `.streamlit/secrets.toml` + `demo/local_saves/`
-
-- [SECRETS-FIX-001] Fix StreamlitSecretNotFoundError khi chạy local
-  - `demo/app.py`: hàm `_secret(key, default="")` — wrap st.secrets.get() an toàn
-  - `demo/app.py` line 756: `"gcp_service_account" not in st.secrets` → try/except `_has_gcp`
-  - Thay tất cả 3 chỗ dùng `st.secrets.get(...)` bằng `_secret(...)`
-
-- [L1B-FP-FIX-001] Fix L1b false positives — từ thường tiếng Việt không còn bị nhận nhầm là thuốc
-  - Nguyên nhân: fuzzy cutoff 70% + token min_len=3 → "Vân","cám","mỗi","theo" match Valsartan/Amoxicillin/Meloxicam/Theophylline
-  - Fix: minimum char length per n: `{1: 6, 2: 9, 3: 12}` trong Layer 2 fuzzy
-  - Fix display: chỉ hiện drug_flags có confidence ≥ 0.85 hoặc DOSE_OUT_OF_RANGE
-  - Kết quả: 0 false positives trên từ thường VN | Metformin/Glibenclamide vẫn Layer 1 exact ✅
+- [FID-VN-010] `fids/FID-VN-010.md` — AI Pipeline Redesign v2.0 DRAFT (706 dòng)
+  - A1: Whisper prompt injection (initial_prompt drug list theo specialty) — 4h effort
+  - A2: VAD silence-aware chunking (silero-vad, max 20s, thay fixed 10s) — 1 ngày
+  - A3: Dialect normalization 200+ entries (Trung/Nam) + abbreviation expansion — 2 ngày
+  - RAG-001: Drug vector store Chroma + multilingual MiniLM — 3 ngày
+  - UI-001: Drug suggestion chips + dialect badge + terminology sidebar — 5 ngày
+  - L4-REDESIGN: Per-drug mandatory confirm (safety fix Session 174116) — 3 ngày
+- [DESIGN-UPDATE] `docs/records/DESIGN_REPORT_v1.1_20260606.md` Section 15 → v2.0
+  - Pipeline v2.0 với VAD/prompt injection/dialect/RAG layers
+  - Benchmark table: Drug Recall local=13-18% vs Cloud=78%
+  - Roadmap 4 phases documented
+- [BACKLOG] FID-VN-010 Phase 0 tasks thêm vào IMMEDIATE: A1/A2/A3/L4-REDESIGN/RAG-001/UI-SUGGEST/BENCH-GT
+- [PENDING] PA-009 (fill GT 54 clips) + PA-010 (FID approve) + PA-011 (CONS Q1+Q3)
+- [PROGRESS] `docs/records/PROJECT_PROGRESS.md` v1.5: P0.6.6 block mới + L4 safety finding + METRICS Drug Recall real
+- [COMMITS] 10334f4 (FID-VN-010) · 7200054 (PROJECT_PROGRESS) · aec1fda (notes+refs+push)
 
 ## Kết quả đo được
-- Tests: 473/473 PASS (không regression sau L1b fix)
-- False positives giảm: 17 FP warnings → 0 khi test với đoạn văn thông thường tiếng Việt
-- App chạy local: localhost:8501 với groq_api_key trong secrets.toml
+- Tests: 473/473 PASS (không thay đổi)
+- FID-VN-010: DRAFT hoàn chỉnh, đủ để Andy review và approve
+- Benchmark evidence: Drug Recall local pipeline = 13–18% (BENCH-002b real) vs 78% (Cloud LLM)
+- Root causes: RC-1 Drug OOV hallucination · RC-2 No clinical domain bias · RC-3 Fixed chunk · RC-4 Dialect
 
 ## Blocker / Phụ thuộc bên ngoài
-- [BENCH-002b] ⏳ Andy cần điền GT vào `data/eval/ref_voice_transcripts_review.txt` (Clip2+Clip3)
-- [PA-007] Andy paste `docs/dev/CHATGPT_CORPUS_PROMPT.md` → ChatGPT → 41 corpus scripts
-- [VBEE_TOKEN] Andy cần lấy VBEE_TOKEN + VBEE_APP_ID
-- [VIETMED-FIX-001] HF_TOKEN cho `scripts/download_vietmed.py`
+- [PA-010] Andy chưa approve FID-VN-010 → Claude chưa implement A1/A2/A3
+- [PA-009] Andy chưa fill 54/57 GT clips → BENCH-002b CEER thật chưa đo được
+- [PA-011] Andy chưa chốt Q1+Q3 → FID-VN-009 PhoBERT chưa implement
 
 ## Phiên tiếp theo — làm ngay theo thứ tự
-1. [DEMO-TEST-001] Andy test lại app local — xác nhận 0 false positive drug warnings, Metformin+Glibenclamide nhận đúng
-2. [BENCH-002b] Andy gửi GT fill xong → Claude chạy CEER thật (drug/vital/symptom per BS)
-3. [PA-007] Andy paste ChatGPT corpus prompt → 41 clinical scripts → update CLINICAL_TEST_CORPUS_VN.md
-4. [DRUG-DB-002] Mở rộng drug_db.json 118 → ~150 thuốc (Augmentin, Bisoprolol, Celecoxib...)
-5. [L1B-TUNE-001] Cân nhắc tăng DRUG_FUZZY_CUTOFF_FLAG 70→78 sau khi có real pilot data
+1. [PA-010] Andy approve `fids/FID-VN-010.md` → Claude implement A1-PROMPT-INJECT (4h, zero risk)
+2. [A2-VAD-CHUNK] `src/core/l0_normalize.py` — silero-vad chunking (1 ngày)
+3. [A3-DIALECT-NORM] `src/core/dialect_norm.py` — dict 200 entries + abbrev (2 ngày)
+4. [L4-REDESIGN-001] Per-drug confirm UI — safety critical (3 ngày)
+5. [PA-009] Andy fill GT clips song song với Claude implement

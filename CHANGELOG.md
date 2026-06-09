@@ -1,6 +1,24 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.8.5] — 2026-06-09 — FID-VN-010 AI Pipeline Redesign v2.0 · DESIGN_REPORT §15 update · 473 tests
+
+### Architecture Design [SES-20260609]
+- feat(fid): `fids/FID-VN-010.md` — AI Pipeline Redesign v2.0 (DRAFT, pending Andy approve)
+  - A1: Whisper prompt injection (initial_prompt với drug list theo specialty)
+  - A2: VAD silence-aware chunking (silero-vad thay fixed 10s)
+  - A3: Dialect normalization 200+ entries (Trung/Nam) + abbreviation expansion
+  - RAG-001: Drug vector store (Chroma + multilingual MiniLM-L12-v2)
+  - UI-001: Real-time drug chips + dialect badge + terminology sidebar
+  - L4-REDESIGN: Per-drug mandatory confirm (safety fix — Session 174116 Losartan→Atorvastatin)
+- docs(design): `docs/records/DESIGN_REPORT_v1.1_20260606.md` Section 15 → v2.0
+  - Pipeline layers cập nhật với VAD/prompt injection/dialect/RAG/LangChain
+  - Benchmark table: Drug Recall local=13-18% vs Cloud=78%
+  - Roadmap 4 phases (Phase 0 → 2 tuần / Phase 2 → 9 tháng)
+- chore(backlog): `docs/records/BACKLOG.md` — FID-VN-010 Phase 0 tasks (A1/A2/A3/L4/RAG/UI/BENCH-GT)
+- chore(pending): `docs/records/PENDING_REQUESTS.md` — PA-009/PA-010/PA-011
+- chore(progress): `docs/records/PROJECT_PROGRESS.md` v1.5 — P0.6.6 + L4 safety finding + METRICS
+
 ## [v0.8.5] — 2026-06-08 — Demo app local mode + L1b false positive fix · 473 tests
 
 ### Demo App — Local Mode

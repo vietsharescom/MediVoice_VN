@@ -1,0 +1,133 @@
+{
+  "session_id": "20260608_174116",
+  "timestamp": "2026-06-08T17:47:20.848355",
+  "cchn": "DEMO",
+  "ten_bn_demo": "a",
+  "chuyen_khoa": "Nội khoa tổng quát",
+  "audio_duration_sec": 74.1,
+  "device_browser": "Chrome",
+  "recording_type": "script",
+  "transcript_real": "Tuyện nhân năm 8 tuổi, tăng huyết áp, rối loạn mở, tái kháng. Huyết áp 145 x 90, mặt mấy sáng. Mặt anh cũng vừa, bình thường, không cao lắm, nhưng huyết áp thì nó hơi cao nha. Nhiệt độ thì 36 độ rưỡi, căng nặng 72 kg. Anh thì hơi nặng lắm, mở máu nhiều đấy, nên là phải giảm xuống. Chẳng đoán là huyết áp tăng độ 2, kèm rối loạn lipid máu. Kê Amlor, Dipin, 5mg uống 1 viên mỗi sáng L'Occitane là 50mg uống 1 viên mỗi sáng Avobastatin là 20mg uống 1 viên mỗi tối Tái khám sau 4 tuần, hiền ăn để xét nghiệm lipid máu trước khi đến Anh nhớ nhé, giữ sức khỏe, đừng có ăn đồ béo nhiều Có thể là ăn dầu, dầu đậu nành, dầu thực vật đừng ăn mỡ nhiều, không có nhậu, uống bia nhiều, không thuốc lá Cái của anh này hiện nay đang bị rối loạn mỡ máu và rất khuyết áp, rất là cao giữ sức khỏe đấy, mà cái khối lượng cũng khá là nặng, sẵn thật",
+  "transcript_mock": "Bệnh nhân nam 45 tuổi, đau đầu vùng chẩm 3 ngày, không sốt, không nôn. Huyết áp đo được 155 trên 95. Nhịp tim 80 lần phút. Không tiền sử bệnh tim mạch. Chẩn đoán tăng huyết áp độ 1. Kê Amlodipine 5 milligram uống sáng, tái khám sau 4 tuần, theo dõi huyết áp tại nhà.",
+  "accuracy_rating": "4.9/5",
+  "avg_score": 4.9,
+  "field_eval": {
+    "transcript": 4,
+    "ten_bn": 5,
+    "tuoi": 5,
+    "ngay_kham": 5,
+    "sinh_hieu": 5,
+    "chan_doan": 5,
+    "don_thuoc": 5,
+    "tai_kham": 5
+  },
+  "notes": {
+    "giong_vung_mien": [
+      "Trung"
+    ],
+    "moi_truong": [
+      "Ồn quạt"
+    ],
+    "dac_diem_bs": [
+      "Rõ ràng"
+    ]
+  },
+  "correction": "",
+  "form_ner": {
+    "ly_do": "tăng huyết áp, rối loạn mở, tái kháng",
+    "chan_doan": "huyết áp tăng độ 2, kèm rối loạn lipid máu",
+    "icd": "I10",
+    "sinh_hieu": {
+      "nhiet_do": 36.5,
+      "huyet_ap": "145 x 90",
+      "mach": 0,
+      "can_nang": 72.0
+    },
+    "don_thuoc": [
+      {
+        "ten": "Amlodipine",
+        "ham_luong": "5mg",
+        "lieu": "1 viên mỗi sáng",
+        "ngay": ""
+      },
+      {
+        "ten": "Atorvastatin",
+        "ham_luong": "50mg",
+        "lieu": "1 viên mỗi sáng",
+        "ngay": ""
+      },
+      {
+        "ten": "Atorvastatin",
+        "ham_luong": "20mg",
+        "lieu": "1 viên mỗi tối",
+        "ngay": ""
+      }
+    ],
+    "tai_kham": "sau 4 tuần"
+  },
+  "form_approved": {
+    "ly_do": "tăng huyết áp, rối loạn mở, tái kháng",
+    "chan_doan": "huyết áp tăng độ 2, kèm rối loạn lipid máu",
+    "icd": "I10",
+    "tai_kham": "sau 4 tuần",
+    "sinh_hieu": {
+      "huyet_ap": "145 x 90",
+      "mach": 0,
+      "nhiet_do": 36.5,
+      "can_nang": 72.0
+    },
+    "don_thuoc": [
+      {
+        "ten": "Amlodipine",
+        "ham_luong": "5mg",
+        "lieu": "1 viên mỗi sáng",
+        "ngay": ""
+      },
+      {
+        "ten": "Atorvastatin",
+        "ham_luong": "50mg",
+        "lieu": "1 viên mỗi sáng",
+        "ngay": ""
+      },
+      {
+        "ten": "Atorvastatin",
+        "ham_luong": "20mg",
+        "lieu": "1 viên mỗi tối",
+        "ngay": ""
+      }
+    ]
+  },
+  "confidence": 0.88,
+  "test_script_id": "W1-002",
+  "ground_truth": {
+    "chan_doan": "Rối loạn lo âu lan toả kèm mất ngủ",
+    "icd": "F41.1",
+    "sinh_hieu": {
+      "huyet_ap": "118/76",
+      "mach": 82,
+      "nhiet_do": 0,
+      "can_nang": 0
+    },
+    "don_thuoc": [
+      {
+        "ten": "Sertraline",
+        "ham_luong": "50mg",
+        "lieu": "1 viên/sáng sau ăn",
+        "ngay": "14 ngày"
+      },
+      {
+        "ten": "Diazepam",
+        "ham_luong": "2mg",
+        "lieu": "1 viên tối khi cần",
+        "ngay": ""
+      }
+    ],
+    "tai_kham": "2 tuần"
+  },
+  "auto_score": {
+    "chan_doan": "❌",
+    "icd": "❌",
+    "sinh_hieu": "❌",
+    "don_thuoc": "⚠️ 0/2"
+  }
+}

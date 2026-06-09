@@ -1,0 +1,37 @@
+{
+  "session_id": "20260608_145949",
+  "timestamp": "2026-06-08T15:00:47.275684",
+  "cchn": "12345",
+  "ten_bn_demo": "NGUYEN VAN MINH",
+  "chuyen_khoa": "Tai mũi họng",
+  "transcript_asr": "Bệnh nhân 32 tuổi, đau họng nuốt đau 2 ngày, sốt 38 độ, không khó thở. Khám họng đỏ, amidan to độ 2, có mủ trắng. Chẩn đoán viêm amidan cấp mủ. Kê Amoxicillin 500 milligram ngày 3 lần sau ăn, Paracetamol 500 milligram khi sốt, súc họng nước muối ấm. Tái khám 5 ngày.",
+  "accuracy_rating": "✅ Đúng hoàn toàn",
+  "correction": "",
+  "form_approved": {
+    "ly_do": "Đau họng nuốt đau 2 ngày, sốt 38°C",
+    "chan_doan": "Viêm amidan cấp có mủ",
+    "icd": "J03.9",
+    "tai_kham": "5 ngày",
+    "sinh_hieu": {
+      "huyet_ap": "115/75",
+      "mach": 88,
+      "nhiet_do": 38.0,
+      "can_nang": 0.0
+    },
+    "don_thuoc": [
+      {
+        "ten": "Amoxicillin",
+        "ham_luong": "500mg",
+        "lieu": "1 viên x 3/ngày sau ăn",
+        "ngay": "7 ngày"
+      },
+      {
+        "ten": "Paracetamol",
+        "ham_luong": "500mg",
+        "lieu": "Khi sốt >38°C",
+        "ngay": "5 ngày"
+      }
+    ]
+  },
+  "confidence": 0.9
+}

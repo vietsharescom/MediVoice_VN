@@ -1,0 +1,31 @@
+{
+  "session_id": "20260608_151206",
+  "timestamp": "2026-06-08T15:12:57.796522",
+  "cchn": "12345",
+  "ten_bn_demo": "NGUYEN VAN MINH",
+  "chuyen_khoa": "Nội khoa tổng quát",
+  "transcript_asr": "Bệnh nhân nam 45 tuổi, đau đầu vùng chẩm 3 ngày, không sốt, không nôn. Huyết áp đo được 155 trên 95. Nhịp tim 80 lần phút. Không tiền sử bệnh tim mạch. Chẩn đoán tăng huyết áp độ 1. Kê Amlodipine 5 milligram uống sáng, tái khám sau 4 tuần, theo dõi huyết áp tại nhà.",
+  "accuracy_rating": "✅ Đúng hoàn toàn",
+  "correction": "",
+  "form_approved": {
+    "ly_do": "Đau đầu vùng chẩm 3 ngày, huyết áp cao",
+    "chan_doan": "Tăng huyết áp độ 1",
+    "icd": "I10",
+    "tai_kham": "4 tuần",
+    "sinh_hieu": {
+      "huyet_ap": "155/95",
+      "mach": 80,
+      "nhiet_do": 36.8,
+      "can_nang": 0.0
+    },
+    "don_thuoc": [
+      {
+        "ten": "Amlodipine",
+        "ham_luong": "5mg",
+        "lieu": "1 viên/sáng",
+        "ngay": "30 ngày"
+      }
+    ]
+  },
+  "confidence": 0.88
+}

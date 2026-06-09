@@ -1,0 +1,43 @@
+{
+  "session_id": "20260608_144750",
+  "timestamp": "2026-06-08T14:49:01.910220",
+  "cchn": "12345",
+  "ten_bn_demo": "NGUYEN VAN MINH",
+  "chuyen_khoa": "Hô hấp",
+  "transcript_asr": "Bệnh nhân nữ 28 tuổi, ho có đờm vàng 5 ngày, sốt 38.2, nghe phổi ran ẩm hai đáy. Không khó thở. Chẩn đoán viêm phế quản cấp. Kê Amoxicillin-Clavulanate 625 milligram ngày 2 lần sau ăn, Bromhexine 8 milligram ngày 3 lần, Paracetamol 500 milligram khi sốt trên 38.5. Tái khám 7 ngày.",
+  "accuracy_rating": "✅ Đúng hoàn toàn",
+  "correction": "",
+  "form_approved": {
+    "ly_do": "Ho đờm vàng 5 ngày, sốt 38.2°C",
+    "chan_doan": "Viêm phế quản cấp",
+    "icd": "J20.9",
+    "tai_kham": "7 ngày",
+    "sinh_hieu": {
+      "huyet_ap": "110/70",
+      "mach": 90,
+      "nhiet_do": 38.2,
+      "can_nang": 0.0
+    },
+    "don_thuoc": [
+      {
+        "ten": "Amoxicillin-Clavulanate",
+        "ham_luong": "625mg",
+        "lieu": "1 viên x 2/ngày",
+        "ngay": "7 ngày"
+      },
+      {
+        "ten": "Bromhexine",
+        "ham_luong": "8mg",
+        "lieu": "1 viên x 3/ngày",
+        "ngay": "7 ngày"
+      },
+      {
+        "ten": "Paracetamol",
+        "ham_luong": "500mg",
+        "lieu": "Khi sốt >38.5°C",
+        "ngay": "7 ngày"
+      }
+    ]
+  },
+  "confidence": 0.91
+}

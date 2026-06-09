@@ -1,0 +1,47 @@
+{
+  "session_id": "20260608_164734",
+  "timestamp": "2026-06-08T16:52:50.134716",
+  "cchn": "123",
+  "ten_bn_demo": "EMM",
+  "chuyen_khoa": "Nội khoa tổng quát",
+  "audio_duration_sec": 92.6,
+  "device_browser": "Chrome",
+  "recording_type": "script",
+  "transcript_real": "Chào chị, chị là chị Liên phải không? Chị 45 tuổi. Rồi hôm nay chị đến khám thì bị gì vậy? Chị bị đau bụng dưới âm ỉ hả? Chị thấy chị xốt nhẹ, chị bị buồn luôn trong 2 ngày gần đây đúng không? Ok, rồi để đo huyết áp cho chị nha. Huyết áp của chị bây giờ là 120 trên 80 Mạch là 75 lần 1 phút Và Chị để coi chị có sốt không rồi nha À chị có sốt nè Nhiệt độ là 38 độ Hơi sốt nhẹ đó Chị có uống cái gì trước khi đến khám chưa? Chị không có uống gì hết ha Rồi Vậy thì tôi chủ đoán là Chị bị nhiễm khuẩn đường tiêu hóa nha Bây giờ tôi sẽ kê thuốc cho chị Thứ nhất là Cipro-Flo-Vaccine 500mg Uống 2 lần mỗi ngày, uống trong 5 ngày chị nha Thứ thứ 2 là Paracetamol Thuốc này là uống khi sốt trên 38 độ Viên này là viên 500mg chị nha Ngoài ra uống thêm cái thuốc nữa là Orizone Chị uống cái này dùng để bùn nước thì nhớ là pha theo cái hướng dẫn chỉ định của người ta nha còn nếu mà chị mà thấy là chị sốt kéo dài quá 3 ngày hoặc là chị cảm thấy là chị đau bụng hơn thì chị đến tắm ngay nha",
+  "transcript_mock": "Bệnh nhân nam 45 tuổi, đau đầu vùng chẩm 3 ngày, không sốt, không nôn. Huyết áp đo được 155 trên 95. Nhịp tim 80 lần phút. Không tiền sử bệnh tim mạch. Chẩn đoán tăng huyết áp độ 1. Kê Amlodipine 5 milligram uống sáng, tái khám sau 4 tuần, theo dõi huyết áp tại nhà.",
+  "accuracy_rating": "✅ Đúng hoàn toàn",
+  "correction": "",
+  "form_approved": {
+    "ly_do": "đau bụng dưới âm ỉ, buồn nôn, sốt",
+    "chan_doan": "nhiễm khuẩn đường tiêu hóa",
+    "icd": "",
+    "tai_kham": "nếu sốt kéo dài quá 3 ngày hoặc đau bụng hơn",
+    "sinh_hieu": {
+      "huyet_ap": "120/80",
+      "mach": 75,
+      "nhiet_do": 38.0,
+      "can_nang": 0.0
+    },
+    "don_thuoc": [
+      {
+        "ten": "Ciprofloxacin",
+        "ham_luong": "500mg",
+        "lieu": "2 lần mỗi ngày",
+        "ngay": "5 ngày"
+      },
+      {
+        "ten": "Paracetamol",
+        "ham_luong": "500mg",
+        "lieu": "khi sốt trên 38 độ",
+        "ngay": ""
+      },
+      {
+        "ten": "Orizone",
+        "ham_luong": "",
+        "lieu": "theo hướng dẫn",
+        "ngay": ""
+      }
+    ]
+  },
+  "confidence": 0.88
+}

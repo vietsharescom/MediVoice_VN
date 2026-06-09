@@ -250,11 +250,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 | Field | Value |
 |---|---|
 | Version | v0.8.5 |
-| Status | **Demo app local mode · L1b false positive fix (0 FP từ thường VN) · local_saves + secrets wrapper** |
+| Status | **FID-VN-010 DRAFT** — AI Pipeline Redesign v2.0 (A1+A2+A3+RAG+UI+L4-redesign) · chờ Andy approve |
 | Tests | **473/473 PASS** · bandit 0 HIGH/MEDIUM · conftest.py SKIP_QWEN |
-| Pending | **BENCH-002b GT review** (Andy điền `data/eval/ref_voice_transcripts_review.txt`) · **PA-007** (ChatGPT corpus) · **VIETMED-FIX-001** (HF_TOKEN) · **VBEE_TOKEN** |
-| Next task | **Andy GT review** Clip2+Clip3 → BENCH-002b CEER thật · **PA-007** ChatGPT corpus · **DRUG-DB-002** mở rộng 150 thuốc |
-| Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` |
+| Pending | **PA-010** approve FID-VN-010 · **PA-009** fill GT 54/57 clips `data/eval/ref_voice_transcripts_review.txt` · **PA-011** chốt Q1+Q3 CONS-20260610-003 PhoBERT · **VIETMED-FIX-001** (HF_TOKEN) |
+| Next task | **Andy approve FID-VN-010** → Claude implement A1 prompt injection (4h) → A2 VAD → A3 dialect |
+| Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.0) · FID: `fids/FID-VN-010.md` |
 
 ---
 

@@ -1,0 +1,152 @@
+{
+  "session_id": "20260608_181451",
+  "timestamp": "2026-06-08T18:18:41.231928",
+  "ngay_kham": "08/06/2026",
+  "ten_bs": "",
+  "co_so": "",
+  "cchn": "DEMO",
+  "ten_bn_demo": "Bệnh nhân Demo",
+  "chuyen_khoa": "Nội khoa tổng quát",
+  "audio_duration_sec": 134.3,
+  "device_browser": "Chrome",
+  "recording_type": "script",
+  "transcript_real": "Tôi là bác sĩ Đỗ Văn Minh, cơ sở y tế của vùng Tân Phú, chuyên về xét nghiệm x-quai. Mã chứng chỉ hành nghề là CH123-789. Hôm nay là ngày 8 tháng 6 năm 2026. Các bệnh nhân tôi khám trong ngày hôm nay. đầu tiên là bệnh nhân Nguyễn Văn A sao anh hôm nay anh khỏe không sáng giờ chờ bao lâu rồi anh A thì 58 tuổi hồ sơ của anh là tăng huyết áp huyết áp cũng khá là cao 145 trên 90 mặt 78 mà mỡ trong máu cũng khá là nhiều như vậy là anh bị huyết áp rồi là rối loạn mỡ máu Nh nhi th th th c b th 36 N th c h n tu n 72kg l h n anh c th t v tu l 58kg thì kg lô gam của anh là bằng 2kg số sau của anh là khoảng 58kg là vừa anh đang thừa 14kg chẳng đoán thì tăng huyết áp độ 2 kèm rối loạn lipid máu anh chịu khó uống thuốc đi nha uống amlo ha Tôi kê thuốc cho anh là Amlodipine là 5mg, uống 1 viên mỗi buổi sáng. Trợ giúp là Losatan 50mg, uống 1 viên mỗi sáng. Tăng cường thêm Atovastatin 20mg, uống 1 viên mỗi tối. 4 tuần trước khi đến thì hồ sơ mà sẽ kịp máu thì tôi chuyển qua bên cho chúng ta sẽ kịp máu liên lạc người ta lấy cái số hình thám nha Ok anh có hỏi gì nữa không em",
+  "transcript_mock": "Bệnh nhân nam 45 tuổi, đau đầu vùng chẩm 3 ngày, không sốt, không nôn. Huyết áp đo được 155 trên 95. Nhịp tim 80 lần phút. Không tiền sử bệnh tim mạch. Chẩn đoán tăng huyết áp độ 1. Kê Amlodipine 5 milligram uống sáng, tái khám sau 4 tuần, theo dõi huyết áp tại nhà.",
+  "accuracy_rating": "5.0/5",
+  "avg_score": 5.0,
+  "benh_nhan": {
+    "ten": "Nguyễn Văn A",
+    "tuoi": 58,
+    "gioi": "Nam",
+    "nam_sinh": "",
+    "sdt": "",
+    "cccd": "",
+    "dia_chi": ""
+  },
+  "field_eval": {
+    "transcript": 5,
+    "ten_bn": 5,
+    "tuoi": 5,
+    "ngay_kham": 5,
+    "ly_do": 5,
+    "sinh_hieu": 5,
+    "chan_doan": 5,
+    "don_thuoc": 5,
+    "tai_kham": 5
+  },
+  "notes": {
+    "giong_vung_mien": [
+      "Trung"
+    ],
+    "moi_truong": [
+      "Yên tĩnh"
+    ],
+    "dac_diem_bs": [
+      "Rõ ràng"
+    ]
+  },
+  "correction": "",
+  "form_ner": {
+    "ly_do": "tăng huyết áp, rối loạn mỡ máu",
+    "chan_doan": "tăng huyết áp độ 2 kèm rối loạn lipid máu",
+    "icd": "I10, E78.5",
+    "sinh_hieu": {
+      "nhiet_do": 0.0,
+      "huyet_ap": "145/90",
+      "mach": 78,
+      "can_nang": 72.0
+    },
+    "don_thuoc": [
+      {
+        "ten": "Amlodipine",
+        "ham_luong": "5mg",
+        "lieu": "1 viên mỗi buổi sáng",
+        "ngay": ""
+      },
+      {
+        "ten": "Losartan",
+        "ham_luong": "50mg",
+        "lieu": "1 viên mỗi sáng",
+        "ngay": ""
+      },
+      {
+        "ten": "Atorvastatin",
+        "ham_luong": "20mg",
+        "lieu": "1 viên mỗi tối",
+        "ngay": ""
+      }
+    ],
+    "tai_kham": ""
+  },
+  "form_approved": {
+    "ly_do": "tăng huyết áp, rối loạn mỡ máu",
+    "chan_doan": "tăng huyết áp độ 2 kèm rối loạn lipid máu",
+    "icd": "I10, E78.5",
+    "tai_kham": "",
+    "sinh_hieu": {
+      "huyet_ap": "145/90",
+      "mach": 78,
+      "nhiet_do": 36.5,
+      "can_nang": 72.0
+    },
+    "don_thuoc": [
+      {
+        "ten": "Amlodipine",
+        "ham_luong": "5mg",
+        "lieu": "1 viên mỗi buổi sáng",
+        "ngay": ""
+      },
+      {
+        "ten": "Losartan",
+        "ham_luong": "50mg",
+        "lieu": "1 viên mỗi sáng",
+        "ngay": ""
+      },
+      {
+        "ten": "Atorvastatin",
+        "ham_luong": "20mg",
+        "lieu": "1 viên mỗi tối",
+        "ngay": ""
+      }
+    ]
+  },
+  "confidence": 0.88,
+  "test_script_id": "W1-001",
+  "ground_truth": {
+    "chan_doan": "Tăng huyết áp độ 2 kèm rối loạn lipid máu",
+    "icd": "I11.9",
+    "sinh_hieu": {
+      "huyet_ap": "145/90",
+      "mach": 78,
+      "nhiet_do": 36.5,
+      "can_nang": 72
+    },
+    "don_thuoc": [
+      {
+        "ten": "Amlodipine",
+        "ham_luong": "5mg",
+        "lieu": "1 viên/sáng",
+        "ngay": "30 ngày"
+      },
+      {
+        "ten": "Losartan",
+        "ham_luong": "50mg",
+        "lieu": "1 viên/sáng",
+        "ngay": "30 ngày"
+      },
+      {
+        "ten": "Atorvastatin",
+        "ham_luong": "20mg",
+        "lieu": "1 viên/tối",
+        "ngay": "30 ngày"
+      }
+    ],
+    "tai_kham": "4 tuần, nhịn ăn xét nghiệm lipid"
+  },
+  "auto_score": {
+    "chan_doan": "✅",
+    "icd": "❌",
+    "sinh_hieu": "✅",
+    "don_thuoc": "✅ 3/3"
+  }
+}
