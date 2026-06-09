@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-09 | v0.11.1
+# Cập nhật: 2026-06-09 | v0.11.2
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -169,6 +169,12 @@
 | P0.6.10e | │  ├─ Pipeline injection | main.py: specialty→L1a A1 + region→A3 dialect + dvp_specialty/dvp_region in response | 🟢 | FID-VN-012 | SES-20260609g | 4 new endpoints: POST /api/doctors + GET + aliases pending + confirm |
 | P0.6.10f | │  └─ test_dvp.py | 23 tests AC-001→AC-010 · DB schema · CRUD · pipeline · alias Human Gate | 🟢 | FID-VN-012 | SES-20260609g | 817/817 PASS · 0 regressions |
 | | │ | | | | | |
+| **P0.6.12** | **├─ 🔵 ORCH-001 Orchestrator v1.0 PROTOTYPE** | **CLI: start/consult/check/close — gọi Groq API thật** | **🔵** | **ORCH-001** | SES-20260609i | `scripts/orchestrator.py` (~190 LOC) — chưa qua FID đầy đủ |
+| P0.6.12a | │  ├─ start_session() | Load iso_audit + LAST_SESSION + BACKLOG + PENDING_REQUESTS | 🟢 | ORCH-001 | SES-20260609i | Chạy thật, output verified |
+| P0.6.12b | │  ├─ consult(topic, question) | Groq API (`requests`, llama-3.3-70b-versatile) → JSON evidence | 🟢 | ORCH-001 | SES-20260609i | `docs/records/consultations/ORCH-CONSULT-20260609-184913.json` |
+| P0.6.12c | │  ├─ consistency_check() | 2x Groq (temp 0.1/0.7) + AGREEMENTS/CONFLICTS/RECOMMENDATION | 🟢 | ORCH-001 | SES-20260609i | `docs/records/consultations/ORCH-CONSULT-20260609-184931.json` |
+| P0.6.12d | │  └─ close_session() | In checklist 6 bước (chưa tự động update docs) | 🟡 | ORCH-001 | SES-20260609i | Chưa làm: detect_confusion(), create_consultation_request() |
+| | │ | | | | | |
 | **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
 | P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |
 | P0.7b |    ├─ DPA ký | Hợp đồng xử lý dữ liệu | 🟡 | PA-003 | — | Luật sư review xong → ký |
@@ -226,15 +232,16 @@
 
 ## PHIÊN TIẾP THEO — LÀM GÌ?
 
-### ⚡ NGAY BÂY GIỜ — v0.11.1 · Demo App v2.1 deployed
+### ⚡ NGAY BÂY GIỜ — v0.11.1 · Orchestrator v1.0 prototype chạy thật
 
 | # | Task | Ai | Điều kiện |
 |---|---|---|---|
-| 1 | **VIETMED-FIX-001** — Fix `scripts/download_vietmed.py` remove `trust_remote_code` + HF_TOKEN (~5 LOC) | Claude | Làm được ngay |
-| 2 | **DESIGN REVIEW** — Xem lại `docs/records/DESIGN_REPORT_v1.1_20260606.md` bổ sung DVP section | Claude + Andy | Phiên tới |
-| 3 | **Pilot Đà Nẵng** — Cài install.bat thật tại phòng khám → thu audio → TRAIN-001 | Andy | Code sẵn sàng · DVP needs real doctor CCHN |
-| 4 | **TRAIN-001** — Fine-tune PhoWhisper trên 50-100h audio thật | Andy + Claude | Cần audio pilot trước |
-| 5 | **DVP Layer 3** — Alias passive learning promote sau ≥5 sessions pilot | Claude | Sau pilot có data |
+| 1 | **ORCH-001 FID** — Viết FID cho Orchestrator v1.0 đầy đủ (`detect_confusion`, `create_consultation_request`, tự động `close_session`) | Claude | Andy approve scope trước khi +100 LOC |
+| 2 | **VIETMED-FIX-001** — Fix `scripts/download_vietmed.py` remove `trust_remote_code` + HF_TOKEN (~5 LOC) | Claude | Làm được ngay |
+| 3 | **DESIGN REVIEW** — Xem lại `docs/records/DESIGN_REPORT_v1.1_20260606.md` bổ sung DVP section | Claude + Andy | Phiên tới |
+| 4 | **Pilot Đà Nẵng** — Cài install.bat thật tại phòng khám → thu audio → TRAIN-001 | Andy | Code sẵn sàng · DVP needs real doctor CCHN |
+| 5 | **TRAIN-001** — Fine-tune PhoWhisper trên 50-100h audio thật | Andy + Claude | Cần audio pilot trước |
+| 6 | **DVP Layer 3** — Alias passive learning promote sau ≥5 sessions pilot | Claude | Sau pilot có data |
 
 ### 🟡 BENCHMARK TIẾP THEO
 
@@ -245,7 +252,7 @@
 
 ---
 
-## METRICS HIỆN TẠI (2026-06-09 · v0.11.1)
+## METRICS HIỆN TẠI (2026-06-09 · v0.11.2)
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
@@ -303,6 +310,7 @@
 | SES-20260609f | 2026-06-09 | v0.10.0→v0.10.1 | TEST-E2E-001 ✅ 22 E2E integration tests · pipeline L1b→L10 real · 794/794 PASS |
 | SES-20260609g | 2026-06-09 | v0.10.1→v0.11.0 | FID-VN-012 ✅ DVP Layer 1+2 · 12 specialties · 4 endpoints · 23 tests · 817/817 PASS |
 | SES-20260609h | 2026-06-09 | v0.11.0→v0.11.1 | DEMO-002 ✅ Demo App v2.1 · Header Block A/B/C · drug card HTML bold · checkbox True · button visibility fix |
+| SES-20260609i | 2026-06-09 | v0.11.1 | ORCH-001 PROTOTYPE ✅ — `scripts/orchestrator.py` start/consult/check/close · Groq API real test (consult + consistency check) · SESSION_CAPTURE_RULES integrated (commit `c9e1392`) · 6-category LAST_SESSION template demo |
 
 ---
 

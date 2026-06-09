@@ -111,10 +111,16 @@
   - `src/api/main.py` — pipeline injection (specialty→L1a, region→A3) + 4 DVP endpoints
   - `tests/unit/test_dvp.py` — 23 tests AC-001→AC-010 PASS | Total: 817/817
   - Predicted Drug Recall: 55.6% → 65-75% (Layer 1+2), 80-90% (Layer 3 mature)
-- [ ] **ORCH-001** ⏳ Orchestrator v1.0 — Automation Layer giữa Andy và Multi-AI
+- [~] **ORCH-001** 🔵 Orchestrator v1.0 — PROTOTYPE chạy được (2026-06-09 SES-20260609i)
   - Source: `Andy/Improvements.md` → `docs/dev/SESSION_CAPTURE_RULES.md`
-  - Scope: `start_session()` + `detect_confusion()` + `create_consultation_request()` + `multi_ai_consult()` + `consistency_check()` + `close_session()`
-  - Prerequisite: FID cần Andy approve trước khi implement (> 100 LOC + new module)
+  - File: `scripts/orchestrator.py` (~190 LOC) — CLI: `start | consult | check | close`
+  - **Done**: `start_session()` (load ISO audit + LAST_SESSION + BACKLOG + PENDING) ✅
+  - **Done**: `consult(topic, question)` — gọi Groq API (`requests`, llama-3.3-70b-versatile), lưu JSON evidence vào `docs/records/consultations/` ✅
+  - **Done**: `consistency_check(topic, question)` — 2x Groq (temp 0.1 vs 0.7) + phân tích AGREEMENTS/CONFLICTS/RECOMMENDATION (llama-3.1-8b-instant) ✅
+  - **Done**: `close_session()` — in checklist 6 bước (chưa tự động hóa, chỉ reminder)
+  - **Demo evidence**: `docs/records/consultations/ORCH-CONSULT-20260609-184913.json` (consult), `ORCH-CONSULT-20260609-184931.json` (consistency check) — output thật từ Groq/LLaMA
+  - **Chưa làm**: `detect_confusion()`, `create_consultation_request()` (CONSULTATION_TEMPLATE format), tự động hóa `close_session()` (chưa tự update docs)
+  - Prerequisite for full v1.0: FID cần Andy approve (> 100 LOC tổng + new module + ghi đè LAST_SESSION tự động)
   - Priority: Phase 1 (sau pilot Đà Nẵng — khi cần scale multi-AI consultation)
 - [ ] **TRAIN-001** ⏳ Fine-tune PhoWhisper trên 50-100h real clinical audio — cần audio thật từ pilot
 - [x] **GAP-002** ✅ Unit tests PII scan — tests/unit/test_pii_scan.py 27 tests PASS (2026-06-06)

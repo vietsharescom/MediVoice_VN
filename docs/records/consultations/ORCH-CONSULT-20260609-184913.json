@@ -1,0 +1,18 @@
+{
+  "type": "consultation",
+  "topic": "ORCH-001",
+  "question": "Goi y kien truc Orchestrator v1.0 cho he thong MediVoice VN: Python script don gian goi Groq API (LLaMA-3.3-70B) de tu van ky thuat, chay tu CLI, ket qua luu JSON. Co phu hop voi quy mo 1 phong kham pilot khong, hay can phuc tap hon?",
+  "ai": "Groq/LLaMA-3.3-70B",
+  "model": "llama-3.3-70b-versatile",
+  "response": "Tôi đề xuất kiến trúc Orchestrator v1.0 cho hệ thống MediVoice VN như sau:\n\n1. Sử dụng Python 3.10 làm ngôn ngữ lập trình chính.\n2. Tạo một script Python đơn giản để gọi Groq API (LLaMA-3.3-70B) thông qua thư viện `requests` hoặc `httpx`.\n3. Script này sẽ nhận đầu vào từ người dùng thông qua CLI (Command Line Interface) bằng cách sử dụng thư viện `argparse`.\n4. Kết quả từ Groq API sẽ được lưu trữ dưới dạng JSON trong một tệp tin hoặc cơ sở dữ liệu SQLite.\n\nVề quy mô, kiến trúc này phù hợp với một phòng khám pilot vì:\n\n* Script Python đơn giản, dễ dàng triển khai và bảo trì.\n* Sử dụng Groq API để giảm thiểu việc xử lý dữ liệu và tập trung vào logic kinh doanh.\n* Lưu trữ kết quả dưới dạng JSON cho phép dễ dàng tích hợp với các hệ thống khác.\n\nTuy nhiên, để mở rộng quy mô, bạn có thể cần xem xét các yếu tố sau:\n\n* Tăng cường bảo mật bằng cách sử dụng các công nghệ như SSL/TLS và xác thực người dùng.\n* Cải thiện hiệu suất bằng cách sử dụng các công nghệ như caching và load balancing.\n* Tích hợp với các hệ thống khác như PhoWhisper-medium và PhoBERT+CRF để tăng cường khả năng xử lý dữ liệu.\n\nVí dụ về script Python đơn giản để gọi Groq API:\n```python\nimport requests\nimport argparse\nimport json\n\ndef call_groq_api(input_text):\n    api_url = \"https://api.groq.com/v1/models/llama-3.3-70b\"\n    headers = {\"Authorization\": \"Bearer YOUR_API_KEY\"}\n    data = {\"input\": input_text}\n    response = requests.post(api_url, headers=headers, json=data)\n    return response.json()\n\ndef main():\n    parser = argparse.ArgumentParser()\n    parser.add_argument(\"--input\", type=str, help=\"Đầu vào từ người dùng\")\n    args = parser.parse_args()\n    result = call_groq_api(args.input)\n    with open(\"result.json\", \"w\") as f:\n        json.dump(result, f)\n\nif __name__ == \"__main__\":\n    main()\n```\nLưu ý rằng bạn cần thay thế `YOUR_API_KEY` bằng khóa API thực sự của bạn.",
+  "usage": {
+    "queue_time": 0.036420814,
+    "prompt_tokens": 254,
+    "prompt_time": 0.013184163,
+    "completion_tokens": 500,
+    "completion_time": 1.80204939,
+    "total_tokens": 754,
+    "total_time": 1.815233553
+  },
+  "timestamp": "2026-06-09T18:49:13.183627"
+}

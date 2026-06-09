@@ -19,6 +19,27 @@ Claude MUST ghi mọi design/decision/architecture change.
 
 ---
 
+## SESSION REPORT TEMPLATE — chat output cuối phiên (trước khi ghi LAST_SESSION.md)
+
+```markdown
+# SESSION REPORT — SES-YYYYMMDD-NNN
+
+1. SUMMARY
+2. ACTIONS COMPLETED
+3. DECISIONS (Owner + Technical)
+4. ARCHITECTURE CHANGES
+5. TASKS CREATED (CT/TP/PA)
+6. PENDING ITEMS
+7. RISKS / CONFUSIONS
+8. NEXT STEPS
+```
+
+> Đây là format hiển thị trong chat. `LAST_SESSION.md` (file) dùng template 6-category
+> ở `CLAUDE.md` §4 — tương đương 1:1 (SUMMARY = Trạng thái đầu→cuối, NEXT STEPS = Phiên
+> tiếp theo, các mục 2-7 = 6 categories).
+
+---
+
 ## 6 CATEGORIES BẮT BUỘC
 
 Nếu thiếu bất kỳ mục nào → báo cáo INVALID → Claude phải viết lại.
@@ -121,9 +142,70 @@ Orchestrator v1.0 sẽ handle:
 - `consistency_check()` — so sánh kết quả multi-AI, flag conflicts
 - `close_session()` — update all docs + increment session + commit/push
 
-**Status:** BACKLOG ORCH-001 ⏳ — Chờ define spec + FID
+**Status:** BACKLOG ORCH-001 🔵 PROTOTYPE — `scripts/orchestrator.py` chạy được `start`/`consult`/`check`/`close` (2026-06-09 SES-20260609i, evidence: `docs/records/consultations/ORCH-CONSULT-20260609-*.json`). Chưa có: `detect_confusion()`, `create_consultation_request()`, `close_session()` tự động hóa.
 
 ---
 
-*DS-VN-DEV-CAPTURE-RULES | v1.0 | 2026-06-09*
-*Source: `Andy/Improvements.md` integrated by Claude per Andy request*
+## CLAUDE'S ROLE & BOUNDARIES
+
+```
+Claude LÀ:
+  AI Reasoner · ISO Assistant · FID Writer · Design Reviewer · Risk Analyst
+
+Claude KHÔNG ĐƯỢC:
+  - tự deploy
+  - tự gọi AI khác mà không thông qua Orchestrator (khi Orchestrator đầy đủ — hiện tại
+    scripts/orchestrator.py consult/check là bước trung gian tạm thời, vẫn ghi evidence JSON)
+  - tự thay đổi pipeline L0→L10 (FROZEN — chỉ qua FID)
+  - tự bypass L4 hoặc L10
+  - tự quyết định khi chưa có OWNER DECISION (Andy) với: nhiều phương án / có rủi ro /
+    thay đổi lớn / FID mới / conflict giữa multi-AI
+```
+
+> Pipeline L0→L10: Claude không được thay đổi, không đề xuất thay đổi, không bypass,
+> không dùng AI trong L0–L3, L5, L7–L9 (chỉ L1a/L1b/L1c/L1d/L6 dùng model — đã FROZEN theo TECH DECISIONS).
+
+---
+
+## MACRO COMMANDS (mapping → session triggers hiện có)
+
+| Macro | Tương đương trong CLAUDE.md | Ghi chú |
+|---|---|---|
+| `/START_SESSION` | `bắt đầu` / `start` / `mở phiên` | → SESSION PROTOCOL §1 |
+| `/CONSULT topic="..."` | `python scripts/orchestrator.py consult "<topic>" "<question>"` | Gọi Groq, lưu JSON evidence |
+| `/FID` | Viết FID mới (`docs/dev/FID_TEMPLATE.md` → `fids/FID-VN-NNN.md`) | Khi >100 LOC / API mới / flow mới |
+| `/RISK` | Ghi vào mục (6) Risks/Confusions của LAST_SESSION.md | Confidence < 70% → consultation |
+| `/CLOSE_SESSION` | `đóng phiên` / `kết thúc` / `close` | → SESSION PROTOCOL §3, 6 bước |
+
+---
+
+## RAG MEMORY STRUCTURE — files Claude tham chiếu mỗi phiên
+
+```
+CLAUDE.md                  — rules, session protocol, current state
+docs/records/BACKLOG.md     — task tracker, next task
+docs/records/LAST_SESSION.md — context phiên trước (6-category)
+docs/records/PENDING_REQUESTS.md — PA/CT/TP tracking
+docs/records/DESIGN_REPORT_v1.1_20260606.md — master design (đọc theo section)
+docs/dev/FID_TEMPLATE.md    — template tạo FID mới
+docs/dev/CONSULTATION_TEMPLATE.md — multi-AI consultation request format
+docs/dev/CONFUSION_PATTERNS.md — Tầng 4, đọc khi confused
+```
+
+> Đầy đủ: bảng "TÀI LIỆU HỆ THỐNG — VỊ TRÍ CHUẨN" trong `CLAUDE.md`.
+
+---
+
+## FINAL SUMMARY — đọc đầu mỗi phiên (1 đoạn)
+
+> Claude đang làm việc trong hệ thống MediVoice VN theo ISO 9001–42001. Claude là AI
+> Reasoner, không tự deploy, không tự gọi AI khác ngoài qua `scripts/orchestrator.py`
+> (evidence JSON), không thay đổi pipeline L0→L10. Mọi phiên: start_session → work →
+> consultation (nếu confused) → synthesize → close_session. Claude phải tạo FID, update
+> BACKLOG/PROJECT_PROGRESS/LAST_SESSION (6 categories) và chờ OWNER DECISION của Andy.
+> Không sáng tạo ngoài tiêu chuẩn quốc tế. Không bỏ bước.
+
+---
+
+*DS-VN-DEV-CAPTURE-RULES | v1.1 | 2026-06-09*
+*Source: `Andy/Improvements.md` integrated by Claude per Andy request — Improvements.md removed sau khi tích hợp xong*

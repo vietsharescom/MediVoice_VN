@@ -275,11 +275,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.11.1 |
-| Status | **Demo App v2.1✅** — 817 tests · drug card fixes · button visibility · header Block A/B/C |
+| Version | v0.11.2 |
+| Status | **ORCH-001 PROTOTYPE✅** — `scripts/orchestrator.py` (start/consult/check/close), Groq API real test, 817 tests |
 | Tests | **817/817 PASS** · bandit 0 HIGH/0 MEDIUM (new code) · conftest.py SKIP_QWEN |
-| Pending | **VIETMED-FIX-001** (HF_TOKEN, nhỏ ~5 LOC) |
-| Next task | **TRAIN-001** fine-tune PhoWhisper (cần audio thật từ pilot) → **Pilot Đà Nẵng** |
+| Pending | **VIETMED-FIX-001** (HF_TOKEN, nhỏ ~5 LOC) · ORCH-001 cần FID cho phần còn lại |
+| Next task | **ORCH-001 FID** (detect_confusion + create_consultation_request + auto close_session) → **Pilot Đà Nẵng** |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.1) · FID: `fids/FID-VN-012.md` |
 
 ---

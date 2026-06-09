@@ -250,3 +250,129 @@ Mọi phiên làm việc phải đi qua Orchestrator: start_session → work →
 Orchestrator chịu trách nhiệm đọc tài liệu ISO, gửi prompt sang GPT/Copilot/Grok, merge kết quả và trả về cho bạn. 
 Bạn phải tạo FID, update BACKLOG, PROJECT_PROGRESS, LAST_SESSION và chờ OWNER DECISION của Andy. 
 Không sáng tạo ngoài tiêu chuẩn quốc tế. Không bỏ bước. Khô
+
+
+TÓM TẮT CHO CLAUDE — BẮT BUỘC THỰC HIỆN KHI BÁO CÁO PHIÊN
+1) Claude phải hiểu: hệ thống ISO đã đầy đủ, nhưng thiếu “Capture Rules”
+Claude KHÔNG được tự suy luận cái gì quan trọng.
+Claude phải dựa vào quy định dưới đây để biết thông tin nào phải ghi vào báo cáo.
+
+⭐ 2) Claude MUST capture 6 loại thông tin trong mọi phiên
+Claude phải luôn ghi đủ 6 mục sau trong Session Report:
+
+(1) Actions Completed
+File đã tạo
+
+File đã sửa
+
+Code đã generate
+
+Design đã đề xuất
+
+Test đã chạy
+
+Benchmark đã cập nhật
+
+(2) Decisions
+Owner Decisions (Andy)  
+Technical Decisions (Claude)
+
+(3) Architecture Changes
+Thay đổi pipeline
+
+Thay đổi module
+
+Thay đổi API
+
+Thay đổi RAG logic
+
+Thay đổi model lifecycle
+
+(4) Tasks Created
+CT-xxx
+
+TP-xxx
+
+PA-xxx
+
+(5) Pending Items
+Việc chưa xong
+
+Việc cần carry-over
+
+Việc cần Andy xác nhận
+
+(6) Risks / Confusions
+Chỗ Claude bị confused
+
+Chỗ cần multi‑AI
+
+Chỗ cần FID
+
+Chỗ có rủi ro
+
+Nếu thiếu bất kỳ mục nào → báo cáo INVALID → Claude phải tạo lại.
+
+⭐ 3) Claude phải dựa vào 3 nguồn để capture
+Nguồn 1 — Chat Content
+Claude scan toàn bộ phiên để tìm:
+
+design
+
+code
+
+quyết định
+
+file path
+
+kiến trúc
+
+task
+
+Nguồn 2 — File Changes
+Claude phải ghi lại:
+
+file mới tạo
+
+file mới sửa
+
+file commit
+
+Nguồn 3 — System Rules (CLAUDE.md)
+Claude phải dùng rule để biết:
+
+cái gì là decision
+
+cái gì là architecture
+
+cái gì là task
+
+cái gì là risk
+
+⭐ 4) Claude phải dùng Session Report Template cố định
+Claude phải luôn dùng form này:
+
+Code
+# SESSION REPORT — SES-YYYYMMDD-NNN
+
+1. SUMMARY
+2. ACTIONS COMPLETED
+3. DECISIONS (Owner + Technical)
+4. ARCHITECTURE CHANGES
+5. TASKS CREATED (CT/TP/PA)
+6. PENDING ITEMS
+7. RISKS / CONFUSIONS
+8. NEXT STEPS
+⭐ 5) Quy tắc vàng cho Claude
+Code
+Claude MUST NOT tóm tắt theo cảm tính.
+Claude MUST follow Capture Rules.
+Claude MUST fill all 6 categories.
+Claude MUST scan chat + file changes + system rules.
+Claude MUST regenerate report nếu thiếu mục.
+Claude MUST carry-over mọi task chưa xong.
+Claude MUST ghi mọi design/decision/architecture change.
+⭐ 6) Tóm tắt 1 câu cho Claude
+Code
+Claude phải báo cáo phiên theo template cố định, ghi đủ 6 loại thông tin, 
+dựa trên chat + file changes + system rules; thiếu mục nào phải tạo lại.ti

@@ -1,6 +1,17 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.2] — 2026-06-09 — Orchestrator v1.0 prototype + Session Capture Rules expansion
+
+### Orchestrator v1.0 prototype [SES-20260609i, ORCH-001]
+- feat(orch): `scripts/orchestrator.py` — CLI `start | consult | check | close`
+- feat(orch): `start_session()` — load iso_audit + LAST_SESSION + BACKLOG + PENDING_REQUESTS
+- feat(orch): `consult(topic, question)` — Groq API (`requests`, llama-3.3-70b-versatile), saves JSON evidence to `docs/records/consultations/`
+- feat(orch): `consistency_check(topic, question)` — 2x Groq (temp 0.1 vs 0.7) + AGREEMENTS/CONFLICTS/RECOMMENDATION analysis (llama-1.1-8b-instant)
+- feat(orch): `close_session()` — prints 6-step close checklist (not yet automated)
+- chore: `requirements.txt` — add `requests==2.34.2` (Groq API client)
+- chore: ISO docs — `docs/dev/SESSION_CAPTURE_RULES.md` expanded with Claude Role/Boundaries, Macro Commands, RAG Memory Structure (from `Andy/Improvements.md`, file to be removed)
+
 ## [v0.11.1] — 2026-06-09 — Demo App v2.1: header redesign + drug card fixes + button visibility
 
 ### Demo App UX fixes [SES-20260609h]

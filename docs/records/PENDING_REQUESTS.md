@@ -54,6 +54,7 @@ Nếu Andy trả lời/làm xong → Claude cập nhật status → DONE.
 | CT-007 | **Followup CEER fix** — Cải thiện tai_kham regex `src/core/l1c_ner.py` → Followup CEER **0.7→0.1** ✅ \| P0.5.2e | 🟡 MEDIUM | ✅ DONE | 2026-06-08 |
 | CT-005 | **DEPLOY-001** Windows installer (venv approach) — install.bat + start.bat + check_env + setup_facility \| P0.6 | 🟡 MEDIUM | ✅ DONE — 287/287 PASS | 2026-06-06 |
 | CT-010 | **FID-VN-012** — Viết Doctor Voice Profile (DVP) FID: 3 layers (Metadata+SpecialtyVocab+PersonalAlias), 8 ACs, DoctorProfile SQLite schema, UX "Trợ lý AI của BS [Tên]". Đọc `docs/records/consultations/CONS-20260610-004.md` + WIN2 Phần 1. | 🔴 HIGH | ✅ DONE — fids/FID-VN-012.md (2026-06-09) | 2026-06-09 |
+| CT-011 | **ORCH-001 FID** — Viết FID đầy đủ cho Orchestrator v1.0: `detect_confusion()`, `create_consultation_request()` (CONSULTATION_TEMPLATE format), tự động hóa `close_session()` (auto-update BACKLOG/PROJECT_PROGRESS/CHANGELOG/LAST_SESSION + iso_audit --increment-session + commit/push). Prototype hiện tại: `scripts/orchestrator.py` (start/consult/check chạy thật với Groq). | 🟡 MEDIUM | ⏳ PENDING | 2026-06-09 |
 
 ---
 
