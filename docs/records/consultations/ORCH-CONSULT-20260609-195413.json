@@ -1,0 +1,27 @@
+{
+  "type": "consultation",
+  "topic": "ORCH-001-DEMO",
+  "question": "MediVoice VN dang dung pipeline L0-L10 frozen, L4 Human Gate bat buoc theo Luat KCB 2023. Ban co goi y gi de tang Drug Recall tu 55.6% len 80% ma khong vi pham frozen pipeline khong?",
+  "responses": {
+    "Groq/LLaMA-3.3-70B": {
+      "model": "llama-3.3-70b-versatile",
+      "response": "Để tăng tỷ lệ Drug Recall từ 55,6% lên 80% mà không vi phạm quy định về frozen pipeline, có thể thực hiện các bước sau:\n\n1. **Tối ưu hóa mô hình PhoBERT+CRF**: Điều chỉnh các siêu tham số của mô hình để cải thiện khả năng nhận dạng và phân loại thuốc.\n2. **Cải thiện chất lượng dữ liệu**: Đánh giá và cải thiện chất lượng dữ liệu đào tạo, bao gồm việc loại bỏ nhiễu và tăng cường độ đa dạng của dữ liệu.\n3. **Tích hợp thông tin từ các nguồn khác**: Sử dụng thông tin từ các nguồn khác như thông tin bệnh nhân, thông tin thuốc, để hỗ trợ quá trình nhận dạng và phân loại thuốc.\n4. **Tối ưu hóa quy trình L4 Human Gate**: Cải thiện quy trình L4 Human Gate để giảm thiểu sai sót và tăng cường độ chính xác của quá trình nhận dạng và phân loại thuốc.\n\nNhững bước trên có thể được thực hiện mà không cần thay đổi cấu trúc pipeline L0-L10, do đó không vi phạm quy định về frozen pipeline.",
+      "usage": {
+        "queue_time": 0.037010191,
+        "prompt_tokens": 233,
+        "prompt_time": 0.012085337,
+        "completion_tokens": 235,
+        "completion_time": 0.915488255,
+        "total_tokens": 468,
+        "total_time": 0.927573592
+      }
+    },
+    "OpenAI/GPT-4o-mini": {
+      "error": "HTTP 429: {\n    \"error\": {\n        \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/gu"
+    },
+    "xAI/Grok-2": {
+      "error": "HTTP 403: {\"code\":\"permission-denied\",\"error\":\"Your newly created team doesn't have any credits or licenses yet. You can purchase those on https://console.x.ai/team/2c812287-5c53-4bdc-913e-6414f70b422a.\"}"
+    }
+  },
+  "timestamp": "2026-06-09T19:54:13.290490"
+}

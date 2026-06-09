@@ -104,7 +104,7 @@ def _openai_call(messages: list, model: str = "gpt-4o-mini",
     )
 
 
-def _xai_call(messages: list, model: str = "grok-2-1212",
+def _xai_call(messages: list, model: str = "grok-3",
               max_tokens: int = 800, temperature: float = 0.3) -> dict:
     api_key = _load_key("XAI_API_KEY", "xai_api_key")
     return _openai_compatible_call(
@@ -117,7 +117,7 @@ def _xai_call(messages: list, model: str = "grok-2-1212",
 _PROVIDERS = {
     "Groq/LLaMA-3.3-70B": _groq_call,
     "OpenAI/GPT-4o-mini": _openai_call,
-    "xAI/Grok-2": _xai_call,
+    "xAI/Grok-3": _xai_call,
 }
 
 
