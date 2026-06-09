@@ -16,6 +16,8 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+import logging
+
 from ..core import l0_normalize, l1a_asr, l1b_drug_correct, l1c_ner
 from ..core import l1d_icd_lookup, l2_validate, l3_route
 from ..core import l4_human_gate, l4_correction_capture, l5_pii_scan, l6_generate_form
@@ -23,16 +25,35 @@ from ..core import l7_storage, l9a_pdf_export, l10_audit_log
 from ..core.l7_storage import init_db, _get_conn
 from ..models.clinical_record import ClinicalRecord, RecordStatus
 
+logger = logging.getLogger(__name__)
+
 app = FastAPI(
     title="MediVoice VN",
     description="Documentation Assistant — AI tạo nháp, Bác sĩ chịu trách nhiệm",
     version="0.2.0",
 )
 
-# Init DB khi startup
+# RAG model singletons — preloaded once at startup (FID-VN-011)
+_embed_model = None
+_drug_collection = None
+
+
 @app.on_event("startup")
 async def startup():
+    global _embed_model, _drug_collection
     init_db()
+    # Preload RAG embedding model + vectorstore if deps available
+    try:
+        from ..core.drug_rag import load_drug_vectorstore, _DEPS_AVAILABLE
+        if _DEPS_AVAILABLE:
+            from sentence_transformers import SentenceTransformer
+            _embed_model = SentenceTransformer(
+                "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+            )
+            _drug_collection = load_drug_vectorstore()
+            logger.info("RAG model preloaded — embed_model ready, collection=%s", _drug_collection)
+    except Exception as exc:
+        logger.warning("RAG preload skipped: %s", exc)
 
 
 # ── Static files (PWA) ─────────────────────────────────────────────────────
@@ -77,9 +98,16 @@ async def transcribe_audio(
         # L1a: ASR
         transcript_raw = l1a_asr.transcribe(audio_arr)
 
-        # L1b: Drug correction
-        transcript_corrected = l1b_drug_correct.correct_drug_names(transcript_raw)
-        drug_candidates = l1b_drug_correct.extract_drug_candidates(transcript_corrected)
+        # L1b: Drug correction — v2 with optional RAG fallback (FID-VN-011)
+        transcript_corrected, drug_matches = l1b_drug_correct.correct_drug_names_v2(
+            transcript_raw,
+            rag_collection=_drug_collection,
+            embed_model=_embed_model,
+        )
+        drug_candidates = [
+            {"inn": dm.inn, "original_text": dm.original_text, "word_position": dm.word_position}
+            for dm in drug_matches
+        ]
 
         # L1c: NER
         entities = l1c_ner.extract_entities(transcript_corrected, drug_candidates)
@@ -519,15 +547,18 @@ async def get_drug_candidates(
         candidates = _fuzzy_drug_candidates(q, n)
         return {"candidates": candidates, "source": "fuzzy_fallback"}
 
-    collection = load_drug_vectorstore()
+    # Use preloaded singletons if available (FID-VN-011); fall back to lazy load
+    collection = _drug_collection or load_drug_vectorstore()
     if collection is None:
         candidates = _fuzzy_drug_candidates(q, n)
         return {"candidates": candidates, "source": "fuzzy_fallback"}
 
     from ..core.l1b_drug_correct import _load_drug_db
     drug_db = _load_drug_db()
-    from sentence_transformers import SentenceTransformer as _ST
-    model = _ST("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+    model = _embed_model
+    if model is None:
+        from sentence_transformers import SentenceTransformer as _ST
+        model = _ST("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
     candidates = hybrid_query_drug(
         q, diagnosis, collection, drug_db, embed_model_instance=model, k=n
     )

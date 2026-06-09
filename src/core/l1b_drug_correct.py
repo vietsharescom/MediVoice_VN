@@ -23,6 +23,10 @@ DATA_DIR = Path(__file__).parent.parent.parent / "data" / "reference"
 DRUG_FUZZY_CUTOFF_STRICT: int = 88   # auto-accept (≥88% = high confidence, no flag)
 DRUG_FUZZY_CUTOFF_FLAG:   int = 70   # flag for BS review (≥70% <88% = LOW_CONFIDENCE)
 
+# Layer 3b RAG thresholds — FID-VN-011, calibrate via pilot data
+RAG_ACCEPT_THRESHOLD: float = 0.68   # auto-accept with LOW_CONFIDENCE flag
+RAG_FLAG_THRESHOLD:   float = 0.55   # flag only, require BS confirm
+
 # Filler words PhoWhisper inserts — stripped before window matching
 _FILLER_WORDS = {"ừm", "ừ", "ờ", "à", "ơ", "ê", "thì", "là", "mà", "thôi", "nhé"}
 
@@ -216,6 +220,31 @@ def _fuzzy_match(token: str, alias_map: dict[str, str]) -> tuple[str | None, flo
     return best_inn, best_score / 100, False
 
 
+def _rag_fallback_match(
+    token: str,
+    chan_doan_context: str,
+    rag_collection,
+    embed_model,
+    drug_db: dict,
+) -> tuple[str | None, float]:
+    """
+    Layer 3b: hybrid RAG fallback when alias + fuzzy + prefix miss.
+    Returns (inn, combined_score) or (None, 0.0).
+    FID-VN-011: 0.65×phonetic + 0.35×semantic.
+    """
+    try:
+        from .drug_rag import hybrid_query_drug
+        results = hybrid_query_drug(
+            token, chan_doan_context, rag_collection, drug_db,
+            embed_model_instance=embed_model, k=1,
+        )
+        if results and results[0]["score"] >= RAG_FLAG_THRESHOLD:
+            return results[0]["inn"], results[0]["score"]
+    except Exception as exc:
+        logger.debug("RAG fallback error: %s", exc)
+    return None, 0.0
+
+
 def _context_prefix_match(token: str, alias_map: dict[str, str]) -> str | None:
     """
     Layer 3: prefix match within filtered alias_map.
@@ -321,6 +350,9 @@ def extract_drug_candidates(transcript: str) -> list[dict]:
 def correct_drug_names_v2(
     transcript: str,
     session_context: dict | None = None,
+    *,
+    rag_collection=None,
+    embed_model=None,
 ) -> tuple[str, list[DrugMatch]]:
     """
     4-layer drug name correction with fuzzy matching, context-aware filtering,
@@ -437,6 +469,30 @@ def correct_drug_names_v2(
                     dm = _run_safety(dm, fragment, session_context)
                     matches.append(dm)
                     result_words[raw_i] = ctx_inn
+                    i += 1
+                    raw_i += 1
+                elif rag_collection is not None and embed_model is not None:
+                    # ── Layer 3b: RAG fallback ─────────────────────────────
+                    # Try 2-3 word window first, then single word
+                    rag_token = " ".join(words[i:min(i+3, len(words))])
+                    chan_doan = (session_context or {}).get("diagnosis", "")
+                    rag_inn, rag_score = _rag_fallback_match(
+                        rag_token, chan_doan, rag_collection, embed_model,
+                        _load_drug_db(),
+                    )
+                    if rag_inn:
+                        flag = rag_score < RAG_ACCEPT_THRESHOLD
+                        confidence = round(rag_score, 3)
+                        dm = DrugMatch(
+                            inn=rag_inn, original_text=rag_token, word_position=raw_i,
+                            confidence=confidence, match_layer=3,
+                            flagged_for_review=True, flag_reason="LOW_CONFIDENCE", severity="LOW",
+                            fuzzy_score=round(rag_score * 100, 1),
+                        )
+                        fragment = " ".join(words[i:min(i+4, len(words))])
+                        dm = _run_safety(dm, fragment, session_context)
+                        matches.append(dm)
+                        result_words[raw_i] = rag_inn
                     i += 1
                     raw_i += 1
                 else:
