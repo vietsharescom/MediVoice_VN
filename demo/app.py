@@ -74,7 +74,7 @@ def audio_hash(audio_bytes: bytes) -> str:
     return hashlib.md5(audio_bytes).hexdigest()[:12]
 
 
-def transcribe_audio(audio_bytes: bytes) -> tuple[str, str]:
+def transcribe_audio(audio_bytes: bytes, language: str = "vi") -> tuple[str, str]:
     try:
         api_key = _secret("groq_api_key")
         if not api_key:
@@ -85,7 +85,7 @@ def transcribe_audio(audio_bytes: bytes) -> tuple[str, str]:
             files={
                 "file": ("audio.wav", io.BytesIO(audio_bytes), "audio/wav"),
                 "model": (None, "whisper-large-v3"),
-                "language": (None, "vi"),
+                "language": (None, language),
                 "response_format": (None, "json"),
             },
             timeout=60,
@@ -284,49 +284,99 @@ if test_suite:
             st.warning(s["natural_wrapper"])
 
 # ── Header ────────────────────────────────────────────────────────────────────
-st.markdown("# 🎙️ MediVoice VN")
-st.markdown('<span class="badge-demo">DEMO — Thử nghiệm · v2.0</span>', unsafe_allow_html=True)
+_hcol1, _hcol2 = st.columns([5, 2])
+with _hcol1:
+    st.markdown("# 🎙️ MediVoice VN")
+with _hcol2:
+    st.markdown(
+        '<div style="text-align:right;padding-top:1.2rem;">'
+        '<span class="badge-demo">DEMO · Thử nghiệm · v2.0</span></div>',
+        unsafe_allow_html=True,
+    )
 st.markdown("""
 <div class="disclaimer">
-⚠️ AI tạo nháp — Bác sĩ chịu trách nhiệm hoàn toàn về nội dung bệnh án<br>
-🔒 DEMO: Vui lòng KHÔNG nhập tên/thông tin bệnh nhân thật
+⚠️ AI tạo nháp — Bác sĩ chịu trách nhiệm hoàn toàn về nội dung bệnh án &nbsp;|&nbsp;
+🔒 DEMO: KHÔNG nhập tên/thông tin bệnh nhân thật
 </div>
 """, unsafe_allow_html=True)
 
-# ── Thông tin Bác sĩ ─────────────────────────────────────────────────────────
-st.subheader("👨‍⚕️ Thông tin phiên khám")
-c1, c2 = st.columns(2)
-with c1:
+# ── BLOCK A: Thông tin Bác sĩ ────────────────────────────────────────────────
+st.markdown('<div class="section-label">👨‍⚕️ A. Thông tin Bác sĩ</div>', unsafe_allow_html=True)
+_a1, _a2, _a3, _a4 = st.columns([3, 3, 2, 2])
+with _a1:
     ten_bs = st.text_input("Tên Bác sĩ ★", placeholder="BS Nguyễn Văn An", key="ten_bs")
-with c2:
+with _a2:
     co_so = st.text_input("Cơ sở y tế ★", placeholder="Phòng khám ABC", key="co_so")
-
-c3, c4, c5 = st.columns(3)
-with c3:
+with _a3:
     cchn = st.text_input("Mã CCHN ★", placeholder="CCHN-012345", key="cchn")
-with c4:
-    SPECIALTIES = [
-        "Nội khoa tổng quát", "Tim mạch", "Hô hấp", "Tiêu hóa",
-        "Nội tiết – Đái tháo đường", "Tai mũi họng", "Da liễu",
-        "Cơ xương khớp", "Nhi", "Sản phụ khoa", "Ngoại",
-        "Chẩn đoán hình ảnh",
-    ]
-    chuyen_khoa = st.selectbox("Chuyên khoa", SPECIALTIES, key="chuyen_khoa")
-with c5:
+with _a4:
     ngay_kham_str = datetime.now().strftime("%d/%m/%Y")
     st.text_input("Ngày khám", value=ngay_kham_str, disabled=True)
 
-_pf1, _pf2, _pf3 = st.columns([3, 1, 1])
-with _pf1:
+# ── BLOCK B: Cài đặt phân tích giọng nói (DVP) ───────────────────────────────
+st.markdown('<div class="section-label">🎙️ B. Cài đặt phân tích giọng nói</div>', unsafe_allow_html=True)
+st.caption("Chọn đúng chuyên khoa + vùng miền → AI nhận diện thuốc & chẩn đoán chính xác hơn")
+
+SPECIALTIES = [
+    "Nội khoa tổng quát", "Tim mạch", "Hô hấp", "Tiêu hóa",
+    "Nội tiết – Đái tháo đường", "Tai mũi họng", "Da liễu",
+    "Cơ xương khớp", "Nhi", "Sản phụ khoa", "Ngoại",
+    "Chẩn đoán hình ảnh",
+]
+REGIONS = [
+    "🔄 Tự động (Auto-detect)",
+    "🏙️ Miền Nam — Sài Gòn (SG)",
+    "🌆 Miền Trung — Đà Nẵng / Huế (DN)",
+    "🏛️ Miền Bắc — Hà Nội (HN)",
+]
+LANGUAGES = [
+    "🇻🇳 Tiếng Việt (mặc định)",
+    "🇬🇧 English (foreign doctor / bilingual)",
+]
+
+_b1, _b2, _b3 = st.columns(3)
+with _b1:
+    chuyen_khoa = st.selectbox(
+        "Chuyên khoa ★",
+        SPECIALTIES,
+        key="chuyen_khoa",
+        help="AI dùng danh sách thuốc theo chuyên khoa để nhận diện chính xác hơn",
+    )
+with _b2:
+    vung_mien_sel = st.selectbox(
+        "Vùng miền / Giọng nói",
+        REGIONS,
+        index=0,
+        key="vung_mien",
+        help="Giúp AI hiểu từ địa phương: 'xỉu' (Nam) = xây xẩm, 'ốm' (Trung) = bệnh",
+    )
+    # Map display label → code for dialect_norm
+    _region_map = {"🔄": "auto", "🏙️": "SG", "🌆": "DN", "🏛️": "HN"}
+    vung_mien_code = _region_map.get(vung_mien_sel[:2], "auto")
+with _b3:
+    lang_sel = st.selectbox(
+        "Ngôn ngữ output",
+        LANGUAGES,
+        index=0,
+        key="output_language",
+        help="VI: mặc định cho BS Việt. EN: BS nước ngoài hoặc báo cáo CĐHA song ngữ",
+    )
+    lang_code = "en" if "English" in lang_sel else "vi"
+
+# ── BLOCK C: Bệnh nhân (pre-fill trước khi ghi âm) ───────────────────────────
+st.markdown('<div class="section-label">👤 C. Bệnh nhân (điền trước — dùng tên giả)</div>', unsafe_allow_html=True)
+st.caption("Điền tên giả để demo. AI cũng tự nghe từ giọng BS nếu BS đọc tên/tuổi trong lúc khám.")
+_c1, _c2, _c3 = st.columns([4, 1, 1])
+with _c1:
     ten_bn_demo = st.text_input(
-        "Tên bệnh nhân *(dùng tên giả cho demo)*",
+        "Tên BN demo ★",
         placeholder="Bệnh nhân A / Nguyễn Văn Demo...",
-        help="Không nhập tên thật trong bản demo",
+        help="KHÔNG nhập tên thật — đây là dữ liệu training",
         key="ten_bn_demo",
     )
-with _pf2:
-    tuoi_bn_demo = st.number_input("Tuổi BN", min_value=0, max_value=120, value=0, key="tuoi_bn_demo")
-with _pf3:
+with _c2:
+    tuoi_bn_demo = st.number_input("Tuổi", min_value=0, max_value=120, value=0, key="tuoi_bn_demo")
+with _c3:
     _gioi_pre_opts = ["Không rõ", "Nam", "Nữ"]
     gioi_bn_demo = st.selectbox("Giới tính", _gioi_pre_opts, key="gioi_bn_demo")
 
@@ -366,8 +416,10 @@ if audio_data is not None and not st.session_state.approved:
         # NEW audio — process it
         st.session_state._audio_hash = current_hash
 
-        with st.spinner("🔄 MediVoice AI đang nhận dạng giọng nói..."):
-            real_transcript, asr_error = transcribe_audio(audio_bytes)
+        _lang = st.session_state.get("output_language", "")
+        _lang_code = "en" if "English" in _lang else "vi"
+        with st.spinner(f"🔄 MediVoice AI đang nhận dạng giọng nói... [{'EN' if _lang_code=='en' else 'VI'}]"):
+            real_transcript, asr_error = transcribe_audio(audio_bytes, language=_lang_code)
 
         clinical_data: dict = {}
         ner_error = ""
@@ -394,6 +446,8 @@ if audio_data is not None and not st.session_state.approved:
             "audio": audio_bytes,
             "timestamp": datetime.now().isoformat(),
             "chuyen_khoa": chuyen_khoa,
+            "vung_mien": st.session_state.get("vung_mien", "auto"),
+            "lang_output": _lang_code,
             "ten_bn": ten_bn_demo or "Bệnh nhân Demo",
             "cchn": cchn or "DEMO",
             "confidence": 0.88 if clinical_data else 0.0,
@@ -663,6 +717,8 @@ if st.session_state.result:
                     "cchn": r["cchn"],
                     "ten_bn_demo": r["ten_bn"],
                     "chuyen_khoa": chuyen_khoa,
+                    "vung_mien": r.get("vung_mien", st.session_state.get("vung_mien", "auto")),
+                    "lang_output": r.get("lang_output", "vi"),
                     "audio_duration_sec": get_audio_duration(r.get("audio", b"")),
                     "device_browser": get_browser_info(),
                     "recording_type": "script" if "Script" in recording_type else "natural",
