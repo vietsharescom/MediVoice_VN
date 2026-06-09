@@ -1,6 +1,21 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.9.1] — 2026-06-09 — BENCH-002b Real Voice: WER 18.4% · Drug 55.6% · tools/bench_002b.py
+
+### BENCH-002b Real Voice Results [SES-20260609d]
+- feat(bench): `tools/bench_002b.py` — WER + CEER trên 57 real-voice clips BS (HN/DN/SG)
+  - Parse GT từ `data/eval/ref_voice_transcripts_review.txt` → merge vào JSON
+  - Run extract_entities() trên GT + ASR transcript → ceer_drugs/diag/vitals/followup
+  - Aggregate by region (HN/DN/SG) + overall
+- data: `data/eval/bench_002b_results.json` — full per-clip results
+- data: `data/eval/ref_voice_transcripts.json` — updated với GT transcripts (PA-009 done)
+- **Results**: WER=18.4% ALL (HN=29.3%⚠️ DN=16.3%✅ SG=16.3%✅)
+  - Drug Recall=55.6% lower bound (GT NER miss phonetic-spelled drugs)
+  - Drug Precision=83.3% (FP thấp ✅)
+  - Diag=71.4% · Vitals=69.3% · Followup=72.7%
+  - Bottleneck: drug phonetic spelling → TRAIN-001 required
+
 ## [v0.9.0] — 2026-06-09 — FID-VN-010 Complete: RAG-001+Hybrid+UI-SUGGEST-001+L4-PWA · 755 tests
 
 ### FID-VN-010 Phase 0 — RAG + Hybrid + UI + L4 PWA [SES-20260609c]

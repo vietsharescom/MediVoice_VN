@@ -4,512 +4,569 @@
     "file": "REF_HN_P1_Clip1.wav",
     "duration_s": 15.3,
     "transcript_asr": "tôi là bác sĩ bổ thích năm nay tôi đang làm việc tại phòng mật tư nhân từ láng hạp thành phố hàng nộiúc niềm vui được tham gia thể hiện lady gái nhằm hỗ trợ bác sĩ vì mệnh án và người giỏi nói.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "tôi là bác sĩ vũ thị thanh hà tôi đang làm việc tại phòng mạch tư nhân từ láng hạ thành phố hà nội tôi rất được vui tham gia thể hiện medivoice nhằm hỗ trợ bác sĩ điền bệnh án bằng giọng nói.",
+    "wer": 0.4091,
+    "notes": "",
+    "transcript_note": "Tôi là bác sĩ vũ thị thanh hà, tôi đang làm việc tại phòng mạch tư nhân đường Láng Hạ, thành phố Hà Nội. Tôi rất vui được tham gia thử nghiệm MediVoice nhằm hỗ trợ bác sĩ ghi bệnh án bằng giọng nói"
   },
   {
     "bs": "HN",
     "file": "REF_HN_P1_Clip2.wav",
     "duration_s": 26.2,
     "transcript_asr": "bệnh nhân ngô thị liên nữ bốn mươi lăm tuổi đến khám vì đau bụng dưới âm ỉm bị sốt nhẹ và buồn nôn trong hai ngày gần đây huyết áp của bệnh nhân là một trăm cơn mưa trên tám mươi mặt là bảy mươi lăm lần phút nhiệt độ ba mươi tám độ xê và bệnh nhân chưa sử dụng thuốc điều trị trước khi đến khám.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "bệnh nhân ngô thị liên nữ bốn mươi lăm tuổi đến khám vì đau bụng dưới âm ỉm bị sốt nhẹ và buồn nôn trong hai ngày gần đây huyết áp của bệnh nhân là một trăm hai mươi trên tám mươi mạch là bảy mươi lăm lần phút nhiệt độ ba mươi tám độ xê và bệnh nhân chưa sử dụng thuốc điều trị trước khi đến khám.",
+    "wer": 0.0435,
+    "notes": "",
+    "transcript_note": "Bệnh nhân NGÔ THỊ LIÊN, nữ, bốn mươi lăm tuổi.Đến khám vì đau bụng dưới âm ỉ, sốt nhẹ và buồn nôn trong hai ngày gần đây.Huyết áp một trăm hai mươi trên tám mươi.Mạch bảy mươi lăm lần một phút.Nhiệt độ ba mươi tám độ C.Bệnh nhân chưa sử dụng thuốc điều trị trước khi đến khám"
   },
   {
     "bs": "HN",
     "file": "REF_HN_P1_Clip3.wav",
     "duration_s": 35.9,
     "transcript_asr": "theo chẩn đoán và theo dõi nhiệm vụian uống hai lần mỗi ngày trong năm ngày karaoke tamon năm trăm lindy gan uống khi số trên ba mươi tám độ oresol pha theo hướng dẫn để mà bù nước lớn mà bệnh nhân suốt kéo dài qua quá can ngày hoặc đau bụng tăng lên thì cần quay mặt tái kháng gan.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "theo chẩn đoán và theo dõi nhiễm khuẩn đường tiêu hoá. Kê đơn là Ci pro flo vac cin năm trăm miligam uống hai lần mỗi ngày trong năm ngày năm trăm miligam uống khi số trên ba mươi tám độ oresol pha theo hướng dẫn để mà bù nước lớn mà bệnh nhân suốt kéo dài qua quá ba ngày hoặc đau bụng tăng lên thì cần quay lại tái kháng ngay.",
+    "wer": 0.3151,
+    "notes": "",
+    "transcript_note": "Chẩn đoán theo dõi nhiễm khuẩn đường tiêu hóa. Kê Ciprofloxacin năm trăm miligam, uống hai lần mỗi ngày trong năm ngày.Paracetamol năm trăm miligam uống khi sốt trên ba mươi tám độ.Oresol pha theo hướng dẫn để bù nước.Nếu sốt kéo dài quá ba ngày hoặc đau bụng tăng lên cần quay lại tái khám ngay"
   },
   {
     "bs": "HN",
     "file": "REF_HN_P2_Clip1.wav",
     "duration_s": 26.6,
     "transcript_asr": "tôi bác sĩ đỗ văn minh công tác tại phòng khám khoa phẫu thuật thành phố hồ chí minh sài gòn ấy hôm nay tôi rất vinh hạnh khi mà tham gia thử nghiệm dự án midi voice là phần mềm hỗ trợ dự án bình ảnh bằng giọng nói dự án này sẽ giúp đỡ chúng tôi rất là nhiều xin chào mừng.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Tôi là bác sĩ ĐỖ VĂN MINH, công tác tại phòng khám đa khoa quận Tân Phú, thành phố Hồ Chí Minh sài gòn đấy. Hôm nay tôi rất vinh hạnh tham gia thử nghiệm dự án Midi Voice là phần mềm hỗ trợ ghi án bệnh án bằng giọng nói.\"",
+    "wer": 0.4902,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "HN",
     "file": "REF_HN_P2_Clip2.wav",
     "duration_s": 34.4,
     "transcript_asr": "dân nguyễn văn an nam ba mươi chín tuổi vào khám vì đầu họng bà nghề này sốt người nhẹ lúc đầu không to cũng hỏng khó thở huyết áp thì một trăm hai mươi trên tám m một phút nhiệt độ ba mươi bảy phẩy tám độ x c trắng họng thì ghi nhận niêm mạc họng đỏ là nguyên đán sưng nhẹ.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Bệnh nhân NGUYỄN VĂN AN, nam, ba mươi chín tuổi.Vào khám vì đau họng ba ngày nay, sốt nhẹ, nuốt đau, không ho, cũng hổng khó thở. Huyết áp thì một trăm hai mươi trên tám mươi milimét thủy ngân.ờ Mạch tám mươi lần một phút.Nhiệt độ ba mươi bảy phẩy tám độ C.Khám họng ghi nhận niêm mạc họng đỏ, amidan sưng nhẹ.\"",
+    "wer": 0.3824,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "HN",
     "file": "REF_HN_P2_Clip3.wav",
     "duration_s": 27.4,
     "transcript_asr": "chẩn đoán viêm hoàn cấp cây thuốc là amosicilin năm trămmg uống một viên ngày ba lần trong năm ngày paracetamol năm trăm ml uống khiốt kiếm ba mươi tám độ nhớ xúc hận nước muối sinh lý ngày ba lần tái kháng sau năm ngày hoặc sớm hơn nếu sốt kéo dài.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Chẩn đoán viêm họng cấp.Kê A mô xi ci lin năm trăm miligam, uống một viên, ngày ba lần, trong năm ngày.Pa ra ce ta mol năm trăm miligam uống khi sốt trên ba mươi tám độ.nhớ Súc họng nước muối sinh lý ngày ba lần.Tái khám sau năm ngày hoặc sớm hơn nếu sốt cao kéo dài.",
+    "wer": 0.3548,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "HN",
     "file": "REF_HN_P3_Clip1.wav",
     "duration_s": 17.3,
     "transcript_asr": "bệnh nhân năm lăm tuổi lại mìn khồi vào khám vì đau ngực trái ngờ ngờ khi gắng sức khoảng một tuần nay sinh hiệu huyết cáp một trăm bốn mươi trên chín mười mặt chín mươi hai lần một phút nhiệt độ ba mươi sáu phẩy tám độ bệnh nhân tỉnh không có thở lúc nghỉ.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Bệnh nhân năm lăm tuổi, Lê Minh Khôi, vào khám vì đau ngực trái cơn khi gắng sức khoảng một tuần nay.Sinh hiệu: huyết áp một trăm bốn mươi trên chín mươi, mạch chín mươi hai lần một phút, nhiệt độ ba mươi sáu phẩy tám độ.Bệnh nhân tỉnh, không khó thở lúc nghỉ.\"",
+    "wer": 0.1607,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "HN",
     "file": "REF_HN_P3_Clip2.wav",
     "duration_s": 8.0,
     "transcript_asr": "chứng rắn đau thấp ngủ ổn định nghi bệnh mạch van kẻ aspirin một trămmg mỗi ngày một viên.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Chẩn đoán đau thắt ngực ổn định, nghi bệnh mạch vành.Kê Aspirin một trăm miligam mỗi ngày một viên.",
+    "wer": 0.4,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "HN",
     "file": "REF_HN_P3_Clip3.wav",
     "duration_s": 13.4,
     "transcript_asr": "cho làm điểm tâm độ xét nghiệm men tim và siêu âm tim nếu bất thường thì chuyển chụp mạch vành khuyến cáo ngưng hút thuốc và giảm vận động gắng sức tái khám sáu bảy ngày.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Cho làm điện tâm đồ, xét nghiệm men tim và siêu âm tim.Nếu bất thường thì chuyển chụp mạch vành.Khuyến cáo ngưng hút thuốc và giảm vận động gắng sức.Tái khám sau bảy ngày.\"",
+    "wer": 0.0811,
+    "notes": "",
+    "transcript_note": "──────────────────────────────────────────────────────────────────────\nBS: DN\n──────────────────────────────────────────────────────────────────────"
   },
   {
     "bs": "DN",
     "file": "REF_DN_P1_Clip1.wav",
     "duration_s": 28.0,
     "transcript_asr": "tôi bác sĩ trần văn mai công tác tại phòng khám nhi khoa vùng hải châu thành phố đà nẵng tối tham gia chương trình kinh nghiệm mini voice để đánh giá tài năng ghi nhận thông tintin khám bằng giọng nói tôi rất hào hứng vì chương trình này rất mong chương trình đi vào hoạt động tốt để chúng tôi có thể áp dụng được vào cho dịch vụ y tế ở cơ sở sản xuất bệnh của tôi.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Tôi là bác sĩ TRẦN văn MAI, công tác tại phòng khám nhi khoa quận Hải Châu, thành phố Đà Nẵng.Tôi tham gia chương trình thử nghiệm Meni Voice để đánh giá khả năng ghi nhận thông tin khám bệnh bằng giọng nói.tôi rất hào hứng CÁI chương trình này rất mong chương trình đi vào hoạt động tốt để chúng tôi có thể áp dụng được vào cho dịch vụ y tế ở cơ sở sản xuất bệnh của tôi.",
+    "wer": 0.1084,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P1_Clip2.wav",
     "duration_s": 25.3,
     "transcript_asr": "đề nghi lý minh khang nam bảy tuổi được giáo dục đình đưa đến khám vì ho sâu mùi và sốt từ hai ngày nay trẻ ăn uống kém hơn bình thường nhưng vẫn tỉnh táo ở nhiệt độ ba mươi tám phẩy năm độ c mặt chín mươi lần một phút hội thông thi tố chưa ghi nhận dấu hiệu suy hô hấp.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "\"Bệnh nhi LÊ MINH KHANG, nam, bảy tuổi.Được gia đình đưa đến khám vì ho, sổ mũi và sốt từ hai ngày nay.Trẻ ăn uống kém hơn bình thường nhưng vẫn tỉnh táo.Nhiệt độ ba mươi tám phẩy năm độ C.Mạch chín mươi lần một phút.Phổi thông khí tốt, chưa ghi nhận dấu hiệu suy hô hấp.\"",
+    "wer": 0.1935,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P1_Clip3.wav",
     "duration_s": 20.8,
     "transcript_asr": "chẩn đoạn nhiễm siêu vi đường hô hấp trên chế parasyte môn hay trăm năm mươimmigram ký số trên ba mươi tám phẩy năm độ nước muối sinh lý nhỏ mỗi ngày bốn lần bà khuyên thích uống nhiều nước và nghỉ ngơi giải khám nếu sốt kéo dài chín bao ngày hoặc xuất hiện khó thở.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Chẩn đoán nhiễm siêu vi đường hô hấp trên.Kê Paracetamol hai trăm năm mươi miligam khi sốt trên ba mươi tám phẩy năm độ.Nước muối sinh lý nhỏ mũi ngày bốn lần.Khuyến khích uống nhiều nước và nghỉ ngơi.Tái khám nếu sốt kéo dài trên ba ngày hoặc xuất hiện khó thở.",
+    "wer": 0.2857,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P2_Clip1.wav",
     "duration_s": 22.5,
     "transcript_asr": "bệnh nhân nam năm mươi lăm tuổi lê minh khôi vào khám vì đau ngực trái tình cơn gây găng sức khoảng một tuần nay sinh hiệu huyết áp một trăm bốn mươi trên chín mươi mạch chín mươi hai lần phút nhiệt độ độ bệnh nhân tỉnh do niêm hồng không khó thở lúc nghỉ.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Bệnh nhân nam năm mươi lăm tuổi, Lê Minh Khôi, vào khám vì đau ngực trái từng cơn khi gắng sức khoảng một tuần nay.Sinh hiệu: huyết áp một trăm bốn mươi trên chín mươi, mạch chín mươi hai lần mỗi phút, nhiệt độ ba mươi sáu độ TÁM.Bệnh nhân tỉnh, DO NIÊM HỌNG KHÔNG khó thở lúc nghỉ.\"",
+    "wer": 0.1475,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P2_Clip2.wav",
     "duration_s": 10.3,
     "transcript_asr": "đấm đoán đau thắt ngực ổn định nghi bệnh mạch vành kiev aspirin 100mg ngày một viên.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Chẩn đoán đau thắt ngực ổn định, nghi bệnh mạch vành.Kê Aspirin một trăm miligam ngày một viên.",
+    "wer": 0.2632,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P2_Clip3.wav",
     "duration_s": 13.2,
     "transcript_asr": "cho làm điện thâm đồ xét nghiệm mang tim và siêu âm tim nếu bất thường thì chuyển chụp mạch vành khuyến cáo ngưng hút thuốc giảm vận động khi gắng sức tái khám sau bảy ngày.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Cho làm điện tâm đồ, xét nghiệm men tim và siêu âm tim.Nếu bất thường thì chuyển chụp mạch vành.Khuyến cáo ngưng hút thuốc giảm vận động gắng sức.Tái khám sau bảy ngày.\"",
+    "wer": 0.0833,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P3_Clip1.wav",
     "duration_s": 20.5,
     "transcript_asr": "bệnh nhân nam sáu mươi tuổi nguyễn văn phúc vào khám vì tiểu khó tiểu đêm nhiều lần trong hai tháng gần đây sinh hiệu huyết áp một trăm ba mươi lăm trên tám mươi lăm mạch bảy mươi tám lần phút nhiệt độ ba mươi sáu độ tám nạn nhân tỉnh táo không đông không đông cấp.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Bệnh nhân nam sáu mươi tuổi, Nguyễn Văn Phúc, vào khám vì tiểu khó, tiểu đêm nhiều lần trong hai tháng gần đây.Sinh hiệu: huyết áp một trăm ba mươi lăm trên tám mươi lăm, mạch bảy mươi tám lần phút, nhiệt độ ba mươi sáu độ tám.Bệnh nhân tỉnh táo, không đau KHÔNG ĐÂU cấp.\"",
+    "wer": 0.0517,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P3_Clip2.wav",
     "duration_s": 17.0,
     "transcript_asr": "chẩn đoán phì đại tuyến tiền liệt lành tính thuốc kê đơn tam su lô xin không phẩy bốn mi li gam uống một lần mỗi ngày sau ăn tối khuyến cáo uống ít nước buổi tối theo dõi triệu chứng tiểu khói.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Chẩn đoán phì đại tuyến tiền liệt lành tính.THUỐC Kê ĐƠN Tam su lÔ Xin 0 phẩy 4 miligam, uống một lần mỗi ngày sau ăn tối.Khuyến cáo uống ít nước buổi tối.Theo dõi triệu chứng tiểu khó.\"",
+    "wer": 0.1463,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P3_Clip3.wav",
     "duration_s": 14.4,
     "transcript_asr": "cho làm siêu âm tiếng tiền liệt xét nghiệm pxr nếu pxr tăng thì cần sinh thiết để loại trừ ca ung thư tái khám sau mười ngày nếu sớm hơn nếu bị trĩu.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Cho làm siêu âm tuyến tiền liệt và xét nghiệm P S A.Nếu P S A tăng thì cần sinh thiết loại trừ CA ung thư.Tái khám sau mười ngày hoặc sớm hơn nếu bí tiểu.\"",
+    "wer": 0.3158,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P4_Clip1.wav",
     "duration_s": 23.0,
     "transcript_asr": "nam hai mươi tuổi tên đỗ văn my vào khám vì sốt và ho khan kéo dài hai ngày sinh hiệu nhiệt độ ba mươi tám phẩy hai độ huyết áp một trăm mười trên bảy mươi mạch chín mươi lần mỗi phút nhịp thở hai mươi lần mỗi phút bệnh nhân không khó thở còn tỉnh táo.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Bệnh nhân nam hai mươi tuổi, tên Đỗ Văn My, vào khám vì sốt và ho khan kéo dài hai ngày.Sinh hiệu: nhiệt độ ba mươi tám phẩy hai độ, huyết áp một trăm mười trên bảy mươi, mạch chín mươi lần mỗi phút, nhịp thở hai mươi lần mỗi phút.Bệnh nhân không khó thở, còn tỉnh táo.",
+    "wer": 0.0333,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P4_Clip2.wav",
     "duration_s": 16.2,
     "transcript_asr": "chẩn đoán nhiễm siêu vi đường hô hấp trên kê đơn paracetamol uống khi sốt trên ba mươi tám độ cách nhau ít nhất bốn giờ vitamin c một gam mỗi ngày súc họng nước muối sinh lý ba lần mỗi ngày.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Chẩn đoán nhiễm siêu vi đường hô hấp trên.Kê đơn Paracetamol năm trăm miligam, uống khi sốt trên ba mươi tám độ, cách nhau ít nhất bốn giờ.Vitamin C một gam mỗi ngày.Súc họng nước muối sinh lý ba lần mỗi ngày.",
+    "wer": 0.0667,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P4_Clip3.wav",
     "duration_s": 12.6,
     "transcript_asr": "theo dõi triệu chứng trong ba ngày nếu sốt cao liên tục hoặc khó thở thì đến bệnh viện ngay khuyến cáo nghỉ ngơi uống nhiều nước và ăn nhẹ dễ tiêu tái khám sau năm ngày nếu không cải thiện.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Theo dõi triệu chứng trong ba ngày.Nếu sốt cao liên tục hoặc khó thở thì đến bệnh viện ngay.Khuyến cáo nghỉ ngơi, uống nhiều nước và ăn nhẹ dễ tiêu.Tái khám sau năm ngày nếu không cải thiện.",
+    "wer": 0.0,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P5_Clip1.wav",
     "duration_s": 18.0,
     "transcript_asr": "nhân nữ lê thị yến năm mươi tuổi vào khám vì đau đầu kéo dài chóng mặt và mất ngủ nhiều tuần sinh hiệu huyết áp một trăm hai mươi trên tám mươi mạch bảy mươi hai lần phút nhiệt bay bảy độ bệnh nhân tĩnh không yếu liệt.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Bệnh nhân nữ Lê Thị Yến năm mươi tuổi, vào khám vì đau đầu kéo dài, chóng mặt và mất ngủ nhiều tuần.Sinh hiệu: huyết áp một trăm hai mươi trên tám mươi, mạch bảy mươi sáu lần phút, nhiệt độ ba mươi bảy độ.Bệnh nhân tỉnh, không yếu liệt.\"",
+    "wer": 0.1154,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P5_Clip2.wav",
     "duration_s": 15.6,
     "transcript_asr": "chẩn đoán đau đầu căng thẳng thuốc paracetamol 500mg khi đau đầu manasum 200mg mỗi ngày khuyến cáo giảm stress và ngủ đủ giấc.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Chẩn đoán đau đầu căng thẳng.THUỐC Paracetamol năm trăm miligam khi đau đầu.Ma NHÊ SI UM hai trăm miligam mỗi ngày.Khuyến cáo giảm stress và ngủ đủ giấc.\"",
+    "wer": 0.3226,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P5_Clip3.wav",
     "duration_s": 12.4,
     "transcript_asr": "chụp mây táo nếu triệu chứng kéo dài hoặc nặng hơn theo dõi huyết áp tại nhà tái khám sau hai tuần hoặc sớm hơn nếu đau tăng hoặc có dấu hiệu thần kinh khu trú.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "\"chụp MRI não nếu triệu chứng kéo dài hoặc nặng hơn.Theo dõi huyết áp tại nhà.Tái khám sau hai tuần hoặc sớm hơn nếu đau tăng hoặc có dấu hiệu thần kinh khu trú.\"",
+    "wer": 0.0556,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P6_Clip1.wav",
     "duration_s": 17.5,
     "transcript_asr": "bệnh nhân nữ bốn mươi hai tuổi trần thị hạnh vào khám vì khát nước nhiều tiểu nhiều và mệt mỏi kể cả một tháng sinh hiệu huyết áp một trăm ba mươi trên tám mươi lăm mặt tám mươi lần phút nhiệt độ bảy bảy độ bệnh nhân tỉnh táo.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Bệnh nhân nữ bốn mươi hai tuổi, Trần Thị Hạnh, vào khám vì khát nước nhiều, tiểu nhiều và mệt mỏi kéo dài một tháng.Sinh hiệu: huyết áp một trăm ba mươi trên tám mươi lăm, mạch tám mươi lần mỗi phút, nhiệt độ ba mươi bảy độ.Bệnh nhân tỉnh táo.\"",
+    "wer": 0.1132,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P6_Clip2.wav",
     "duration_s": 11.1,
     "transcript_asr": "chẩn đoán đái tháo đường tuýp hai mới phát hiện kê mek fốc binh năm trămmily gam uống hai lần mỗi ngày sau ăn khuyến cáo chế độ ăn giảm đường là thanh bầu.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Chẩn đoán đái tháo đường tUÝP hai mới phát hiện.Kê MÉt PHỐT min năm trăm miligam, uống hai lần mỗi ngày sau ăn.Khuyến cáo chế độ ăn giảm đường và tinh bột.",
+    "wer": 0.2353,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P6_Clip3.wav",
     "duration_s": 14.3,
     "transcript_asr": "từng huyết lúc đói hp a1c và chức năng thận nếu hp a1c trên bảy mươi lăm thì cân nhắc tăng liều thuốc tập thể dục ít nhất phút mỗi ngày tái càng sau hai tuần.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "đường huyết lúc đói, H B A 1 c và chức năng thận. Nếu H b A 1 c trên bảy phần trăm thì cân nhắc tăng liều thuốc.Tập thể dục ít nhất ba mươi phút mỗi ngày. Tái khám sau hai tuần.\"",
+    "wer": 0.3636,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P7_Clip1.wav",
     "duration_s": 18.9,
     "transcript_asr": "bệnh nhân nữ ba mươi lăm tuổi nguyễn thủy vào khám vì đau tức ngực nhẹ và mệt mỏi kéo dài một tuần sinh hồi thệu áp một trăm hai mươi lăm trên tám mươi mạch bảy mươi hai tầng phút nhiệt độ baệt độ ba bảy độ bệnh nhân tỉnh tiếp xúc tốt không khó thở.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Bệnh nhân nữ ba mươi lăm tuổi, Nguyễn Thuỷ, vào khám vì đau tức ngực nhẹ và mệt mỏi kéo dài một tuần.Sinh hiệu: huyết áp một trăm hai mươi lăm trên tám mươi, mạch bảy mươi sáu lần mỗi phút, nhiệt độ ba mươi bảy độ.Bệnh nhân tỉnh, tiếp xúc tốt không khó thở cấp.\"",
+    "wer": 0.1724,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P7_Clip2.wav",
     "duration_s": 17.6,
     "transcript_asr": "chẩn đoán rối loạn lo âu kèm đau ngực không đặc hiệu kê đơn diaz palm haimilygames uống buổi tối khi cần omega green hai mươimg uống trước ăn sáng khuyến cáo hạn chế cafein và stress.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Chẩn đoán rối loạn lo âu kèm đau ngực không đặc hiệu.Kê đơn Di a ze pam hai miligam, uống buổi tối khi cần.Ô mÊ pÊ ra ZÔN hai mươi miligam, uống trước ăn sáng.Khuyến cáo hạn chế cÀ PHÊ IN và stress.\"",
+    "wer": 0.3478,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P7_Clip3.wav",
     "duration_s": 13.8,
     "transcript_asr": "điện tâm đồ siêu âm tim để loại trừ nguyên nhân tim mạch nếu kết quả bình thường thì tiếp tục theo dõi ngoại trú tái khám sau ngày hoặc sớm hơn nếu đau ngực tăng hoặc khó thở.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "điện tâm đồ và siêu âm tim để loại trừ nguyên nhân tim mạch.Nếu kết quả bình thường thì tiếp tục theo dõi ngoại trú.Tái khám sau mười ngày hoặc sớm hơn nếu đau ngực tăng hoặc khó thở.\"",
+    "wer": 0.0488,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P8_Clip1.wav",
     "duration_s": 23.6,
     "transcript_asr": "bệnh nhân nữ tên trần thanh liên bốn mươi bảy tuổi vào khám vì đau đầu chóng mặt trong ba ngày nay sinh hiệu huyết áp một trăm ba mươi trên tám mươi mạch tám mươi hai nhiệt độ ba mươi bảy độ nhịp thở mười lăm lần phút bệnh nhân tỉnh táo tiếp xúc tốt.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "\"Bệnh nhân nữ tên Trần Thanh Liên bốn mươi bảy tuổi, vào khám vì đau đầu và chóng mặt trong ba ngày nay.Sinh hiệu ghi nhận: huyết áp một trăm ba mươi trên tám mươi, mạch tám mươi hai, nhiệt độ ba mươi bảy phẩy độ, nhịp thở mười tám lần phút.Bệnh nhân tỉnh táo, tiếp xúc tốt.\"",
+    "wer": 0.0833,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P8_Clip2.wav",
     "duration_s": 23.2,
     "transcript_asr": "chẩn đoán tăng huyết áp độ một kèm đau đầu kê đơn ong lau đi pin nămmilygram uống một lần mỗi ngày vào buổi sáng paracetamol mm uống khi đau đầu hoặc khi sốt trên độ cách nhau đến giờ theo dõi huyết áp tại nhà hàng ngày.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "\"Chẩn đoán tăng huyết áp độ một kèm đau đầu.Kê đơn Am lo di pine năm miligam, uống một lần mỗi ngày vào buổi sáng.Paracetamol năm trăm miligam, uống khi đau đầu hoặc sốt trên ba mươi tám độ, cách nhau đén bốn đến sáu giờ.Theo dõi huyết áp tại nhà hằng ngày.\"",
+    "wer": 0.3036,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "DN",
     "file": "REF_DN_P8_Clip3.wav",
     "duration_s": 22.1,
     "transcript_asr": "xét nghiệm công thức máu chức năng thận điện giải đồ nếu huyết áp trên tầm bốn mươi trên chín mươi kéo dài thì cần điều chỉnh thuốc khuyến cáo giảm muối trong ăn uống và vận động nhẹ tái khám sau bảy ngày hoặc sớm hơn nếu đau đầu.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "xét nghiệm công thức máu, chức năng thận và điện giải đồ.Nếu huyết áp trên một trăm bốn mươi trên chín mươi kéo dài thì cần điều chỉnh thuốc.Khuyến cáo giảm muối trong ăn uống và vận động nhẹ.Tái khám sau bảy ngày hoặc sớm hơn nếu đau đầu.\"",
+    "wer": 0.0577,
+    "notes": "",
+    "transcript_note": "──────────────────────────────────────────────────────────────────────\nBS: SG\n──────────────────────────────────────────────────────────────────────"
   },
   {
     "bs": "SG",
     "file": "REF_SG_P1_Clip1.wav",
     "duration_s": 23.5,
     "transcript_asr": "ông nam sáu mươi hai tuổi trần văn bình vào cấp cứu vì khó thở tăng dần trong hai ngày nay sinh hiệu huyết áp một trăm mười trên bảy mươi mạch một trăm mười lần mỗi phút nhiệt độ độ nhịp thở mỗi phút bệnh nhân thở gấp có sử dụng cơ hô hấp phụ.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "\"Bệnh nhân nam sáu mươi hai tuổi, Trần Văn Bình, vào cấp cứu vì khó thở tăng dần trong hai ngày nay.Sinh hiệu: huyết áp một trăm mười trên bảy mươi, mạch một trăm mười lần mỗi phút, nhiệt độ ba mươi tám độ, nhịp thở hai mươi sáu lần mỗi phút.Bệnh nhân thở gấp, có sử dụng cơ hô hấp phụ.\"",
+    "wer": 0.1406,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P1_Clip2.wav",
     "duration_s": 14.7,
     "transcript_asr": "chẩn đoán suy hô hấp cấp gây do viêm phổi nặng cho thở ô xy qua mác sáu lít mỗi phút khởi động kháng sinh serbia jay một ga mỗi ngày theo dõi sbo hai liên tục.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Chẩn đoán suy hô hấp cấp nghi do viêm phổi nặng.Cho thở oxy qua mask sáu lít mỗi phút.Khởi động kháng sinh Cef tri a zone một gam mỗi ngày.Theo dõi SpO2 liên tục.\"",
+    "wer": 0.2973,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P1_Clip3.wav",
     "duration_s": 15.9,
     "transcript_asr": "cho chụp x quang phổi và xét nghiệm khí máu động mạch nếu sp o2 dưới chín mươi thì cân nhắc thở máy không xâm lấn theo dõi sát dấu hiệu suy hô hấp hội chứng hồi sức nếu diễn tiến nặng.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Cho chụp X-quang phổi và xét nghiệm khí máu động mạch.Nếu Sp O2 dưới chín mươi thì cân nhắc thở máy không xâm lấn.Theo dõi sát dấu hiệu suy hô hấp.Hội chẩn hồi sức nếu diễn tiến nặng.\"",
+    "wer": 0.0238,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P2_Clip1.wav",
     "duration_s": 22.3,
     "transcript_asr": "bệnh nhân nam mười tám tuổi phạm minh tuấn vào khám vì đau tay trái và nghe kém ba ngày nay sau khi bị cảm lạnh sinh hiệu huyết áp một trăm người trên bảy mươi mạch tám m táo không chống mặt.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Bệnh nhân nam mười tám tuổi, Phạm Minh Tuấn, vào khám vì đau tai trái và nghe kém ba ngày nay sau khi bị cảm lạnh.Sinh hiệu: huyết áp một trăm mười trên bảy mươi, mạch tám mươi hai lần mỗi phút, nhiệt độ ba mươi bảy phẩy tám độ.Bệnh nhân tỉnh táo, không chóng mặt.\"",
+    "wer": 0.3276,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P2_Clip2.wav",
     "duration_s": 12.7,
     "transcript_asr": "chẩn đoán viêm tai giữa cấp camosilin uống ba lần một ngày trong bẩy ngày paris saint laure năm trămmg khi đau tai hoặc sốt.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "\"Chẩn đoán viêm tai giữa cấp.Kê A mốc xi lin năm trăm miligam, uống ba lần một ngày trong bảy ngày.Pa ra xê ta môn năm trăm miligam khi đau tai hoặc sốt.\"",
+    "wer": 0.4571,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P2_Clip3.wav",
     "duration_s": 11.2,
     "transcript_asr": "theo dõi giảm đau và giảm sốt trong ba ngày nếu đau tăng hoặc chảy dịch tai thì tái khám ngay khuyến cáo tránh nước vào tai hẹn tái khám sau năm ngày.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "\"Theo dõi giảm đau và giảm sốt trong ba ngày.Nếu đau tăng hoặc chảy dịch tai thì tái khám ngay.Khuyến cáo tránh nước vào tai.Hẹn tái khám sau năm ngày.\"",
+    "wer": 0.0,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P3_Clip1.wav",
     "duration_s": 18.6,
     "transcript_asr": "nông nhân nữ bốn mươi tuổi đặng thị hồng vào khám thịt khàn tuyến kéo dài hơn hai tuần và đau họng nhẹ sinh hiệu huyết áp 120 trên 80 mạch 1976 lần mỗi phút nhiệt độ độ bệnh nhân không khó thở.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Bệnh nhân nữ bốn mươi tuổi, Đặng Thị Hồng, vào khám vì khàn tiếng kéo dài hơn hai tuần và đau họng nhẹ.Sinh hiệu: huyết áp một trăm hai mươi trên tám mươi, mạch bảy mươi sáu lần mỗi phút, nhiệt độ ba mươi bảy độ.Bệnh nhân không khó thở.\"",
+    "wer": 0.2885,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P3_Clip2.wav",
     "duration_s": 17.6,
     "transcript_asr": "chẩn đoán viêm thanh quản mạn tính kê thuốc kháng viêm brad ni sô lô uống ngắn hạn ba ngày thuốc giảm đau paracetamol 500mg khi cần khuyến cáo hạn chế nói nhiều và tránh khói bụi.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "\"Chẩn đoán viêm thanh quản mạn tính.Kê thuốc kháng viêm brết ni sô lôn năm miligam, uống ngắn hạn ba ngày.Thuốc giảm đau Pa ra xê ta môn năm trăm miligam khi cần.Khuyến cáo hạn chế nói nhiều và tránh khói bụi.\"",
+    "wer": 0.2667,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P3_Clip3.wav",
     "duration_s": 12.5,
     "transcript_asr": "soi thanh quản nếu để đánh giá dây thanh nếu không cải thiện thì cần sinh thiết loại trừ tổn thương ác tính theo dõi dòng nói và triệu chứng khàn tiến tái khám sau mười ngày.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "\"soi thanh quản để đánh giá dây thanh.Nếu không cải thiện thì cần sinh thiết loại trừ tổn thương ác tính.Theo dõi giọng nói và triệu chứng khàn tiếng.Tái khám sau mười ngày.\"",
+    "wer": 0.0833,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P4_Clip1.wav",
     "duration_s": 20.2,
     "transcript_asr": "bệnh nhân nữ năm mươi hai tuổi nguyễn thị hà vào khám vì sụt gân mệt mỏi và đau bụng vùng thượng vị kéo dài sinh hiệu huyết áp một trăm hai mươi lăm trên tám mươi mặt tám mươi hai lần mỗi phút nhiệt độ ba mươi bảy độ bệnh nhân gầy thể trạng giảm.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Bệnh nhân nữ năm mươi hai tuổi, Nguyễn Thị Hà, vào khám vì sụt cân, mệt mỏi và đau bụng vùng thượng vị kéo dài.Sinh hiệu: huyết áp một trăm hai mươi lăm trên tám mươi, mạch tám mươi hai lần mỗi phút, nhiệt độ ba mươi bảy độ.Bệnh nhân gầy, thể trạng giảm.\"",
+    "wer": 0.0357,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P4_Clip2.wav",
     "duration_s": 15.2,
     "transcript_asr": "chẩn đoán nghi ung thư dạ dày cho là nội soi dạ dày sinh thiết xét nghiệm dấu ấn ung thư c e a và c a mười chín chín khuyến cáo nhập viện để đánh giá giai đoạn bệnh.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Chẩn đoán nghi ung thư dạ dày.Cho làm nội soi dạ dày sinh thiết.Xét nghiệm dấu ấn ung thư C E A và C A 19-9.Khuyến cáo nhập viện để đánh giá giai đoạn bệnh.\"",
+    "wer": 0.1026,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P4_Clip3.wav",
     "duration_s": 16.8,
     "transcript_asr": "chụp city ổ bụng có cảnh quan để đánh giá gì cần nếu xác định ung thư thì hội chứng đa chuyên khoa tư vấn điều trị hoá trị hoặc phẫu thuật tùy giai đoạn tái khám ngay sau khi có kết quả sinh thiết.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Chụp ci ty ổ bụng có cản quang để đánh giá di căn.Nếu xác định ung thư thì hội chứng đa chuyên khoa.Tư vấn điều trị hóa trị hoặc phẫu thuật tùy giai đoạn.Tái khám ngay sau khi có kết quả sinh thiết.\"",
+    "wer": 0.1522,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P5_Clip1.wav",
     "duration_s": 19.3,
     "transcript_asr": "nam hai mươi lăm tuổi nguyễn văn hòa vào khám vì nổi mẩn đỏ ngứa toàn thân sau khi ăn hải sản hai ngày trước sinh hiệu huyết áp một trăm mười trên bẩy mươi mạch tám mươi lần mỗi phút nhiệt độ ba mươi bảy độ không khó thở không phù môi.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "nam hai mươi lăm tuổi, Nguyễn Văn Hòa, vào khám vì nổi mẩn đỏ ngứa toàn thân sau khi ăn hải sản hai ngày trước.Sinh hiệu: huyết áp một trăm mười trên bảy mươi, mạch tám mươi tám mươi lần mỗi phút, nhiệt độ ba mươi bảy độ.Không khó thở, không phù môi.\"",
+    "wer": 0.0545,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P5_Clip2.wav",
     "duration_s": 14.2,
     "transcript_asr": "sáng mè đai cốc do dị ứng kê lông nata din mườimilyg am mỗi ngày một viên bradley solo nămmilyg am trong ba ngày nếu ngứa nhiều tránh thức ăn nghiện gây dị ứng.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "đoán mề đay cấp do dị ứng.Kê Lô ra ta dine mười miligam mỗi ngày một viên.Pret ni sô lôn năm miligam trong ba ngày nếu ngứa nhiều.Tránh thức ăn nghi gây dị ứng.\"",
+    "wer": 0.4595,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P5_Clip3.wav",
     "duration_s": 13.4,
     "transcript_asr": "theo dõi dấu hiệu phù môi hoặc khó thở nếu xuất hiện thì đến cấp cứu ngay khuyến cáo tránh hải sản và thức ăn lạ trong thời gian tới tái khám nếu tổn thương da không giảm sau ba ngày.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Theo dõi dấu hiệu phù môi hoặc khó thở. Nếu xuất hiện thì đến cấp cứu ngay.Khuyến cáo tránh hải sản và thức ăn lạ trong thời gian tới.Tái khám nếu tổn thương da không giảm sau ba ngày.\"",
+    "wer": 0.0,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P6_Clip1.wav",
     "duration_s": 18.1,
     "transcript_asr": "nhân nữ ba mươi ba tuổi lý thị mai vào khám vì rụng tóc nhiều và do đầu ngứa kéo dài một tháng sinh hiệu huyết áp một trăm mười lăm trên bảy mươi lăm mạch bảy mươi tám lần mỗi phút nhiệt độ ba mươi bảy độ bệnh nhân tỉnh táo.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Bệnh nhân nữ ba mươi ba tuổi, Lý Thị Mai, vào khám vì rụng tóc nhiều và da đầu ngứa kéo dài một tháng.Sinh hiệu: huyết áp một trăm mười lăm trên bảy mươi lăm, mạch bảy mươi tám lần mỗi phút, nhiệt độ ba mươi bảy độ.Bệnh nhân tỉnh táo.\"",
+    "wer": 0.0377,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P6_Clip2.wav",
     "duration_s": 14.3,
     "transcript_asr": "chẩn đoán viêm da tiết bã da đầu kê kê tô cô ra giôn dầu gội dùng hai đến ba lần mỗi tuần vitamin b uống mỗi ngày hạn chế rải da đầu.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "\"Chẩn đoán viêm da tiết bã da đầu.Kê kê tô cô ra giôn dầu gội, dùng hai đến ba lần mỗi tuần.Vitamin B complex uống mỗi ngày.Hạn chế gãi da đầu.\"",
+    "wer": 0.0588,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P6_Clip3.wav",
     "duration_s": 11.1,
     "transcript_asr": "bởi giảm ngứa và giảm bông vảy sau hai tuần nếu không cải thiện thì cân nhắc xin thiết gia khuyến cáo giữ vệ sinh da đầu sạch tái khám sau mười bốn ngày.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "\"Theo dõi giảm ngứa và giảm bong vảy sau hai tuần.Nếu không cải thiện thì cân nhắc sinh thiết da.Khuyến cáo giữ vệ sinh da đầu sạch.Tái khám sau mười bốn ngày.\"",
+    "wer": 0.1429,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P7_Clip1.wav",
     "duration_s": 17.0,
     "transcript_asr": "nhiều nhân nữ sáu tuổi phạm bảo ngọc được đưa đến khám vì sốt cao và ho có đờm hai ngày nay nhiệt độ ba mươi chín độ mạnh lần mũi phút nhịp thở lần mũi phút trẻ mệt ăn uống kém nhưng còn tỉnh táo.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "\"Bệnh nhi nữ sáu tuổi, Phạm Bảo Ngọc, được đưa đến khám vì sốt cao và ho có đờm hai ngày nay.Nhiệt độ ba mươi chín độ, mạch một trăm mười lần mỗi phút, nhịp thở hai mươi bốn lần mỗi phút.Trẻ mệt, ăn uống kém nhưng còn tỉnh táo.\"",
+    "wer": 0.2115,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P7_Clip2.wav",
     "duration_s": 20.0,
     "transcript_asr": "đoán viêm phổi cộng đồng mức độ nhẹ kê amosilin liều 40mg x kg mỗi ngày chia ba lần trong bẩy ngày paracetamol kg khi sốt trên độ rưỡi khi dùng nước muối sinh lý mỗi ngày hai lần theo hạn chế.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "\"Chẩn đoán viêm phổi cộng đồng mức độ nhẹ.Kê Amo xi lin liều bốn mươi miligam trên kilogram mỗi ngày, chia ba lần trong bảy ngày.Pa ra ce ta mol hai trăm năm mươi miligam khi sốt trên ba mươi tám phẩy năm độ.Khí dung nước muối sinh lý mỗi ngày hai lần.\"",
+    "wer": 0.5536,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P7_Clip3.wav",
     "duration_s": 14.6,
     "transcript_asr": "theo dõi nhịp thở và dấu hiệu khó thở nếu thở tăng nhanh và rút lõm lồng ngực thì nhập viện ngay khuyến cáo uống nhiều nước và nghỉ ngơi tái khám sau ba ngày.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "\"Theo dõi nhịp thở và dấu hiệu khó thở.Nếu thở tăng nhanh và rút lõm lồng ngực thì nhập viện ngay.Khuyến cáo uống nhiều nước và nghỉ ngơi.Tái khám sau ba ngày.\"",
+    "wer": 0.0,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P8_Clip1.wav",
     "duration_s": 20.9,
     "transcript_asr": "bệnh nhân nữ hai mươi tám tuổi nguyễn thị hoa vào khám vì trễ kinh hai tháng kèm buồn nôn và mệt mỏi sinh hiệu huyết áp một trăm mười trên bảy mươi mạch tám mươi hai lần mỗi phút nhiệt độ ba mươi bảy độ bệnh nhân tỉnh táo nghi ngờ có thai.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Bệnh nhân nữ hai mươi tám tuổi, Nguyễn Thị Hoa, vào khám vì trễ kinh hai tháng kèm buồn nôn và mệt mỏi.Sinh hiệu: huyết áp một trăm mười trên bảy mươi, mạch tám mươi hai lần mỗi phút, nhiệt độ ba mươi bảy độ.Bệnh nhân tỉnh táo, nghi ngờ có thai.\"",
+    "wer": 0.0,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P8_Clip2.wav",
     "duration_s": 15.7,
     "transcript_asr": "chẩn đoán nghi thay sớm cho làm xét nghiệm beta hcg và siêu âm tử cung khuyến cáo bổ sung axit folic năm trăm mcg mỗi ngày không dùng thuốc tùy ý trong giai đoạn này.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Chẩn đoán nghi thai sớm.Cho làm xét nghiệm beta h C G và siêu âm tử cung.Khuyến cáo bổ sung acid folic năm trăm microgam mỗi ngày.Không dùng thuốc tùy ý trong giai đoạn này",
+    "wer": 0.1579,
+    "notes": "",
+    "transcript_note": ""
   },
   {
     "bs": "SG",
     "file": "REF_SG_P8_Clip3.wav",
     "duration_s": 13.4,
     "transcript_asr": "nếu beta hcg dương tính và thi hẹn siêu âm sau bảy đến mười ngày theo dõi dấu hiệu đau bụng hoặc ra huyết âm đạo tái khám ngay nếu có bất thường.",
-    "transcript_gt": "",
-    "wer": null,
-    "notes": ""
+    "transcript_gt": "Nếu beta hCG dương tính thì hẹn siêu âm sau bảy đến mười ngày.Theo dõi dấu hiệu đau bụng hoặc ra huyết âm đạo.Tái khám ngay nếu có bất thường.\"",
+    "wer": 0.0625,
+    "notes": "",
+    "transcript_note": ""
   }
 ]

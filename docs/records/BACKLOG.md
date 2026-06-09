@@ -19,14 +19,17 @@
   - ✅ `tools/bench_ceer_semi.py` — CEER tool cho groundtruth_all.json format
   - **Root cause: ASR bottleneck — PhoWhisper mangling drug names → L1b không tìm được**
   - **Kết luận: BENCH-002b (pilot thật) + TRAIN-001 bắt buộc trước GO**
-- [ ] **BENCH-002b** 🟡 CEER thật: audio pilot BS Đà Nẵng + ground truth labels (sau BENCH-002a)
-  - Baseline lâm sàng synthetic (2026-06-08): 10/10 files | Vitals=0.033✅ Diag=0.1✅ Drug=0.9🔴
-  - Template lâm sàng: `data/audio/ground_truth_lam_sang_template.json`
-  - Template dental: `data/audio/dental/ground_truth_dental_template.json`
-  - ✅ 57 clips BS thật đã transcribed (2026-06-12): `data/eval/ref_voice_transcripts_review.txt` + `.json`
-  - 12+ chuyên khoa: tim mạch, hô hấp, GI, tiết niệu, nội tiết, nhi, sản khoa, da liễu, ung thư...
-  - Drug mishear patterns thật: Amoxicillin→amosicilin, Metformin→mek fốc binh, Amlodipine→ong lau đi pin
-  - ⏳ **Chờ Andy**: điền GT vào `data/eval/ref_voice_transcripts_review.txt` (Clip2+Clip3 ưu tiên)
+- [x] **BENCH-002b** ✅ CEER thật trên 57 real-voice clips BS (HN/DN/SG) — 2026-06-09
+  - `tools/bench_002b.py` + `data/eval/bench_002b_results.json`
+  - **WER**: HN=29.3% · DN=16.3% · SG=16.3% · **Overall=18.4%** ← PhoWhisper tốt trên giọng thật
+  - **Drug Recall**: 55.6% lower bound (GT NER miss phonetic-spelled drugs → actual thấp hơn)
+  - **Drug Precision**: 83.3% (FP thấp ✅)
+  - **Diag Accuracy**: 71.4% overall (DN/SG=83.3%✅ · HN=0%🔴 do WER cao)
+  - **Vitals Accuracy**: 69.3% overall (DN/SG OK · HN thấp)
+  - **Followup Accuracy**: 72.7% overall (SG=100%✅)
+  - Missed drugs: Ciprofloxacin · Paracetamol · Vitamin B1 · Folic acid
+  - Root cause drug miss: BS spell-out phonetic "MÉt PHỐT min" → L1b không nhận → cần TRAIN-001
+  - ✅ PA-009 done: Andy điền đủ 57/57 GT clips
 
 ### FID-VN-010 PIPELINE REDESIGN — Phase 0 [IMMEDIATE, sau BENCH-002b pending]
 > Evidence: BENCH-002b 2026-06-08 | FID: `fids/FID-VN-010.md` | Prerequisite: A1+A2+A3 trước khi bật bất kỳ ML layer mới
@@ -69,9 +72,7 @@
   - `src/api/main.py` — GET `/api/drug-candidates`, GET `/api/terms`, POST `/api/dialect-check`
   - `src/api/static/index.html` — drug chips panel + dialect badge + term sidebar + specialty selector
   - `tests/unit/test_api_suggestions.py` — 43 tests PASS | Total: 755/755
-- [ ] **BENCH-GT-001** 🔴 Fill GT labels — ANDY TASK: điền 54/57 còn lại trong `data/eval/ref_voice_transcripts_review.txt`
-  - Clip2+Clip3 ưu tiên (BS Đà Nẵng/SG real voice)
-  - Cần để: đo BENCH-002b CEER thật + PhoBERT GO criteria
+- [x] **BENCH-GT-001** ✅ Andy điền 57/57 GT clips `data/eval/ref_voice_transcripts_review.txt` — 2026-06-09
 - [x] **GAP-002** ✅ Unit tests PII scan — tests/unit/test_pii_scan.py 27 tests PASS (2026-06-06)
 - [x] **GAP-003** ✅ Unit tests L8 error handler — `tests/unit/test_l8_error_handler.py` 20 tests PASS (2026-06-08) | P0.2.L8
 - [x] **GAP-004** ✅ Unit tests L9a PDF export — `tests/unit/test_l9a_pdf_export.py` 15 tests PASS (2026-06-08) | P0.2.L9a

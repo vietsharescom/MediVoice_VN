@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-09 | v0.9.0
+# Cập nhật: 2026-06-09 | v0.9.1
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -141,6 +141,13 @@
 | P0.6.7f | │  ├─ RAG-001-FIX Hybrid | Hybrid 0.65×fuzzy + 0.35×RAG — fix RC-A/RC-C | 🟢 | RAG-FIX | SES-20260609c | `_build_phonetic_index` + `hybrid_query_drug` · +31 tests |
 | P0.6.7g | │  └─ UI-SUGGEST-001 | Drug chips + dialect badge + terminology sidebar — 43 tests | 🟢 | UI-001 | SES-20260609c | `src/api/static/js/suggestions.js` · `src/api/main.py` 3 endpoints |
 | | │ | | | | | |
+| **P0.6.8** | **├─ 🟢 BENCH-002b Real Voice** | **57 clips BS thật HN/DN/SG · WER=18.4% · Drug=55.6%LB** | **🟢** | **BENCH-002b** | SES-20260609d | WER✅ · Drug🔴LB · Diag⚠️ · findings → TRAIN-001 next |
+| P0.6.8a | │  ├─ tools/bench_002b.py | Parse GT TXT → WER (jiwer) + CEER per clip, aggregate by region | 🟢 | BENCH-002b | SES-20260609d | `tools/bench_002b.py` |
+| P0.6.8b | │  ├─ WER by region | HN=29.3%⚠️ · DN=16.3%✅ · SG=16.3%✅ · ALL=18.4%✅ | 🟢 | BENCH-002b | SES-20260609d | PhoWhisper untuned good on real BS voice |
+| P0.6.8c | │  ├─ Drug Recall (lower bound) | TP=5 FN=4 FP=1 · Recall=55.6%LB · Precision=83.3% | 🔴 | BENCH-002b | SES-20260609d | GT phonetic spell → undercount · actual recall lower · TRAIN-001 required |
+| P0.6.8d | │  ├─ Missed drugs | Ciprofloxacin · Paracetamol · Vitamin B1 · Folic acid | 🔴 | BENCH-002b | SES-20260609d | Add phonetic_variants to drug_db.json |
+| P0.6.8e | │  └─ bench_002b_results.json | Full per-clip results: wer, gt_drugs, pred_drugs, ceer | 🟢 | BENCH-002b | SES-20260609d | `data/eval/bench_002b_results.json` |
+| | │ | | | | | |
 | **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
 | P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |
 | P0.7b |    ├─ DPA ký | Hợp đồng xử lý dữ liệu | 🟡 | PA-003 | — | Luật sư review xong → ký |
@@ -198,46 +205,46 @@
 
 ## PHIÊN TIẾP THEO — LÀM GÌ?
 
-### ⚡ NGAY BÂY GIỜ — Phase 0 còn lại
+### ⚡ NGAY BÂY GIỜ — Sau BENCH-002b
 
 | # | Task | Ai | Điều kiện |
 |---|---|---|---|
-| 1 | **RAG-001-DRUG-VECTOR** — `src/core/drug_rag.py` Chroma + MiniLM | Claude | Không chờ — bắt đầu ngay |
-| 2 | **UI-SUGGEST-001** — Drug chips + dialect badge | Claude | Chờ RAG-001 xong |
-| 3 | **PA-009 Fill GT** — Điền 54/57 GT còn lại `data/eval/ref_voice_transcripts_review.txt` | Andy | Song song với RAG-001 |
-| 4 | **PA-010 Approve FID-VN-010** — Retroactive approve (Phase 0 đã implement xong) | Andy | Khi rảnh |
+| 1 | **FID-VN-011** — L1b RAG integration + model preload startup lifecycle | Claude | Viết FID trước, Andy approve |
+| 2 | **drug_db expand** — Thêm phonetic_variants Ciprofloxacin · Tamsulosin · Vitamin B1 · Folic acid | Claude | Không chờ |
+| 3 | **TRAIN-001** — PhoWhisper fine-tune pipeline chuẩn bị | Claude | Cần 50-100h audio thật — sau pilot |
+| 4 | **PA-010 Approve FID-VN-010** — Retroactive approve `fids/FID-VN-010.md` | Andy | Khi rảnh |
 
-### 🟡 BENCHMARK (sau khi Andy fill GT)
+### 🟡 BENCHMARK TIẾP THEO
 
 | # | Task |
 |---|---|
-| BENCH-002b-CEER | Chạy CEER thật trên 57 clips có GT → đo improvement A1/A2/A3 |
-| BENCH-002b-GO | Kiểm tra PhoBERT GO criteria (F1 ≥ 0.85, BS correction -10%) |
+| BENCH-003 | Re-run sau FID-VN-011 + drug_db expand → đo Drug Recall improvement |
+| BENCH-PILOT | Record 50-100h audio thật → CEER thật → GO criteria cho TRAIN-001 |
 
 ---
 
-## METRICS HIỆN TẠI (2026-06-09 · v0.8.6)
+## METRICS HIỆN TẠI (2026-06-09 · v0.9.1)
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | **678/678** | 🟢 |
+| Tests PASS | 100% | **755/755** | 🟢 |
 | bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
 | Vital extraction (TC audio) | >0% | bench tc_001/tc_002: vital=True | 🟢 fixed FID-VN-005 |
 | WER semi-synthetic | <30% | SG 25.8% · CT 30.4% · HN 34.6% | 🟡 cần fine-tune |
+| **WER real BS voice (BENCH-002b)** | **<20%** | **ALL=18.4%✅ · DN/SG=16.3%✅ · HN=29.3%⚠️** | **🟢 OK (untuned)** |
 | NER BS1 (Bắc chuẩn, WER=8%) | >80% | **7/7 = 100%** | 🟢 |
 | NER BS2 (Nam nhanh, WER=19%) | >80% | **6/7 = 86%** (post-fix BUG-K/L/M) | 🟢 |
 | CEER Drug (semi-synthetic) | <10% | 0.967 (Drug 97%) | ✅ |
 | CEER Diag (semi-synthetic) | <10% | 0.667 | ⚠️ cần pilot thật |
-| CEER Vital (semi-synthetic) | <10% | 0.333 (pre-fix) → cải thiện sau BUG-K/L/M fix | 🟡 |
-| CEER Followup (semi-synthetic) | <10% | 0.400 | 🟡 |
-| CEER thật | <5% | ❓ cần audio BS thật | 🟡 BENCH-002b |
+| **Drug Recall real (BENCH-002b LB)** | **≥70%** | **55.6% LB** (GT phonetic miss → actual lower) | **🔴 TRAIN-001 required** |
+| **Diag CEER real (BENCH-002b)** | **<30%** | ALL=71.4% · DN/SG=83.3%✅ · HN=0%🔴 | 🟡 HN blocked by WER |
+| **Vitals CEER real (BENCH-002b)** | **<30%** | 69.3% ALL | 🟡 |
 | TRAIN-002 PhoBERT NER | F1 > 0.70 | **F1=99.44%** (epoch 3, synthetic data) | ✅ |
 | **Drug Recall (CONS-002-EVAL, synthetic)** | **≥88%** | **99.5%** | **✅ GO (synthetic)** |
 | **Silent FP Rate (CONS-002-EVAL)** | **≤10%** | **0.0%** | **✅ GO** |
 | **Safety Catch (CONS-002-EVAL)** | **≥80%** | **92.1%** | **✅ GO** |
 | **Phonetic Recall (CONS-002-EVAL)** | **≥85%** | **98.7%** | **✅ GO** |
-| **Drug Recall real BS voice (local pipeline)** | **≥70%** | **13–18%** | **🔴 CRITICAL GAP** |
-| **Drug Recall real BS voice (Cloud LLM ref)** | — | 78% | 🟡 Cloud masks local weakness |
+| **Drug Recall real BS voice (local pipeline)** | **≥70%** | **55.6%LB** (BENCH-002b) | **🔴 CRITICAL GAP** |
 | **L4 Human Gate safety** | 0 drug substitution | Per-drug confirm gate ✅ DONE | 🟢 L4-REDESIGN-001 SES-20260609b |
 | BS approve rate | >85% | ❓ chưa pilot | ⏳ |
 | NPS | >7/10 | ❓ chưa pilot | ⏳ |
@@ -268,8 +275,10 @@
 | SES-20260610b | 2026-06-10 | v0.7.2 | TRAIN-002 ✅ DONE F1=99.44% · BUG-K2+BUG-N fix · 409/409 · Drug corpus analysis · Canadian MedVoice benchmark |
 | SES-20260609 | 2026-06-09 | v0.8.5 | Real voice testing 9 sessions Drive · CONS-20260608-002 rewrite (644 dòng) · CONS-20260610-003 6 AI reviews · FID-VN-010 DRAFT (AI Pipeline Redesign v2.0) · DESIGN_REPORT §15 → v2.0 |
 | SES-20260609b | 2026-06-09 | v0.8.5→v0.8.6 | FID-VN-010 Phase 0: A1✅ A2✅ A3✅ L4-REDESIGN✅ · 473→678 tests (+205) |
+| SES-20260609c | 2026-06-09 | v0.8.6→v0.9.0 | RAG-001-FIX Hybrid ✅ · UI-SUGGEST-001 ✅ · L4-PWA ✅ · 678→755 tests (+77) |
+| SES-20260609d | 2026-06-09 | v0.9.0→v0.9.1 | BENCH-002b ✅ — 57 clips real BS voice WER=18.4% Drug=55.6%LB · tools/bench_002b.py |
 
 ---
 
-*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.6 | 2026-06-09*
+*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.7 | 2026-06-09*
 *Cập nhật mỗi phiên đóng. Đọc cùng BACKLOG.md + PENDING_REQUESTS.md*

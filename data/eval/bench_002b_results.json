@@ -1,0 +1,828 @@
+{
+  "version": "BENCH-002b-v1",
+  "total_clips": 57,
+  "wer_by_region": {
+    "HN": 0.293,
+    "ALL": 0.184,
+    "DN": 0.163,
+    "SG": 0.163
+  },
+  "ceer_by_region": {
+    "HN": {
+      "vitals": 0.556,
+      "drug": 0.5,
+      "diag": 1.0,
+      "followup": 1.0
+    },
+    "ALL": {
+      "vitals": 0.307,
+      "drug": 0.556,
+      "diag": 0.286,
+      "followup": 0.273
+    },
+    "DN": {
+      "vitals": 0.208,
+      "drug": 0.5,
+      "diag": 0.167,
+      "followup": 0.333
+    },
+    "SG": {
+      "vitals": 0.312,
+      "drug": 0.667,
+      "diag": 0.167,
+      "followup": 0.0
+    }
+  },
+  "drug_aggregate": {
+    "tp": 5,
+    "fn": 4,
+    "fp": 1,
+    "recall": 0.556,
+    "precision": 0.833
+  },
+  "per_clip": [
+    {
+      "file": "REF_HN_P1_Clip1.wav",
+      "bs": "HN",
+      "clip_type": 1,
+      "duration_s": 15.3,
+      "wer": 0.4091,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": ""
+    },
+    {
+      "file": "REF_HN_P1_Clip2.wav",
+      "bs": "HN",
+      "clip_type": 2,
+      "duration_s": 26.2,
+      "wer": 0.0435,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.667,
+      "vitals_stated": 3,
+      "vitals_missed": 2
+    },
+    {
+      "file": "REF_HN_P1_Clip3.wav",
+      "bs": "HN",
+      "clip_type": 3,
+      "duration_s": 35.9,
+      "wer": 0.3151,
+      "pred_drugs": [],
+      "gt_drugs": [
+        "Ciprofloxacin"
+      ],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "theo dõi nhiễm khuẩn đường tiêu hóa",
+      "ceer_drug": 1.0,
+      "drug_tp": 0,
+      "drug_fn": 1,
+      "drug_fp": 0,
+      "ceer_diag": 1.0
+    },
+    {
+      "file": "REF_HN_P2_Clip1.wav",
+      "bs": "HN",
+      "clip_type": 1,
+      "duration_s": 26.6,
+      "wer": 0.4902,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": ""
+    },
+    {
+      "file": "REF_HN_P2_Clip2.wav",
+      "bs": "HN",
+      "clip_type": 2,
+      "duration_s": 34.4,
+      "wer": 0.3824,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.667,
+      "vitals_stated": 3,
+      "vitals_missed": 2
+    },
+    {
+      "file": "REF_HN_P2_Clip3.wav",
+      "bs": "HN",
+      "clip_type": 3,
+      "duration_s": 27.4,
+      "wer": 0.3548,
+      "pred_drugs": [
+        "Amoxicillin",
+        "Paracetamol"
+      ],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "viêm họng cấp",
+      "ceer_diag": 1.0,
+      "ceer_followup": 1.0
+    },
+    {
+      "file": "REF_HN_P3_Clip1.wav",
+      "bs": "HN",
+      "clip_type": 1,
+      "duration_s": 17.3,
+      "wer": 0.1607,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.333,
+      "vitals_stated": 3,
+      "vitals_missed": 1
+    },
+    {
+      "file": "REF_HN_P3_Clip2.wav",
+      "bs": "HN",
+      "clip_type": 2,
+      "duration_s": 8.0,
+      "wer": 0.4,
+      "pred_drugs": [
+        "Aspirin (Acetylsalicylic acid)"
+      ],
+      "gt_drugs": [
+        "Aspirin (Acetylsalicylic acid)"
+      ],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_drug": 0.0,
+      "drug_tp": 1,
+      "drug_fn": 0,
+      "drug_fp": 0
+    },
+    {
+      "file": "REF_HN_P3_Clip3.wav",
+      "bs": "HN",
+      "clip_type": 3,
+      "duration_s": 13.4,
+      "wer": 0.0811,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": ""
+    },
+    {
+      "file": "REF_DN_P1_Clip1.wav",
+      "bs": "DN",
+      "clip_type": 1,
+      "duration_s": 28.0,
+      "wer": 0.1084,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": ""
+    },
+    {
+      "file": "REF_DN_P1_Clip2.wav",
+      "bs": "DN",
+      "clip_type": 2,
+      "duration_s": 25.3,
+      "wer": 0.1935,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.0,
+      "vitals_stated": 2,
+      "vitals_missed": 0
+    },
+    {
+      "file": "REF_DN_P1_Clip3.wav",
+      "bs": "DN",
+      "clip_type": 3,
+      "duration_s": 20.8,
+      "wer": 0.2857,
+      "pred_drugs": [],
+      "gt_drugs": [
+        "Paracetamol"
+      ],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "nhiễm siêu vi đường hô hấp trên",
+      "ceer_drug": 1.0,
+      "drug_tp": 0,
+      "drug_fn": 1,
+      "drug_fp": 0,
+      "ceer_diag": 1.0
+    },
+    {
+      "file": "REF_DN_P2_Clip1.wav",
+      "bs": "DN",
+      "clip_type": 1,
+      "duration_s": 22.5,
+      "wer": 0.1475,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.333,
+      "vitals_stated": 3,
+      "vitals_missed": 1
+    },
+    {
+      "file": "REF_DN_P2_Clip2.wav",
+      "bs": "DN",
+      "clip_type": 2,
+      "duration_s": 10.3,
+      "wer": 0.2632,
+      "pred_drugs": [
+        "Aspirin (Acetylsalicylic acid)"
+      ],
+      "gt_drugs": [
+        "Aspirin (Acetylsalicylic acid)"
+      ],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_drug": 0.0,
+      "drug_tp": 1,
+      "drug_fn": 0,
+      "drug_fp": 0
+    },
+    {
+      "file": "REF_DN_P2_Clip3.wav",
+      "bs": "DN",
+      "clip_type": 3,
+      "duration_s": 13.2,
+      "wer": 0.0833,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_followup": 0.0
+    },
+    {
+      "file": "REF_DN_P3_Clip1.wav",
+      "bs": "DN",
+      "clip_type": 1,
+      "duration_s": 20.5,
+      "wer": 0.0517,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.0,
+      "vitals_stated": 3,
+      "vitals_missed": 0
+    },
+    {
+      "file": "REF_DN_P3_Clip2.wav",
+      "bs": "DN",
+      "clip_type": 2,
+      "duration_s": 17.0,
+      "wer": 0.1463,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "phì đại tuyến tiền liệt lành tính thuốc",
+      "gt_chan_doan": "phì đại tuyến tiền liệt lành tính",
+      "ceer_diag": 0.0
+    },
+    {
+      "file": "REF_DN_P3_Clip3.wav",
+      "bs": "DN",
+      "clip_type": 3,
+      "duration_s": 14.4,
+      "wer": 0.3158,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_followup": 0.0
+    },
+    {
+      "file": "REF_DN_P4_Clip1.wav",
+      "bs": "DN",
+      "clip_type": 1,
+      "duration_s": 23.0,
+      "wer": 0.0333,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.0,
+      "vitals_stated": 3,
+      "vitals_missed": 0
+    },
+    {
+      "file": "REF_DN_P4_Clip2.wav",
+      "bs": "DN",
+      "clip_type": 2,
+      "duration_s": 16.2,
+      "wer": 0.0667,
+      "pred_drugs": [
+        "Paracetamol",
+        "Vitamin C (Ascorbic acid)"
+      ],
+      "gt_drugs": [
+        "Paracetamol"
+      ],
+      "pred_chan_doan": "nhiễm siêu vi đường hô hấp trên",
+      "gt_chan_doan": "nhiễm siêu vi đường hô hấp trên",
+      "ceer_drug": 1.0,
+      "drug_tp": 1,
+      "drug_fn": 0,
+      "drug_fp": 1,
+      "ceer_diag": 0.0
+    },
+    {
+      "file": "REF_DN_P4_Clip3.wav",
+      "bs": "DN",
+      "clip_type": 3,
+      "duration_s": 12.6,
+      "wer": 0.0,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_followup": 0.0
+    },
+    {
+      "file": "REF_DN_P5_Clip1.wav",
+      "bs": "DN",
+      "clip_type": 1,
+      "duration_s": 18.0,
+      "wer": 0.1154,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.333,
+      "vitals_stated": 3,
+      "vitals_missed": 1
+    },
+    {
+      "file": "REF_DN_P5_Clip2.wav",
+      "bs": "DN",
+      "clip_type": 2,
+      "duration_s": 15.6,
+      "wer": 0.3226,
+      "pred_drugs": [
+        "Paracetamol"
+      ],
+      "gt_drugs": [
+        "Paracetamol"
+      ],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_drug": 0.0,
+      "drug_tp": 1,
+      "drug_fn": 0,
+      "drug_fp": 0
+    },
+    {
+      "file": "REF_DN_P5_Clip3.wav",
+      "bs": "DN",
+      "clip_type": 3,
+      "duration_s": 12.4,
+      "wer": 0.0556,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_followup": 0.0
+    },
+    {
+      "file": "REF_DN_P6_Clip1.wav",
+      "bs": "DN",
+      "clip_type": 1,
+      "duration_s": 17.5,
+      "wer": 0.1132,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.333,
+      "vitals_stated": 3,
+      "vitals_missed": 1
+    },
+    {
+      "file": "REF_DN_P6_Clip2.wav",
+      "bs": "DN",
+      "clip_type": 2,
+      "duration_s": 11.1,
+      "wer": 0.2353,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "đái tháo đường tuýp hai mới phát hiện",
+      "gt_chan_doan": "đái tháo đường tUÝP hai mới phát hiện",
+      "ceer_diag": 0.0
+    },
+    {
+      "file": "REF_DN_P6_Clip3.wav",
+      "bs": "DN",
+      "clip_type": 3,
+      "duration_s": 14.3,
+      "wer": 0.3636,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_followup": 1.0
+    },
+    {
+      "file": "REF_DN_P7_Clip1.wav",
+      "bs": "DN",
+      "clip_type": 1,
+      "duration_s": 18.9,
+      "wer": 0.1724,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.667,
+      "vitals_stated": 3,
+      "vitals_missed": 2
+    },
+    {
+      "file": "REF_DN_P7_Clip2.wav",
+      "bs": "DN",
+      "clip_type": 2,
+      "duration_s": 17.6,
+      "wer": 0.3478,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "rối loạn lo âu kèm đau ngực không đặc hiệu",
+      "gt_chan_doan": "rối loạn lo âu kèm đau ngực không đặc hiệu",
+      "ceer_diag": 0.0
+    },
+    {
+      "file": "REF_DN_P7_Clip3.wav",
+      "bs": "DN",
+      "clip_type": 3,
+      "duration_s": 13.8,
+      "wer": 0.0488,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_followup": 1.0
+    },
+    {
+      "file": "REF_DN_P8_Clip1.wav",
+      "bs": "DN",
+      "clip_type": 1,
+      "duration_s": 23.6,
+      "wer": 0.0833,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.0,
+      "vitals_stated": 3,
+      "vitals_missed": 0
+    },
+    {
+      "file": "REF_DN_P8_Clip2.wav",
+      "bs": "DN",
+      "clip_type": 2,
+      "duration_s": 23.2,
+      "wer": 0.3036,
+      "pred_drugs": [
+        "Paracetamol"
+      ],
+      "gt_drugs": [],
+      "pred_chan_doan": "tăng huyết áp độ một kèm đau đầu",
+      "gt_chan_doan": "tăng huyết áp độ một kèm đau đầu",
+      "ceer_diag": 0.0
+    },
+    {
+      "file": "REF_DN_P8_Clip3.wav",
+      "bs": "DN",
+      "clip_type": 3,
+      "duration_s": 22.1,
+      "wer": 0.0577,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": ""
+    },
+    {
+      "file": "REF_SG_P1_Clip1.wav",
+      "bs": "SG",
+      "clip_type": 1,
+      "duration_s": 23.5,
+      "wer": 0.1406,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.333,
+      "vitals_stated": 3,
+      "vitals_missed": 1
+    },
+    {
+      "file": "REF_SG_P1_Clip2.wav",
+      "bs": "SG",
+      "clip_type": 2,
+      "duration_s": 14.7,
+      "wer": 0.2973,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": ""
+    },
+    {
+      "file": "REF_SG_P1_Clip3.wav",
+      "bs": "SG",
+      "clip_type": 3,
+      "duration_s": 15.9,
+      "wer": 0.0238,
+      "pred_drugs": [
+        "Iron (Ferrous)"
+      ],
+      "gt_drugs": [
+        "Iron (Ferrous)"
+      ],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_drug": 0.0,
+      "drug_tp": 1,
+      "drug_fn": 0,
+      "drug_fp": 0
+    },
+    {
+      "file": "REF_SG_P2_Clip1.wav",
+      "bs": "SG",
+      "clip_type": 1,
+      "duration_s": 22.3,
+      "wer": 0.3276,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 1.0,
+      "vitals_stated": 3,
+      "vitals_missed": 3
+    },
+    {
+      "file": "REF_SG_P2_Clip2.wav",
+      "bs": "SG",
+      "clip_type": 2,
+      "duration_s": 12.7,
+      "wer": 0.4571,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "viêm tai giữa cấp",
+      "ceer_diag": 1.0
+    },
+    {
+      "file": "REF_SG_P2_Clip3.wav",
+      "bs": "SG",
+      "clip_type": 3,
+      "duration_s": 11.2,
+      "wer": 0.0,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "đau tăng hoặc chảy dịch",
+      "gt_chan_doan": "đau tăng hoặc chảy dịch",
+      "ceer_diag": 0.0,
+      "ceer_followup": 0.0
+    },
+    {
+      "file": "REF_SG_P3_Clip1.wav",
+      "bs": "SG",
+      "clip_type": 1,
+      "duration_s": 18.6,
+      "wer": 0.2885,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.667,
+      "vitals_stated": 3,
+      "vitals_missed": 2
+    },
+    {
+      "file": "REF_SG_P3_Clip2.wav",
+      "bs": "SG",
+      "clip_type": 2,
+      "duration_s": 17.6,
+      "wer": 0.2667,
+      "pred_drugs": [
+        "Paracetamol"
+      ],
+      "gt_drugs": [],
+      "pred_chan_doan": "viêm thanh quản mạn tính",
+      "gt_chan_doan": "viêm thanh quản mạn tính",
+      "ceer_diag": 0.0
+    },
+    {
+      "file": "REF_SG_P3_Clip3.wav",
+      "bs": "SG",
+      "clip_type": 3,
+      "duration_s": 12.5,
+      "wer": 0.0833,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_followup": 0.0
+    },
+    {
+      "file": "REF_SG_P4_Clip1.wav",
+      "bs": "SG",
+      "clip_type": 1,
+      "duration_s": 20.2,
+      "wer": 0.0357,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.0,
+      "vitals_stated": 3,
+      "vitals_missed": 0
+    },
+    {
+      "file": "REF_SG_P4_Clip2.wav",
+      "bs": "SG",
+      "clip_type": 2,
+      "duration_s": 15.2,
+      "wer": 0.1026,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": ""
+    },
+    {
+      "file": "REF_SG_P4_Clip3.wav",
+      "bs": "SG",
+      "clip_type": 3,
+      "duration_s": 16.8,
+      "wer": 0.1522,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "hội chứng đa chuyên khoa",
+      "gt_chan_doan": "hội chứng đa chuyên khoa",
+      "ceer_diag": 0.0
+    },
+    {
+      "file": "REF_SG_P5_Clip1.wav",
+      "bs": "SG",
+      "clip_type": 1,
+      "duration_s": 19.3,
+      "wer": 0.0545,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.0,
+      "vitals_stated": 3,
+      "vitals_missed": 0
+    },
+    {
+      "file": "REF_SG_P5_Clip2.wav",
+      "bs": "SG",
+      "clip_type": 2,
+      "duration_s": 14.2,
+      "wer": 0.4595,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": ""
+    },
+    {
+      "file": "REF_SG_P5_Clip3.wav",
+      "bs": "SG",
+      "clip_type": 3,
+      "duration_s": 13.4,
+      "wer": 0.0,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": ""
+    },
+    {
+      "file": "REF_SG_P6_Clip1.wav",
+      "bs": "SG",
+      "clip_type": 1,
+      "duration_s": 18.1,
+      "wer": 0.0377,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.0,
+      "vitals_stated": 3,
+      "vitals_missed": 0
+    },
+    {
+      "file": "REF_SG_P6_Clip2.wav",
+      "bs": "SG",
+      "clip_type": 2,
+      "duration_s": 14.3,
+      "wer": 0.0588,
+      "pred_drugs": [],
+      "gt_drugs": [
+        "Vitamin B1 (Thiamine)"
+      ],
+      "pred_chan_doan": "viêm da tiết bã da đầu",
+      "gt_chan_doan": "viêm da tiết bã da đầu",
+      "ceer_drug": 1.0,
+      "drug_tp": 0,
+      "drug_fn": 1,
+      "drug_fp": 0,
+      "ceer_diag": 0.0
+    },
+    {
+      "file": "REF_SG_P6_Clip3.wav",
+      "bs": "SG",
+      "clip_type": 3,
+      "duration_s": 11.1,
+      "wer": 0.1429,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_followup": 0.0
+    },
+    {
+      "file": "REF_SG_P7_Clip1.wav",
+      "bs": "SG",
+      "clip_type": 1,
+      "duration_s": 17.0,
+      "wer": 0.2115,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.5,
+      "vitals_stated": 2,
+      "vitals_missed": 1
+    },
+    {
+      "file": "REF_SG_P7_Clip2.wav",
+      "bs": "SG",
+      "clip_type": 2,
+      "duration_s": 20.0,
+      "wer": 0.5536,
+      "pred_drugs": [
+        "Paracetamol"
+      ],
+      "gt_drugs": [],
+      "pred_chan_doan": "viêm phổi cộng đồng mức",
+      "gt_chan_doan": "viêm phổi cộng đồng mức độ nhẹ",
+      "ceer_diag": 0.0
+    },
+    {
+      "file": "REF_SG_P7_Clip3.wav",
+      "bs": "SG",
+      "clip_type": 3,
+      "duration_s": 14.6,
+      "wer": 0.0,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_followup": 0.0
+    },
+    {
+      "file": "REF_SG_P8_Clip1.wav",
+      "bs": "SG",
+      "clip_type": 1,
+      "duration_s": 20.9,
+      "wer": 0.0,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_vitals": 0.0,
+      "vitals_stated": 3,
+      "vitals_missed": 0
+    },
+    {
+      "file": "REF_SG_P8_Clip2.wav",
+      "bs": "SG",
+      "clip_type": 2,
+      "duration_s": 15.7,
+      "wer": 0.1579,
+      "pred_drugs": [],
+      "gt_drugs": [
+        "Folic acid (Vitamin B9)"
+      ],
+      "pred_chan_doan": "",
+      "gt_chan_doan": "",
+      "ceer_drug": 1.0,
+      "drug_tp": 0,
+      "drug_fn": 1,
+      "drug_fp": 0
+    },
+    {
+      "file": "REF_SG_P8_Clip3.wav",
+      "bs": "SG",
+      "clip_type": 3,
+      "duration_s": 13.4,
+      "wer": 0.0625,
+      "pred_drugs": [],
+      "gt_drugs": [],
+      "pred_chan_doan": "đau bụng hoặc ra huyết",
+      "gt_chan_doan": ""
+    }
+  ]
+}

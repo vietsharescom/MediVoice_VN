@@ -2,56 +2,50 @@
 # Ghi đè mỗi phiên — git history lưu lịch sử cũ tự động
 # ISO/IEC 42001:2023 Cl.9.1 (Performance evaluation)
 
-## Mã phiên: SES-20260609c
-## Thời gian: 2026-06-09 (tiếp nối SES-20260609b)
-## Version: v0.8.6 → v0.9.0
+## Mã phiên: SES-20260609d
+## Thời gian: 2026-06-09
+## Version: v0.9.0 → v0.9.1
 
 ---
 
 ## Trạng thái đầu → cuối
-v0.8.6 | 678 tests → v0.9.0 | 755/755 tests PASS
+v0.9.0 | 755 tests PASS → v0.9.1 | 755 tests PASS (no new code tests)
 
 ## Đã hoàn thành
-- [RAG-001-DRUG-VECTOR] `src/core/drug_rag.py` — ChromaDB + paraphrase-multilingual-MiniLM-L12-v2
-  - build_drug_vectorstore() + load_drug_vectorstore() + query_drug_rag() + query_drug_rag_from_file()
-  - Document: INN + phonetic_variants (3 regions) + brands + keywords + drug_class + diagnoses
-  - `tests/unit/test_drug_rag.py` — 80 tests PASS
-- [RAG-001-FIX] Hybrid fuzzy 65% + RAG 35% — fix RC-A (MiniLM not phonetic) + RC-C (missing variants)
-  - _build_phonetic_index() + _fuzzy_phonetic_search() + hybrid_query_drug() + hybrid_query_drug_from_file()
-  - "mek foc binh"→Metformin✅ "ong lau di pin"→Amlodipine✅ (vs RAG-only: ❌)
-  - /api/drug-candidates endpoint cập nhật dùng hybrid_query_drug() → source="hybrid"
-  - +31 tests: TestBuildPhoneticIndex(9) + TestFuzzyPhoneticSearch(11) + TestHybridQueryDrug(13)
-- [UI-SUGGEST-001] `src/api/static/js/suggestions.js` — Suggestions IIFE module
-  - onTranscriptReady() parallel drug candidates + dialect check
-  - onSpecialtyChange() reload term sidebar với cache
-  - Renders: drug chips, dialect badge, term sidebar
-  - `tests/unit/test_api_suggestions.py` — 43 tests PASS
-- [UI-SUGGEST-001 API] `src/api/main.py` — 3 endpoints
-  - GET /api/drug-candidates (hybrid fallback fuzzy), GET /api/terms (8 chuyên khoa), POST /api/dialect-check
-  - _SPECIALTY_TERMS: 8 specialties × 10-20 terms ICD coded
-- [UI-SUGGEST-001 HTML] `src/api/static/index.html` — drug chips + dialect badge + term sidebar
-  - specialty selector + suggest-drug-panel + suggest-dialect-badge + suggest-term-sidebar
-- [L4-REDESIGN-001 PWA] `src/api/static/index.html` — per-drug confirm UI (Luật KCB 2023 Đ.62)
-  - .drug-confirm-row (unconfirmed=amber, confirmed=green) + .drug-confirm-progress
-  - renderDrugConfirmList() + onDrugConfirmChange() + updateApproveButton()
-  - #btn-approve disabled cho đến khi tất cả thuốc được xác nhận
-  - L4 safety guard trong approveRecord(): block nếu chưa confirm đủ
+- [PA-009 DONE] Andy điền đủ 57/57 GT clips `data/eval/ref_voice_transcripts_review.txt`
+- [BENCH-GT-001 DONE] 57/57 GT transcripts verified filled
+- [BENCH-002b] `tools/bench_002b.py` — WER + CEER trên 57 real-voice clips BS thật (HN/DN/SG)
+  - Parse review TXT → merge GT → compute WER (jiwer) + CEER (drug/diag/vitals/followup)
+  - `data/eval/bench_002b_results.json` — full per-clip results saved
+  - `data/eval/ref_voice_transcripts.json` — updated với GT + wer values
 
-## Kết quả đo được
-- Tests: 678/678 → 755/755 PASS (+77 tests trong phiên)
-- RAG-001: ChromaDB vectorstore build/query với paraphrase-multilingual-MiniLM-L12-v2
-- RAG-001-FIX: hybrid score = 0.65×fuzzy + 0.35×rag → fix phonetic recall
-- UI-SUGGEST-001: 3 endpoints + JS module + HTML integration hoàn chỉnh
-- L4-PWA: per-drug checkbox PWA, BS không thể bypass mà không tick từng thuốc
-- bandit: 0 HIGH / 0 MEDIUM từ code mới (9 medium pre-existing HuggingFace download)
+## Kết quả đo được BENCH-002b
+| Metric | HN | DN | SG | ALL |
+|--------|----|----|-----|-----|
+| WER | 29.3%⚠️ | 16.3%✅ | 16.3%✅ | **18.4%**✅ |
+| Drug CEER | 0.500⚠️ | 0.500⚠️ | 0.667🔴 | 0.556🔴 |
+| Diag CEER | 1.000🔴 | 0.167✅ | 0.167✅ | 0.286⚠️ |
+| Vitals CEER | 0.556🔴 | 0.208⚠️ | 0.312⚠️ | 0.307⚠️ |
+| Followup CEER | 1.000🔴 | 0.333⚠️ | 0.000✅ | 0.273⚠️ |
+
+Drug: TP=5, FN=4, FP=1 → Recall=55.6%LB, Precision=83.3%
+Missed: Ciprofloxacin · Paracetamol · Vitamin B1 · Folic acid
+⚠️ GT drug count understated: BS spell-out phonetic ("MÉt PHỐT min") → L1b miss → actual recall thấp hơn
+
+## Phân tích findings
+- WER 18.4% overall: PhoWhisper hoạt động tốt trên giọng BS thật (không cần fine-tune để deploy)
+- HN WER 29.3% vs DN/SG 16.3%: Giọng Bắc harder cho PhoWhisper (không surprise)
+- Drug recall 55.6% lower bound: BOTTLENECK chính — BS nói tên thuốc theo phonetic ("mét phốt min")
+- Diag HN=0%: Hệ quả trực tiếp của WER cao — transcript quá noisy để NER extract
+- RAG-001 hybrid đã implement → sẽ cải thiện drug recall cho real-voice queries
+- TRAIN-001 vẫn required: PhoWhisper cần fine-tune để học pronunciation "Ciprofloxacin", "Tamsulosin"
 
 ## Blocker / Phụ thuộc bên ngoài
-- [PA-009] Andy chưa fill 54/57 GT clips → BENCH-002b CEER thật chưa đo được
-- [PA-010] FID-VN-010 approve retroactive (Phase 0 đã implement xong)
-- [PA-011] Andy chưa chốt Q1+Q3 → FID-VN-009 PhoBERT deferred
-- [VIETMED-FIX-001] HF_TOKEN cần để download VietMed audio
+- [TRAIN-001] Fine-tune PhoWhisper cần 50-100h audio thật → cần thêm pilot sessions
+- [PA-011 DONE] PhoBERT Q1/Q3 đã chốt (xem PENDING_REQUESTS)
+- [VIETMED-FIX-001] HF_TOKEN cần để download VietMed audio 2.5GB
 
 ## Phiên tiếp theo — làm ngay theo thứ tự
-1. [BENCH-GT-001] Andy fill GT clips `data/eval/ref_voice_transcripts_review.txt` (Clip2+Clip3 ưu tiên)
-2. [BENCH-002b] Đo CEER thật sau khi có GT — Drug Recall, Diag, Vital real pilot audio
-3. [TRAIN-001] Fine-tune PhoWhisper trên 50-100h audio pilot thật — cần BENCH-002b trước
+1. [FID-VN-011] Write FID cho L1b RAG integration + model preload lifecycle (Andy hỏi cuối phiên)
+2. [TRAIN-001] Chuẩn bị training pipeline PhoWhisper fine-tune — cần 50-100h audio
+3. [drug_db expand] Thêm phonetic_variants cho missed drugs: Ciprofloxacin · Tamsulosin · Diazepam · Omeprazole
