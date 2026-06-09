@@ -1704,6 +1704,127 @@ PHASE 3 — Platform (2027–2028)
 
 ---
 
+## 21. DEMO APP — STREAMLIT PILOT DATA COLLECTION
+
+### Dành cho ai: Kỹ thuật, Kinh doanh
+
+### Mục đích
+
+```
+Demo App KHÔNG phải sản phẩm cuối.
+Mục tiêu: thu audio BS thật tại phòng khám VN → training data cho TRAIN-001.
+
+1. BS nói về ca khám → Groq Whisper transcribe → LLM Groq NER → Mẫu 15/BV-01 draft
+2. BS review từng field + xác nhận từng thuốc (L4 gate)
+3. Lưu: Google Drive (audio WAV + session JSON) hoặc local_saves/
+4. Đánh giá độ chính xác AI (1-5 per field) → dataset quality labels
+
+Pilot data 2026-06-08: 9 WAV + 10 JSON tại DN/SG
+  → data/drive-download-20260609T031416Z-3-001/
+```
+
+### Kiến trúc
+
+```
+demo/app.py          ← Streamlit UI chính (Mẫu 15/BV-01 layout)
+demo/rag_chain.py    ← RAG pipeline: Groq Whisper + L1b + ICD lookup
+demo/requirements.txt← deps Streamlit Cloud
+demo/local_saves/    ← fallback lưu local nếu Google Drive chưa cấu hình
+
+Import chain:
+  demo/app.py → demo/rag_chain.py → src.core.l1b_drug_correct (RAG)
+  Fallback: nếu src import lỗi → gọi Groq LLM trực tiếp qua requests
+
+Secrets (gitignored .streamlit/secrets.toml):
+  groq_api_key      = "gsk_..."
+  drive_folder_id   = "1YlFmNcusVgRwA4ObwtBJej19ZcyzrzqL"
+  gcp_service_account = { ... }  ← chỉ cần khi upload Google Drive
+```
+
+### UI Layout — Mẫu 15/BV-01
+
+```
+HEADER: 🎙️ MediVoice VN | Badge DEMO v2.0
+DISCLAIMER: ⚠️ AI tạo nháp — BS chịu trách nhiệm hoàn toàn
+
+SIDEBAR: Test Mode (script selection — DVP calibration)
+
+─── THÔNG TIN PHIÊN KHÁM ─────────────────────────
+  Tên BS ★ | Cơ sở ★ | CCHN ★ | Chuyên khoa | Ngày
+  Tên BN demo (tên giả — KHÔNG nhập thật)
+
+─── GHI ÂM ────────────────────────────────────────
+  [Script chuẩn / Tự nhiên] — radio
+  st.audio_input → WAV → hash guard → Groq ASR → NER
+
+─── TRANSCRIPT BOX ────────────────────────────────
+  Transcript gốc (màu xanh lá)
+  Confidence bar
+  Drug flags ⚠️ nếu có
+
+─── MẪU 15/BV-01 DRAFT ──────────────────────────
+  I.  Thông tin BN: tên / tuổi / giới / năm sinh / SĐT / CCCD
+  II. Lý do khám / Triệu chứng chính
+  III. Sinh hiệu: HA | Mạch | Nhiệt độ | Cân nặng
+  IV. Chẩn đoán ★ + ICD-10-VN ★ + Tái khám
+  V.  Đơn thuốc — L4 Human Gate:
+      💊 Thuốc 1 — hàm lượng · liều · ngày  [✓ checkbox]
+      ⚠️ Thuốc 2 (flagged) — nghe: X · Y% [✓ checkbox]
+      ← disabled PHÊ DUYỆT until ALL checkboxes ✓
+
+─── ĐÁNH GIÁ TRANSCRIPT ───────────────────────────
+  Slider 1-5 per field: transcript, tên, tuổi, ngày, sinh hiệu, CĐ, thuốc, tái khám
+
+─── NOTES ─────────────────────────────────────────
+  Giọng vùng miền | Môi trường | Đặc điểm BS | Ghi chú sửa lỗi
+
+─── ACTIONS ───────────────────────────────────────
+  [✅ Phê duyệt & Lưu]   [❌ Từ chối]
+  → Drive: audio WAV + session JSON
+  → Fallback: demo/local_saves/
+  → Download buttons: JSON + WAV
+```
+
+### Triển khai
+
+```
+LOCAL:
+  demo_start.bat → streamlit run demo/app.py --server.port 8501
+  + localtunnel: npx --yes localtunnel --port 8501 → global URL tạm thời
+  Lần đầu visit global URL → nhập IP máy tính (194.34.105.20) làm password
+
+STREAMLIT CLOUD:
+  URL: https://medivoice-vn-demo.streamlit.app/
+  Branch: master | Main file: demo/app.py
+  Auto-redeploy: mỗi push lên GitHub
+  Secrets: thêm thủ công trong dashboard (không commit vào git)
+    groq_api_key = "gsk_..."
+    drive_folder_id = "1Yl..."
+    [gcp_service_account] = { ... }
+  Sleep: 7 ngày không dùng → ngủ → push commit để wake
+
+ISO GAP (đã khắc phục 2026-06-09):
+  Lý do gap: demo/app.py được build qua 27+ commits (nhiều phiên) không có FID
+  Fix: BACKLOG DEMO-001 + §21 DESIGN_REPORT (file này)
+```
+
+### Giới hạn DEMO
+
+```
+NOT production:
+  - Groq API: cloud (data ngoài VN) — chỉ dùng cho demo/training
+  - Production sẽ dùng PhoWhisper offline (NĐ13/2023 compliant)
+  - Database: Google Drive + local_saves (không SQLite+Fernet)
+  - Không có L10 audit log, không có L7 encrypted storage
+
+Data handling:
+  - BS dùng tên giả cho BN → không vi phạm NĐ13/2023
+  - Audio/JSON upload Google Drive → chỉ training data, không bệnh án thật
+  - BS đã ký BS_ONBOARDING_CHECKLIST + DPA trước khi dùng demo
+```
+
+---
+
 ## CHANGELOG BÁO CÁO THIẾT KẾ
 
 | Version | Ngày | Thay đổi |
@@ -1713,6 +1834,7 @@ PHASE 3 — Platform (2027–2028)
 | v2.0 | 2026-06-09 | **§15 AI Pipeline rewrite — FID-VN-010 + BENCH-002b:**<br>• L0: VAD silence-aware chunking (silero-vad)<br>• L1a: Prompt Injection (initial_prompt drug list per specialty)<br>• Post-ASR: Dialect normalization (200+ entries, region-aware)<br>• L1b: "Layer 5 RAG" concept draft (thresholds chưa calibrated)<br>• L4: Per-drug mandatory confirm safety redesign<br>• Performance benchmarks từ BENCH-002b evidence |
 | v2.1 | 2026-06-09 | **§15 sync với code thật — FID-VN-011 + DRUG-DB-002 + FID-VN-009:**<br>• L1b: Layer 5 → **Layer 3b** (tên đúng với code)<br>• L1b: Threshold 0.80 → **0.68 accept / 0.55 flag** (calibrated)<br>• L1b: Hybrid query **0.65×fuzzy + 0.35×RAG** (logic thật)<br>• L1b: Model preload singleton (_embed_model + _drug_collection startup)<br>• L1b: drug_db_v200 **154 INN** (DRUG-DB-002 +8 drugs)<br>• L1c: PhoBERT **PARALLEL + early-exit** (thay shadow mode)<br>• Benchmarks: cập nhật v2.1 actual từ BENCH-002b real voice<br>• Roadmap: Phase 0 ✅ + Phase 0.5 ✅ đánh dấu DONE với file paths |
 | v2.2 | 2026-06-09 | **§15+§19 DVP Layer 1+2 DONE — FID-VN-012 v0.11.0:**<br>• Roadmap: Phase 0.6 DVP L1+2 ✅ DONE (⏳→✅)<br>• DVP: DoctorProfile model · doctor_profiles+doctor_aliases tables<br>• DVP: SPECIALTY_DRUG_CLASSES 12 canonical (cdha/mat/noi_tiet/than_tiet_nieu mới)<br>• DVP: Pipeline injection specialty→L1a + region→A3 per doctor<br>• DVP Layer 3: dvp_alias.py schema (pilot-gated, ⏳ cần ≥5 sessions)<br>• VIETMED-FIX-001: download_vietmed.py trust_remote_code → HF_TOKEN |
+| v2.3 | 2026-06-09 | **§21 Demo App — ISO gap fix DEMO-001:**<br>• Thêm §21 Demo App (Streamlit pilot collection — 27+ commits chưa có FID)<br>• demo/app.py v2.0: audio hash guard (fix form không hiện) + Mẫu 15/BV-01 UI redesign<br>• UI: I.Hành chính → II.Lý do → III.Sinh hiệu → IV.CĐ+ICD → V.Đơn thuốc L4 gate<br>• BACKLOG DEMO-001 entry added |
 
 ---
 

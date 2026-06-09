@@ -1,28 +1,31 @@
 """
-MediVoice VN — Demo App
+MediVoice VN — Demo App v2.0
 Streamlit Cloud deployment for BS pilot testing
-Data collection: audio + corrections (no real PII)
+UI: Mẫu 15/BV-01 layout per DESIGN_REPORT §7
+Fix: audio-hash guard prevents re-processing on widget reruns
 """
-import streamlit as st
-import json
-import time
+import hashlib
 import io
-import wave
-import requests
+import json
 import os
 import sys
-from pathlib import Path
+import wave
 from datetime import datetime
+from pathlib import Path
 
-# RAG chain (L1b + LangChain + L1d)
+import requests
+import streamlit as st
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
+
 try:
     from demo.rag_chain import extract_clinical_rag as _rag_extract
     _RAG_OK = True
-except Exception as _rag_err:
+except Exception:
     _RAG_OK = False
 
-# ── Load test scripts ────────────────────────────────────────────────────────
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
 @st.cache_data
 def load_test_suite():
     path = os.path.join(os.path.dirname(__file__), "test_scripts", "test_suite.json")
@@ -32,36 +35,12 @@ def load_test_suite():
     except Exception:
         return None
 
-def auto_score(form_approved: dict, ground_truth: dict) -> dict:
-    """Compare NER output vs ground truth. Returns per-field scores."""
-    scores = {}
-    # Chẩn đoán
-    gt_cd = ground_truth.get("chan_doan", "").lower().strip()
-    ap_cd = form_approved.get("chan_doan", "").lower().strip()
-    scores["chan_doan"] = "✅" if gt_cd and ap_cd and (gt_cd in ap_cd or ap_cd in gt_cd) else "❌"
-    # ICD
-    gt_icd = ground_truth.get("icd", "").strip()
-    ap_icd = form_approved.get("icd", "").strip()
-    icd_ok = gt_icd and ap_icd and (gt_icd in ap_icd or ap_icd in gt_icd or any(c.strip() in ap_icd for c in gt_icd.split(",")))
-    scores["icd"] = "✅" if icd_ok else ("⚠️" if not ap_icd else "❌")
-    # Sinh hiệu
-    gt_sh = ground_truth.get("sinh_hieu", {})
-    ap_sh = form_approved.get("sinh_hieu", {})
-    sh_ok = all(
-        str(gt_sh.get(k, 0)) == str(ap_sh.get(k, 0))
-        for k in ["huyet_ap", "mach"]
-        if gt_sh.get(k)
-    )
-    scores["sinh_hieu"] = "✅" if sh_ok else "❌"
-    # Thuốc — đếm % tên thuốc đúng
-    gt_drugs = {d["ten"].lower() for d in ground_truth.get("don_thuoc", [])}
-    ap_drugs = {d["ten"].lower() for d in form_approved.get("don_thuoc", [])}
-    if gt_drugs:
-        matched = sum(1 for g in gt_drugs if any(g in a or a in g for a in ap_drugs))
-        scores["don_thuoc"] = f"✅ {matched}/{len(gt_drugs)}" if matched == len(gt_drugs) else f"⚠️ {matched}/{len(gt_drugs)}"
-    else:
-        scores["don_thuoc"] = "N/A"
-    return scores
+
+def _secret(key: str, default: str = "") -> str:
+    try:
+        return st.secrets.get(key, default)
+    except Exception:
+        return default
 
 
 def get_audio_duration(audio_bytes: bytes) -> float:
@@ -75,99 +54,68 @@ def get_audio_duration(audio_bytes: bytes) -> float:
 def get_browser_info() -> str:
     try:
         ua = st.context.headers.get("user-agent", "")
-        if "Edg" in ua:
-            return "Edge"
-        if "Chrome" in ua:
-            return "Chrome"
-        if "Firefox" in ua:
-            return "Firefox"
-        if "Safari" in ua:
-            return "Safari"
-        return ua[:80] if ua else "unknown"
+        for browser in ("Edg", "Chrome", "Firefox", "Safari"):
+            if browser in ua:
+                return browser
+        return ua[:60] if ua else "unknown"
     except Exception:
         return "unknown"
 
 
-def _secret(key: str, default: str = "") -> str:
-    """Safe secrets access — returns default if secrets.toml missing."""
-    try:
-        return st.secrets.get(key, default)
-    except Exception:
-        return default
+def audio_hash(audio_bytes: bytes) -> str:
+    return hashlib.md5(audio_bytes).hexdigest()[:12]
 
 
 def transcribe_audio(audio_bytes: bytes) -> tuple[str, str]:
-    """Transcribe using Groq Whisper Large V3 (free tier, Vietnamese).
-    Returns (transcript, error_msg).
-    """
     try:
         api_key = _secret("groq_api_key")
         if not api_key:
-            return "", "groq_api_key chưa được cấu hình trong Secrets"
-        headers = {"Authorization": f"Bearer {api_key}"}
-        files = {
-            "file": ("audio.wav", io.BytesIO(audio_bytes), "audio/wav"),
-            "model": (None, "whisper-large-v3"),
-            "language": (None, "vi"),
-            "response_format": (None, "json"),
-        }
+            return "", "groq_api_key chưa cấu hình trong Secrets"
         resp = requests.post(
             "https://api.groq.com/openai/v1/audio/transcriptions",
-            headers=headers,
-            files=files,
+            headers={"Authorization": f"Bearer {api_key}"},
+            files={
+                "file": ("audio.wav", io.BytesIO(audio_bytes), "audio/wav"),
+                "model": (None, "whisper-large-v3"),
+                "language": (None, "vi"),
+                "response_format": (None, "json"),
+            },
             timeout=60,
         )
         if resp.status_code == 200:
             text = resp.json().get("text", "").strip()
             return (text, "") if text else ("", "Không nhận diện được giọng nói")
-        return "", f"Groq lỗi {resp.status_code}: {resp.text[:300]}"
+        return "", f"Groq {resp.status_code}: {resp.text[:200]}"
     except Exception as e:
-        return "", f"Exception: {e}"
+        return "", f"Lỗi kết nối: {e}"
 
 
 def extract_clinical_data(transcript: str) -> tuple[dict, str]:
-    """Use Groq LLM to extract structured clinical fields from real transcript.
-    Returns (data_dict, error_msg).
-    """
     try:
         api_key = _secret("groq_api_key")
         if not api_key or not transcript:
-            return {}, "Không có transcript hoặc API key"
-        prompt = f"""Bạn là AI phân tích bệnh án y tế tiếng Việt, chuyên xử lý lời nói tự nhiên của bác sĩ trong phòng khám.
+            return {}, "Thiếu transcript hoặc API key"
+        prompt = f"""Bạn là AI phân tích bệnh án tiếng Việt. Trích xuất thông tin lâm sàng từ lời BS nói.
 
 QUY TẮC:
-1. BỎ QUA: chào hỏi xã giao, câu chuyện phiếm, tiếng ừ/à/hmm
-2. Thông tin BN: trích xuất tên, tuổi, giới nếu BS đề cập ("bệnh nhân nữ 42 tuổi", "anh Nam")
-3. Sinh hiệu: nếu không đề cập → để 0 hoặc "" (không điền mặc định)
-4. Tên thuốc: chuẩn hóa về INN quốc tế ("Zempalm"→"Diazepam", "Cetralin"→"Sertraline", "L'Occitane"→"Losartan", "Avobastatin"→"Atorvastatin")
-5. ICD-10: chỉ điền khi chắc chắn (tăng HA→I10, lo âu→F41.1, viêm họng→J02.9, tiểu đường type2→E11.9)
-6. "ngay" để "" nếu BS nói "khi cần", "khi sốt" hoặc không nói số ngày
-7. Transcript có thể có lỗi ASR — suy luận từ ngữ cảnh y tế
-8. Chỉ trả về JSON, không giải thích thêm
+1. BỎ QUA: chào hỏi, tiếng ừ/à/hmm
+2. Thông tin BN: tên/tuổi/giới nếu BS đề cập
+3. Sinh hiệu: để 0/"" nếu không đề cập
+4. Tên thuốc: chuẩn hóa về INN quốc tế
+5. ICD-10: chỉ điền khi chắc chắn (I10/J20.9/E11.9...)
+6. "ngay" để "" nếu BS không nói số ngày
+7. Chỉ trả về JSON
 
-TRANSCRIPT (lời BS nói tự nhiên, có thể lẫn hội thoại với bệnh nhân):
-{transcript}
+TRANSCRIPT: {transcript}
 
-JSON OUTPUT:
+JSON:
 {{
-  "benh_nhan": {{
-    "ten": "họ tên nếu BS đề cập, để trống nếu không rõ",
-    "tuoi": 0,
-    "gioi": "Nam/Nữ/Không rõ",
-    "nam_sinh": ""
-  }},
-  "ly_do": "triệu chứng chính bệnh nhân than phiền",
-  "chan_doan": "chẩn đoán bác sĩ kết luận",
+  "benh_nhan": {{"ten": "", "tuoi": 0, "gioi": "Nam/Nữ/Không rõ", "nam_sinh": ""}},
+  "ly_do": "",
+  "chan_doan": "",
   "icd": "",
-  "sinh_hieu": {{
-    "nhiet_do": 0,
-    "huyet_ap": "",
-    "mach": 0,
-    "can_nang": 0
-  }},
-  "don_thuoc": [
-    {{"ten": "tên INN chuẩn", "ham_luong": "", "lieu": "", "ngay": ""}}
-  ],
+  "sinh_hieu": {{"nhiet_do": 0, "huyet_ap": "", "mach": 0, "can_nang": 0}},
+  "don_thuoc": [{{"ten": "", "ham_luong": "", "lieu": "", "ngay": ""}}],
   "tai_kham": ""
 }}"""
         resp = requests.post(
@@ -190,18 +138,11 @@ JSON OUTPUT:
             return {}, "LLM không trả về JSON"
         data = json.loads(m.group())
         sh = data.get("sinh_hieu", {})
-        try:
-            sh["nhiet_do"] = float(sh.get("nhiet_do", 36.5))
-        except (ValueError, TypeError):
-            sh["nhiet_do"] = 36.5
-        try:
-            sh["mach"] = int(sh.get("mach", 0))
-        except (ValueError, TypeError):
-            sh["mach"] = 0
-        try:
-            sh["can_nang"] = float(sh.get("can_nang", 0))
-        except (ValueError, TypeError):
-            sh["can_nang"] = 0.0
+        for k, cast, default in [("nhiet_do", float, 36.5), ("mach", int, 0), ("can_nang", float, 0.0)]:
+            try:
+                sh[k] = cast(sh.get(k, default))
+            except (ValueError, TypeError):
+                sh[k] = default
         data["sinh_hieu"] = sh
         return data, ""
     except Exception as e:
@@ -209,12 +150,10 @@ JSON OUTPUT:
 
 
 def upload_to_drive(audio_bytes: bytes, session_data: dict) -> tuple[bool, str]:
-    """Returns (success, error_msg)."""
     try:
         from google.oauth2 import service_account
         from googleapiclient.discovery import build
         from googleapiclient.http import MediaIoBaseUpload
-
         creds = service_account.Credentials.from_service_account_info(
             st.secrets["gcp_service_account"],
             scopes=["https://www.googleapis.com/auth/drive"],
@@ -222,153 +161,131 @@ def upload_to_drive(audio_bytes: bytes, session_data: dict) -> tuple[bool, str]:
         service = build("drive", "v3", credentials=creds, cache_discovery=False)
         folder_id = st.secrets["drive_folder_id"]
         ts = session_data["session_id"]
-
         audio_meta = {"name": f"medivoice_audio_{ts}.wav", "parents": [folder_id]}
-        audio_media = MediaIoBaseUpload(io.BytesIO(audio_bytes), mimetype="audio/wav")
         service.files().create(
-            body=audio_meta, media_body=audio_media, supportsAllDrives=True
+            body=audio_meta,
+            media_body=MediaIoBaseUpload(io.BytesIO(audio_bytes), mimetype="audio/wav"),
+            supportsAllDrives=True,
         ).execute()
-
-        json_bytes = json.dumps(session_data, ensure_ascii=False, indent=2).encode("utf-8")
-        json_meta = {"name": f"medivoice_session_{ts}.json", "parents": [folder_id]}
-        json_media = MediaIoBaseUpload(io.BytesIO(json_bytes), mimetype="application/json")
+        json_bytes = json.dumps(session_data, ensure_ascii=False, indent=2).encode()
         service.files().create(
-            body=json_meta, media_body=json_media, supportsAllDrives=True
+            body={"name": f"medivoice_session_{ts}.json", "parents": [folder_id]},
+            media_body=MediaIoBaseUpload(io.BytesIO(json_bytes), mimetype="application/json"),
+            supportsAllDrives=True,
         ).execute()
-
         return True, ""
     except Exception as e:
         return False, str(e)
 
 
+def auto_score(form_approved: dict, ground_truth: dict) -> dict:
+    scores = {}
+    gt_cd = ground_truth.get("chan_doan", "").lower().strip()
+    ap_cd = form_approved.get("chan_doan", "").lower().strip()
+    scores["chan_doan"] = "✅" if gt_cd and ap_cd and (gt_cd in ap_cd or ap_cd in gt_cd) else "❌"
+    gt_icd = ground_truth.get("icd", "").strip()
+    ap_icd = form_approved.get("icd", "").strip()
+    scores["icd"] = "✅" if gt_icd and ap_icd and (gt_icd in ap_icd or ap_icd in gt_icd) else ("⚠️" if not ap_icd else "❌")
+    gt_drugs = {d["ten"].lower() for d in ground_truth.get("don_thuoc", [])}
+    ap_drugs = {d["ten"].lower() for d in form_approved.get("don_thuoc", [])}
+    if gt_drugs:
+        matched = sum(1 for g in gt_drugs if any(g in a or a in g for a in ap_drugs))
+        scores["don_thuoc"] = f"✅ {matched}/{len(gt_drugs)}" if matched == len(gt_drugs) else f"⚠️ {matched}/{len(gt_drugs)}"
+    else:
+        scores["don_thuoc"] = "N/A"
+    return scores
+
+
+# ── Page config ───────────────────────────────────────────────────────────────
+
 st.set_page_config(
-    page_title="MediVoice VN — Demo",
+    page_title="MediVoice VN",
     page_icon="🎙️",
     layout="centered",
-    initial_sidebar_state="expanded",
+    initial_sidebar_ebar="expanded",
 )
 
 st.markdown("""
 <style>
-  .main { max-width: 640px; margin: 0 auto; }
+  section.main > div { max-width: 680px; margin: 0 auto; }
   .disclaimer {
-    background: #fff3e0; border-left: 4px solid #e65100;
-    padding: 0.6rem 1rem; border-radius: 4px;
-    font-size: 0.85rem; color: #e65100; font-weight: 600;
+    background:#fff3e0; border-left:4px solid #e65100;
+    padding:0.5rem 0.9rem; border-radius:4px;
+    font-size:0.82rem; color:#e65100; font-weight:600; margin-bottom:0.5rem;
   }
-  .result-box {
-    background: #e8f0fe; border-radius: 8px; padding: 1rem;
-    border: 1px solid #c5cae9; font-size: 0.9rem; white-space: pre-wrap;
+  .mau15-box {
+    background:#f8fafb; border:1.5px solid #b0bec5; border-radius:10px;
+    padding:1.2rem 1.4rem; margin-top:0.5rem;
   }
-  .result-real {
-    background: #e8f5e9; border-radius: 8px; padding: 1rem;
-    border: 2px solid #2e7d32; font-size: 0.9rem; white-space: pre-wrap;
+  .mau15-header {
+    font-size:0.78rem; color:#546e7a; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.7rem;
   }
-  .conf-label { font-size: 0.8rem; color: #555; margin-bottom: 4px; }
+  .transcript-box {
+    background:#e8f5e9; border:2px solid #2e7d32; border-radius:8px;
+    padding:0.9rem 1rem; font-size:0.88rem; white-space:pre-wrap;
+    line-height:1.5; color:#1b5e20;
+  }
+  .confidence-bar {
+    height:6px; border-radius:3px; background:#e0e0e0; margin:4px 0 8px;
+  }
+  .confidence-fill {
+    height:6px; border-radius:3px;
+    background: linear-gradient(90deg, #ef5350 0%, #ffa726 40%, #66bb6a 80%);
+  }
   .drug-card {
-    background: #f5f5f5; border-radius: 8px;
-    padding: 0.5rem 0.75rem; margin-bottom: 0.4rem;
-    font-size: 0.85rem;
+    background:#fff; border:1px solid #e0e0e0; border-radius:8px;
+    padding:0.55rem 0.8rem; margin-bottom:0.35rem;
+    display:flex; align-items:center; gap:0.5rem;
   }
-  .approved { color: #2e7d32; font-weight: 700; font-size: 1rem; }
+  .drug-flagged { border-color:#ffa726; background:#fff8e1; }
+  .approved-stamp {
+    color:#2e7d32; font-weight:800; font-size:1.05rem;
+    text-align:center; padding:0.3rem;
+  }
   .badge-demo {
-    background: #e3f2fd; color: #1565c0;
-    padding: 2px 8px; border-radius: 12px;
-    font-size: 0.72rem; font-weight: 600;
+    background:#e3f2fd; color:#1565c0;
+    padding:2px 10px; border-radius:12px;
+    font-size:0.72rem; font-weight:700;
+  }
+  .section-label {
+    font-size:0.78rem; font-weight:700; color:#455a64;
+    text-transform:uppercase; letter-spacing:0.05em;
+    margin: 0.8rem 0 0.3rem;
   }
 </style>
 """, unsafe_allow_html=True)
 
-MOCK_CASES = {
-    "Nội khoa tổng quát": {
-        "transcript": "Bệnh nhân nam 45 tuổi, đau đầu vùng chẩm 3 ngày, không sốt, không nôn. Huyết áp đo được 155 trên 95. Nhịp tim 80 lần phút. Không tiền sử bệnh tim mạch. Chẩn đoán tăng huyết áp độ 1. Kê Amlodipine 5 milligram uống sáng, tái khám sau 4 tuần, theo dõi huyết áp tại nhà.",
-        "ly_do": "Đau đầu vùng chẩm 3 ngày, huyết áp cao",
-        "chan_doan": "Tăng huyết áp độ 1",
-        "icd": "I10",
-        "sinh_hieu": {"huyet_ap": "155/95", "mach": 80, "nhiet_do": 36.8},
-        "don_thuoc": [
-            {"ten": "Amlodipine", "ham_luong": "5mg", "lieu": "1 viên/sáng", "ngay": "30 ngày"},
-        ],
-        "tai_kham": "4 tuần",
-        "confidence": 0.88,
-    },
-    "Hô hấp": {
-        "transcript": "Bệnh nhân nữ 28 tuổi, ho có đờm vàng 5 ngày, sốt 38.2, nghe phổi ran ẩm hai đáy. Không khó thở. Chẩn đoán viêm phế quản cấp. Kê Amoxicillin-Clavulanate 625 milligram ngày 2 lần sau ăn, Bromhexine 8 milligram ngày 3 lần, Paracetamol 500 milligram khi sốt trên 38.5. Tái khám 7 ngày.",
-        "ly_do": "Ho đờm vàng 5 ngày, sốt 38.2°C",
-        "chan_doan": "Viêm phế quản cấp",
-        "icd": "J20.9",
-        "sinh_hieu": {"huyet_ap": "110/70", "mach": 90, "nhiet_do": 38.2},
-        "don_thuoc": [
-            {"ten": "Amoxicillin-Clavulanate", "ham_luong": "625mg", "lieu": "1 viên x 2/ngày", "ngay": "7 ngày"},
-            {"ten": "Bromhexine", "ham_luong": "8mg", "lieu": "1 viên x 3/ngày", "ngay": "7 ngày"},
-            {"ten": "Paracetamol", "ham_luong": "500mg", "lieu": "Khi sốt >38.5°C", "ngay": "7 ngày"},
-        ],
-        "tai_kham": "7 ngày",
-        "confidence": 0.91,
-    },
-    "Tiêu hóa": {
-        "transcript": "Bệnh nhân 50 tuổi, đau thượng vị sau ăn, ợ chua, buồn nôn 2 tuần. Không nôn ra máu, không đi ngoài phân đen. Chẩn đoán viêm dạ dày trào ngược. Kê Omeprazole 20 milligram sáng trước ăn 30 phút, Sucralfate 1 gram ngày 3 lần trước bữa ăn. Tái khám 4 tuần, nội soi nếu không cải thiện.",
-        "ly_do": "Đau thượng vị, ợ chua, buồn nôn 2 tuần",
-        "chan_doan": "Viêm dạ dày – trào ngược dạ dày thực quản",
-        "icd": "K29.7",
-        "sinh_hieu": {"huyet_ap": "120/80", "mach": 75, "nhiet_do": 36.6},
-        "don_thuoc": [
-            {"ten": "Omeprazole", "ham_luong": "20mg", "lieu": "1 viên/sáng trước ăn 30'", "ngay": "28 ngày"},
-            {"ten": "Sucralfate", "ham_luong": "1g", "lieu": "1 gói x 3/ngày trước bữa ăn", "ngay": "28 ngày"},
-        ],
-        "tai_kham": "4 tuần",
-        "confidence": 0.85,
-    },
-    "Nội tiết – Đái tháo đường": {
-        "transcript": "Bệnh nhân nam 58 tuổi, đái tháo đường type 2 tái khám. Đường huyết lúc đói 8.5 mmol/L, cân nặng 78 kilogram. Bệnh nhân ăn nhiều tinh bột, ít vận động. Tiếp tục Metformin 500 milligram ngày 2 lần sau ăn. Thêm tư vấn chế độ ăn kiêng. Xét nghiệm HbA1c sau 3 tháng.",
-        "ly_do": "Đái tháo đường type 2 – tái khám định kỳ",
-        "chan_doan": "Đái tháo đường type 2 chưa kiểm soát tốt",
-        "icd": "E11.9",
-        "sinh_hieu": {"huyet_ap": "130/85", "mach": 76, "nhiet_do": 36.5, "can_nang": 78},
-        "don_thuoc": [
-            {"ten": "Metformin", "ham_luong": "500mg", "lieu": "1 viên x 2/ngày sau ăn", "ngay": "90 ngày"},
-        ],
-        "tai_kham": "3 tháng (kèm HbA1c)",
-        "confidence": 0.93,
-    },
-    "Tai mũi họng": {
-        "transcript": "Bệnh nhân 32 tuổi, đau họng nuốt đau 2 ngày, sốt 38 độ, không khó thở. Khám họng đỏ, amidan to độ 2, có mủ trắng. Chẩn đoán viêm amidan cấp mủ. Kê Amoxicillin 500 milligram ngày 3 lần sau ăn, Paracetamol 500 milligram khi sốt, súc họng nước muối ấm. Tái khám 5 ngày.",
-        "ly_do": "Đau họng nuốt đau 2 ngày, sốt 38°C",
-        "chan_doan": "Viêm amidan cấp có mủ",
-        "icd": "J03.9",
-        "sinh_hieu": {"huyet_ap": "115/75", "mach": 88, "nhiet_do": 38.0},
-        "don_thuoc": [
-            {"ten": "Amoxicillin", "ham_luong": "500mg", "lieu": "1 viên x 3/ngày sau ăn", "ngay": "7 ngày"},
-            {"ten": "Paracetamol", "ham_luong": "500mg", "lieu": "Khi sốt >38°C", "ngay": "5 ngày"},
-        ],
-        "tai_kham": "5 ngày",
-        "confidence": 0.90,
-    },
-    "Da liễu": {
-        "transcript": "Bệnh nhân nữ 25 tuổi, nổi mẩn đỏ ngứa toàn thân 1 ngày sau ăn hải sản. Không phù mặt, không khó thở. Chẩn đoán mề đay cấp do dị ứng thức ăn. Kê Loratadine 10 milligram ngày 1 lần, Methylprednisolone 4 milligram ngày 2 lần sau ăn trong 3 ngày. Tránh hải sản. Tái khám nếu không đỡ hoặc khó thở.",
-        "ly_do": "Mẩn đỏ ngứa toàn thân sau ăn hải sản",
-        "chan_doan": "Mề đay cấp – dị ứng thức ăn",
-        "icd": "L50.0",
-        "sinh_hieu": {"huyet_ap": "112/72", "mach": 82, "nhiet_do": 36.7},
-        "don_thuoc": [
-            {"ten": "Loratadine", "ham_luong": "10mg", "lieu": "1 viên/ngày", "ngay": "7 ngày"},
-            {"ten": "Methylprednisolone", "ham_luong": "4mg", "lieu": "1 viên x 2/ngày sau ăn", "ngay": "3 ngày"},
-        ],
-        "tai_kham": "Nếu không đỡ sau 3 ngày",
-        "confidence": 0.87,
-    },
+# ── Session state init ────────────────────────────────────────────────────────
+_DEFAULTS = {
+    "result": None, "approved": False,
+    "drive_error": "", "drive_uploaded": False,
+    "_audio_hash": None,
 }
-
-# ── Session state ─────────────────────────────────────────────────────────────
-for k, v in [("result", None), ("approved", False), ("drive_error", ""), ("drive_uploaded", False)]:
+for k, v in _DEFAULTS.items():
     if k not in st.session_state:
         st.session_state[k] = v
 if "session_id" not in st.session_state:
     st.session_state.session_id = datetime.now().strftime("%Y%m%d_%H%M%S")
 
+# ── Test Mode Sidebar ─────────────────────────────────────────────────────────
+test_suite = load_test_suite()
+active_script = None
+if test_suite:
+    with st.sidebar:
+        st.markdown("## 🧪 Test Mode")
+        script_options = {f"{s['id']} · {s['title']}": s for s in test_suite["scripts"]}
+        selected = st.selectbox("Script", ["— Demo thường —"] + list(script_options.keys()))
+        if selected != "— Demo thường —":
+            active_script = script_options[selected]
+            s = active_script
+            st.caption(f"**Weakness:** `{s['target_weakness']}` · {'⭐'*s['difficulty']}")
+            st.info(s["clinical_content"])
+            st.warning(s["natural_wrapper"])
+
 # ── Header ────────────────────────────────────────────────────────────────────
 st.markdown("# 🎙️ MediVoice VN")
-st.markdown('<span class="badge-demo">DEMO — Phiên bản thử nghiệm</span>', unsafe_allow_html=True)
+st.markdown('<span class="badge-demo">DEMO — Thử nghiệm · v2.0</span>', unsafe_allow_html=True)
 st.markdown("""
 <div class="disclaimer">
 ⚠️ AI tạo nháp — Bác sĩ chịu trách nhiệm hoàn toàn về nội dung bệnh án<br>
@@ -376,57 +293,33 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ── Test Mode Sidebar ────────────────────────────────────────────────────────
-test_suite = load_test_suite()
-active_script = None
-if test_suite:
-    with st.sidebar:
-        st.markdown("## 🧪 Test Mode — Andy Only")
-        st.caption("Chọn script để test systematic. Ground truth tự động so sánh sau khi lưu.")
-        script_options = {
-            f"{s['id']} · {s['title']}": s
-            for s in test_suite["scripts"]
-        }
-        selected = st.selectbox("Script", ["— Không dùng (demo thường) —"] + list(script_options.keys()))
-        if selected != "— Không dùng (demo thường) —":
-            active_script = script_options[selected]
-            s = active_script
-            st.markdown(f"**Weakness:** `{s['target_weakness']}`")
-            st.markdown(f"**Difficulty:** {'⭐' * s['difficulty']}")
-            st.markdown(f"**Target duration:** ~{s['duration_target_sec']}s")
-            st.divider()
-            st.markdown("**📋 Nội dung lâm sàng cần truyền đạt:**")
-            st.info(s["clinical_content"])
-            st.markdown("**💬 Cách nói tự nhiên:**")
-            st.warning(s["natural_wrapper"])
-            st.markdown("**👀 Watch for:**")
-            for w in s["watch_for"]:
-                st.markdown(f"- {w}")
-
-st.divider()
-
-# ── Thông tin Bác sĩ & Cơ sở ─────────────────────────────────────────────────
+# ── Thông tin Bác sĩ ─────────────────────────────────────────────────────────
 st.subheader("👨‍⚕️ Thông tin phiên khám")
+c1, c2 = st.columns(2)
+with c1:
+    ten_bs = st.text_input("Tên Bác sĩ ★", placeholder="BS Nguyễn Văn An", key="ten_bs")
+with c2:
+    co_so = st.text_input("Cơ sở y tế ★", placeholder="Phòng khám ABC", key="co_so")
 
-col_bs1, col_bs2 = st.columns(2)
-with col_bs1:
-    ten_bs = st.text_input("Tên Bác sĩ khám ★", placeholder="VD: BS Nguyễn Văn An", key="ten_bs")
-with col_bs2:
-    co_so = st.text_input("Cơ sở y tế ★", placeholder="VD: Phòng khám Đa khoa ABC", key="co_so")
-
-col1, col2, col3 = st.columns(3)
-with col1:
-    chuyen_khoa = st.selectbox("Chuyên khoa", list(MOCK_CASES.keys()), index=0)
-with col2:
-    cchn = st.text_input("Mã CCHN ★", placeholder="VD: CCHN-012345")
-with col3:
+c3, c4, c5 = st.columns(3)
+with c3:
+    cchn = st.text_input("Mã CCHN ★", placeholder="CCHN-012345")
+with c4:
+    SPECIALTIES = [
+        "Nội khoa tổng quát", "Tim mạch", "Hô hấp", "Tiêu hóa",
+        "Nội tiết – Đái tháo đường", "Tai mũi họng", "Da liễu",
+        "Cơ xương khớp", "Nhi", "Sản phụ khoa", "Ngoại",
+        "Chẩn đoán hình ảnh",
+    ]
+    chuyen_khoa = st.selectbox("Chuyên khoa", SPECIALTIES)
+with c5:
     ngay_kham_str = datetime.now().strftime("%d/%m/%Y")
     st.text_input("Ngày khám", value=ngay_kham_str, disabled=True)
 
 ten_bn_demo = st.text_input(
-    "Tên bệnh nhân (dùng tên giả cho demo)",
-    placeholder="VD: Bệnh nhân A, Nguyễn Văn Demo...",
-    help="Không nhập tên thật trong bản demo này",
+    "Tên bệnh nhân *(dùng tên giả cho demo)*",
+    placeholder="Bệnh nhân A / Nguyễn Văn Demo...",
+    help="Không nhập tên thật trong bản demo",
 )
 
 st.divider()
@@ -436,308 +329,316 @@ st.subheader("🎤 Ghi âm")
 
 recording_type = st.radio(
     "Loại ghi âm",
-    ["🗒️ Script chuẩn — đọc theo kịch bản", "💬 Tự nhiên — nói như khám thật"],
+    ["🗒️ Script chuẩn", "💬 Tự nhiên"],
     horizontal=True,
-    help="Script chuẩn: dùng để đo baseline accuracy. Tự nhiên: dữ liệu thực tế để train.",
+    help="Script: đo baseline accuracy · Tự nhiên: dữ liệu training thực",
 )
-
 if "Tự nhiên" in recording_type:
-    st.info(
-        "💬 Cứ nói tự nhiên như đang khám thật — hỏi thăm bệnh nhân, nói tiếng địa phương, không cần theo thứ tự.\n\n"
-        "AI tự lọc thông tin lâm sàng và bỏ qua hội thoại thông thường.\n\n"
-        "⚕️ Sinh hiệu do trợ lý đo trước → đọc lại 1 câu hoặc điền tay vào form sau."
-    )
+    st.info("💬 Nói tự nhiên như đang khám thật. AI tự lọc thông tin lâm sàng.")
 else:
-    st.info(
-        "🗒️ Đọc theo script đã chuẩn bị — nói rõ ràng, đủ thông tin lâm sàng.\n\n"
-        "Dùng để đo accuracy baseline và so sánh với giọng tự nhiên."
-    )
+    st.info("🗒️ Đọc theo script, nói rõ ràng, đủ thông tin lâm sàng.")
 
-with st.expander("💡 Tips ghi âm hiệu quả — giúp AI nhận đúng hơn", expanded=False):
+with st.expander("💡 Tips ghi âm — tên thuốc & sinh hiệu", expanded=False):
     st.markdown("""
-**Tên thuốc tiếng Anh / từ khó → nói 2–3 lần, chậm rãi:**
-> *"Atorvastatin... Atorvastatin... 20 milligram"*
-> *"Sertraline... Sertraline... 50 milligram"*
+**Tên thuốc khó → nói chậm 2 lần:** *"Atorvastatin... Atorvastatin... 20 milligram"*
 
-**Bệnh lý dài / phức tạp → nhấn mạnh, ngắt sau từ khó:**
-> *"Thoát vị đĩa đệm... [dừng] ...thoát vị đĩa đệm cột sống thắt lưng"*
-> *"Huyết áp 145 trên 90..."* (đọc rõ "trên")
+**Sinh hiệu → đọc rõ từng chỉ số:** *"Huyết áp 130 trên 85 — mạch 72 — cân 68 kilo"*
 
-**Liều lượng → đọc từng con số:**
-> *"5 milligram"* (không nói "5mg"), *"ngày 2 lần"*
-
-**Tái khám → nói cuối cùng:**
-> *"Tái khám sau 4 tuần"* — nói sau khi kê đơn xong
-
-**Sinh hiệu → đọc lần lượt:**
-> *"Huyết áp 130 trên 85 — mạch 72 — nhiệt độ 36 phẩy 7 — cân nặng 68 kilo"*
+**Liều lượng:** nói "5 milligram" thay vì "5mg" — **Tái khám:** nói cuối cùng sau đơn thuốc
     """)
 
 audio_data = st.audio_input("Nhấn để ghi âm")
 
+# ── Audio processing — HASH GUARD (fix: prevent re-processing on reruns) ─────
 if audio_data is not None and not st.session_state.approved:
     audio_bytes = audio_data.getvalue()
+    current_hash = audio_hash(audio_bytes)
 
-    with st.spinner("🔄 MediVoice AI đang nhận dạng giọng nói..."):
-        real_transcript, asr_error = transcribe_audio(audio_bytes)
+    if st.session_state._audio_hash != current_hash:
+        # NEW audio — process it
+        st.session_state._audio_hash = current_hash
 
-    clinical_data = {}
-    ner_error = ""
-    drug_flags = []
-    if real_transcript:
-        api_key = _secret("groq_api_key")
-        if _RAG_OK and api_key:
-            with st.spinner("🧠 MediVoice AI đang phân tích lâm sàng (RAG pipeline)..."):
-                clinical_data, ner_error, drug_flags = _rag_extract(real_transcript, api_key)
-        else:
-            with st.spinner("🧠 Đang phân tích lâm sàng và điền form..."):
-                clinical_data, ner_error = extract_clinical_data(real_transcript)
-                drug_flags = []
+        with st.spinner("🔄 MediVoice AI đang nhận dạng giọng nói..."):
+            real_transcript, asr_error = transcribe_audio(audio_bytes)
 
-    # Start from mock structure, override with real extracted data
-    # Khi có real transcript: dùng NER data hoàn toàn, KHÔNG fallback mock
-    # (mock có thể sai chuyên khoa → chẩn đoán/ICD sai nguy hiểm)
-    if real_transcript and clinical_data:
+        clinical_data: dict = {}
+        ner_error = ""
+        drug_flags: list = []
+
+        if real_transcript:
+            api_key = _secret("groq_api_key")
+            try:
+                if _RAG_OK and api_key:
+                    with st.spinner("🧠 Đang phân tích lâm sàng (RAG pipeline)..."):
+                        clinical_data, ner_error, drug_flags = _rag_extract(real_transcript, api_key)
+                else:
+                    with st.spinner("🧠 Đang phân tích lâm sàng..."):
+                        clinical_data, ner_error = extract_clinical_data(real_transcript)
+            except Exception as e:
+                ner_error = f"NER lỗi: {e}"
+                clinical_data = {}
+
         result = {
-            "transcript": MOCK_CASES[chuyen_khoa]["transcript"],  # giữ mock transcript để tham khảo
-            "confidence": MOCK_CASES[chuyen_khoa]["confidence"],
-            "ly_do": clinical_data.get("ly_do", ""),
-            "chan_doan": clinical_data.get("chan_doan", ""),
-            "icd": clinical_data.get("icd", ""),
-            "sinh_hieu": clinical_data.get("sinh_hieu", {"nhiet_do": 0, "huyet_ap": "", "mach": 0, "can_nang": 0}),
-            "don_thuoc": clinical_data.get("don_thuoc", []),
-            "tai_kham": clinical_data.get("tai_kham", ""),
+            "transcript_real": real_transcript,
+            "asr_error": asr_error,
+            "ner_ok": bool(clinical_data),
+            "ner_error": ner_error,
+            "audio": audio_bytes,
+            "timestamp": datetime.now().isoformat(),
+            "chuyen_khoa": chuyen_khoa,
+            "ten_bn": ten_bn_demo or "Bệnh nhân Demo",
+            "cchn": cchn or "DEMO",
+            "confidence": 0.88 if clinical_data else 0.0,
+            "benh_nhan_ner": clinical_data.get("benh_nhan", {}) if clinical_data else {},
+            "ly_do": clinical_data.get("ly_do", "") if clinical_data else "",
+            "chan_doan": clinical_data.get("chan_doan", "") if clinical_data else "",
+            "icd": clinical_data.get("icd", "") if clinical_data else "",
+            "sinh_hieu": clinical_data.get("sinh_hieu", {"nhiet_do": 36.5, "huyet_ap": "", "mach": 0, "can_nang": 0.0}) if clinical_data else {"nhiet_do": 36.5, "huyet_ap": "", "mach": 0, "can_nang": 0.0},
+            "don_thuoc": clinical_data.get("don_thuoc", []) if clinical_data else [],
+            "tai_kham": clinical_data.get("tai_kham", "") if clinical_data else "",
+            "drug_flags": [
+                {"inn": m.inn, "original": m.original_text, "reason": m.flag_reason, "confidence": round(m.confidence, 2)}
+                for m in drug_flags
+                if m.flagged_for_review and (m.confidence >= 0.85 or m.flag_reason == "DOSE_OUT_OF_RANGE")
+            ] if drug_flags else [],
+            "form_ner": {
+                "ly_do": clinical_data.get("ly_do", "") if clinical_data else "",
+                "chan_doan": clinical_data.get("chan_doan", "") if clinical_data else "",
+                "icd": clinical_data.get("icd", "") if clinical_data else "",
+                "sinh_hieu": clinical_data.get("sinh_hieu", {}) if clinical_data else {},
+                "don_thuoc": clinical_data.get("don_thuoc", []) if clinical_data else [],
+                "tai_kham": clinical_data.get("tai_kham", "") if clinical_data else "",
+            },
         }
-    else:
-        result = MOCK_CASES[chuyen_khoa].copy()
-    result["chuyen_khoa"] = chuyen_khoa
-    result["ten_bn"] = ten_bn_demo or "Bệnh nhân Demo"
-    result["cchn"] = cchn or "DEMO"
-    result["audio"] = audio_bytes
-    result["timestamp"] = datetime.now().isoformat()
-    result["transcript_real"] = real_transcript
-    result["asr_error"] = asr_error
-    result["ner_error"] = ner_error
-    result["ner_ok"] = bool(clinical_data)
-    result["benh_nhan_ner"] = clinical_data.get("benh_nhan", {}) if clinical_data else {}
-    # Only surface high-confidence uncertain matches (≥0.85) — avoids noise from
-    # common Vietnamese words scoring 0.6-0.80 against drug names via fuzzy.
-    # DOSE_OUT_OF_RANGE always shown regardless of confidence.
-    result["drug_flags"] = [
-        {"inn": m.inn, "original": m.original_text, "reason": m.flag_reason, "confidence": round(m.confidence, 2)}
-        for m in drug_flags
-        if m.flagged_for_review and (m.confidence >= 0.85 or m.flag_reason == "DOSE_OUT_OF_RANGE")
-    ] if drug_flags else []
-    result["form_ner"] = {
-        "ly_do": clinical_data.get("ly_do", "") if clinical_data else "",
-        "chan_doan": clinical_data.get("chan_doan", "") if clinical_data else "",
-        "icd": clinical_data.get("icd", "") if clinical_data else "",
-        "sinh_hieu": clinical_data.get("sinh_hieu", {}) if clinical_data else {},
-        "don_thuoc": clinical_data.get("don_thuoc", []) if clinical_data else [],
-        "tai_kham": clinical_data.get("tai_kham", "") if clinical_data else "",
-    }
-    st.session_state.result = result
-    st.session_state.approved = False
-    st.session_state.drive_error = ""
-    st.session_state.drive_uploaded = False
-    for _k in list(st.session_state.keys()):
-        if _k.startswith("drug_confirm_"):
+        st.session_state.result = result
+        st.session_state.approved = False
+        st.session_state.drive_error = ""
+        st.session_state.drive_uploaded = False
+        # Clean drug confirm keys
+        for _k in [k for k in st.session_state.keys() if k.startswith("drug_confirm_")]:
             del st.session_state[_k]
 
-# ── Kết quả ───────────────────────────────────────────────────────────────────
+# ── Kết quả — MẪU 15/BV-01 layout ────────────────────────────────────────────
 if st.session_state.result:
     r = st.session_state.result
     st.divider()
-    st.subheader("📋 Kết quả phân tích")
 
-    def _s(v):
-        return {1: "1 ❌", 2: "2 🔴", 3: "3 🟡", 4: "4 🟢", 5: "5 ✅"}[v]
-
+    # ── Transcript box + confidence ───────────────────────────────────────────
     real_t = r.get("transcript_real", "")
     asr_err = r.get("asr_error", "")
     ner_ok = r.get("ner_ok", False)
     ner_err = r.get("ner_error", "")
+    conf = r.get("confidence", 0.0)
+    _flags = r.get("drug_flags", [])
 
-    # ── TRANSCRIPT + đánh giá ngay bên dưới ─────────────────────────────
     if real_t:
-        st.markdown("**🎙️ MediVoice AI nghe giọng Bác sĩ**")
-        st.markdown(f'<div class="result-real">{real_t}</div>', unsafe_allow_html=True)
-        # Drug flags from L1b
-        _flags = r.get("drug_flags", [])
-        if _flags:
-            for f in _flags:
-                st.warning(f"⚠️ Tên thuốc cần xác nhận: **{f['inn']}** (nghe: *{f['original']}*, lý do: {f['reason']}, confidence: {f['confidence']})")
-        if ner_ok:
-            st.success("✅ Form đã được điền tự động từ giọng Bác sĩ — kiểm tra và chỉnh sửa bên dưới")
-        else:
-            if ner_err:
-                st.warning(f"⚠️ Phân tích NER lỗi: {ner_err} — form hiện dùng ví dụ minh họa")
+        st.markdown("#### 🎙️ AI nghe giọng Bác sĩ")
+        st.markdown(f'<div class="transcript-box">{real_t}</div>', unsafe_allow_html=True)
+        conf_pct = int(conf * 100) if conf else 0
+        col_conf, col_status = st.columns([3, 2])
+        with col_conf:
+            st.markdown(
+                f'<div style="font-size:0.8rem;color:#555;margin-top:4px;">'
+                f'Độ tin cậy AI: <b>{conf_pct}%</b></div>'
+                f'<div class="confidence-bar"><div class="confidence-fill" style="width:{conf_pct}%"></div></div>',
+                unsafe_allow_html=True,
+            )
+        with col_status:
+            if ner_ok:
+                st.success("✅ Form tự động điền")
+            elif ner_err:
+                st.warning(f"⚠️ NER: {ner_err[:80]}")
             else:
-                st.info("ℹ️ Form dùng ví dụ minh họa")
+                st.info("ℹ️ Form dùng ví dụ")
+        for f in _flags:
+            st.warning(f"⚠️ Thuốc cần xác nhận: **{f['inn']}** (nghe: *{f['original']}* · {f['reason']} · {f['confidence']:.0%})")
     else:
         if asr_err:
             st.warning(f"⚠️ Chưa transcribe được: **{asr_err}**")
-        st.markdown("**Transcript mô phỏng** *(ví dụ minh họa — chuyên khoa đã chọn)*")
-        st.markdown(f'<div class="result-box">{r["transcript"]}</div>', unsafe_allow_html=True)
-
-    score_transcript = st.select_slider(
-        "Transcript nghe đúng", options=[1, 2, 3, 4, 5], value=5,
-        format_func=_s, key="score_transcript",
-        help="1=Sai hoàn toàn · 3=Gần đúng · 5=Đúng hoàn toàn",
-    )
-
-    st.divider()
-    st.subheader("📝 Nháp bệnh án — Mẫu 15/BV-01")
-
-    # ── THÔNG TIN HÀNH CHÍNH BỆNH NHÂN ──────────────────────────────────
-    st.markdown("#### 👤 Thông tin bệnh nhân *(Mẫu 15/BV-01 — Phần I)*")
-    _bn = r.get("benh_nhan_ner", {})
-    col_bn1, col_bn2, col_bn3 = st.columns(3)
-    with col_bn1:
-        bn_ten = st.text_input("Họ tên BN", value=_bn.get("ten", "") or ten_bn_demo or "", placeholder="VD: Nguyễn Văn A (demo)")
-    with col_bn2:
-        _tuoi_val = int(_bn.get("tuoi", 0) or 0)
-        bn_tuoi = st.number_input("Tuổi", value=_tuoi_val, min_value=0, max_value=120, step=1)
-    with col_bn3:
-        _gioi_opts = ["Không rõ", "Nam", "Nữ"]
-        _gioi_idx = _gioi_opts.index(_bn.get("gioi", "Không rõ")) if _bn.get("gioi") in _gioi_opts else 0
-        bn_gioi = st.selectbox("Giới tính", _gioi_opts, index=_gioi_idx)
-    col_bn4, col_bn5, col_bn6 = st.columns(3)
-    with col_bn4:
-        bn_nam_sinh = st.text_input("Năm sinh", value=_bn.get("nam_sinh", "") or "", placeholder="VD: 1982")
-    with col_bn5:
-        bn_sdt = st.text_input("Số điện thoại", placeholder="VD: 090xxx (demo)")
-    with col_bn6:
-        bn_cccd = st.text_input("Số CCCD/CMND", placeholder="Để trống cho demo")
-    bn_dia_chi = st.text_input("Địa chỉ", placeholder="VD: Q.Hải Châu, Đà Nẵng (demo)")
-
-    col_bn_ev1, col_bn_ev2, col_bn_ev3 = st.columns(3)
-    with col_bn_ev1:
-        score_ten = st.select_slider("Tên BN", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_ten")
-    with col_bn_ev2:
-        score_tuoi = st.select_slider("Tuổi / Năm sinh", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_tuoi")
-    with col_bn_ev3:
-        score_ngay = st.select_slider("Ngày khám", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_ngay")
-
-    st.divider()
-
-    # ── CHẨN ĐOÁN + đánh giá ngay bên dưới ─────────────────────────────
-    st.markdown("#### 🏥 Chẩn đoán *(ưu tiên #1 — BS xác nhận)*")
-    chan_doan = st.text_input(
-        "Chẩn đoán chính ★",
-        value=r.get("chan_doan", ""),
-        placeholder="VD: Viêm phế quản cấp / Tăng huyết áp độ 1 / Đái tháo đường type 2",
-        help="Bắt buộc theo TT32/2023. BS chịu trách nhiệm hoàn toàn.",
-    )
-    col_icd, col_tk = st.columns(2)
-    with col_icd:
-        icd = st.text_input("Mã ICD-10-VN ★", value=r.get("icd", ""), placeholder="VD: J20.9 / I10 / E11.9")
-    with col_tk:
-        tai_kham = st.text_input("Tái khám", value=r.get("tai_kham", ""), placeholder="VD: 7 ngày / 1 tháng")
-    col_cd_ev, col_tk_ev = st.columns(2)
-    with col_cd_ev:
-        score_cd = st.select_slider("Chẩn đoán đúng không", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_cd")
-    with col_tk_ev:
-        score_tk = st.select_slider("Tái khám đúng không", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_tk")
-
-    st.divider()
-
-    # ── ĐƠN THUỐC — L4-REDESIGN: per-drug confirm (FID-VN-010) ──────────
-    st.markdown("#### 💊 Đơn thuốc — BS xác nhận từng thuốc *(L4 Safety Gate)*")
-    _don_thuoc = r.get("don_thuoc", [])
-    _flags_map = {f["inn"].lower(): f for f in r.get("drug_flags", [])}
-
-    def _drug_flag_info(drug_name: str) -> dict | None:
-        dn = drug_name.lower()
-        for inn_key, flag in _flags_map.items():
-            if inn_key in dn or dn in inn_key:
-                return flag
-        return None
-
-    _drug_confirmed = []
-    for _i, _drug in enumerate(_don_thuoc):
-        _name = _drug.get("ten", "")
-        _flag = _drug_flag_info(_name)
-        _parts = [f'**{_name}** {_drug.get("ham_luong", "")}'.strip()]
-        if _drug.get("lieu"):
-            _parts.append(_drug["lieu"])
-        if _drug.get("ngay"):
-            _parts.append(_drug["ngay"])
-        _label = " — ".join(p for p in _parts if p.strip())
-        _col_info, _col_check = st.columns([5, 1])
-        with _col_info:
-            if _flag:
-                _conf = _flag.get("confidence", 0)
-                _orig = _flag.get("original", "")
-                st.warning(f"⚠️ {_label}  |  AI nghe: *{_orig}*  |  confidence: {_conf:.0%}")
-            else:
-                st.markdown(f'<div class="drug-card">💊 {_label}</div>', unsafe_allow_html=True)
-        with _col_check:
-            _confirmed = st.checkbox(
-                "✓",
-                key=f"drug_confirm_{_i}",
-                help=f"Xác nhận {_name}: tên, liều, số ngày đúng",
-            )
-            _drug_confirmed.append(_confirmed)
-
-    if not _don_thuoc:
-        st.caption("*(Không phát hiện đơn thuốc trong giọng nói)*")
-    _all_drugs_confirmed = all(_drug_confirmed) if _drug_confirmed else True
-    if _drug_confirmed:
-        _n_conf = sum(_drug_confirmed)
-        _n_total = len(_drug_confirmed)
-        if _all_drugs_confirmed:
-            st.success(f"✅ {_n_total}/{_n_total} thuốc đã xác nhận")
         else:
-            st.info(f"💊 {_n_conf}/{_n_total} thuốc đã xác nhận — tick ✓ từng thuốc trước khi lưu")
-    score_dt = st.select_slider("Đơn thuốc đúng không", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_dt")
+            st.info("ℹ️ Chưa có transcript — dùng ví dụ minh họa theo chuyên khoa")
+
+    # ── Đánh giá transcript ───────────────────────────────────────────────────
+    def _s(v): return {1:"1 ❌", 2:"2 🔴", 3:"3 🟡", 4:"4 🟢", 5:"5 ✅"}[v]
+    score_transcript = st.select_slider(
+        "Transcript nghe đúng chưa?", options=[1,2,3,4,5], value=5,
+        format_func=_s, key="score_transcript",
+        help="1=Sai hoàn toàn · 5=Đúng hoàn toàn",
+    )
 
     st.divider()
 
-    # ── LÝ DO + SINH HIỆU + đánh giá sinh hiệu bên trong expander ───────
-    ly_do = st.text_area("Lý do khám / Triệu chứng chính", value=r.get("ly_do", ""), height=60)
-    score_ly_do = st.select_slider("Lý do khám đúng không", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_ly_do")
+    # ── MẪU 15/BV-01 ─────────────────────────────────────────────────────────
+    st.subheader("📋 Mẫu 15/BV-01 — Nháp AI")
+    st.markdown("""
+    <div class="disclaimer" style="font-size:0.78rem;">
+    ⚠️ AI tạo nháp — Bác sĩ xem lại, chỉnh sửa và chịu trách nhiệm hoàn toàn
+    </div>
+    """, unsafe_allow_html=True)
 
-    with st.expander("📊 Sinh hiệu *(thường do trợ lý đo trước — mở để xem/chỉnh)*", expanded=False):
+    with st.container():
+        # ── I. Thông tin hành chính ───────────────────────────────────────────
+        st.markdown('<div class="section-label">I. Thông tin bệnh nhân</div>', unsafe_allow_html=True)
+        _bn = r.get("benh_nhan_ner", {})
+        c1, c2, c3 = st.columns(3)
+        with c1:
+            bn_ten = st.text_input("Họ tên BN", value=_bn.get("ten","") or ten_bn_demo or "", placeholder="(Demo)")
+        with c2:
+            bn_tuoi = st.number_input("Tuổi", value=int(_bn.get("tuoi",0) or 0), min_value=0, max_value=120)
+        with c3:
+            _gioi_opts = ["Không rõ","Nam","Nữ"]
+            bn_gioi = st.selectbox("Giới tính", _gioi_opts,
+                index=_gioi_opts.index(_bn.get("gioi","Không rõ")) if _bn.get("gioi") in _gioi_opts else 0)
+
+        c4, c5, c6 = st.columns(3)
+        with c4:
+            bn_nam_sinh = st.text_input("Năm sinh", value=_bn.get("nam_sinh","") or "")
+        with c5:
+            bn_sdt = st.text_input("SĐT", placeholder="(Demo)")
+        with c6:
+            bn_cccd = st.text_input("CCCD/CMND", placeholder="(Demo)")
+
+        ca1, ca2, ca3 = st.columns(3)
+        with ca1:
+            score_ten = st.select_slider("Tên BN", [1,2,3,4,5], 5, _s, key="score_ten")
+        with ca2:
+            score_tuoi = st.select_slider("Tuổi", [1,2,3,4,5], 5, _s, key="score_tuoi")
+        with ca3:
+            score_ngay = st.select_slider("Ngày khám", [1,2,3,4,5], 5, _s, key="score_ngay")
+
+        st.divider()
+
+        # ── II. Lý do vào viện ────────────────────────────────────────────────
+        st.markdown('<div class="section-label">II. Lý do khám / Triệu chứng chính</div>', unsafe_allow_html=True)
+        ly_do = st.text_area("", value=r.get("ly_do",""), height=60, placeholder="VD: Đau đầu vùng chẩm 3 ngày, huyết áp cao", label_visibility="collapsed")
+        score_ly_do = st.select_slider("Lý do khám đúng chưa?", [1,2,3,4,5], 5, _s, key="score_ly_do")
+
+        st.divider()
+
+        # ── III. Sinh hiệu ────────────────────────────────────────────────────
+        st.markdown('<div class="section-label">III. Sinh hiệu</div>', unsafe_allow_html=True)
         sh = r.get("sinh_hieu", {})
-        col1, col2 = st.columns(2)
-        with col1:
-            huyet_ap = st.text_input("Huyết áp (mmHg)", value=sh.get("huyet_ap", ""), placeholder="VD: 120/80")
-            mach = st.number_input("Mạch (lần/phút)", value=int(sh.get("mach", 0)), min_value=0, max_value=200)
-        with col2:
-            _nd = float(sh.get("nhiet_do", 0) or 0)
-            nhiet_do = st.number_input("Nhiệt độ (°C)", value=_nd if 34.0 <= _nd <= 42.0 else 36.5, min_value=34.0, max_value=42.0, step=0.1)
-            can_nang = st.number_input("Cân nặng (kg)", value=float(sh.get("can_nang", 0)), min_value=0.0, max_value=200.0, step=0.1)
-        score_sh = st.select_slider("Sinh hiệu đúng không", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_sh")
+        cs1, cs2, cs3, cs4 = st.columns(4)
+        with cs1:
+            huyet_ap = st.text_input("Huyết áp (mmHg)", value=sh.get("huyet_ap",""), placeholder="120/80")
+        with cs2:
+            mach = st.number_input("Mạch (lần/ph)", value=int(sh.get("mach",0)), min_value=0, max_value=200)
+        with cs3:
+            _nd = float(sh.get("nhiet_do",0) or 0)
+            nhiet_do = st.number_input("Nhiệt độ (°C)", value=_nd if 34.0<=_nd<=42.0 else 36.5,
+                                        min_value=34.0, max_value=42.0, step=0.1)
+        with cs4:
+            can_nang = st.number_input("Cân nặng (kg)", value=float(sh.get("can_nang",0)), min_value=0.0, max_value=200.0, step=0.1)
+        score_sh = st.select_slider("Sinh hiệu đúng chưa?", [1,2,3,4,5], 5, _s, key="score_sh")
+
+        st.divider()
+
+        # ── IV. Chẩn đoán + ICD ───────────────────────────────────────────────
+        st.markdown('<div class="section-label">IV. Chẩn đoán lâm sàng ★</div>', unsafe_allow_html=True)
+        chan_doan = st.text_input(
+            "Chẩn đoán chính ★",
+            value=r.get("chan_doan",""),
+            placeholder="VD: Tăng huyết áp độ 1 / Viêm phế quản cấp / Đái tháo đường type 2",
+            help="Bắt buộc theo TT32/2023. BS chịu trách nhiệm hoàn toàn.",
+            label_visibility="collapsed",
+        )
+        ci1, ci2 = st.columns(2)
+        with ci1:
+            icd = st.text_input("Mã ICD-10-VN ★", value=r.get("icd",""), placeholder="VD: J20.9 / I10 / E11.9")
+        with ci2:
+            tai_kham = st.text_input("Tái khám", value=r.get("tai_kham",""), placeholder="VD: 7 ngày / 1 tháng")
+        cd1, cd2 = st.columns(2)
+        with cd1:
+            score_cd = st.select_slider("Chẩn đoán đúng chưa?", [1,2,3,4,5], 5, _s, key="score_cd")
+        with cd2:
+            score_tk = st.select_slider("Tái khám đúng chưa?", [1,2,3,4,5], 5, _s, key="score_tk")
+
+        st.divider()
+
+        # ── V. Đơn thuốc — L4 Human Gate ────────────────────────────────────
+        st.markdown('<div class="section-label">V. Đơn thuốc — Bác sĩ xác nhận từng thuốc ★</div>', unsafe_allow_html=True)
+        _don_thuoc = r.get("don_thuoc", [])
+        _flags_map = {f["inn"].lower(): f for f in _flags}
+
+        def _flag_for(drug_name: str):
+            dn = drug_name.lower()
+            for k, v in _flags_map.items():
+                if k in dn or dn in k:
+                    return v
+            return None
+
+        _drug_confirmed = []
+        for _i, _drug in enumerate(_don_thuoc):
+            _name = _drug.get("ten", "")
+            _hl = _drug.get("ham_luong","")
+            _lieu = _drug.get("lieu","")
+            _ngay = _drug.get("ngay","")
+            _flag = _flag_for(_name)
+            _label_parts = [f"**{_name}** {_hl}".strip()]
+            if _lieu: _label_parts.append(_lieu)
+            if _ngay: _label_parts.append(_ngay)
+            _label = " · ".join(p for p in _label_parts if p.strip())
+
+            dc1, dc2 = st.columns([5,1])
+            with dc1:
+                if _flag:
+                    st.warning(f"⚠️ {_label}  |  AI nghe: *{_flag['original']}*  |  {_flag['confidence']:.0%}")
+                else:
+                    st.markdown(f'<div class="drug-card">💊 {_label}</div>', unsafe_allow_html=True)
+            with dc2:
+                _confirmed = st.checkbox("✓", key=f"drug_confirm_{_i}",
+                                          help=f"Xác nhận {_name}: tên, liều, số ngày đúng")
+                _drug_confirmed.append(_confirmed)
+
+        if not _don_thuoc:
+            st.caption("*(Chưa phát hiện đơn thuốc trong giọng nói)*")
+
+        _all_confirmed = all(_drug_confirmed) if _drug_confirmed else True
+        if _drug_confirmed:
+            n_ok = sum(_drug_confirmed)
+            if _all_confirmed:
+                st.success(f"✅ {len(_drug_confirmed)}/{len(_drug_confirmed)} thuốc đã xác nhận")
+            else:
+                st.info(f"💊 {n_ok}/{len(_drug_confirmed)} thuốc — tick ✓ từng thuốc trước khi lưu")
+
+        score_dt = st.select_slider("Đơn thuốc đúng chưa?", [1,2,3,4,5], 5, _s, key="score_dt")
 
     st.divider()
 
-    # ── GHI CHÚ MÔI TRƯỜNG — 2 cột ngang ────────────────────────────────
-    st.markdown("**🎙️ Ghi chú môi trường & đặc điểm**")
-    col_n1, col_n2 = st.columns(2)
-    with col_n1:
-        note_giong = st.multiselect("Giọng vùng miền", ["Bắc", "Trung", "Nam", "Huế", "Tây Nguyên", "Khác"], key="note_giong")
-        note_noise = st.multiselect("Môi trường ghi âm", ["Yên tĩnh", "Ồn quạt", "Ồn nhiều người", "Phòng vang", "Tiếng xe ngoài", "Nhiễu khác"], key="note_noise")
-    with col_n2:
-        note_bs = st.multiselect("Đặc điểm BS nói", ["Rõ ràng", "Nói nhanh", "Giọng nhẹ", "Dùng tiếng địa phương", "Thuật ngữ đặc biệt", "Khó nghe"], key="note_bs")
-        correction = st.text_input("Ghi chú thêm", placeholder="VD: 'L'Occitane' → Losartan · ồn quạt · giọng Nam...", key="correction_text")
+    # ── Ghi chú môi trường ────────────────────────────────────────────────────
+    st.markdown("**🎙️ Ghi chú cho dữ liệu training**")
+    nc1, nc2 = st.columns(2)
+    with nc1:
+        note_giong = st.multiselect("Giọng vùng miền",
+            ["Bắc","Trung","Nam","Huế","Tây Nguyên","Khác"], key="note_giong")
+        note_noise = st.multiselect("Môi trường",
+            ["Yên tĩnh","Ồn quạt","Ồn nhiều người","Phòng vang","Tiếng xe ngoài"], key="note_noise")
+    with nc2:
+        note_bs = st.multiselect("Đặc điểm BS",
+            ["Rõ ràng","Nói nhanh","Giọng nhẹ","Tiếng địa phương","Thuật ngữ đặc biệt"], key="note_bs")
+        correction = st.text_input("Ghi chú sửa lỗi AI",
+            placeholder="VD: 'L'Occitane'→Losartan · ồn quạt · giọng Nam",
+            key="correction_text")
 
-    _all_scores = [score_transcript, score_ten, score_tuoi, score_ngay, score_sh, score_cd, score_dt, score_tk, score_ly_do]
-    avg_score = round(sum(_all_scores) / len(_all_scores), 1)
-    accuracy = f"{avg_score}/5"
+    _scores = [score_transcript, score_ten, score_tuoi, score_ngay, score_sh, score_cd, score_dt, score_tk, score_ly_do]
+    avg_score = round(sum(_scores)/len(_scores), 1)
 
     st.divider()
 
-    # Drive error hiện ở đây (persistent qua rerun)
+    # ── Drive error display ───────────────────────────────────────────────────
     if st.session_state.drive_error:
-        st.error(f"☁️ Drive upload lỗi: {st.session_state.drive_error}")
+        if "local_saves" in st.session_state.drive_error:
+            st.info(f"💾 {st.session_state.drive_error}")
+        else:
+            st.error(f"☁️ Drive: {st.session_state.drive_error}")
 
-    col_approve, col_reject = st.columns(2)
-
-    with col_approve:
-        if not _all_drugs_confirmed:
-            st.warning("⚠️ Tick ✓ xác nhận từng thuốc trước khi lưu bệnh án")
-        if st.button("✅ Xác nhận & Lưu", type="primary", use_container_width=True, disabled=not _all_drugs_confirmed):
+    # ── Action buttons ────────────────────────────────────────────────────────
+    ba1, ba2 = st.columns(2)
+    with ba1:
+        if not _all_confirmed and _drug_confirmed:
+            st.warning("⚠️ Tick ✓ xác nhận từng thuốc")
+        if st.button("✅ Phê duyệt & Lưu", type="primary",
+                      use_container_width=True, disabled=not _all_confirmed):
             if not st.session_state.approved:
                 session_data = {
                     "session_id": st.session_state.session_id,
@@ -747,35 +648,24 @@ if st.session_state.result:
                     "co_so": co_so,
                     "cchn": r["cchn"],
                     "ten_bn_demo": r["ten_bn"],
-                    "chuyen_khoa": r["chuyen_khoa"],
+                    "chuyen_khoa": chuyen_khoa,
                     "audio_duration_sec": get_audio_duration(r.get("audio", b"")),
                     "device_browser": get_browser_info(),
                     "recording_type": "script" if "Script" in recording_type else "natural",
-                    "transcript_real": r.get("transcript_real", ""),
-                    "transcript_mock": r["transcript"],
-                    "accuracy_rating": accuracy,
+                    "transcript_real": r.get("transcript_real",""),
+                    "accuracy_rating": f"{avg_score}/5",
                     "avg_score": avg_score,
                     "benh_nhan": {
                         "ten": bn_ten, "tuoi": bn_tuoi, "gioi": bn_gioi,
-                        "nam_sinh": bn_nam_sinh, "sdt": bn_sdt,
-                        "cccd": bn_cccd, "dia_chi": bn_dia_chi,
+                        "nam_sinh": bn_nam_sinh, "sdt": bn_sdt, "cccd": bn_cccd,
                     },
                     "field_eval": {
-                        "transcript": score_transcript,
-                        "ten_bn": score_ten,
-                        "tuoi": score_tuoi,
-                        "ngay_kham": score_ngay,
-                        "ly_do": score_ly_do,
-                        "sinh_hieu": score_sh,
-                        "chan_doan": score_cd,
-                        "don_thuoc": score_dt,
-                        "tai_kham": score_tk,
+                        "transcript": score_transcript, "ten_bn": score_ten,
+                        "tuoi": score_tuoi, "ngay_kham": score_ngay,
+                        "ly_do": score_ly_do, "sinh_hieu": score_sh,
+                        "chan_doan": score_cd, "don_thuoc": score_dt, "tai_kham": score_tk,
                     },
-                    "notes": {
-                        "giong_vung_mien": note_giong,
-                        "moi_truong": note_noise,
-                        "dac_diem_bs": note_bs,
-                    },
+                    "notes": {"giong_vung_mien": note_giong, "moi_truong": note_noise, "dac_diem_bs": note_bs},
                     "correction": correction,
                     "form_ner": r.get("form_ner", {}),
                     "form_approved": {
@@ -783,145 +673,111 @@ if st.session_state.result:
                         "chan_doan": chan_doan,
                         "icd": icd,
                         "tai_kham": tai_kham,
-                        "sinh_hieu": {
-                            "huyet_ap": huyet_ap,
-                            "mach": mach,
-                            "nhiet_do": nhiet_do,
-                            "can_nang": can_nang,
-                        },
+                        "sinh_hieu": {"huyet_ap": huyet_ap, "mach": mach, "nhiet_do": nhiet_do, "can_nang": can_nang},
                         "don_thuoc": r["don_thuoc"],
                     },
-                    "confidence": r["confidence"],
                     "test_script_id": active_script["id"] if active_script else None,
                     "ground_truth": active_script["ground_truth"] if active_script else None,
                 }
-                # Auto-score nếu đang chạy test script
                 if active_script:
-                    form_app = {
-                        "chan_doan": chan_doan, "icd": icd,
-                        "sinh_hieu": {"huyet_ap": huyet_ap, "mach": mach},
-                        "don_thuoc": r["don_thuoc"],
-                    }
-                    session_data["auto_score"] = auto_score(form_app, active_script["ground_truth"])
+                    session_data["auto_score"] = auto_score(
+                        {"chan_doan": chan_doan, "icd": icd,
+                         "sinh_hieu": {"huyet_ap": huyet_ap, "mach": mach},
+                         "don_thuoc": r["don_thuoc"]},
+                        active_script["ground_truth"],
+                    )
                 st.session_state.approved = True
                 st.session_state.session_data = session_data
 
-                # Always attempt Drive upload — log result regardless
+                # Upload
                 try:
                     _has_gcp = "gcp_service_account" in st.secrets
                 except Exception:
                     _has_gcp = False
-                if not _has_gcp:
-                    # Local mode: save JSON to demo/local_saves/
-                    _save_dir = Path(__file__).parent / "local_saves"
-                    _save_dir.mkdir(exist_ok=True)
-                    _save_path = _save_dir / f"session_{session_data['session_id']}.json"
-                    try:
-                        _save_path.write_text(
-                            json.dumps(session_data, ensure_ascii=False, indent=2),
-                            encoding="utf-8",
-                        )
-                        st.session_state.drive_uploaded = False
-                        st.session_state.drive_error = f"Local mode — đã lưu: demo/local_saves/{_save_path.name}"
-                    except Exception as _e:
-                        st.session_state.drive_uploaded = False
-                        st.session_state.drive_error = f"Local save lỗi: {_e}"
-                else:
+
+                if _has_gcp:
                     with st.spinner("📤 Đang lưu lên Google Drive..."):
                         ok, err = upload_to_drive(r.get("audio", b""), session_data)
                     st.session_state.drive_uploaded = ok
                     st.session_state.drive_error = err
+                else:
+                    _save_dir = Path(__file__).parent / "local_saves"
+                    _save_dir.mkdir(exist_ok=True)
+                    _path = _save_dir / f"session_{session_data['session_id']}.json"
+                    try:
+                        _path.write_text(json.dumps(session_data, ensure_ascii=False, indent=2), encoding="utf-8")
+                        st.session_state.drive_error = f"Local mode — đã lưu: demo/local_saves/{_path.name}"
+                    except Exception as _e:
+                        st.session_state.drive_error = f"Local save lỗi: {_e}"
+
                 st.rerun()
 
-    with col_reject:
+    with ba2:
         if st.button("❌ Từ chối", use_container_width=True):
-            st.warning("Đã từ chối — bệnh án không được lưu.")
             st.session_state.result = None
             st.session_state.approved = False
-            for _k in list(st.session_state.keys()):
-                if _k.startswith("drug_confirm_"):
-                    del st.session_state[_k]
+            st.session_state._audio_hash = None
             st.rerun()
 
+    # ── Approved state ────────────────────────────────────────────────────────
     if st.session_state.approved and hasattr(st.session_state, "session_data"):
         sd = st.session_state.session_data
-        st.markdown('<p class="approved">✅ Bệnh án đã được xác nhận</p>', unsafe_allow_html=True)
+        st.markdown('<p class="approved-stamp">✅ Bệnh án đã được Bác sĩ phê duyệt & lưu</p>', unsafe_allow_html=True)
 
         if st.session_state.get("drive_uploaded"):
             st.success("☁️ Đã lưu lên Google Drive — cảm ơn Bác sĩ!")
         elif st.session_state.get("drive_error"):
-            st.error(f"❌ Drive lỗi: {st.session_state.drive_error}")
-            st.warning("📩 Vui lòng tải file bên dưới và gửi về **vietshares.com@gmail.com**")
-        else:
-            st.info("📩 Tải file bên dưới rồi gửi về **vietshares.com@gmail.com**")
+            if "local_saves" not in st.session_state.drive_error:
+                st.warning("📩 Drive lỗi — tải file bên dưới gửi về **vietshares.com@gmail.com**")
 
-        # Auto-score nếu có test script
         if sd.get("auto_score"):
             sc = sd["auto_score"]
             st.markdown(f"### 🎯 Auto-score — Script `{sd.get('test_script_id')}`")
-            sc_cols = st.columns(4)
+            sc_cols = st.columns(len(sc))
             for i, (field, score) in enumerate(sc.items()):
-                sc_cols[i % 4].metric(field, score)
+                sc_cols[i].metric(field, score)
             st.divider()
 
-        # Hiển thị xác nhận dữ liệu đã lưu
-        with st.expander("🔍 Kiểm tra dữ liệu đã lưu", expanded=False):
-            col_v1, col_v2 = st.columns(2)
-            with col_v1:
-                fe = sd.get("field_eval", {})
-                st.markdown(f"**Điểm trung bình:** {sd.get('avg_score', '—')}/5")
-                st.markdown(f"**Transcript:** {fe.get('transcript','—')}/5 · **Tên:** {fe.get('ten_bn','—')}/5 · **Tuổi:** {fe.get('tuoi','—')}/5")
-                st.markdown(f"**Sinh hiệu:** {fe.get('sinh_hieu','—')}/5 · **CĐ:** {fe.get('chan_doan','—')}/5 · **Thuốc:** {fe.get('don_thuoc','—')}/5")
-                st.markdown(f"**Correction:** `{sd.get('correction','(trống)') or '(trống)'}`")
-                nt = sd.get("notes", {})
-                if any(nt.values()):
-                    st.markdown(f"**Giọng:** {', '.join(nt.get('giong_vung_mien',[]) or ['—'])} · **Môi trường:** {', '.join(nt.get('moi_truong',[]) or ['—'])}")
-            with col_v2:
-                st.markdown(f"**Chẩn đoán:** {sd.get('form_approved', {}).get('chan_doan', '—')}")
-                st.markdown(f"**ICD:** {sd.get('form_approved', {}).get('icd', '—') or '(trống)'}")
-                st.markdown(f"**Duration:** {sd.get('audio_duration_sec', '—')}s")
-                st.markdown(f"**Browser:** {sd.get('device_browser', '—')} · **Type:** {sd.get('recording_type', '—')}")
-                drugs = sd.get('form_approved', {}).get('don_thuoc', [])
-                st.markdown(f"**Thuốc:** {', '.join(d.get('ten','') for d in drugs) or '—'}")
+        with st.expander("🔍 Xem dữ liệu đã lưu", expanded=False):
+            fe = sd.get("field_eval", {})
+            st.markdown(f"**Điểm TB:** {sd.get('avg_score','—')}/5 · **Browser:** {sd.get('device_browser','—')}")
+            st.markdown(f"**CĐ:** {sd.get('form_approved',{}).get('chan_doan','—')} · **ICD:** {sd.get('form_approved',{}).get('icd','—')}")
+            drugs = sd.get("form_approved",{}).get("don_thuoc",[])
+            st.markdown(f"**Thuốc:** {', '.join(d.get('ten','') for d in drugs) or '—'} · **Duration:** {sd.get('audio_duration_sec','—')}s")
 
-        col_dl1, col_dl2 = st.columns(2)
-        with col_dl1:
+        c_dl1, c_dl2 = st.columns(2)
+        with c_dl1:
             st.download_button(
-                label="⬇️ Tải dữ liệu phiên (JSON)",
+                "⬇️ Tải dữ liệu phiên (JSON)",
                 data=json.dumps(sd, ensure_ascii=False, indent=2),
                 file_name=f"medivoice_session_{sd['session_id']}.json",
                 mime="application/json",
                 use_container_width=True,
             )
-        with col_dl2:
+        with c_dl2:
             if "audio" in r:
                 st.download_button(
-                    label="⬇️ Tải file âm thanh",
+                    "⬇️ Tải file âm thanh",
                     data=r["audio"],
                     file_name=f"medivoice_audio_{sd['session_id']}.wav",
                     mime="audio/wav",
                     use_container_width=True,
                 )
 
-        st.info("📩 Gửi file JSON + âm thanh về: **vietshares.com@gmail.com** để đội ngũ cải thiện hệ thống. Cảm ơn Bác sĩ!")
+        st.info("📩 Gửi JSON + âm thanh về: **vietshares.com@gmail.com** để cải thiện hệ thống")
 
         if st.button("🔄 Khám bệnh nhân tiếp theo"):
-            st.session_state.result = None
-            st.session_state.approved = False
-            st.session_state.drive_error = ""
-            st.session_state.drive_uploaded = False
+            for k, v in _DEFAULTS.items():
+                st.session_state[k] = v
             if hasattr(st.session_state, "session_data"):
                 del st.session_state.session_data
-            for _k in list(st.session_state.keys()):
-                if _k.startswith("drug_confirm_"):
-                    del st.session_state[_k]
+            st.session_state.session_id = datetime.now().strftime("%Y%m%d_%H%M%S")
             st.rerun()
 
-# ── Footer ────────────────────────────────────────────────────────────────────
+# ── Footer ─────────────────────────────────────────────────────────────────────
 st.divider()
 st.markdown(
-    "<center><small>MediVoice VN v0.8.6 · Demo · "
-    "Liên hệ: vietshares.com@gmail.com · "
-    "© 2026 Maple Leaf Group</small></center>",
+    "<center><small>MediVoice VN v2.0 · Demo · "
+    "© 2026 Maple Leaf Group · vietshares.com@gmail.com</small></center>",
     unsafe_allow_html=True,
 )

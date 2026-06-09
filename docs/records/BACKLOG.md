@@ -85,6 +85,16 @@
   - Coverage: pipeline structure (6) · NER extraction (5) · L4 gate (4) · PDF (3) · PII (2) · routing (2)
   - Mock L1a ASR with `ground_truth_lam_sang_template.json`; all downstream layers run real
   - Total: 794/794 PASS
+- [x] **DEMO-001** ✅ Streamlit Demo App v2.0 — Pilot data collection + Mẫu 15/BV-01 UI redesign (2026-06-09)
+  - `demo/app.py` — 27+ commit history; ISO gap resolved: FID/design documented 2026-06-09
+  - **Bug fixed**: `st.audio_input` re-processing on every Streamlit rerun → audio hash guard (`_audio_hash` + `hashlib.md5`)
+  - **UI redesign** v2.0: Mẫu 15/BV-01 layout (I. Hành chính · II. Lý do · III. Sinh hiệu · IV. CĐ + ICD · V. Đơn thuốc L4 gate · Tái khám)
+  - **L4 per-drug gate**: `st.checkbox` xác nhận từng thuốc — disabled PHÊ DUYỆT until all ✓
+  - **Pilot data**: 9 WAV + 10 JSON sessions 2026-06-08 tại DN/SG — `data/drive-download-20260609T031416Z-3-001/`
+  - Deploy: `https://medivoice-vn-demo.streamlit.app/` (Streamlit Cloud, auto-redeploy on push)
+  - Localhost: `demo_start.bat` → `http://localhost:8501` + localtunnel global URL
+  - Secrets (gitignored): `.streamlit/secrets.toml` — add manually in Streamlit Cloud dashboard
+  - Design doc: `docs/records/DESIGN_REPORT_v1.1_20260606.md` §21 Demo App (added 2026-06-09)
 - [x] **FID-VN-012** ✅ Doctor Voice Profile (DVP) Layer 1+2 — 2026-06-09
   - `src/models/doctor_profile.py` — DoctorProfile + DoctorAlias (12 specialties, 3 regions)
   - `src/core/l7_storage.py` — doctor_profiles + doctor_aliases tables + full CRUD
