@@ -1,5 +1,5 @@
 # BACKLOG.md — MediVoice VN
-# v0.7.2 — Updated 2026-06-07
+# v0.8.6 — Updated 2026-06-09
 # Single source of truth cho tasks.
 
 ---
@@ -31,17 +31,16 @@
 ### FID-VN-010 PIPELINE REDESIGN — Phase 0 [IMMEDIATE, sau BENCH-002b pending]
 > Evidence: BENCH-002b 2026-06-08 | FID: `fids/FID-VN-010.md` | Prerequisite: A1+A2+A3 trước khi bật bất kỳ ML layer mới
 
-- [ ] **A1-PROMPT-INJECT** 🔴 Whisper prompt injection — bias PhoWhisper decoder về drug vocabulary
-  - File: `src/core/l1a_asr.py` — thêm `build_initial_prompt(drug_db, specialty)`
-  - Inject top 30 drugs by specialty vào `initial_prompt`
-  - Expected: +10–25% drug recall cho drugs có phonetic overlap
-  - Effort: 4h | Risk: Thấp (rollback = xóa initial_prompt parameter)
-- [ ] **A2-VAD-CHUNK** 🔴 VAD silence-aware chunking — thay fixed 10s chunk
-  - File: `src/core/l0_normalize.py` — thêm `vad_chunk_audio()`
-  - Library: `silero-vad` (MIT, ~1MB, CPU fast)
-  - Max chunk = 20s, gap_ms = 500ms, split nếu > max
-  - Expected: WER giảm 5–15%, giữ drug+dose trong cùng 1 chunk
-  - Effort: 1 ngày | Risk: Thấp
+- [x] **A1-PROMPT-INJECT** ✅ Whisper prompt injection — bias PhoWhisper decoder về drug vocabulary (2026-06-09)
+  - `src/core/l1a_asr.py` — `SPECIALTY_DRUG_CLASSES` + `get_drugs_by_specialty()` + `build_initial_prompt()`
+  - `transcribe()` / `transcribe_file()` / `transcribe_chunks()` nhận `drug_db` + `specialty` params
+  - `tests/unit/test_l1a_prompt_inject.py` — 23 tests PASS | Total: 496/496
+  - Graceful fallback khi transformers version không support `initial_prompt`
+- [x] **A2-VAD-CHUNK** ✅ VAD silence-aware chunking — thay fixed 10s chunk (2026-06-09)
+  - `src/core/l0_normalize.py` — `_merge_short_gaps()` + `vad_chunk_audio()`
+  - `silero-vad==6.2.1` thêm vào `requirements.txt` + `requirements-prod.txt`
+  - Max chunk 20s, gap_ms 500ms, auto-split nếu vượt, fallback về `chunk_audio()` cũ
+  - `tests/unit/test_l0_vad_chunk.py` — 18 tests PASS | Total: 514/514
 - [ ] **A3-DIALECT-NORM** 🔴 Dialect normalization + abbreviation expansion
   - File mới: `src/core/dialect_norm.py`
   - Dict 200+ entries: Trung (mô/rứa/hỉ/răng/ni) + Nam (hổng/dzô/tui) + medical_abbrev

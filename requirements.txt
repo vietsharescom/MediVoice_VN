@@ -17,6 +17,7 @@ torchaudio==2.3.0
 # ── Audio Processing ──────────────────────────────────────────
 soundfile==0.12.1
 librosa==0.10.2
+silero-vad==6.2.1          # A2-VAD-CHUNK: silence-aware chunking (MIT)
 pydub==0.25.1
 
 # ── NLP / NER ─────────────────────────────────────────────────

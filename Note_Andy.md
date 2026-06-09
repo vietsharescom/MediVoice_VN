@@ -1,4 +1,61 @@
 
+BƯỚC 1 — Trạng thái:
+v0.8.5 | 473 tests PASS | ISO: 🔴 2 issues | Ready.
+
+BƯỚC 2 — ISO 🔴 ISSUES (flag trước khi làm gì)
+
+Issue 1: Andy có 3 pending requests chưa xử lý
+Issue 2: BACKLOG IMMEDIATE có 5 tasks 🔴 chưa làm (blocked by PA-010)
+
+📋 Andy cần làm:
+
+PA-009 — Điền GT 54/57 clips còn lại trong data/eval/ref_voice_transcripts_review.txt
+PA-010 🔴 — Review + approve fids/FID-VN-010.md (AI Pipeline Redesign v2.0)
+PA-011 — Chốt Q1+Q3 CONS-20260610-003 PhoBERT
+🔧 Claude còn làm: Không có CT pending.
+
+BƯỚC 3 — LAST_SESSION.md:
+
+
+## Mã phiên: SES-20260609
+## Thời gian: 2026-06-09 (đêm)
+## Version: v0.8.5 → v0.8.5 (docs only, no code change)
+
+## Trạng thái đầu → cuối
+v0.8.5 | 473 tests → v0.8.5 | 473 tests (không thay đổi code)
+
+## Đã hoàn thành
+- [FID-VN-010] fids/FID-VN-010.md — AI Pipeline Redesign v2.0 DRAFT (706 dòng)
+  - A1: Whisper prompt injection — 4h effort
+  - A2: VAD silence-aware chunking — 1 ngày
+  - A3: Dialect normalization 200+ entries — 2 ngày
+  - RAG-001: Drug vector store Chroma — 3 ngày
+  - UI-001: Drug suggestion chips — 5 ngày
+  - L4-REDESIGN: Per-drug mandatory confirm — 3 ngày
+- [DESIGN-UPDATE] docs/records/DESIGN_REPORT_v1.1_20260606.md Section 15 → v2.0
+- [BACKLOG] FID-VN-010 tasks thêm vào IMMEDIATE
+- [PENDING] PA-009 + PA-010 + PA-011 created
+- [PROGRESS] docs/records/PROJECT_PROGRESS.md v1.5 updated
+
+## Kết quả đo được
+- Tests: 473/473 PASS
+- FID-VN-010: DRAFT hoàn chỉnh, đủ để Andy review
+- Drug Recall local pipeline = 13–18% vs 78% (Cloud LLM)
+- Root causes: RC-1 Drug OOV · RC-2 No clinical bias · RC-3 Fixed chunk · RC-4 Dialect
+
+## Blocker / Phụ thuộc bên ngoài
+- [PA-010] Andy chưa approve FID-VN-010 → chưa implement A1/A2/A3
+- [PA-009] Andy chưa fill 54/57 GT clips → BENCH-002b CEER thật chưa đo được
+- [PA-011] Andy chưa chốt Q1+Q3 → PhoBERT chưa implement
+
+## Phiên tiếp theo — làm ngay theo thứ tự
+1. [PA-010] Andy approve fids/FID-VN-010.md → Claude implement A1-PROMPT-INJECT (4h)
+2. [A2-VAD-CHUNK] src/core/l0_normalize.py — silero-vad chunking (1 ngày)
+3. [A3-DIALECT-NORM] src/core/dialect_norm.py — dict 200 entries (2 ngày)
+4. [L4-REDESIGN-001] Per-drug confirm UI — safety critical (3 ngày)
+5. [PA-009] Andy fill GT clips song song
+================
+
 8/6/2026 24h00
 
 P0.6.6 — block mới: Real Voice Testing + Consultation (Drive sessions phân tích, CONS-002 rewrite, CONS-003 6 AI reviews, FID-VN-010 DRAFT)
