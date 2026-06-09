@@ -111,6 +111,11 @@
   - `src/api/main.py` — pipeline injection (specialty→L1a, region→A3) + 4 DVP endpoints
   - `tests/unit/test_dvp.py` — 23 tests AC-001→AC-010 PASS | Total: 817/817
   - Predicted Drug Recall: 55.6% → 65-75% (Layer 1+2), 80-90% (Layer 3 mature)
+- [ ] **ORCH-001** ⏳ Orchestrator v1.0 — Automation Layer giữa Andy và Multi-AI
+  - Source: `Andy/Improvements.md` → `docs/dev/SESSION_CAPTURE_RULES.md`
+  - Scope: `start_session()` + `detect_confusion()` + `create_consultation_request()` + `multi_ai_consult()` + `consistency_check()` + `close_session()`
+  - Prerequisite: FID cần Andy approve trước khi implement (> 100 LOC + new module)
+  - Priority: Phase 1 (sau pilot Đà Nẵng — khi cần scale multi-AI consultation)
 - [ ] **TRAIN-001** ⏳ Fine-tune PhoWhisper trên 50-100h real clinical audio — cần audio thật từ pilot
 - [x] **GAP-002** ✅ Unit tests PII scan — tests/unit/test_pii_scan.py 27 tests PASS (2026-06-06)
 - [x] **GAP-003** ✅ Unit tests L8 error handler — `tests/unit/test_l8_error_handler.py` 20 tests PASS (2026-06-08) | P0.2.L8

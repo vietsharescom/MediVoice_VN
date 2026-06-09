@@ -169,6 +169,9 @@ BƯỚC 6 — Increment session counter + Commit & Push
 
 ### 4. TEMPLATE LAST_SESSION.md
 
+> Capture Rules đầy đủ: `docs/dev/SESSION_CAPTURE_RULES.md`
+> Claude phải ghi đủ 6 categories — báo cáo thiếu mục = INVALID.
+
 ```markdown
 # LAST_SESSION.md — MediVoice VN
 # Ghi đè mỗi phiên — git history lưu lịch sử cũ tự động
@@ -183,18 +186,40 @@ BƯỚC 6 — Increment session counter + Commit & Push
 ## Trạng thái đầu → cuối
 v{trước} | {N} tests → v{sau} | {N} tests
 
-## Đã hoàn thành
-- [TASK-ID] mô tả kết quả cụ thể, đo được
-- [TASK-ID] ...
+## 1. Actions Completed
+- Files tạo: [đường dẫn đầy đủ]
+- Files sửa: [đường dẫn đầy đủ]
+- Code generated: [mô tả ngắn + LOC ước tính]
+- Tests chạy: N/N PASS
+- Design/Benchmark cập nhật: (nếu có)
 
-## Kết quả đo được
-- Tests: N/N PASS
-- Pipeline: input mẫu → output mẫu (nếu có)
+## 2. Decisions
+- Owner Decisions (Andy): [quyết định Andy đã đưa ra trong phiên]
+- Technical Decisions (Claude): [quyết định kỹ thuật Claude tự chọn]
+- (để trống nếu không có quyết định mới)
 
-## Blocker / Phụ thuộc bên ngoài
-- [TASK-ID] lý do bị block
+## 3. Architecture Changes
+- (Pipeline/module/API/RAG logic thay đổi — để trống nếu không có)
+- (Thay đổi nào ảnh hưởng L0→L10 PHẢI có FID)
 
-## Phiên tiếp theo — làm ngay theo thứ tự
+## 4. Tasks Created
+- CT-xxx: [mô tả] — (Claude còn làm)
+- PA-xxx: [mô tả] — (Andy cần làm)
+- TP-xxx: [mô tả] — (cần hỏi AI khác)
+- (để trống nếu không có tasks mới)
+
+## 5. Pending Items
+- [TASK-ID] việc chưa xong, carry-over phiên sau
+- [TASK-ID] cần Andy xác nhận
+- (để trống nếu không có)
+
+## 6. Risks / Confusions
+- (Chỗ Claude confused / confidence < 70%)
+- (Chỗ cần FID — thay đổi > 100 LOC)
+- (Chỗ có rủi ro pháp lý / safety)
+- (để trống nếu không có)
+
+## Phiên tiếp theo — thứ tự ưu tiên
 1. [TASK-ID] mô tả (ưu tiên cao nhất)
 2. [TASK-ID] ...
 3. [TASK-ID] ...
@@ -228,6 +253,7 @@ v{trước} | {N} tests → v{sau} | {N} tests
 | `PROJECT_PROGRESS.md` | `docs/records/` | Claude + Andy | **Tiến độ toàn dự án — lưu đồ + bảng màu** |
 | `IMPROVEMENT_PROCESS.md` | `docs/compliance/` | Claude + Andy | ISO Cl.10.3 — quy trình cải tiến liên tục |
 | `CONFUSION_PATTERNS.md` | `docs/dev/` | **Claude** | Tầng 4 Memory — đọc khi confused/FID |
+| `SESSION_CAPTURE_RULES.md` | `docs/dev/` | **Claude** | 6-category capture rules — ISO 42001 Cl.9.1 |
 | `CONSULTATION_TEMPLATE.md` | `docs/dev/` | Claude + Andy | Multi-AI consultation workflow |
 | `QUALITY_AUDIT_TEMPLATE.md` | `docs/dev/` | Claude + Andy | ISO/IEC 25010 product quality audit |
 | `FID_TEMPLATE.md` | `docs/dev/` | Claude | Template tạo FID mới (FID-VN-{NNN}.md → fids/) |
