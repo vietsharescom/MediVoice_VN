@@ -111,14 +111,19 @@
   - `src/api/main.py` — pipeline injection (specialty→L1a, region→A3) + 4 DVP endpoints
   - `tests/unit/test_dvp.py` — 23 tests AC-001→AC-010 PASS | Total: 817/817
   - Predicted Drug Recall: 55.6% → 65-75% (Layer 1+2), 80-90% (Layer 3 mature)
-- [~] **ORCH-001** 🔵 Orchestrator v1.0 — PROTOTYPE chạy được (2026-06-09 SES-20260609i)
+- [~] **ORCH-001** 🔵 Orchestrator v1.0 — PROTOTYPE multi-AI chạy được (2026-06-09 SES-20260609i)
   - Source: `Andy/Improvements.md` → `docs/dev/SESSION_CAPTURE_RULES.md`
-  - File: `scripts/orchestrator.py` (~190 LOC) — CLI: `start | consult | check | close`
+  - File: `scripts/orchestrator.py` (~250 LOC) — CLI: `start | consult | check | close`
   - **Done**: `start_session()` (load ISO audit + LAST_SESSION + BACKLOG + PENDING) ✅
-  - **Done**: `consult(topic, question)` — gọi Groq API (`requests`, llama-3.3-70b-versatile), lưu JSON evidence vào `docs/records/consultations/` ✅
-  - **Done**: `consistency_check(topic, question)` — 2x Groq (temp 0.1 vs 0.7) + phân tích AGREEMENTS/CONFLICTS/RECOMMENDATION (llama-3.1-8b-instant) ✅
+  - **Done**: `multi_ai_consult()` + `_PROVIDERS` registry — Groq/OpenAI/xAI qua `_openai_compatible_call()` chung ✅
+  - **Done**: `consult(topic, question)` — gọi tất cả providers, lưu JSON evidence vào `docs/records/consultations/` ✅
+  - **Done**: `consistency_check(topic, question)` — query tất cả providers + Groq phân tích AGREEMENTS/CONFLICTS/RECOMMENDATION ✅
   - **Done**: `close_session()` — in checklist 6 bước (chưa tự động hóa, chỉ reminder)
-  - **Demo evidence**: `docs/records/consultations/ORCH-CONSULT-20260609-184913.json` (consult), `ORCH-CONSULT-20260609-184931.json` (consistency check) — output thật từ Groq/LLaMA
+  - **Provider status (2026-06-09)**:
+    - Groq/LLaMA-3.3-70B ✅ hoạt động (free tier)
+    - OpenAI/GPT-4o-mini ⚠️ key hợp lệ nhưng HTTP 429 — hết quota/chưa add billing (`platform.openai.com`)
+    - xAI/Grok-2 ⚠️ key hợp lệ nhưng HTTP 403 — team chưa có credits (`console.x.ai`)
+  - **Demo evidence**: `docs/records/consultations/ORCH-CONSULT-20260609-184913.json`, `*-184931.json`, `*-195003.json` (multi-provider, Groq output thật + OpenAI/xAI skip reasons)
   - **Chưa làm**: `detect_confusion()`, `create_consultation_request()` (CONSULTATION_TEMPLATE format), tự động hóa `close_session()` (chưa tự update docs)
   - Prerequisite for full v1.0: FID cần Andy approve (> 100 LOC tổng + new module + ghi đè LAST_SESSION tự động)
   - Priority: Phase 1 (sau pilot Đà Nẵng — khi cần scale multi-AI consultation)

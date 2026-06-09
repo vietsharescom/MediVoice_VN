@@ -27,15 +27,15 @@ if sys.stdout.encoding and sys.stdout.encoding.lower() not in ("utf-8", "utf8"):
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 
-def _load_groq_key() -> str:
+def _load_key(env_var: str, secrets_key: str) -> str:
     import os
-    key = os.environ.get("GROQ_API_KEY", "")
+    key = os.environ.get(env_var, "")
     if key:
         return key
     secrets = ROOT / ".streamlit" / "secrets.toml"
     if secrets.exists():
         for line in secrets.read_text(encoding="utf-8").splitlines():
-            if "groq_api_key" in line and "=" in line:
+            if line.strip().startswith(secrets_key) and "=" in line:
                 return line.split("=", 1)[1].strip().strip('"').strip("'")
     return ""
 
@@ -51,11 +51,11 @@ def _banner(title: str) -> None:
     print(f"\n{'='*60}\n  {title}\n{'='*60}")
 
 
-def _groq_call(messages: list, model: str = "llama-3.3-70b-versatile",
-               max_tokens: int = 800, temperature: float = 0.3) -> dict:
-    api_key = _load_groq_key()
+def _openai_compatible_call(url: str, api_key: str, messages: list, model: str,
+                             max_tokens: int, temperature: float) -> dict:
+    """Shared caller for OpenAI-compatible chat completion APIs (Groq, OpenAI, xAI)."""
     if not api_key:
-        return {"error": "GROQ_API_KEY not found — add to .streamlit/secrets.toml or set env var"}
+        return {"error": "API key not found — add to .streamlit/secrets.toml or set env var"}
 
     payload = {
         "model": model,
@@ -66,7 +66,7 @@ def _groq_call(messages: list, model: str = "llama-3.3-70b-versatile",
 
     try:
         resp = requests.post(
-            "https://api.groq.com/openai/v1/chat/completions",
+            url,
             headers={
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json",
@@ -84,6 +84,41 @@ def _groq_call(messages: list, model: str = "llama-3.3-70b-versatile",
         }
     except Exception as e:
         return {"error": str(e)}
+
+
+def _groq_call(messages: list, model: str = "llama-3.3-70b-versatile",
+               max_tokens: int = 800, temperature: float = 0.3) -> dict:
+    api_key = _load_key("GROQ_API_KEY", "groq_api_key")
+    return _openai_compatible_call(
+        "https://api.groq.com/openai/v1/chat/completions",
+        api_key, messages, model, max_tokens, temperature,
+    )
+
+
+def _openai_call(messages: list, model: str = "gpt-4o-mini",
+                 max_tokens: int = 800, temperature: float = 0.3) -> dict:
+    api_key = _load_key("OPENAI_API_KEY", "openai_api_key")
+    return _openai_compatible_call(
+        "https://api.openai.com/v1/chat/completions",
+        api_key, messages, model, max_tokens, temperature,
+    )
+
+
+def _xai_call(messages: list, model: str = "grok-2-1212",
+              max_tokens: int = 800, temperature: float = 0.3) -> dict:
+    api_key = _load_key("XAI_API_KEY", "xai_api_key")
+    return _openai_compatible_call(
+        "https://api.x.ai/v1/chat/completions",
+        api_key, messages, model, max_tokens, temperature,
+    )
+
+
+# Provider registry for multi-AI consultation
+_PROVIDERS = {
+    "Groq/LLaMA-3.3-70B": _groq_call,
+    "OpenAI/GPT-4o-mini": _openai_call,
+    "xAI/Grok-2": _xai_call,
+}
 
 
 # ── Session Start ──────────────────────────────────────────────────────────────
@@ -148,44 +183,54 @@ Compliance: NĐ13/2023 · TT32/2023 · ISO 42001 · Luật AI 134/2025.
 Trả lời ngắn gọn, kỹ thuật, actionable. Nếu câu hỏi tiếng Việt thì trả lời tiếng Việt."""
 
 
-def consult(topic: str, question: str, context: str = "") -> dict:
-    """Call Groq LLaMA-3.3-70B as external AI consultant."""
+def multi_ai_consult(topic: str, question: str, context: str = "") -> dict:
+    """Send the same question to all configured providers in _PROVIDERS."""
     user_msg = f"Context:\n{context}\n\nQuestion:\n{question}" if context else question
+    messages = [
+        {"role": "system", "content": _SYSTEM + f"\nTopic hiện tại: {topic}"},
+        {"role": "user", "content": user_msg},
+    ]
 
-    print(f"\n🔄 Consulting Groq/LLaMA-3.3-70B  |  topic: {topic}")
-    result = _groq_call(
-        messages=[
-            {"role": "system", "content": _SYSTEM + f"\nTopic hiện tại: {topic}"},
-            {"role": "user", "content": user_msg},
-        ],
-    )
+    results = {}
+    for name, fn in _PROVIDERS.items():
+        print(f"  -> {name}...")
+        results[name] = fn(messages)
+    return results
 
-    if "error" in result:
-        return {"error": result["error"], "topic": topic}
+
+def consult(topic: str, question: str, context: str = "") -> dict:
+    """Consult all configured AI providers (Groq, OpenAI, xAI) and save evidence."""
+    print(f"\n🔄 Multi-AI consult  |  topic: {topic}")
+    results = multi_ai_consult(topic, question, context)
 
     out = {
         "type": "consultation",
         "topic": topic,
         "question": question,
-        "ai": "Groq/LLaMA-3.3-70B",
-        "model": result["model"],
-        "response": result["content"],
-        "usage": result["usage"],
+        "responses": {},
         "timestamp": datetime.now().isoformat(),
     }
 
-    _print_consult(out)
+    _banner(f"CONSULTATION  |  {topic}")
+    for name, result in results.items():
+        print(f"\n--- {name} ---")
+        if "error" in result:
+            print(f"  [SKIPPED] {result['error']}")
+            out["responses"][name] = {"error": result["error"]}
+            continue
+        print(result["content"])
+        u = result.get("usage", {})
+        if u:
+            print(f"\n  [Tokens: {u.get('prompt_tokens', 0)} prompt + {u.get('completion_tokens', 0)} completion]")
+        out["responses"][name] = {
+            "model": result["model"],
+            "response": result["content"],
+            "usage": u,
+        }
+    print("=" * 60)
+
     _save_consult(out)
     return out
-
-
-def _print_consult(r: dict) -> None:
-    _banner(f"CONSULTATION  |  {r.get('ai','AI')}  |  {r.get('topic','')}")
-    print(r.get("response", r.get("error", "")))
-    u = r.get("usage", {})
-    if u:
-        print(f"\n  [Tokens: {u.get('prompt_tokens',0)} prompt + {u.get('completion_tokens',0)} completion]")
-    print("=" * 60)
 
 
 def _save_consult(r: dict) -> None:
@@ -200,42 +245,42 @@ def _save_consult(r: dict) -> None:
 # ── Consistency Check ─────────────────────────────────────────────────────────
 
 def consistency_check(topic: str, question: str) -> None:
-    """
-    Send same question twice (simulating 2 AI perspectives), then analyse consistency.
-    Production version would call GPT-4 + Groq + Copilot in parallel.
-    """
-    print(f"\n🔄 Consistency check — calling 2x Groq with different temperatures...")
+    """Send the same question to all providers, then ask Groq to analyse consistency."""
+    print(f"\n🔄 Consistency check — querying {len(_PROVIDERS)} providers...")
 
-    r1 = _groq_call(
-        messages=[
-            {"role": "system", "content": _SYSTEM + f"\nTopic: {topic}\nPerspective: Conservative / risk-aware"},
-            {"role": "user", "content": question},
-        ],
-        temperature=0.1,
-    )
-    r2 = _groq_call(
-        messages=[
-            {"role": "system", "content": _SYSTEM + f"\nTopic: {topic}\nPerspective: Innovative / performance-focused"},
-            {"role": "user", "content": question},
-        ],
-        temperature=0.7,
-    )
+    messages = [
+        {"role": "system", "content": _SYSTEM + f"\nTopic: {topic}"},
+        {"role": "user", "content": question},
+    ]
 
-    if "error" in r1 or "error" in r2:
-        print(f"  Error: {r1.get('error', r2.get('error', ''))}")
+    responses = {}
+    for name, fn in _PROVIDERS.items():
+        print(f"  -> {name}...")
+        responses[name] = fn(messages)
+
+    ok = {name: r for name, r in responses.items() if "error" not in r}
+    skipped = {name: r for name, r in responses.items() if "error" in r}
+
+    for name, r in skipped.items():
+        print(f"  [SKIPPED] {name}: {r['error']}")
+
+    if len(ok) < 2:
+        print("  Not enough providers responded to compare — need at least 2.")
         return
 
-    print(f"\n  📊 Response A (Conservative):\n  {r1['content'][:300]}...\n")
-    print(f"  📊 Response B (Innovative):\n  {r2['content'][:300]}...\n")
+    for name, r in ok.items():
+        print(f"\n  📊 {name}:\n  {r['content'][:300]}...\n")
 
-    # Analyse consistency
+    comparison_text = "\n\n".join(
+        f"Response from {name}:\n{r['content']}" for name, r in ok.items()
+    )
     check = _groq_call(
         messages=[
-            {"role": "system", "content": "You are a consistency analyser. Compare two AI responses and output EXACTLY:\n1. AGREEMENTS:\n2. CONFLICTS:\n3. RECOMMENDATION:"},
-            {"role": "user", "content": f"Topic: {topic}\n\nResponse A:\n{r1['content']}\n\nResponse B:\n{r2['content']}"},
+            {"role": "system", "content": "You are a consistency analyser. Compare the AI responses below and output EXACTLY:\n1. AGREEMENTS:\n2. CONFLICTS:\n3. RECOMMENDATION:"},
+            {"role": "user", "content": f"Topic: {topic}\n\n{comparison_text}"},
         ],
         model="llama-3.1-8b-instant",
-        max_tokens=350,
+        max_tokens=400,
         temperature=0.1,
     )
 
@@ -244,7 +289,8 @@ def consistency_check(topic: str, question: str) -> None:
     print("=" * 60)
     _save_consult({
         "type": "consistency_check", "topic": topic, "question": question,
-        "response_a": r1["content"], "response_b": r2["content"],
+        "responses": {name: r["content"] for name, r in ok.items()},
+        "skipped": {name: r["error"] for name, r in skipped.items()},
         "consistency": check.get("content", ""), "timestamp": datetime.now().isoformat(),
     })
 

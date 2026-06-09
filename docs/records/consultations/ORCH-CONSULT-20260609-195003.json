@@ -1,0 +1,27 @@
+{
+  "type": "consultation",
+  "topic": "ORCH-001",
+  "question": "Trong 1 cau, ban la AI nao va model gi?",
+  "responses": {
+    "Groq/LLaMA-3.3-70B": {
+      "model": "llama-3.3-70b-versatile",
+      "response": "Tôi là Technical Consultant cho MediVoice VN, sử dụng stack công nghệ bao gồm Python 3.10, FastAPI, PhoWhisper-medium cho xử lý giọng nói, PhoBERT+CRF cho xử lý ngôn ngữ tự nhiên và SQLite cho lưu trữ dữ liệu, tất cả được tích hợp trong ứng dụng Streamlit.",
+      "usage": {
+        "queue_time": 0.05421452,
+        "prompt_tokens": 184,
+        "prompt_time": 0.009293461,
+        "completion_tokens": 70,
+        "completion_time": 0.229324289,
+        "total_tokens": 254,
+        "total_time": 0.23861775
+      }
+    },
+    "OpenAI/GPT-4o-mini": {
+      "error": "HTTP 429: {\n    \"error\": {\n        \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/gu"
+    },
+    "xAI/Grok-2": {
+      "error": "HTTP 400: {\"code\":\"invalid-argument\",\"error\":\"Model not found: grok-2-latest\"}"
+    }
+  },
+  "timestamp": "2026-06-09T19:50:03.718838"
+}
