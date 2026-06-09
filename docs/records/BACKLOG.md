@@ -41,18 +41,17 @@
   - `silero-vad==6.2.1` thêm vào `requirements.txt` + `requirements-prod.txt`
   - Max chunk 20s, gap_ms 500ms, auto-split nếu vượt, fallback về `chunk_audio()` cũ
   - `tests/unit/test_l0_vad_chunk.py` — 18 tests PASS | Total: 514/514
-- [ ] **A3-DIALECT-NORM** 🔴 Dialect normalization + abbreviation expansion
-  - File mới: `src/core/dialect_norm.py`
-  - Dict 200+ entries: Trung (mô/rứa/hỉ/răng/ni) + Nam (hổng/dzô/tui) + medical_abbrev
-  - ⚠️ Region-aware: "ốm" = bệnh (Trung) ≠ gầy (Nam) — đọc `facility.region`
-  - Unit test 50 cases, dialect badge output cho UI
-  - Effort: 2 ngày | Risk: Thấp
-- [ ] **L4-REDESIGN-001** 🔴 Per-drug mandatory confirm UI — safety critical
-  - Files: `demo/app.py` + `demo/static/js/` + `demo/static/index.html`
-  - KHÔNG batch approve: mỗi drug phải tap xác nhận riêng
-  - Confidence bar per field, flagged drugs require explicit confirm
-  - Evidence: Session 174116 Losartan→Atorvastatin safety failure
-  - Effort: 3 ngày | Risk: Thấp | Impact: SAFETY CRITICAL
+- [x] **A3-DIALECT-NORM** ✅ Dialect normalization + abbreviation expansion (2026-06-09)
+  - `src/core/dialect_norm.py` — DIALECT_MAP 200+ entries (central/southern/northern/medical_abbrev)
+  - `detect_region()` + `normalize_dialect()` + `expand_abbreviations()` + `normalize_text()`
+  - ⚠️ "ốm" handled correctly: bệnh (central) ≠ gầy (southern) — region-aware
+  - Multi-word phrases matched trước single-word (sort by length desc)
+  - `tests/unit/test_l1a_dialect_norm.py` — 49 tests PASS | Total: 563/563
+- [x] **L4-REDESIGN-001** ✅ Per-drug mandatory confirm UI — safety critical (2026-06-09)
+  - `demo/app.py` — per-drug `st.checkbox` + `_all_drugs_confirmed` gate + `disabled=not _all_drugs_confirmed`
+  - Flagged drugs (L1b drug_flags): hiện `st.warning` + confidence % thay vì static card
+  - Reset drug_confirm keys khi new result / Từ chối / Khám BN tiếp theo
+  - 678/678 tests PASS | Evidence: Session 174116 Losartan→Atorvastatin safety failure
 - [ ] **RAG-001-DRUG-VECTOR** 🟡 Drug Vector Store — Chroma + multilingual MiniLM
   - File mới: `src/core/drug_rag.py`
   - Build từ `data/reference/drug_db_v200.json` (146 INN, phonetic_variants)

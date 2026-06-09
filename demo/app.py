@@ -540,6 +540,9 @@ if audio_data is not None and not st.session_state.approved:
     st.session_state.approved = False
     st.session_state.drive_error = ""
     st.session_state.drive_uploaded = False
+    for _k in list(st.session_state.keys()):
+        if _k.startswith("drug_confirm_"):
+            del st.session_state[_k]
 
 # ── Kết quả ───────────────────────────────────────────────────────────────────
 if st.session_state.result:
@@ -639,17 +642,54 @@ if st.session_state.result:
 
     st.divider()
 
-    # ── ĐƠN THUỐC + đánh giá ngay bên dưới ─────────────────────────────
-    st.markdown("#### 💊 Đơn thuốc *(chuyên môn sâu — kiểm tra kỹ)*")
-    for drug in r.get("don_thuoc", []):
-        parts = [f'<b>{drug.get("ten","")}</b> {drug.get("ham_luong","")}']
-        if drug.get("lieu"):
-            parts.append(drug["lieu"])
-        if drug.get("ngay"):
-            parts.append(drug["ngay"])
-        st.markdown(f'<div class="drug-card">💊 {" — ".join(parts)}</div>', unsafe_allow_html=True)
-    if not r.get("don_thuoc"):
+    # ── ĐƠN THUỐC — L4-REDESIGN: per-drug confirm (FID-VN-010) ──────────
+    st.markdown("#### 💊 Đơn thuốc — BS xác nhận từng thuốc *(L4 Safety Gate)*")
+    _don_thuoc = r.get("don_thuoc", [])
+    _flags_map = {f["inn"].lower(): f for f in r.get("drug_flags", [])}
+
+    def _drug_flag_info(drug_name: str) -> dict | None:
+        dn = drug_name.lower()
+        for inn_key, flag in _flags_map.items():
+            if inn_key in dn or dn in inn_key:
+                return flag
+        return None
+
+    _drug_confirmed = []
+    for _i, _drug in enumerate(_don_thuoc):
+        _name = _drug.get("ten", "")
+        _flag = _drug_flag_info(_name)
+        _parts = [f'**{_name}** {_drug.get("ham_luong", "")}'.strip()]
+        if _drug.get("lieu"):
+            _parts.append(_drug["lieu"])
+        if _drug.get("ngay"):
+            _parts.append(_drug["ngay"])
+        _label = " — ".join(p for p in _parts if p.strip())
+        _col_info, _col_check = st.columns([5, 1])
+        with _col_info:
+            if _flag:
+                _conf = _flag.get("confidence", 0)
+                _orig = _flag.get("original", "")
+                st.warning(f"⚠️ {_label}  |  AI nghe: *{_orig}*  |  confidence: {_conf:.0%}")
+            else:
+                st.markdown(f'<div class="drug-card">💊 {_label}</div>', unsafe_allow_html=True)
+        with _col_check:
+            _confirmed = st.checkbox(
+                "✓",
+                key=f"drug_confirm_{_i}",
+                help=f"Xác nhận {_name}: tên, liều, số ngày đúng",
+            )
+            _drug_confirmed.append(_confirmed)
+
+    if not _don_thuoc:
         st.caption("*(Không phát hiện đơn thuốc trong giọng nói)*")
+    _all_drugs_confirmed = all(_drug_confirmed) if _drug_confirmed else True
+    if _drug_confirmed:
+        _n_conf = sum(_drug_confirmed)
+        _n_total = len(_drug_confirmed)
+        if _all_drugs_confirmed:
+            st.success(f"✅ {_n_total}/{_n_total} thuốc đã xác nhận")
+        else:
+            st.info(f"💊 {_n_conf}/{_n_total} thuốc đã xác nhận — tick ✓ từng thuốc trước khi lưu")
     score_dt = st.select_slider("Đơn thuốc đúng không", options=[1, 2, 3, 4, 5], value=5, format_func=_s, key="score_dt")
 
     st.divider()
@@ -695,7 +735,9 @@ if st.session_state.result:
     col_approve, col_reject = st.columns(2)
 
     with col_approve:
-        if st.button("✅ Xác nhận & Lưu", type="primary", use_container_width=True):
+        if not _all_drugs_confirmed:
+            st.warning("⚠️ Tick ✓ xác nhận từng thuốc trước khi lưu bệnh án")
+        if st.button("✅ Xác nhận & Lưu", type="primary", use_container_width=True, disabled=not _all_drugs_confirmed):
             if not st.session_state.approved:
                 session_data = {
                     "session_id": st.session_state.session_id,
@@ -796,6 +838,9 @@ if st.session_state.result:
             st.warning("Đã từ chối — bệnh án không được lưu.")
             st.session_state.result = None
             st.session_state.approved = False
+            for _k in list(st.session_state.keys()):
+                if _k.startswith("drug_confirm_"):
+                    del st.session_state[_k]
             st.rerun()
 
     if st.session_state.approved and hasattr(st.session_state, "session_data"):
@@ -867,12 +912,15 @@ if st.session_state.result:
             st.session_state.drive_uploaded = False
             if hasattr(st.session_state, "session_data"):
                 del st.session_state.session_data
+            for _k in list(st.session_state.keys()):
+                if _k.startswith("drug_confirm_"):
+                    del st.session_state[_k]
             st.rerun()
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.divider()
 st.markdown(
-    "<center><small>MediVoice VN v0.8.4 · Demo · "
+    "<center><small>MediVoice VN v0.8.6 · Demo · "
     "Liên hệ: vietshares.com@gmail.com · "
     "© 2026 Maple Leaf Group</small></center>",
     unsafe_allow_html=True,
