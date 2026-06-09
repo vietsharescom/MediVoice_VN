@@ -14,6 +14,7 @@ from datetime import datetime
 from cryptography.fernet import Fernet
 
 from ..models.clinical_record import ClinicalRecord, RecordStatus
+from ..models.doctor_profile import DoctorProfile, DoctorAlias
 from .l4_human_gate import assert_approved
 
 _DB_PATH = Path(os.getenv("MEDIVOICE_DB", "medivoice.db"))
@@ -79,6 +80,31 @@ def init_db(db_path: Path | None = None) -> None:
             detail       TEXT DEFAULT '',
             prev_hash    TEXT DEFAULT '',
             entry_hash   TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS doctor_profiles (
+            cchn                TEXT PRIMARY KEY,
+            name                TEXT NOT NULL,
+            region              TEXT NOT NULL,
+            primary_specialty   TEXT NOT NULL,
+            secondary_specialty TEXT,
+            english_level       TEXT DEFAULT 'Basic',
+            speaking_speed      TEXT DEFAULT 'Vừa',
+            created_at          TEXT NOT NULL,
+            updated_at          TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS doctor_aliases (
+            id               INTEGER PRIMARY KEY AUTOINCREMENT,
+            cchn             TEXT NOT NULL REFERENCES doctor_profiles(cchn),
+            alias_text       TEXT NOT NULL,
+            inn              TEXT NOT NULL,
+            session_count    INTEGER DEFAULT 0,
+            occurrence_count INTEGER DEFAULT 0,
+            confirmed_by_bs  INTEGER DEFAULT 0,
+            created_at       TEXT NOT NULL,
+            last_seen        TEXT NOT NULL,
+            UNIQUE(cchn, alias_text)
         );
     """)
     conn.commit()
@@ -165,3 +191,133 @@ def update_pdf_path(record_id: str, pdf_path: str, db_path: Path | None = None) 
     )
     conn.commit()
     conn.close()
+
+
+# ── DVP — Doctor Profile CRUD (FID-VN-012) ───────────────────────────────────
+
+_DVP_COLS = [
+    "cchn", "name", "region", "primary_specialty", "secondary_specialty",
+    "english_level", "speaking_speed", "created_at", "updated_at",
+]
+
+_ALIAS_COLS = [
+    "id", "cchn", "alias_text", "inn",
+    "session_count", "occurrence_count", "confirmed_by_bs",
+    "created_at", "last_seen",
+]
+
+
+def save_doctor_profile(profile: DoctorProfile, db_path: Path | None = None) -> None:
+    """Upsert DoctorProfile vào DB."""
+    now = datetime.now().isoformat()
+    conn = _get_conn(db_path)
+    conn.execute(
+        """INSERT OR REPLACE INTO doctor_profiles
+           (cchn, name, region, primary_specialty, secondary_specialty,
+            english_level, speaking_speed, created_at, updated_at)
+           VALUES (?,?,?,?,?,?,?,?,?)""",
+        (
+            profile.cchn, profile.name, profile.region,
+            profile.primary_specialty, profile.secondary_specialty,
+            profile.english_level, profile.speaking_speed,
+            profile.created_at or now, now,
+        ),
+    )
+    conn.commit()
+    conn.close()
+
+
+def load_doctor_profile(cchn: str, db_path: Path | None = None) -> DoctorProfile | None:
+    """Đọc DoctorProfile theo cchn — trả None nếu chưa có."""
+    conn = _get_conn(db_path)
+    row = conn.execute(
+        "SELECT cchn, name, region, primary_specialty, secondary_specialty,"
+        " english_level, speaking_speed, created_at, updated_at"
+        " FROM doctor_profiles WHERE cchn=?",
+        (cchn,),
+    ).fetchone()
+    conn.close()
+    if not row:
+        return None
+    return DoctorProfile(**dict(zip(_DVP_COLS, row)))
+
+
+def save_alias_occurrence(
+    cchn: str,
+    alias_text: str,
+    inn: str,
+    session_id: str,
+    db_path: Path | None = None,
+) -> None:
+    """
+    Ghi nhận một lần xuất hiện alias từ L4 correction capture.
+    session_count tăng khi session_id mới (dùng last_seen làm proxy).
+    """
+    now = datetime.now().isoformat()
+    conn = _get_conn(db_path)
+    row = conn.execute(
+        "SELECT id, session_count, last_seen FROM doctor_aliases"
+        " WHERE cchn=? AND alias_text=?",
+        (cchn, alias_text),
+    ).fetchone()
+    if row is None:
+        conn.execute(
+            """INSERT INTO doctor_aliases
+               (cchn, alias_text, inn, session_count, occurrence_count,
+                confirmed_by_bs, created_at, last_seen)
+               VALUES (?,?,?,1,1,0,?,?)""",
+            (cchn, alias_text, inn, now, session_id),
+        )
+    else:
+        alias_id, sc, last_seen = row
+        new_sc = sc + (1 if last_seen != session_id else 0)
+        conn.execute(
+            """UPDATE doctor_aliases
+               SET occurrence_count = occurrence_count + 1,
+                   session_count = ?,
+                   last_seen = ?
+               WHERE id = ?""",
+            (new_sc, session_id, alias_id),
+        )
+    conn.commit()
+    conn.close()
+
+
+def get_pending_aliases(cchn: str, db_path: Path | None = None) -> list[DoctorAlias]:
+    """Aliases đủ điều kiện promote (≥3 lần + ≥2 sessions) chưa BS confirm."""
+    conn = _get_conn(db_path)
+    rows = conn.execute(
+        """SELECT id, cchn, alias_text, inn, session_count, occurrence_count,
+                  confirmed_by_bs, created_at, last_seen
+           FROM doctor_aliases
+           WHERE cchn=? AND confirmed_by_bs=0
+             AND occurrence_count >= 3 AND session_count >= 2""",
+        (cchn,),
+    ).fetchall()
+    conn.close()
+    return [DoctorAlias(**dict(zip(_ALIAS_COLS, r))) for r in rows]
+
+
+def confirm_alias(alias_id: int, confirmed: bool, db_path: Path | None = None) -> None:
+    """BS confirm (True) hoặc reject (False) alias pending."""
+    conn = _get_conn(db_path)
+    conn.execute(
+        "UPDATE doctor_aliases SET confirmed_by_bs=? WHERE id=?",
+        (1 if confirmed else -1, alias_id),
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_active_aliases(cchn: str, db_path: Path | None = None) -> list[DoctorAlias]:
+    """Aliases đã được BS confirm (confirmed_by_bs=1)."""
+    conn = _get_conn(db_path)
+    rows = conn.execute(
+        """SELECT id, cchn, alias_text, inn, session_count, occurrence_count,
+                  confirmed_by_bs, created_at, last_seen
+           FROM doctor_aliases
+           WHERE cchn=? AND confirmed_by_bs=1""",
+        (cchn,),
+    ).fetchall()
+    conn.close()
+    return [DoctorAlias(**dict(zip(_ALIAS_COLS, r))) for r in rows]

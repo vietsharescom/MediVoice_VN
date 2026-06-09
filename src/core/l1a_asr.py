@@ -14,34 +14,77 @@ _pipeline = None   # lazy-loaded
 
 # A1-PROMPT-INJECT: Specialty → drug_class list mapping.
 # None = all drugs (general clinical — no specialty filter).
+# FID-VN-012 canonical IDs (12 specialties) + legacy aliases for backward compat.
 SPECIALTY_DRUG_CLASSES: dict[str, list[str] | None] = {
+    # ── FID-VN-012 canonical (12 specialties) ────────────────────────────────
     "noi_khoa": [
         "statin", "ace_inhibitor", "arb", "beta_blocker", "calcium_channel_blocker",
         "thiazide_like_diuretic", "loop_diuretic", "biguanide", "sulfonylurea",
         "dpp4_inhibitor", "sglt2_inhibitor", "analgesic_antipyretic", "ppi",
         "antihistamine_2nd_gen", "corticosteroid",
     ],
-    "nhi_khoa": [
-        "analgesic_antipyretic", "antihistamine_2nd_gen", "penicillin",
-        "cephalosporin_3g", "macrolide", "corticosteroid",
-    ],
-    "ngoai_khoa": [
-        "analgesic_antipyretic", "nsaid", "penicillin", "cephalosporin_3g",
-        "opioid_weak", "ppi",
-    ],
-    "san_khoa": ["analgesic_antipyretic", "penicillin", "corticosteroid"],
     "tim_mach": [
         "statin", "ace_inhibitor", "arb", "beta_blocker", "calcium_channel_blocker",
         "thiazide_like_diuretic", "loop_diuretic", "antiplatelet", "anticoagulant",
-        "supplement_cardiac",
+        "supplement_cardiac", "cardiac_glycoside",
     ],
-    "tieu_hoa": ["ppi", "antacid", "prokinetic", "nitroimidazole", "penicillin"],
-    "than_kinh": [
+    "chan_thuong_chinh_hinh": [
+        "nsaid", "opioid_weak", "analgesic_antipyretic", "corticosteroid",
+        "uric_acid_lowering", "gout_acute", "calcium_channel_blocker",
+    ],
+    "tai_mui_hong": [
+        "antihistamine_2nd_gen", "corticosteroid", "macrolide", "quinolone",
+        "analgesic_antipyretic", "penicillin", "cephalosporin_3g",
+    ],
+    "san_phu_khoa": [
+        "analgesic_antipyretic", "penicillin", "cephalosporin_3g",
+        "corticosteroid", "nitroimidazole", "macrolide",
+    ],
+    "nhi": [
+        "analgesic_antipyretic", "antihistamine_2nd_gen", "penicillin",
+        "cephalosporin_3g", "macrolide", "corticosteroid", "beta2_agonist",
+    ],
+    "cdha": None,  # contrast agents / all drugs — no specialty filter
+    "ngoai": [
+        "analgesic_antipyretic", "nsaid", "penicillin", "cephalosporin_3g",
+        "opioid_weak", "ppi", "nitroimidazole", "penicillin_beta_lactamase_inhibitor",
+    ],
+    "da_lieu": [
+        "antihistamine_2nd_gen", "corticosteroid", "azole_antifungal",
+        "polyene_antifungal", "lincosamide",
+    ],
+    "mat": [
+        "antihistamine_2nd_gen", "corticosteroid", "quinolone",
+        "azole_antifungal", "analgesic_antipyretic",
+    ],
+    "noi_tiet": [
+        "biguanide", "sulfonylurea", "dpp4_inhibitor", "sglt2_inhibitor",
+        "alpha_glucosidase_inhibitor", "thiazolidinedione", "corticosteroid",
+        "statin",
+    ],
+    "than_tiet_nieu": [
+        "loop_diuretic", "thiazide_like_diuretic", "ace_inhibitor", "arb",
+        "quinolone", "penicillin_beta_lactamase_inhibitor",
+    ],
+    # ── Legacy aliases (backward compat — same drug classes as canonical) ─────
+    "nhi_khoa":    [
+        "analgesic_antipyretic", "antihistamine_2nd_gen", "penicillin",
+        "cephalosporin_3g", "macrolide", "corticosteroid", "beta2_agonist",
+    ],
+    "ngoai_khoa":  [
+        "analgesic_antipyretic", "nsaid", "penicillin", "cephalosporin_3g",
+        "opioid_weak", "ppi", "nitroimidazole", "penicillin_beta_lactamase_inhibitor",
+    ],
+    "san_khoa":    [
+        "analgesic_antipyretic", "penicillin", "cephalosporin_3g",
+        "corticosteroid", "nitroimidazole", "macrolide",
+    ],
+    "tieu_hoa":    ["ppi", "antacid", "prokinetic", "nitroimidazole", "penicillin"],
+    "than_kinh":   [
         "analgesic_antipyretic", "anticonvulsant_neuropathic", "antioxidant_neuropathic",
         "ssri", "benzodiazepine", "sedative_hypnotic",
     ],
     "co_xuong_khop": ["nsaid", "corticosteroid", "uric_acid_lowering", "gout_acute"],
-    "da_lieu": ["antihistamine_2nd_gen", "corticosteroid"],
     "lam_sang": None,  # all drugs
 }
 

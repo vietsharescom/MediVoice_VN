@@ -22,8 +22,14 @@ from ..core import l0_normalize, l1a_asr, l1b_drug_correct, l1c_ner
 from ..core import l1d_icd_lookup, l2_validate, l3_route
 from ..core import l4_human_gate, l4_correction_capture, l5_pii_scan, l6_generate_form
 from ..core import l7_storage, l9a_pdf_export, l10_audit_log
-from ..core.l7_storage import init_db, _get_conn
+from ..core.l7_storage import (
+    init_db, _get_conn,
+    save_doctor_profile, load_doctor_profile,
+    get_pending_aliases, confirm_alias,
+)
+from ..core.dialect_norm import normalize_text as _dialect_normalize
 from ..models.clinical_record import ClinicalRecord, RecordStatus
+from ..models.doctor_profile import DoctorProfile, VALID_SPECIALTIES, VALID_REGIONS
 
 logger = logging.getLogger(__name__)
 
@@ -95,12 +101,22 @@ async def transcribe_audio(
         # L0: Normalize
         audio_arr, wav_path = l0_normalize.normalize(tmp.name)
 
-        # L1a: ASR
-        transcript_raw = l1a_asr.transcribe(audio_arr)
+        # DVP: load doctor profile for specialty + region injection (FID-VN-012)
+        _dvp_profile = load_doctor_profile(doctor_cchn) if doctor_cchn else None
+        _specialty = _dvp_profile.primary_specialty if _dvp_profile else "noi_khoa"
+        _region = _dvp_profile.region if _dvp_profile else "auto"
+
+        # L1a: ASR + A1 prompt injection with doctor specialty
+        from ..core.l1b_drug_correct import _load_drug_db as _get_drug_db
+        _drug_db = _get_drug_db()
+        transcript_raw = l1a_asr.transcribe(audio_arr, drug_db=_drug_db, specialty=_specialty)
+
+        # A3: Dialect normalization with doctor region (before L1b)
+        transcript_normalized, _dialect_subs = _dialect_normalize(transcript_raw, _region)
 
         # L1b: Drug correction — v2 with optional RAG fallback (FID-VN-011)
         transcript_corrected, drug_matches = l1b_drug_correct.correct_drug_names_v2(
-            transcript_raw,
+            transcript_normalized,
             rag_collection=_drug_collection,
             embed_model=_embed_model,
         )
@@ -168,6 +184,9 @@ async def transcribe_audio(
             "route": route,
             "pii_detected": pii_detected,
             "status": record.status.value,
+            "dvp_specialty": _specialty,
+            "dvp_region": _region,
+            "dialect_subs": _dialect_subs,
             "warning": "AI tạo nháp — Bác sĩ vui lòng kiểm tra trước khi lưu",
         }
 
@@ -379,6 +398,92 @@ async def submit_feedback(
 @app.get("/api/health")
 async def health():
     return {"status": "ok", "version": "0.3.0"}
+
+
+# ── DVP — Doctor Profile endpoints (FID-VN-012) ───────────────────────────────
+
+@app.post("/api/doctors")
+async def register_doctor(
+    cchn: str = Form(...),
+    name: str = Form(...),
+    region: str = Form(...),
+    primary_specialty: str = Form(...),
+    secondary_specialty: str = Form(default=""),
+    english_level: str = Form(default="Basic"),
+    speaking_speed: str = Form(default="Vừa"),
+):
+    """
+    Đăng ký DoctorProfile — region + primary_specialty bắt buộc.
+    DVP Layer 1: metadata ảnh hưởng chất lượng ASR ngay session 1.
+    """
+    if region not in VALID_REGIONS:
+        raise HTTPException(400, f"region phải là: {sorted(VALID_REGIONS)}")
+    if primary_specialty not in VALID_SPECIALTIES:
+        raise HTTPException(400, f"primary_specialty phải là: {sorted(VALID_SPECIALTIES)}")
+
+    from datetime import datetime as _dt
+    profile = DoctorProfile(
+        cchn=cchn,
+        name=name,
+        region=region,
+        primary_specialty=primary_specialty,
+        secondary_specialty=secondary_specialty or None,
+        english_level=english_level,
+        speaking_speed=speaking_speed,
+        created_at=_dt.now().isoformat(),
+    )
+    save_doctor_profile(profile)
+    return {"cchn": cchn, "status": "registered", "specialty": primary_specialty, "region": region}
+
+
+@app.get("/api/doctors/{cchn}")
+async def get_doctor(cchn: str):
+    """Lấy DoctorProfile theo cchn."""
+    profile = load_doctor_profile(cchn)
+    if not profile:
+        raise HTTPException(404, f"Doctor {cchn} chưa đăng ký DVP")
+    return {
+        "cchn": profile.cchn,
+        "name": profile.name,
+        "region": profile.region,
+        "primary_specialty": profile.primary_specialty,
+        "secondary_specialty": profile.secondary_specialty,
+        "english_level": profile.english_level,
+        "speaking_speed": profile.speaking_speed,
+    }
+
+
+@app.get("/api/doctors/{cchn}/aliases/pending")
+async def get_alias_pending(cchn: str):
+    """
+    Lấy danh sách aliases đủ điều kiện promote (≥3 lần / ≥2 phiên).
+    BS xem xét và confirm YES/NO — Human Gate alias (Luật KCB 2023 Đ.62).
+    """
+    from ..core.dvp_alias import check_and_promote
+    candidates = check_and_promote(cchn)
+    return {"cchn": cchn, "pending": candidates, "count": len(candidates)}
+
+
+@app.post("/api/doctors/{cchn}/aliases/{alias_id}/confirm")
+async def confirm_doctor_alias(
+    cchn: str,
+    alias_id: int,
+    doctor_cchn: str = Form(...),
+    confirmed: str = Form(...),   # "yes" | "no"
+):
+    """
+    BS confirm hoặc reject alias candidate.
+    Human Gate — BS phải xác nhận trước khi alias active.
+    """
+    if doctor_cchn != cchn:
+        raise HTTPException(403, "Chỉ BS đó mới confirm alias của mình")
+    is_confirmed = confirmed.lower() in ("yes", "true", "1", "có")
+    confirm_alias(alias_id, is_confirmed)
+    return {
+        "alias_id": alias_id,
+        "status": "confirmed" if is_confirmed else "rejected",
+        "message": "Trợ lý đã cập nhật." if is_confirmed else "Đã bỏ qua alias này.",
+    }
 
 
 # ── UI-SUGGEST-001: Drug candidates, Terms, Dialect check ─────────────────
