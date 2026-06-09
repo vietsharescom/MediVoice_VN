@@ -1106,11 +1106,15 @@ TÍCH HỢP AUTO [Gói 3, Phase 2]:
 ## 15. AI PIPELINE KỸ THUẬT (L0→L10)
 
 ### Dành cho ai: Kỹ thuật
-### Version: v2.0 — Cập nhật 2026-06-09 | FID-VN-010 | BENCH-002b evidence
+### Version: v2.1 — Cập nhật 2026-06-09 | FID-VN-010 + FID-VN-011 | BENCH-002b evidence
 
 > **v2.0 RATIONALE:** BENCH-002b evidence (2026-06-08): Drug Recall local pipeline = 13–18% vs Cloud LLM = 78%.
 > Root causes: Drug OOV hallucination + No clinical domain bias ở ASR + Fixed chunk cắt giữa câu + Dialect gap.
 > FID: `fids/FID-VN-010.md` | Consultation: `docs/records/consultations/CONS-20260608-002.md`
+>
+> **v2.1 UPDATE (2026-06-09):** FID-VN-011 implement xong — Layer 3b RAG thay vì "Layer 5"; thresholds calibrated từ
+> BENCH-002b; drug_db_v200 nâng lên 154 INN; model preload singleton; PhoBERT chạy PARALLEL thay shadow mode.
+> FID: `fids/FID-VN-011.md` | Tests: 794/794 PASS
 
 ```
 INPUT: Giọng nói bác sĩ (WAV/MP3/M4A/WEBM)
@@ -1146,17 +1150,28 @@ INPUT: Giọng nói bác sĩ (WAV/MP3/M4A/WEBM)
        xn→xét nghiệm | sa→siêu âm | xq→x-quang
        đtđ→đái tháo đường | tha→tăng huyết áp
 
-[L1b] DRUG CORRECTION (v2 — multi-layer)
-  Layer 1: Exact alias match (existing, fast)
-  Layer 2: Fuzzy match RapidFuzz token_sort_ratio (cutoff ~85%)
-  Layer 3: Phonetic prefix + diagnosis context
-  Layer 4: Safety Rule Engine — hard dose validation, ambiguity → flag
-  [v2 NEW] Layer 5: Drug Vector RAG (Chroma + multilingual MiniLM):
-    → Query: distorted drug token + diagnosis context
-    → Store: drug_db_v200 (146 INN, phonetic_variants, drug_class)
-    → Recover: "glibizi" + "đái tháo đường" → Glipizide
-    → Threshold: score ≥ 0.80 để auto-suggest; < 0.80 → flagged_for_review
-  DB: drug_db_v200.json — 146 INN, 100% phonetic_variants, 3 vùng miền
+[L1b] DRUG CORRECTION (v2.1 — multi-layer, FID-VN-011)
+  Layer 1: Exact alias match — drug_db_v200.json keywords + brand names (fast)
+  Layer 2: Fuzzy match RapidFuzz token_sort_ratio (cutoff 70%) — n-gram windows (3,2,1)
+  Layer 3: Phonetic prefix + diagnosis context (_context_prefix_match)
+  Layer 3b [FID-VN-011 — v2.1 NEW]: Drug Vector RAG fallback
+    → Trigger: token ≥6 chars AND Layer 1+2+3 đều miss
+    → Hybrid query: 0.65 × RapidFuzz phonetic + 0.35 × RAG cosine similarity
+         (hybrid_query_drug() trong src/core/drug_rag.py)
+    → Store: drug_db_v200 (154 INN, phonetic_variants 3 vùng miền, drug_class)
+    → Recover: "zxqvjkw" + "tăng huyết áp" context → Amlodipine
+    → Thresholds (calibrated từ BENCH-002b):
+         score ≥ 0.68 → auto-accept, flag LOW_CONFIDENCE (BS confirm qua L4)
+         score 0.55–0.68 → flag only, không sửa transcript
+         score < 0.55 → bỏ qua
+    → Nếu RAG deps không install → skip silently (backward compat)
+  Layer 4: Safety Rule Engine — hard dose validation, ambiguity → flag (mọi layer)
+  DB: drug_db_v200.json — 154 INN (DRUG-DB-002: +8 2026-06-09), phonetic_variants 3 regions
+  Model preload [FID-VN-011]: src/api/main.py startup():
+    → _embed_model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
+    → _drug_collection = load_drug_vectorstore()
+    → Load 1 lần lúc startup — inject vào correct_drug_names_v2(rag_collection, embed_model)
+    → Tránh cold start 3-5s mỗi API call
 
 [L1c] NER — NHẬN DẠNG THỰC THỂ Y TẾ
   Extract từ transcript tiếng Việt đã normalize:
@@ -1165,11 +1180,15 @@ INPUT: Giọng nói bác sĩ (WAV/MP3/M4A/WEBM)
     MEDICATION: thuốc + liều + tần suất + số ngày + đường dùng
     HISTORY: tiền sử bệnh, dị ứng
     FOLLOWUP: lịch tái khám
-  Phase 0: rule-based regex (nhanh, reliable) — CURRENT
-  [FID-VN-009] PhoBERT + CRF SHADOW mode — OFF by default
-    → Bật khi BENCH-002b GO criteria đạt (≥50 GT transcripts)
-    → Shadow = log only, không merge vào production output
-    → GO requires: F1 ≥ 0.85 trên real audio, BS correction rate -10%
+  Phase 0: rule-based regex (nhanh, reliable) — CURRENT (production)
+  [FID-VN-009 — DONE 2026-06-09] PhoBERT PARALLEL mode — ON (supplement only):
+    → PARALLEL: rule-based luôn chạy; PhoBERT bổ sung gaps (không replace)
+    → early-exit: nếu rule-based confidence cao → bỏ qua PhoBERT call
+    → PhoBERT F1=99.44% (TRAIN-002, 3 epochs, 10K synthetic BIO samples)
+    → Chỉ ghi vào meta["phobert_*"] — KHÔNG viết trực tiếp vào MedicalEntities vital
+    → Dedup: PhoBERT result trùng rule-based → bỏ qua; khác → supplement
+    → Model: vinai/phobert-base-v2 + CRF head, lazy-load, lru_cache
+    → src/core/l1c_phobert.py + extract_entities_hybrid() trong l1c_ner.py
 
 [L1d] ICD-10-VN LOOKUP
   Tra mã tự động từ text chẩn đoán (đã dialect-normalized)
@@ -1260,22 +1279,49 @@ REAL-TIME UI LAYER (parallel với tất cả layers):
   Transcript live display — streaming từng utterance
 ```
 
-### Performance benchmarks (BENCH-002b, 2026-06-08)
+### Performance benchmarks (BENCH-002b real BS voice, 2026-06-09)
 
-| Metric | v1.0 local pipeline | Target v2.0 | Cloud LLM (ref) |
-|---|---|---|---|
-| Drug Recall | 13–18% | ≥ 40% (Phase 0) / ≥ 70% (Phase 1) | 78% |
-| WER PhoWhisper | 47–89% (real) | ≤ 35% Phase 0 / ≤ 20% Phase 1 | — |
-| NER F1 | unknown (real) | ≥ 0.85 (Phase 1) | — |
-| don_thuoc accuracy | ~25% (N=1) | ≥ 70% (Phase 0.5) | — |
+| Metric | v1.0 local | **v2.1 actual (2026-06-09)** | Target v2.x | Cloud LLM (ref) |
+|---|---|---|---|---|
+| WER (ALL) | 47–89% | **18.4%** ✅ | ≤ 20% | — |
+| WER HN | 47–89% | **29.3%** ⚠️ | ≤ 20% (sau TRAIN-001) | — |
+| WER DN/SG | 47–89% | **16.3%** ✅ | ≤ 20% | — |
+| Drug Recall (real LB) | 13–18% | **55.6% LB** 🔴 | ≥ 70% (TRAIN-001) | 78% |
+| Drug Precision | — | **83.3%** ✅ | ≥ 90% | — |
+| Drug Recall (synthetic CONS-002-EVAL) | — | **99.5%** ✅ | ≥ 88% | — |
+| Safety Catch (CONS-002-EVAL) | — | **92.1%** ✅ | ≥ 80% | — |
+| PhoBERT NER F1 (TRAIN-002 synthetic) | — | **99.44%** ✅ | ≥ 0.85 real | — |
+| Tests PASS | 0 | **794/794** ✅ | 100% | — |
 
-### Roadmap phases (FID-VN-010)
+> ⚠️ Drug Recall 55.6%LB: BS spell tên thuốc theo phonetic ("mét phốt min") → GT NER miss → actual recall thấp hơn.
+> Root cause: PhoWhisper garble phonetic drug names → Layer 3b RAG giúp một phần → TRAIN-001 để giải quyết triệt để.
+
+### Roadmap phases (FID-VN-010 + FID-VN-011 — trạng thái 2026-06-09)
 
 ```
-Phase 0  (2 tuần)   — A1+A2+A3+L4-REDESIGN: không cần data mới
-Phase 0.5 (1 tháng) — RAG-001+UI-001: drug vector store + suggestion chips
-Phase 1  (3 tháng)  — PhoBERT production + LangChain 4 chains + ICD RAG
-Phase 2  (9 tháng)  — LoRA PhoWhisper + Qwen2.5-7B local (thay Groq)
+Phase 0  ✅ DONE (2026-06-09) — A1+A2+A3+L4-REDESIGN (FID-VN-010)
+  src/core/l1a_asr.py  — prompt injection
+  src/core/l0_normalize.py  — VAD silence-aware chunking
+  src/core/dialect_norm.py  — 200+ entries, region-aware
+  src/api/static/index.html  — per-drug mandatory confirm UI
+
+Phase 0.5 ✅ DONE (2026-06-09) — RAG-001+UI-001+FID-VN-011
+  src/core/drug_rag.py  — Chroma + MiniLM + hybrid_query_drug()
+  src/core/l1b_drug_correct.py  — Layer 3b fallback (FID-VN-011)
+  src/api/main.py  — model preload singleton
+  src/api/static/js/suggestions.js  — drug chips + dialect badge + terminology sidebar
+  data/reference/drug_db_v200.json  — 154 INN
+  tests/integration/test_e2e_pipeline.py  — 22 E2E tests
+
+Phase 1  (3–6 tháng)  — TRAIN-001 + PhoBERT production + pilot audio
+  PhoWhisper fine-tune trên 50-100h real BS audio (sau pilot Đà Nẵng)
+  PhoBERT NER validation trên real audio (hiện: synthetic F1=99.44%)
+  ICD-10 Vector RAG (semantic lookup thay substring)
+
+Phase 2  (9–12 tháng) — LoRA PhoWhisper + TT13/2025 compliance
+  Qwen2.5-7B LoRA local (thay Groq)
+  Chữ ký số BS (TT13/2025 deadline 31/12/2026)
+  HL7 v2 + FHIR R4 export
 ```
 
 ---
@@ -1635,10 +1681,12 @@ PHASE 3 — Platform (2027–2028)
 |---|---|---|
 | v1.0 | 2026-06-03 | Bản thiết kế gốc (VISION + BRS + PROJECT_KICKOFF) |
 | v1.1 | 2026-06-06 | **Major update từ session design review:**<br>• Thêm Queue Management System + TTS loa<br>• Thêm 2 chế độ vận hành (Mode A/B/C)<br>• Thêm Doctor Pre-visit Briefing<br>• Thêm Post-care CRM (D+2/D+4/D+7)<br>• Thêm Referral 2 chiều + Retest flow<br>• Thêm Staff Confirm Gate<br>• Cập nhật kênh liên lạc (Zalo/Email phân tách)<br>• Thêm Email auto-processor + điều kiện 3 lớp<br>• Thêm Booking engine chuẩn (7 states + buffer)<br>• Thêm Integration Gateway + adapter pattern<br>• Cập nhật M5 commission tracking đúng luật<br>• Thêm Website widget + REST API booking<br>• Thêm kế toán API gateway<br>• Làm rõ data compliance 3 lớp bảo vệ |
+| v2.0 | 2026-06-09 | **§15 AI Pipeline rewrite — FID-VN-010 + BENCH-002b:**<br>• L0: VAD silence-aware chunking (silero-vad)<br>• L1a: Prompt Injection (initial_prompt drug list per specialty)<br>• Post-ASR: Dialect normalization (200+ entries, region-aware)<br>• L1b: "Layer 5 RAG" concept draft (thresholds chưa calibrated)<br>• L4: Per-drug mandatory confirm safety redesign<br>• Performance benchmarks từ BENCH-002b evidence |
+| v2.1 | 2026-06-09 | **§15 sync với code thật — FID-VN-011 + DRUG-DB-002 + FID-VN-009:**<br>• L1b: Layer 5 → **Layer 3b** (tên đúng với code)<br>• L1b: Threshold 0.80 → **0.68 accept / 0.55 flag** (calibrated)<br>• L1b: Hybrid query **0.65×fuzzy + 0.35×RAG** (logic thật)<br>• L1b: Model preload singleton (_embed_model + _drug_collection startup)<br>• L1b: drug_db_v200 **154 INN** (DRUG-DB-002 +8 drugs)<br>• L1c: PhoBERT **PARALLEL + early-exit** (thay shadow mode)<br>• Benchmarks: cập nhật v2.1 actual từ BENCH-002b real voice<br>• Roadmap: Phase 0 ✅ + Phase 0.5 ✅ đánh dấu DONE với file paths |
 
 ---
 
-*DS-VN-REC-20260606-001 | Design Report v1.1*
+*DS-VN-REC-20260606-001 | Design Report v2.1*
 *Prepared by: Claude Sonnet 4.6 | Owner: Andy Phan — Maple Leaf Group*
-*Date: 2026-06-06 | Status: FINAL*
+*Created: 2026-06-06 | Last updated: 2026-06-09 | Status: LIVING DOCUMENT*
 *ISO/IEC 42001:2023 | ISO 9001:2015 | TT32/2023 | NĐ13/2023*
