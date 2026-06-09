@@ -1,5 +1,5 @@
 # BACKLOG.md — MediVoice VN
-# v0.9.0 — Updated 2026-06-09
+# v0.9.1 — Updated 2026-06-09
 # Single source of truth cho tasks.
 
 ---
@@ -73,6 +73,11 @@
   - `src/api/static/index.html` — drug chips panel + dialect badge + term sidebar + specialty selector
   - `tests/unit/test_api_suggestions.py` — 43 tests PASS | Total: 755/755
 - [x] **BENCH-GT-001** ✅ Andy điền 57/57 GT clips `data/eval/ref_voice_transcripts_review.txt` — 2026-06-09
+- [ ] **FID-VN-011** 🔵 DRAFT — L1b Layer 3 RAG + model preload lifecycle — chờ Andy approve
+  - `fids/FID-VN-011.md` — DRAFT 2026-06-09
+  - Q1: Approve implement? Q2: Threshold 0.68 OK?
+  - Khi approve: ~140 LOC — `main.py` preload + `l1b_drug_correct.py` Layer 3 fallback
+- [ ] **TRAIN-001** ⏳ Fine-tune PhoWhisper trên 50-100h real clinical audio — cần audio thật từ pilot
 - [x] **GAP-002** ✅ Unit tests PII scan — tests/unit/test_pii_scan.py 27 tests PASS (2026-06-06)
 - [x] **GAP-003** ✅ Unit tests L8 error handler — `tests/unit/test_l8_error_handler.py` 20 tests PASS (2026-06-08) | P0.2.L8
 - [x] **GAP-004** ✅ Unit tests L9a PDF export — `tests/unit/test_l9a_pdf_export.py` 15 tests PASS (2026-06-08) | P0.2.L9a
