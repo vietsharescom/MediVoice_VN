@@ -58,9 +58,10 @@
     - `CT-030` ✅ DONE — Nhiệt độ decimal mất khi ASR "phẩy"→"chấm" (37.9°C → đọc thành 37.0). Fix `_RE_DEC_WORDS`.
     - `CT-031` ✅ DONE — Chẩn đoán/ICD-10/Tái khám trống khi ASR "Kê"→"che" (không dấu). Fix `_PRESCRIPTION_KW`.
     - `CT-032` ✅ DONE — Tái khám trống khi ASR "tái khám"→"tái kháng". Fix `_RE_TAI_KHAM`/`_RE_TAI_KHAM_DIAGNOSIS`/`_PRESCRIPTION_KW` (`kh[aá]m`→`kh[aá](?:m|ng)`).
-    - `CT-033` 🔴 PENDING — SAFETY: "Vitamin D3" hallucinated vào đơn thuốc từ ASR garble câu khám "amidan sưng nhẹ" → literal "Vitamin D3 xương nhẹ" → L1b match đúng kỹ thuật nhưng sai ngữ nghĩa. Không sửa được bằng regex — mitigation = CT-023.
+    - `CT-033` ✅ Mitigated — SAFETY: "Vitamin D3" hallucinated vào đơn thuốc từ ASR garble câu khám "amidan sưng nhẹ" → literal "Vitamin D3 xương nhẹ" → L1b match đúng kỹ thuật nhưng sai ngữ nghĩa. Không sửa được bằng regex — mitigation = CT-023 (nút Xóa).
     - `CT-034` ✅ DONE — Drug recall miss "Paracetamol"→"pha ra citamon" — thêm phonetic_variants 3-từ vào drug_db_v200.json.
     - 826/826 tests PASS. RAG vectorstore (`data/drug_vectorstore/`) rebuilt với 155 thuốc (Oresol + Paracetamol alias mới).
+  - **CT-023 ✅ DONE (2026-06-10)**: `src/api/static/index.html` `renderDrugConfirmList()` — thêm nút "🗑️ Xóa" mỗi dòng thuốc (`removeDrug(idx)`), state `_currentDrugs`/`_drugConfirmed`. Xóa thuốc → `_drugTotal` giảm, không tính vào yêu cầu xác nhận; xóa hết (`_drugTotal===0`) → nút Lưu tự mở khóa. `buildEditedFormData()` dùng `_currentDrugs` làm `don_thuoc` cuối — thuốc bị xóa KHÔNG vào hồ sơ/PDF. 826/826 PASS.
 - [x] **A3-DIALECT-NORM** ✅ Dialect normalization + abbreviation expansion (2026-06-09)
   - `src/core/dialect_norm.py` — DIALECT_MAP 200+ entries (central/southern/northern/medical_abbrev)
   - `detect_region()` + `normalize_dialect()` + `expand_abbreviations()` + `normalize_text()`

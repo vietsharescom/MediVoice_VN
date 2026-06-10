@@ -130,6 +130,12 @@
   .drug-confirm-check input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--success); }
   .drug-confirm-check.is-confirmed { color: var(--success); }
   .drug-confirm-progress { font-size: 0.78rem; color: var(--text-secondary); text-align: center; margin-top: 0.4rem; }
+  .drug-confirm-delete {
+    flex-shrink: 0; border: 1px solid #ffcdd2; background: #fff;
+    color: #c62828; border-radius: 6px; width: 30px; height: 30px;
+    font-size: 0.95rem; cursor: pointer; transition: background 0.15s;
+  }
+  .drug-confirm-delete:hover { background: #ffebee; }
 
   /* Action buttons */
   .btn { padding: 0.7rem 1.2rem; border: none; border-radius: 8px; font-size: 0.9rem;
@@ -452,6 +458,8 @@ let currentRecordId = null;
 let currentFormData = null;
 let _drugTotal = 0;
 let _drugConfirmCount = 0;
+let _currentDrugs = [];
+let _drugConfirmed = [];
 
 async function toggleRecord() {
   if (isRecording) {
@@ -601,38 +609,52 @@ function _escHtml(str) {
 }
 
 function renderDrugConfirmList(drugs) {
-  _drugTotal = drugs.length;
-  _drugConfirmCount = 0;
+  _currentDrugs = (drugs || []).map(d => Object.assign({}, d));
+  _drugConfirmed = _currentDrugs.map(() => false);
+  _renderDrugRows();
+}
+
+function _drugProgressText() {
+  if (_drugTotal === 0) return '(Không có thuốc được kê)';
+  if (_drugConfirmCount >= _drugTotal) return '✅ Tất cả ' + _drugTotal + ' thuốc đã xác nhận';
+  return 'Cần xác nhận từng thuốc — ' + _drugConfirmCount + '/' + _drugTotal + ' đã xác nhận';
+}
+
+function _renderDrugRows() {
+  _drugTotal = _currentDrugs.length;
+  _drugConfirmCount = _drugConfirmed.filter(Boolean).length;
   const drugList = document.getElementById('drug-list');
 
-  if (drugs.length === 0) {
+  if (_currentDrugs.length === 0) {
     drugList.innerHTML = '<p style="font-size:0.82rem;color:var(--text-secondary)">(Không có thuốc được kê)</p>';
     updateApproveButton();
     return;
   }
 
   let html = '<div class="drug-confirm-list">';
-  drugs.forEach((d, i) => {
+  _currentDrugs.forEach((d, i) => {
     const parts = [
       d.ham_luong || '',
       d.so_lan_ngay || '',
       d.so_ngay ? d.so_ngay + ' ngày' : '',
     ].filter(Boolean);
     const detail = parts.join(' — ') || '---';
+    const confirmed = _drugConfirmed[i];
     html += `
-      <div class="drug-confirm-row" id="drug-row-${i}">
+      <div class="drug-confirm-row${confirmed ? ' confirmed' : ''}" id="drug-row-${i}">
         <div class="drug-confirm-info">
           <div class="drug-name">${_escHtml(d.inn || '---')}</div>
           <div class="drug-detail">${_escHtml(detail)}</div>
         </div>
-        <label class="drug-confirm-check" id="drug-chk-lbl-${i}">
-          <input type="checkbox" id="drug-chk-${i}" onchange="onDrugConfirmChange(${i})">
-          <span>Xác nhận</span>
+        <label class="drug-confirm-check${confirmed ? ' is-confirmed' : ''}" id="drug-chk-lbl-${i}">
+          <input type="checkbox" id="drug-chk-${i}" onchange="onDrugConfirmChange(${i})"${confirmed ? ' checked' : ''}>
+          <span>${confirmed ? '✓ Đã xác nhận' : 'Xác nhận'}</span>
         </label>
+        <button type="button" class="drug-confirm-delete" title="Xóa thuốc này khỏi đơn (nếu AI gợi ý sai)" onclick="removeDrug(${i})">🗑️</button>
       </div>`;
   });
   html += '</div>';
-  html += `<div class="drug-confirm-progress" id="drug-confirm-progress">Cần xác nhận từng thuốc — 0/${drugs.length} đã xác nhận</div>`;
+  html += `<div class="drug-confirm-progress" id="drug-confirm-progress">${_drugProgressText()}</div>`;
 
   drugList.innerHTML = html;
   updateApproveButton();
@@ -640,29 +662,17 @@ function renderDrugConfirmList(drugs) {
 
 function onDrugConfirmChange(idx) {
   const chk = document.getElementById('drug-chk-' + idx);
-  const row = document.getElementById('drug-row-' + idx);
-  const lbl = document.getElementById('drug-chk-lbl-' + idx);
-  const span = lbl ? lbl.querySelector('span') : null;
-  if (chk.checked) {
-    row.classList.add('confirmed');
-    lbl.classList.add('is-confirmed');
-    if (span) span.textContent = '✓ Đã xác nhận';
-    _drugConfirmCount++;
-  } else {
-    row.classList.remove('confirmed');
-    lbl.classList.remove('is-confirmed');
-    if (span) span.textContent = 'Xác nhận';
-    _drugConfirmCount--;
-  }
-  const prog = document.getElementById('drug-confirm-progress');
-  if (prog) {
-    if (_drugConfirmCount >= _drugTotal) {
-      prog.textContent = '✅ Tất cả ' + _drugTotal + ' thuốc đã xác nhận';
-    } else {
-      prog.textContent = 'Cần xác nhận từng thuốc — ' + _drugConfirmCount + '/' + _drugTotal + ' đã xác nhận';
-    }
-  }
-  updateApproveButton();
+  _drugConfirmed[idx] = chk.checked;
+  _renderDrugRows();
+}
+
+// CT-023 — BS xóa gợi ý thuốc SAI trước khi lưu (an toàn: không bị kẹt
+// giữa "tick xác nhận thuốc sai" và "không Lưu được")
+function removeDrug(idx) {
+  _currentDrugs.splice(idx, 1);
+  _drugConfirmed.splice(idx, 1);
+  _renderDrugRows();
+  showToast('Đã xóa thuốc khỏi đơn');
 }
 
 function updateApproveButton() {
@@ -701,6 +711,9 @@ function buildEditedFormData() {
     nhip_tho: fd.sinh_hieu ? fd.sinh_hieu.nhip_tho : null,
     spo2: fd.sinh_hieu ? fd.sinh_hieu.spo2 : null,
   };
+
+  // CT-023 — đơn thuốc cuối cùng = danh sách sau khi BS đã xóa gợi ý sai
+  fd.don_thuoc = _currentDrugs;
   return fd;
 }
 
