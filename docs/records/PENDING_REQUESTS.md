@@ -61,6 +61,7 @@ Nếu Andy trả lời/làm xong → Claude cập nhật status → DONE.
 | CT-015 | **DVP Layer 1 frontend UI** — Backend `/api/doctors` đã có (region/specialty/english_level/speaking_speed), nhưng `index.html` chưa có form đăng ký "Trợ lý AI của BS [Tên]". | 🟡 MEDIUM | ⏳ PENDING | 2026-06-09 |
 | CT-016 | **Transcribe accuracy regression (audio mới)** — Andy ghi audio mới, transcript có lỗi nặng ("monroeleague", "viêm gan đại tràng" sai). Không có audio cũ để so sánh trực tiếp — cần Andy lưu lại audio file mới này (đã ở `data/audio/`?) + ground truth để đối chiếu BENCH-002b (baseline: Drug Recall 55.6%, WER DN/SG 16.3%, WER HN 29.3%). Thời gian xử lý >1 phút cũng cần đo lại (có thể do model load lần đầu — bình thường trên CPU). | 🟡 MEDIUM | ⏳ PENDING — cần audio file + ground truth | 2026-06-09 |
 | CT-017 | **GG Drive backup tài liệu dev/ISO** — tiếp tục từ GCP service account key Andy gửi (project `valid-dragon-498814-b3`). Cần Andy cung cấp đường dẫn file JSON key đã tải (KHÔNG paste JSON vào chat). Sau đó wire `gcp_service_account` vào `.streamlit/secrets.toml` + viết `scripts/backup_docs.py`. | 🟡 MEDIUM | ⏳ PENDING — chờ JSON key file path | 2026-06-09 |
+| CT-018 | **NER fix: Huyết áp digit-form + Nhiệt độ "là"** — `src/core/l1c_ner.py`: (1) thêm `_RE_BP_DIGITS` để bắt "120 trên cao 80"→120/80 (trước đây chỉ bắt word-form); (2) `_RE_NHIET_DO`/`_RE_NHIET_DO_SPLIT` thêm `(?:là\s*)?` để bắt "nhiệt độ là 39 độ c" (trước đây regex fail vì "là" không phải whitespace/colon). 817/817 PASS. | 🟡 MEDIUM | ✅ DONE (2026-06-09) | 2026-06-09 |
 
 ---
 

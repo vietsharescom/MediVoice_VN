@@ -43,7 +43,7 @@ class MedicalEntities:
 # ─── Sinh hiệu patterns ────────────────────────────────────────────────────
 
 _RE_NHIET_DO = re.compile(
-    r"(?:sốt|nhiệt độ|temp(?:erature)?)\s*[:\s]?\s*"
+    r"(?:sốt|nhiệt độ|temp(?:erature)?)\s*(?:là\s*)?[:\s]?\s*"
     r"(\d{2}(?:[.,]\d)?)"
     r"(?:\s+(?:độ\s*)?(\d|một|hai|ba|bốn|năm|sáu|bảy|bẩy|tám|chín))?"  # digit OR VN word; allow "độ" separator
     r"\s*°?(?:c|celsius|độ)?",
@@ -53,7 +53,7 @@ _RE_NHIET_DO = re.compile(
 # Also handles: "sốt 3 7.8", "sốt 3 7 phẩy 8" (all digit-by-digit temp readings).
 # tens group: VN word (ba/bốn/...) OR already-digit; rest: decimal number already normalized.
 _RE_NHIET_DO_SPLIT = re.compile(
-    r"(?:sốt|nhiệt độ|temp(?:erature)?)\s*[:\s]?\s*"
+    r"(?:sốt|nhiệt độ|temp(?:erature)?)\s*(?:là\s*)?[:\s]?\s*"
     r"(ba|bốn|tư|năm|sáu|bảy|bẩy|tám|chín|\d)\s+"
     r"(\d+(?:[.,]\d)?)",
     re.IGNORECASE
@@ -220,6 +220,8 @@ _WCOLLQ = r"(?:một)\s+(?:" + _WTG + r"|" + _W10 + r"|" + _WABR + r")"
 _WN  = r"(?:" + _WH + r"|" + _WCOLLQ + r"|" + _WTG + r"|" + _W10 + r"|" + _WSH + r")"
 
 _RE_BP_WORDS  = re.compile(r"\b(" + _WN + r")\s+(?:trên|tri)\s+(" + _WN + r")\b", re.I | re.U)
+# Digit-form BP with spoken "trên" connector + filler word: "120 trên cao 80" / "120 trên thấp 80" → "120/80"
+_RE_BP_DIGITS = re.compile(r"\b(\d{2,3})\s+(?:trên|tri)\s+(?:cao|thấp)?\s*(\d{2,3})\b", re.I | re.U)
 _RE_DEC_WORDS = re.compile(r"\b(" + _WN + r"|" + _WO + r")\s+phẩy\s+(" + _WO + r")\b", re.I | re.U)
 _RE_RUOI      = re.compile(r"\b(" + _WN + r"|" + _WO + r")\s+(?:độ\s+)?rưỡi\b", re.I | re.U)
 _RE_WINT      = re.compile(r"\b" + _WN + r"\b", re.I | re.U)
@@ -284,6 +286,9 @@ def _normalize_vn_numbers(text: str) -> str:
         a, b = _vn_to_int(m.group(1)), _vn_to_int(m.group(2))
         return f"{a}/{b}" if (a is not None and b is not None) else m.group(0)
 
+    def _bp_digits(m: re.Match) -> str:
+        return f"{m.group(1)}/{m.group(2)}"
+
     def _dec(m: re.Match) -> str:
         a = _vn_to_int(m.group(1))
         b = _VN_ONES.get(m.group(2).lower().strip())
@@ -302,6 +307,7 @@ def _normalize_vn_numbers(text: str) -> str:
         return f"{v}{m.group(2)}" if v is not None else m.group(0)
 
     r = _RE_BP_WORDS.sub(_bp, text)
+    r = _RE_BP_DIGITS.sub(_bp_digits, r)
     r = _RE_DEC_WORDS.sub(_dec, r)
     r = _RE_RUOI.sub(_ruoi, r)
     r = _RE_WINT.sub(_wint, r)
