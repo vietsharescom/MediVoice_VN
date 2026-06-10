@@ -275,11 +275,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.11.3 |
-| Status | **CT-018 NER fix ✅ · CT-015 DVP UI ✅ · A2-VAD wire→REVERTED (CT-019 🔴)**, 817 tests |
-| Tests | **817/817 PASS** · bandit 0 HIGH/0 MEDIUM (new code) · conftest.py SKIP_QWEN |
+| Version | v0.11.4 |
+| Status | **CT-030/031/032/034 NER+drug fixes ✅ · CT-023 L4 delete-drug UI ✅ · CT-028 quyết: 100% local, không hybrid Groq**, 826 tests |
+| Tests | **826/826 PASS** · bandit 0 HIGH/0 MEDIUM (new code) · conftest.py SKIP_QWEN |
 | Pending | **CT-019** (🔴 A2 VAD-chunk regression — debug offline trước khi wire lại) · CT-016/CT-017/CT-014 ⏳ · VIETMED-FIX-001 |
-| Next task | **CT-019 debug A2-VAD** (per-chunk transcript A/B test) → **Pilot Đà Nẵng** (TRAIN-001 prereq) |
+| Next task | **TRAIN-001** (PhoWhisper fine-tune, ưu tiên cao nhất per CT-028) → CT-019 debug A2-VAD song song nếu có audio |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.1) · FID: `fids/FID-VN-010.md`, `fids/FID-VN-012.md` |
 
 ---

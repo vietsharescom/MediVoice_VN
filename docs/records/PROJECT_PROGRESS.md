@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-09 | v0.11.3
+# Cập nhật: 2026-06-10 | v0.11.4
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -180,6 +180,14 @@
 | P0.6.13b | │  ├─ CT-015 DVP Layer 1 UI | Card "🩺 Trợ lý AI của Bác sĩ" — register/edit, localStorage `mv_doctor_cchn` | 🟢 | CT-015 | SES-20260609j | `src/api/static/index.html` commit `271b82a` |
 | P0.6.13c | │  └─ A2-VAD wire→REVERT | Wired vào `/transcribe` → live test "KHÔNG NHẬN DẠNG ĐƯỢC GÌ LUÔN" → revert ngay | 🔴 | CT-019 | SES-20260609j | commits `270cea3`→`271b82a` · cần debug offline (per-chunk vs whole-file) |
 | | │ | | | | | |
+| **P0.6.14** | **├─ 🟢 CT-030/031/032/034 + CT-023 L4 UI + CT-028 decision** | **Real Clip 1-3 NER/drug fixes · L4 nút Xóa thuốc · Groq hybrid REJECTED** | **🟢** | **CT-023/028/029/030-034** | SES-20260610 | v0.11.3→v0.11.4 · 826/826 PASS |
+| P0.6.14a | │  ├─ CT-030/031 NER fix | Mạch (pulse) "mật"+mất "lần" · Chẩn đoán/ICD-10 "theo dõi"→"theo thì" | 🟢 | CT-030/031 | SES-20260610 | `src/core/l1c_ner.py` commit `8d5f983` |
+| P0.6.14b | │  ├─ CT-032 NER fix | Fix bổ sung từ Real Clip 1-3 test | 🟢 | CT-032 | SES-20260610 | `src/core/l1c_ner.py` commit `8d5f983` |
+| P0.6.14c | │  ├─ CT-034 Drug DB | "pha ra citamon"→Paracetamol alias + RAG vectorstore rebuild | 🟢 | CT-034 | SES-20260610 | `src/core/l1b_drug_correct.py` commit `aa9bea1` |
+| P0.6.14d | │  ├─ CT-029 Groq benchmark | 57 real clips: WER 18.4% local vs 32.6% Groq · Drug Precision 83.3% vs 57.1% · Diag CEER 0.286 vs 0.429 · Groq Drug Recall 88.9% vs 55.6% (nhưng hallucination chưa fix) | 🟢 | CT-029 | SES-20260610 | branch `experiment/groq-degallucination` (CT-026+CT-029, KHÔNG merge) |
+| P0.6.14e | │  ├─ CT-028 quyết định | Andy: GIỮ 100% local pipeline, KHÔNG hybrid Groq. Ưu tiên TRAIN-001. `experiment/groq-degallucination` giữ làm reference, mở lại khi cần so sánh | 🟢 | CT-028 | SES-20260610 | `docs/records/PENDING_REQUESTS.md` |
+| P0.6.14f | │  └─ CT-023 L4 nút Xóa thuốc | Per-drug "🗑️ Xóa" trong L4 confirm list — `_currentDrugs`/`_drugConfirmed`, `buildEditedFormData()` dùng list sau khi xóa → mitigates CT-022/CT-033 | 🟢 | CT-023 | SES-20260610 | `src/api/static/index.html` commit `2c3186a` |
+| | │ | | | | | |
 | **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
 | P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |
 | P0.7b |    ├─ DPA ký | Hợp đồng xử lý dữ liệu | 🟡 | PA-003 | — | Luật sư review xong → ký |
@@ -237,16 +245,17 @@
 
 ## PHIÊN TIẾP THEO — LÀM GÌ?
 
-### ⚡ NGAY BÂY GIỜ — v0.11.3 · CT-019 A2-VAD debug ưu tiên cao nhất
+### ⚡ NGAY BÂY GIỜ — v0.11.4 · TRAIN-001 ưu tiên cao nhất (per CT-028)
 
 | # | Task | Ai | Điều kiện |
 |---|---|---|---|
-| 1 | **CT-019 🔴** — Debug A2 VAD-chunk regression: A/B test per-chunk vs whole-file transcript offline (script riêng, KHÔNG wire vào `/transcribe` cho đến khi rõ nguyên nhân hallucination) | Claude | Cần audio mẫu (data/audio/) |
-| 2 | **ORCH-001 FID** — Viết FID cho Orchestrator v1.0 đầy đủ (`detect_confusion`, `create_consultation_request`, tự động `close_session`) | Claude | Andy approve scope trước khi +100 LOC |
-| 3 | **VIETMED-FIX-001** — Fix `scripts/download_vietmed.py` remove `trust_remote_code` + HF_TOKEN (~5 LOC) | Claude | Làm được ngay |
-| 4 | **CT-016/CT-017/CT-014** — chờ Andy cung cấp audio+GT / GG Drive JSON key path / mô tả flow calibration | Andy | Chờ Andy |
-| 5 | **Pilot Đà Nẵng** — Cài install.bat thật tại phòng khám → thu audio → TRAIN-001 | Andy | Code sẵn sàng · DVP needs real doctor CCHN |
-| 6 | **TRAIN-001** — Fine-tune PhoWhisper trên 50-100h audio thật | Andy + Claude | 🔴 Drug Recall 55.6%LB / Diag CEER chưa đạt mục tiêu — chỉ fine-tune mới giải quyết được, không phải patch nhỏ |
+| 1 | **TRAIN-001 🔴** — Fine-tune PhoWhisper trên 50-100h audio thật | Andy + Claude | 🔴 Drug Recall 55.6%LB / Diag CEER chưa đạt — quyết định CT-028 (2026-06-10): KHÔNG hybrid Groq, chỉ fine-tune giải quyết được |
+| 2 | **CT-019 🔴** — Debug A2 VAD-chunk regression: A/B test per-chunk vs whole-file transcript offline (script riêng, KHÔNG wire vào `/transcribe` cho đến khi rõ nguyên nhân hallucination) | Claude | Cần audio mẫu (data/audio/) |
+| 3 | **ORCH-001 FID** — Viết FID cho Orchestrator v1.0 đầy đủ (`detect_confusion`, `create_consultation_request`, tự động `close_session`) | Claude | Andy approve scope trước khi +100 LOC |
+| 4 | **VIETMED-FIX-001** — Fix `scripts/download_vietmed.py` remove `trust_remote_code` + HF_TOKEN (~5 LOC) | Claude | Làm được ngay |
+| 5 | **CT-016/CT-017/CT-014** — chờ Andy cung cấp audio+GT / GG Drive JSON key path / mô tả flow calibration | Andy | Chờ Andy |
+| 6 | **Pilot Đà Nẵng** — Cài install.bat thật tại phòng khám → thu audio → TRAIN-001 | Andy | Code sẵn sàng · DVP needs real doctor CCHN |
+| 7 | **PA-013** — Revoke `medivoice-bench` Groq API key trên console.groq.com (KHÔNG đụng `medivoice-demo`) | Andy | Key đã expose trong chat phiên CT-029 |
 
 ### 🟡 BENCHMARK TIẾP THEO
 
@@ -257,11 +266,13 @@
 
 ---
 
-## METRICS HIỆN TẠI (2026-06-09 · v0.11.3)
+## METRICS HIỆN TẠI (2026-06-10 · v0.11.4)
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | **817/817** | 🟢 |
+| Tests PASS | 100% | **826/826** | 🟢 |
+| **Drug Recall Groq vs local (CT-029)** | ≥70% | Groq=88.9% (hallucination chưa fix) vs local=55.6%LB | 🔴 TRAIN-001 required (Groq REJECTED — CT-028) |
+| **Diag CEER Groq vs local (CT-029)** | <30% | local=0.286 vs Groq=0.429 | 🟢 local thắng |
 | bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
 | Vital extraction (TC audio) | >0% | bench tc_001/tc_002: vital=True | 🟢 fixed FID-VN-005 |
 | WER semi-synthetic | <30% | SG 25.8% · CT 30.4% · HN 34.6% | 🟡 cần fine-tune |
@@ -317,8 +328,9 @@
 | SES-20260609h | 2026-06-09 | v0.11.0→v0.11.1 | DEMO-002 ✅ Demo App v2.1 · Header Block A/B/C · drug card HTML bold · checkbox True · button visibility fix |
 | SES-20260609i | 2026-06-09 | v0.11.1 | ORCH-001 PROTOTYPE ✅ — `scripts/orchestrator.py` start/consult/check/close · Groq API real test (consult + consistency check) · SESSION_CAPTURE_RULES integrated (commit `c9e1392`) · 6-category LAST_SESSION template demo |
 | SES-20260609j | 2026-06-09 | v0.11.2→v0.11.3 | CT-018 ✅ NER fix (BP digits + nhiệt độ "là") · CT-015 ✅ DVP Layer 1 registration UI · A2-VAD wired vào `/transcribe` rồi REVERTED ngay (CT-019 🔴 — live test "KHÔNG NHẬN DẠNG ĐƯỢC GÌ LUÔN") · 817/817 PASS |
+| SES-20260610 | 2026-06-10 | v0.11.3→v0.11.4 | CT-030/031/032 ✅ NER fix Real Clip 1-3 · CT-034 ✅ drug alias "pha ra citamon" + RAG rebuild · merge `experiment/local-accuracy`→master · CT-029 ✅ Groq benchmark 57 clips (local thắng WER/Drug Precision/Diag CEER) · CT-028 ✅ quyết định: 100% local, KHÔNG hybrid Groq, ưu tiên TRAIN-001 · `experiment/groq-degallucination` giữ làm reference (KHÔNG merge) · CT-023 ✅ L4 nút "🗑️ Xóa thuốc" · 826/826 PASS |
 
 ---
 
-*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.8 | 2026-06-09*
+*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.9 | 2026-06-10*
 *Cập nhật mỗi phiên đóng. Đọc cùng BACKLOG.md + PENDING_REQUESTS.md*

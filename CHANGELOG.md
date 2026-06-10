@@ -1,6 +1,17 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.4] — 2026-06-10 — CT-030/031/032/034 NER+drug fixes · CT-023 L4 delete-drug UI · CT-028 decision (no Groq hybrid)
+
+### Production fixes from real-voice testing + L4 safety UI [SES-20260610]
+- fix(l1c_ner): CT-030/031/032 — NER fixes from real Clip 1-3 test (Mạch/pulse, Chẩn đoán/ICD-10 "theo dõi"→"theo thì")
+- fix(l1b_drug_correct): CT-034 — Paracetamol "pha ra citamon" alias + RAG vectorstore rebuild
+- feat(ui): CT-023 — per-drug "🗑️ Xóa" delete button in L4 confirm list (`renderDrugConfirmList`); `_currentDrugs`/`_drugConfirmed` state replaces static render; `buildEditedFormData()` uses post-delete `_currentDrugs` as final `don_thuoc` — mitigates CT-022 (Oresol→Xylometazoline) and CT-033 (hallucinated Vitamin D3)
+- docs: CT-026/CT-029/CT-028/PA-013 closed — Groq whisper-large-v3 + llama-3.3-70b benchmark on 57 real clips: local pipeline wins WER (18.4% vs 32.6%), Drug Precision (83.3% vs 57.1%), Diag CEER (0.286 vs 0.429); Groq wins Drug Recall (88.9% vs 55.6%) but unfixed hallucination
+- decision: 100% local pipeline retained, no Groq hybrid (P3); `experiment/groq-degallucination` kept as permanent reference branch (NOT merged); TRAIN-001 prioritized
+- merge: `experiment/local-accuracy` (CT-022/030/031/032/034) fast-forwarded into `master`
+- 826/826 tests PASS, 0 regressions
+
 ## [v0.11.3] — 2026-06-09 — NER fixes (CT-018) + DVP registration UI (CT-015) + A2-VAD revert (CT-019)
 
 ### NER + UI + A2 regression [SES-20260609j]
