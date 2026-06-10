@@ -148,17 +148,23 @@
       "phonetic_variants": {
         "north": [
           "pa ra xe ta mol",
-          "pa ra xê ta mol"
+          "pa ra xê ta mol",
+          "pha ra citamon",
+          "pha ra xitamon"
         ],
         "central": [
           "pa ra xe ta mol",
           "pa ra xê ta môl",
-          "pa ra xê ta"
+          "pa ra xê ta",
+          "pha ra citamon",
+          "pha ra xitamon"
         ],
         "south": [
           "pa ra",
           "pa ra xe ta",
-          "pa ra xe ta mol"
+          "pa ra xe ta mol",
+          "pha ra citamon",
+          "pha ra xitamon"
         ]
       },
       "valid_doses_mg": [

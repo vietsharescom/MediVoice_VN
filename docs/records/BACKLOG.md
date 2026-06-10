@@ -59,8 +59,8 @@
     - `CT-031` ✅ DONE — Chẩn đoán/ICD-10/Tái khám trống khi ASR "Kê"→"che" (không dấu). Fix `_PRESCRIPTION_KW`.
     - `CT-032` ✅ DONE — Tái khám trống khi ASR "tái khám"→"tái kháng". Fix `_RE_TAI_KHAM`/`_RE_TAI_KHAM_DIAGNOSIS`/`_PRESCRIPTION_KW` (`kh[aá]m`→`kh[aá](?:m|ng)`).
     - `CT-033` 🔴 PENDING — SAFETY: "Vitamin D3" hallucinated vào đơn thuốc từ ASR garble câu khám "amidan sưng nhẹ" → literal "Vitamin D3 xương nhẹ" → L1b match đúng kỹ thuật nhưng sai ngữ nghĩa. Không sửa được bằng regex — mitigation = CT-023.
-    - `CT-034` 🟡 PENDING — Drug recall miss: "Paracetamol"→"pha ra citamon" không match (phần CT-027).
-    - 825/825 tests PASS sau CT-030/031/032.
+    - `CT-034` ✅ DONE — Drug recall miss "Paracetamol"→"pha ra citamon" — thêm phonetic_variants 3-từ vào drug_db_v200.json.
+    - 826/826 tests PASS. RAG vectorstore (`data/drug_vectorstore/`) rebuilt với 155 thuốc (Oresol + Paracetamol alias mới).
 - [x] **A3-DIALECT-NORM** ✅ Dialect normalization + abbreviation expansion (2026-06-09)
   - `src/core/dialect_norm.py` — DIALECT_MAP 200+ entries (central/southern/northern/medical_abbrev)
   - `detect_region()` + `normalize_dialect()` + `expand_abbreviations()` + `normalize_text()`

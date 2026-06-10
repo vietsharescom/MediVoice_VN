@@ -73,6 +73,11 @@ class TestLayer1Exact:
         txt, matches = correct_drug_names_v2("a moc xi lin 500mg")
         assert any(m.inn == "Amoxicillin" for m in matches)
 
+    def test_paracetamol_pha_ra_citamon(self):
+        # CT-034: ASR garble "Paracetamol" -> "pha ra citamon" (Clip 1-3 test)
+        txt, matches = correct_drug_names_v2("uống pha ra citamon 500mg ba lần mỗi ngày")
+        assert any(m.inn == "Paracetamol" and m.match_layer == 1 for m in matches)
+
     def test_oresol_exact_not_xylometazoline(self):
         # CT-022: ASR garble "o re sol pha với nước" trước đây bị fuzzy-match
         # nhầm sang Xylometazoline (phonetic_variant "xylo me ta zo li ne").
