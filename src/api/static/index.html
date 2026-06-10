@@ -167,6 +167,15 @@
   @keyframes fadein { from { opacity: 0; bottom: 1rem; } to { opacity: 1; bottom: 1.5rem; } }
 
   .hidden { display: none !important; }
+  .dvp-greeting {
+    background: #e8f5e9; border-radius: 8px; padding: 0.75rem;
+    font-size: 0.85rem; color: var(--success); display: flex;
+    align-items: center; justify-content: space-between; gap: 0.5rem;
+  }
+  .dvp-greeting .dvp-edit {
+    background: none; border: none; color: var(--primary);
+    font-size: 0.8rem; cursor: pointer; text-decoration: underline; flex-shrink: 0;
+  }
   .section-title {
     font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;
     color: var(--text-secondary); margin-bottom: 0.4rem;
@@ -230,6 +239,60 @@
 </div>
 
 <div class="container">
+
+  <!-- DVP card — Trợ lý AI cá nhân hóa theo BS (FID-VN-012 Layer 1) -->
+  <div class="card" id="card-dvp">
+    <h2 id="dvp-title">🩺 Trợ lý AI của Bác sĩ</h2>
+
+    <div id="dvp-greeting" class="dvp-greeting hidden">
+      <span id="dvp-greeting-text"></span>
+      <button class="dvp-edit" onclick="DVP.edit()">Sửa thông tin</button>
+    </div>
+
+    <div id="dvp-form">
+      <div class="form-row">
+        <label>Mã CCHN Bác sĩ *</label>
+        <input type="text" id="dvp-cchn" placeholder="VD: CCHN-012345" autocomplete="off">
+      </div>
+      <div class="form-row">
+        <label>Tên bác sĩ *</label>
+        <input type="text" id="dvp-name" placeholder="VD: BS. Nguyễn Văn A">
+      </div>
+      <div class="form-row">
+        <label>Vùng miền *</label>
+        <select id="dvp-region">
+          <option value="northern">Miền Bắc</option>
+          <option value="central">Miền Trung</option>
+          <option value="southern">Miền Nam</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Chuyên khoa chính *</label>
+        <select id="dvp-primary-specialty"></select>
+      </div>
+      <div class="form-row">
+        <label>Chuyên khoa phụ (nếu có)</label>
+        <select id="dvp-secondary-specialty"></select>
+      </div>
+      <div class="form-row">
+        <label>Trình độ tiếng Anh</label>
+        <select id="dvp-english-level">
+          <option value="Basic">Cơ bản</option>
+          <option value="Intermediate">Trung bình</option>
+          <option value="Good">Tốt</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Tốc độ nói</label>
+        <select id="dvp-speaking-speed">
+          <option value="Chậm">Chậm</option>
+          <option value="Vừa" selected>Vừa</option>
+          <option value="Nhanh">Nhanh</option>
+        </select>
+      </div>
+      <button class="btn btn-approve" onclick="DVP.save()">✅ Xác nhận & Lưu</button>
+    </div>
+  </div>
 
   <!-- Setup card -->
   <div class="card" id="card-setup">
@@ -707,8 +770,119 @@ function resetRecordBtn() {
   document.getElementById('record-label').textContent = 'Ghi âm lượt tiếp theo';
 }
 
+// FID-VN-012 DVP Layer 1 — Trợ lý AI cá nhân hóa theo BS (registration)
+const DVP_SPECIALTIES = {
+  noi_khoa: 'Nội khoa',
+  tim_mach: 'Tim mạch',
+  chan_thuong_chinh_hinh: 'Chấn thương chỉnh hình',
+  tai_mui_hong: 'Tai Mũi Họng',
+  san_phu_khoa: 'Sản phụ khoa',
+  nhi: 'Nhi khoa',
+  cdha: 'Chẩn đoán hình ảnh',
+  ngoai: 'Ngoại khoa',
+  da_lieu: 'Da liễu',
+  mat: 'Nhãn khoa',
+  noi_tiet: 'Nội tiết',
+  than_tiet_nieu: 'Thận tiết niệu',
+};
+const DVP_REGIONS = { northern: 'Miền Bắc', central: 'Miền Trung', southern: 'Miền Nam' };
+
+const DVP = {
+  async init() {
+    const primarySel = document.getElementById('dvp-primary-specialty');
+    const secondarySel = document.getElementById('dvp-secondary-specialty');
+    for (const [id, label] of Object.entries(DVP_SPECIALTIES)) {
+      primarySel.add(new Option(label, id));
+    }
+    secondarySel.add(new Option('Không có', ''));
+    for (const [id, label] of Object.entries(DVP_SPECIALTIES)) {
+      secondarySel.add(new Option(label, id));
+    }
+
+    const savedCchn = localStorage.getItem('mv_doctor_cchn');
+    if (savedCchn) {
+      const profile = await DVP.fetchProfile(savedCchn);
+      if (profile) {
+        DVP.showGreeting(profile);
+        document.getElementById('doctor-cchn').value = profile.cchn;
+        return;
+      }
+    }
+    if (savedCchn) document.getElementById('dvp-cchn').value = savedCchn;
+  },
+
+  async fetchProfile(cchn) {
+    try {
+      const resp = await fetch(`/api/doctors/${encodeURIComponent(cchn)}`);
+      if (!resp.ok) return null;
+      return await resp.json();
+    } catch (e) {
+      return null;
+    }
+  },
+
+  showGreeting(profile) {
+    const specialty = DVP_SPECIALTIES[profile.primary_specialty] || profile.primary_specialty;
+    const region = DVP_REGIONS[profile.region] || profile.region;
+    document.getElementById('dvp-greeting-text').textContent =
+      `Trợ lý AI của BS ${profile.name} đã sẵn sàng — ${specialty} · ${region}`;
+    document.getElementById('dvp-greeting').classList.remove('hidden');
+    document.getElementById('dvp-form').classList.add('hidden');
+    DVP._lastProfile = profile;
+  },
+
+  edit() {
+    const p = DVP._lastProfile;
+    if (p) {
+      document.getElementById('dvp-cchn').value = p.cchn;
+      document.getElementById('dvp-name').value = p.name;
+      document.getElementById('dvp-region').value = p.region;
+      document.getElementById('dvp-primary-specialty').value = p.primary_specialty;
+      document.getElementById('dvp-secondary-specialty').value = p.secondary_specialty || '';
+      document.getElementById('dvp-english-level').value = p.english_level;
+      document.getElementById('dvp-speaking-speed').value = p.speaking_speed;
+    }
+    document.getElementById('dvp-greeting').classList.add('hidden');
+    document.getElementById('dvp-form').classList.remove('hidden');
+  },
+
+  async save() {
+    const cchn = document.getElementById('dvp-cchn').value.trim();
+    const name = document.getElementById('dvp-name').value.trim();
+    if (!cchn || !name) {
+      showToast('Vui lòng nhập Mã CCHN và Tên bác sĩ');
+      return;
+    }
+
+    const form = new FormData();
+    form.append('cchn', cchn);
+    form.append('name', name);
+    form.append('region', document.getElementById('dvp-region').value);
+    form.append('primary_specialty', document.getElementById('dvp-primary-specialty').value);
+    form.append('secondary_specialty', document.getElementById('dvp-secondary-specialty').value);
+    form.append('english_level', document.getElementById('dvp-english-level').value);
+    form.append('speaking_speed', document.getElementById('dvp-speaking-speed').value);
+
+    try {
+      const resp = await fetch('/api/doctors', { method: 'POST', body: form });
+      if (!resp.ok) {
+        const err = await resp.json();
+        throw new Error(err.detail || 'Lỗi lưu thông tin');
+      }
+      localStorage.setItem('mv_doctor_cchn', cchn);
+      document.getElementById('doctor-cchn').value = cchn;
+      const profile = await DVP.fetchProfile(cchn);
+      DVP.showGreeting(profile);
+      showToast('Đã lưu thông tin Trợ lý AI');
+    } catch (e) {
+      showToast('Lỗi: ' + e.message);
+    }
+  },
+};
+
 // UI-SUGGEST-001: init terminology sidebar on page load
 window.addEventListener('DOMContentLoaded', () => {
+  DVP.init();
   if (window.Suggestions) {
     const sel = document.getElementById('specialty-select');
     Suggestions.init(sel ? sel.value : 'noi_khoa');

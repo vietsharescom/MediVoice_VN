@@ -44,8 +44,8 @@
   - `silero-vad==6.2.1` thêm vào `requirements.txt` + `requirements-prod.txt`
   - Max chunk 20s, gap_ms 500ms, auto-split nếu vượt, fallback về `chunk_audio()` cũ
   - `tests/unit/test_l0_vad_chunk.py` — 18 tests PASS | Total: 514/514
-  - ✅ WIRED vào `/transcribe` (`src/api/main.py`) — trước đó chỉ có function+tests, chưa wire (2026-06-09)
-  - `_vad_model` cached module-level (tránh reload silero-vad mỗi request) — 817/817 PASS
+  - `_vad_model` cached module-level (tránh reload silero-vad mỗi request)
+  - 🔴 ĐÃ THỬ wire vào `/transcribe` (2026-06-09 đêm) → REVERTED ngay — Andy test thực tế: transcript "KHÔNG NHẬN DẠNG ĐƯỢC GÌ LUÔN" (regression nặng, per-chunk PhoWhisper hallucination). Cần debug riêng (CT-019) trước khi wire lại — KHÔNG tự ý wire lại nếu chưa có A/B test.
 - [x] **A3-DIALECT-NORM** ✅ Dialect normalization + abbreviation expansion (2026-06-09)
   - `src/core/dialect_norm.py` — DIALECT_MAP 200+ entries (central/southern/northern/medical_abbrev)
   - `detect_region()` + `normalize_dialect()` + `expand_abbreviations()` + `normalize_text()`

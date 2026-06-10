@@ -109,13 +109,7 @@ async def transcribe_audio(
         # L1a: ASR + A1 prompt injection with doctor specialty
         from ..core.l1b_drug_correct import _load_drug_db as _get_drug_db
         _drug_db = _get_drug_db()
-
-        # A2: VAD silence-aware chunking (FID-VN-010) — chunk theo điểm im lặng
-        # thay vì fixed 10s, tránh cắt giữa câu (drug name + dose mất context)
-        _audio_chunks = l0_normalize.vad_chunk_audio(audio_arr)
-        transcript_raw = l1a_asr.transcribe_chunks(
-            _audio_chunks, drug_db=_drug_db, specialty=_specialty
-        )
+        transcript_raw = l1a_asr.transcribe(audio_arr, drug_db=_drug_db, specialty=_specialty)
 
         # A3: Dialect normalization with doctor region (before L1b)
         transcript_normalized, _dialect_subs = _dialect_normalize(transcript_raw, _region)
