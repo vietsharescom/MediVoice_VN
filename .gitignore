@@ -44,3 +44,6 @@ data/external/
 # Synthetic audio binary files — too large for git (120MB), use separate storage
 data/synthetic_audio/*.mp3
 data/synthetic_audio/wav/
+
+# Private notes (API keys, draft ideas, Claude double-check notes — never commit)
+Andy/private_notes.md
