@@ -18,6 +18,8 @@ OVERLAP = 2.0           # seconds overlap — fallback only
 VAD_MAX_CHUNK_S = 20.0  # max chunk duration for VAD mode (PhoWhisper limit)
 VAD_GAP_MS = 500.0      # merge speech segments with silence gap < 500ms
 
+_vad_model = None  # lazy-loaded, cached — avoid reloading silero-vad per request
+
 
 def normalize(audio_path: str | Path) -> tuple[np.ndarray, str]:
     """
@@ -85,11 +87,14 @@ def vad_chunk_audio(
     Max chunk 20s để PhoWhisper không bị truncate.
     Nếu silero-vad không load được → fallback về chunk_audio() cũ (fixed 10s).
     """
+    global _vad_model
     try:
         import torch
         from silero_vad import load_silero_vad, get_speech_timestamps
 
-        model = load_silero_vad()
+        if _vad_model is None:
+            _vad_model = load_silero_vad()
+        model = _vad_model
         audio_tensor = torch.from_numpy(audio.astype(np.float32))
 
         timestamps = get_speech_timestamps(
