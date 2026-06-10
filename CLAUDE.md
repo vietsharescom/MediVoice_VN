@@ -275,12 +275,12 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.11.2 |
-| Status | **ORCH-001 PROTOTYPE✅** — `scripts/orchestrator.py` (start/consult/check/close), Groq API real test, 817 tests |
+| Version | v0.11.3 |
+| Status | **CT-018 NER fix ✅ · CT-015 DVP UI ✅ · A2-VAD wire→REVERTED (CT-019 🔴)**, 817 tests |
 | Tests | **817/817 PASS** · bandit 0 HIGH/0 MEDIUM (new code) · conftest.py SKIP_QWEN |
-| Pending | **VIETMED-FIX-001** (HF_TOKEN, nhỏ ~5 LOC) · ORCH-001 cần FID cho phần còn lại |
-| Next task | **ORCH-001 FID** (detect_confusion + create_consultation_request + auto close_session) → **Pilot Đà Nẵng** |
-| Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.1) · FID: `fids/FID-VN-012.md` |
+| Pending | **CT-019** (🔴 A2 VAD-chunk regression — debug offline trước khi wire lại) · CT-016/CT-017/CT-014 ⏳ · VIETMED-FIX-001 |
+| Next task | **CT-019 debug A2-VAD** (per-chunk transcript A/B test) → **Pilot Đà Nẵng** (TRAIN-001 prereq) |
+| Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.1) · FID: `fids/FID-VN-010.md`, `fids/FID-VN-012.md` |
 
 ---
 

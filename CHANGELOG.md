@@ -1,6 +1,16 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.3] — 2026-06-09 — NER fixes (CT-018) + DVP registration UI (CT-015) + A2-VAD revert (CT-019)
+
+### NER + UI + A2 regression [SES-20260609j]
+- fix(l1c_ner): `_RE_BP_DIGITS` — extract digit-form BP with filler word "120 trên cao 80" → 120/80
+- fix(l1c_ner): `_RE_NHIET_DO`/`_RE_NHIET_DO_SPLIT` accept optional "là" before value — "nhiệt độ là 39 độ c" → 39.0
+- feat(dvp): `src/api/static/index.html` — "🩺 Trợ lý AI của Bác sĩ" registration card (CT-015), wired to existing `POST /api/doctors` + `GET /api/doctors/{cchn}`, persists `cchn` in `localStorage`
+- feat(A2): wire `vad_chunk_audio()` + `transcribe_chunks()` into `/transcribe` [FID-VN-010]
+- revert(A2): un-wire VAD chunking — live test produced unrecognizable transcript ("KHÔNG NHẬN DẠNG ĐƯỢC GÌ LUÔN"), reverted to whole-file `transcribe()`. Debug tracked as CT-019 (🔴 HIGH, pending)
+- 817/817 tests PASS, no regressions
+
 ## [v0.11.2] — 2026-06-09 — Orchestrator v1.0 prototype + Session Capture Rules expansion
 
 ### Orchestrator v1.0 prototype [SES-20260609i, ORCH-001]

@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-09 | v0.11.2
+# Cập nhật: 2026-06-09 | v0.11.3
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -175,6 +175,11 @@
 | P0.6.12c | │  ├─ consistency_check() | 2x Groq (temp 0.1/0.7) + AGREEMENTS/CONFLICTS/RECOMMENDATION | 🟢 | ORCH-001 | SES-20260609i | `docs/records/consultations/ORCH-CONSULT-20260609-184931.json` |
 | P0.6.12d | │  └─ close_session() | In checklist 6 bước (chưa tự động update docs) | 🟡 | ORCH-001 | SES-20260609i | Chưa làm: detect_confusion(), create_consultation_request() |
 | | │ | | | | | |
+| **P0.6.13** | **├─ 🟡 CT-018+CT-015 NER fix + DVP UI · A2-VAD REVERTED** | **Digit BP/nhiệt độ "là" fix · DVP registration card · A2 wire→revert** | **🟡** | **CT-018/015/019** | SES-20260609j | v0.11.2→v0.11.3 · 817/817 PASS |
+| P0.6.13a | │  ├─ CT-018 NER fix | `_RE_BP_DIGITS` "120 trên cao 80"→120/80 · `_RE_NHIET_DO` chấp nhận "là" | 🟢 | CT-018 | SES-20260609j | `src/core/l1c_ner.py` commit `91c4369` |
+| P0.6.13b | │  ├─ CT-015 DVP Layer 1 UI | Card "🩺 Trợ lý AI của Bác sĩ" — register/edit, localStorage `mv_doctor_cchn` | 🟢 | CT-015 | SES-20260609j | `src/api/static/index.html` commit `271b82a` |
+| P0.6.13c | │  └─ A2-VAD wire→REVERT | Wired vào `/transcribe` → live test "KHÔNG NHẬN DẠNG ĐƯỢC GÌ LUÔN" → revert ngay | 🔴 | CT-019 | SES-20260609j | commits `270cea3`→`271b82a` · cần debug offline (per-chunk vs whole-file) |
+| | │ | | | | | |
 | **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
 | P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |
 | P0.7b |    ├─ DPA ký | Hợp đồng xử lý dữ liệu | 🟡 | PA-003 | — | Luật sư review xong → ký |
@@ -232,16 +237,16 @@
 
 ## PHIÊN TIẾP THEO — LÀM GÌ?
 
-### ⚡ NGAY BÂY GIỜ — v0.11.1 · Orchestrator v1.0 prototype chạy thật
+### ⚡ NGAY BÂY GIỜ — v0.11.3 · CT-019 A2-VAD debug ưu tiên cao nhất
 
 | # | Task | Ai | Điều kiện |
 |---|---|---|---|
-| 1 | **ORCH-001 FID** — Viết FID cho Orchestrator v1.0 đầy đủ (`detect_confusion`, `create_consultation_request`, tự động `close_session`) | Claude | Andy approve scope trước khi +100 LOC |
-| 2 | **VIETMED-FIX-001** — Fix `scripts/download_vietmed.py` remove `trust_remote_code` + HF_TOKEN (~5 LOC) | Claude | Làm được ngay |
-| 3 | **DESIGN REVIEW** — Xem lại `docs/records/DESIGN_REPORT_v1.1_20260606.md` bổ sung DVP section | Claude + Andy | Phiên tới |
-| 4 | **Pilot Đà Nẵng** — Cài install.bat thật tại phòng khám → thu audio → TRAIN-001 | Andy | Code sẵn sàng · DVP needs real doctor CCHN |
-| 5 | **TRAIN-001** — Fine-tune PhoWhisper trên 50-100h audio thật | Andy + Claude | Cần audio pilot trước |
-| 6 | **DVP Layer 3** — Alias passive learning promote sau ≥5 sessions pilot | Claude | Sau pilot có data |
+| 1 | **CT-019 🔴** — Debug A2 VAD-chunk regression: A/B test per-chunk vs whole-file transcript offline (script riêng, KHÔNG wire vào `/transcribe` cho đến khi rõ nguyên nhân hallucination) | Claude | Cần audio mẫu (data/audio/) |
+| 2 | **ORCH-001 FID** — Viết FID cho Orchestrator v1.0 đầy đủ (`detect_confusion`, `create_consultation_request`, tự động `close_session`) | Claude | Andy approve scope trước khi +100 LOC |
+| 3 | **VIETMED-FIX-001** — Fix `scripts/download_vietmed.py` remove `trust_remote_code` + HF_TOKEN (~5 LOC) | Claude | Làm được ngay |
+| 4 | **CT-016/CT-017/CT-014** — chờ Andy cung cấp audio+GT / GG Drive JSON key path / mô tả flow calibration | Andy | Chờ Andy |
+| 5 | **Pilot Đà Nẵng** — Cài install.bat thật tại phòng khám → thu audio → TRAIN-001 | Andy | Code sẵn sàng · DVP needs real doctor CCHN |
+| 6 | **TRAIN-001** — Fine-tune PhoWhisper trên 50-100h audio thật | Andy + Claude | 🔴 Drug Recall 55.6%LB / Diag CEER chưa đạt mục tiêu — chỉ fine-tune mới giải quyết được, không phải patch nhỏ |
 
 ### 🟡 BENCHMARK TIẾP THEO
 
@@ -252,7 +257,7 @@
 
 ---
 
-## METRICS HIỆN TẠI (2026-06-09 · v0.11.2)
+## METRICS HIỆN TẠI (2026-06-09 · v0.11.3)
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
@@ -311,6 +316,7 @@
 | SES-20260609g | 2026-06-09 | v0.10.1→v0.11.0 | FID-VN-012 ✅ DVP Layer 1+2 · 12 specialties · 4 endpoints · 23 tests · 817/817 PASS |
 | SES-20260609h | 2026-06-09 | v0.11.0→v0.11.1 | DEMO-002 ✅ Demo App v2.1 · Header Block A/B/C · drug card HTML bold · checkbox True · button visibility fix |
 | SES-20260609i | 2026-06-09 | v0.11.1 | ORCH-001 PROTOTYPE ✅ — `scripts/orchestrator.py` start/consult/check/close · Groq API real test (consult + consistency check) · SESSION_CAPTURE_RULES integrated (commit `c9e1392`) · 6-category LAST_SESSION template demo |
+| SES-20260609j | 2026-06-09 | v0.11.2→v0.11.3 | CT-018 ✅ NER fix (BP digits + nhiệt độ "là") · CT-015 ✅ DVP Layer 1 registration UI · A2-VAD wired vào `/transcribe` rồi REVERTED ngay (CT-019 🔴 — live test "KHÔNG NHẬN DẠNG ĐƯỢC GÌ LUÔN") · 817/817 PASS |
 
 ---
 
