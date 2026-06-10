@@ -35,6 +35,7 @@
 | 2026-06-03 | **Conformity assessment budget** 80–200M VND | Luật AI 134/2025: bắt buộc trước 01/09/2027 | Phải có revenue trước mid-2027 |
 | 2026-06-03 | **Zalo OA API: chỉ non-medical content** | Zalo cấm gửi thông tin y tế nhạy cảm qua OA API | Reminder: "Nhắc lịch tái khám" OK. Chẩn đoán/thuốc: KHÔNG |
 | 2026-06-03 | **Lưu trữ 10 năm** tối thiểu | TT32/2023: bệnh án lưu 10–20 năm | Trách nhiệm thuộc cơ sở KCB, không phải platform |
+| 2026-06-10 | **PILOT PHASE EXCEPTION**: audio pilot có PII bệnh nhân thật (giọng BS+BN) tạm thời lưu GG Drive (Google Cloud, ngoài VN) — `medivoice-uploader@valid-dragon-498814-b3.iam.gserviceaccount.com` | Andy: đã có consent từ BS + bệnh nhân + luật sư review riêng cho giai đoạn thử nghiệm (CT-024). KHÔNG đổi Rule #4 cho production. | **TẠM THỜI — chỉ pilot/testing.** Trước khi scale/launch chính thức (Pilot→Production): di chuyển/xóa audio khỏi GG Drive, chuyển sang VN Cloud (VNG/FPT/VNPT) theo TECH DECISIONS gốc. Cần văn bản consent lưu tại `docs/compliance/` (DPA_TEMPLATE.md / BS_ONBOARDING_CHECKLIST.md). |
 
 ---
 

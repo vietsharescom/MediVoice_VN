@@ -1,4 +1,28 @@
 
+9/6/26
+
+Đã thiết lập kế hoạch — bảo toàn cả 2 phương án + 3 phương án mới
+Bước 0 — Khoá lại (đã làm, an toàn, reversible):
+
+git tag baseline-v0.11.3-pre-groq-eval — snapshot trạng thái hiện tại, có thể quay lại bất cứ lúc nào (git checkout baseline-v0.11.3-pre-groq-eval)
+master — giữ nguyên = production (local pipeline), KHÔNG đụng tới
+Branch experiment/groq-degallucination — cho Phương án 4
+Branch experiment/local-accuracy — cho Phương án 5
+Branch experiment/hybrid-pipeline — sẽ tạo sau khi có số liệu (Phương án 3)
+Đã ghi vào docs/records/PENDING_REQUESTS.md:
+
+ID	Phương án	Việc cần làm	Trạng thái
+CT-026	P4 — Giảm hallucination Groq demo	Sửa demo/app.py: prompt rule cấm bịa thuốc + temp=0 + field trich_dan (grounding) + cross-check local drug_db. Mục tiêu: rerun W1-001 → đơn thuốc chỉ còn đúng 3 thuốc	⏳ PENDING
+CT-027	P5 — Tăng accuracy local	TRAIN-001 (fine-tune PhoWhisper) + mở rộng drug_db alias (CT-022) + tiếp tục NER fixes	⏳ PENDING
+CT-029	Đo số liệu thật	Viết tools/bench_groq.py chạy Groq trên cùng 57 clip BENCH-002b, ra CEER để so sánh trực tiếp với local (Drug Recall 55.6% hiện tại)	⏳ PENDING — cần GROQ_API_KEY
+CT-028	P3 — Mix/Hybrid	Quyết định kiến trúc lai sau khi có số liệu CT-029 + CT-027, cần FID-VN-014	🔒 BLOCKED chờ CT-029+CT-027
+PA-013	—	Andy set $env:GROQ_API_KEY="gsk_..." (KHÔNG paste vào chat) để Claude chạy CT-029	⏳ chờ Andy
+Để bắt đầu: bạn set biến môi trường GROQ_API_KEY (PowerShell: $env:GROQ_API_KEY="gsk_...", không paste key vào chat), tôi sẽ bắt đầu CT-029 (benchmark) song song với CT-026 (giảm hallucination demo) trên branch experiment/groq-degallucination. CT-027 (tăng accuracy local) có thể bắt đầu ngay không cần API key.
+
+Bạn muốn tôi bắt đầu từ đâu trước — CT-026 (sửa prompt demo), CT-027 (local), hay chờ API key cho CT-029 trước?
+
+. CT-027 (tăng accuracy local) c
+============
 BƯỚC 1 — Trạng thái:
 v0.8.5 | 473 tests PASS | ISO: 🔴 2 issues | Ready.
 

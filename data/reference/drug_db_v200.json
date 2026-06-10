@@ -9,9 +9,10 @@
       "DRUG-ALIAS-001: PhoWhisper phonetic variants for Glimepiride/Colchicine/Etoricoxib/Vitamin B/Metformin/Omeprazole (2026-06-10)",
       "CONS-20260610-001 + CONS-20260610-002: phonetic_variants + drug_class + dose_range (2026-06-10)",
       "DRUG-DB-002: SGLT-2/DPP-4/ARB/CCB/PPI/neuropathy additions (2026-06-10)",
-      "DRUG-DB-002: Erythromycin/AluminiumPhosphate/Betamethasone/Clindamycin/Lisinopril/Digoxin/Nystatin/Ketoconazole (2026-06-09)"
+      "DRUG-DB-002: Erythromycin/AluminiumPhosphate/Betamethasone/Clindamycin/Lisinopril/Digoxin/Nystatin/Ketoconazole (2026-06-09)",
+      "CT-022/CT-027: thêm Oresol (ORS) — thiếu trong DB gây fuzzy-match nhầm sang Xylometazoline (2026-06-10)"
     ],
-    "total_drugs": 154,
+    "total_drugs": 155,
     "version": "2.0.0",
     "categories": {
       "Giảm đau": 3,
@@ -90,9 +91,10 @@
       "Kháng sinh Lincosamide": 1,
       "Tim mạch glycoside": 1,
       "Chống nấm Polyene": 1,
-      "Chống nấm Azole toàn thân": 1
+      "Chống nấm Azole toàn thân": 1,
+      "Bù nước điện giải": 1
     },
-    "otc_count": 38,
+    "otc_count": 39,
     "rx_count": 72,
     "schema_version": "v200",
     "new_fields": [
@@ -7426,6 +7428,58 @@
         "nấm móng",
         "viêm da tiết bã"
       ]
+    },
+    "Oresol": {
+      "inn": "Oresol",
+      "brands": [
+        "Oresol",
+        "ORS",
+        "Hydrite",
+        "Resomal"
+      ],
+      "forms": [
+        "gói bột pha 200ml",
+        "gói bột pha 1000ml"
+      ],
+      "typical": "pha 1 gói với nước đun sôi để nguội theo đúng thể tích ghi trên gói, uống từng ngụm sau mỗi lần đi ngoài",
+      "category": "Bù nước điện giải",
+      "otc": true,
+      "keywords": [
+        "oresol",
+        "ors",
+        "bu nuoc",
+        "bù nước",
+        "điện giải",
+        "tiêu chảy",
+        "mất nước"
+      ],
+      "phonetic_variants": {
+        "north": [
+          "o re sol",
+          "ô rê sôn",
+          "o re son"
+        ],
+        "central": [
+          "o re sol",
+          "ô rê sôn"
+        ],
+        "south": [
+          "o re sol",
+          "o rê son"
+        ]
+      },
+      "valid_doses_mg": [],
+      "dose_range": {
+        "min": 0,
+        "max": 0
+      },
+      "drug_class": "oral_rehydration_salt",
+      "compatible_diagnoses": [
+        "tiêu chảy",
+        "mất nước",
+        "rối loạn tiêu hóa",
+        "nhiễm khuẩn đường tiêu hóa"
+      ]
     }
   },
   "keyword_index": {
@@ -9507,6 +9561,24 @@
     "azole": "Ketoconazole",
     "kê to co na zon": "Ketoconazole",
     "ni do ral": "Ketoconazole",
-    "kê to con": "Ketoconazole"
+    "kê to con": "Ketoconazole",
+    "oresol": [
+      "Oresol"
+    ],
+    "ors": [
+      "Oresol"
+    ],
+    "hydrite": [
+      "Oresol"
+    ],
+    "resomal": [
+      "Oresol"
+    ],
+    "bu nuoc": [
+      "Oresol"
+    ],
+    "bù nước": [
+      "Oresol"
+    ]
   }
 }

@@ -63,7 +63,7 @@ _RE_HA_SYSTOLIC = re.compile(
     re.IGNORECASE
 )
 _RE_MACH = re.compile(
-    r"(?:mạch|mặc|mặt|pulse|HR)\s*[:\s]?\s*(\d{2,3})\s*(?:lần/phút|bpm|nhịp)?",  # "mặc"/"mặt" = PhoWhisper for "mạch"
+    r"(?:mạch|mặc|mặt|mật|pulse|HR)\s*[:\s]?\s*(\d{2,3})\s*(?:lần/phút|bpm|nhịp)?",  # "mặc"/"mặt"/"mật" = PhoWhisper for "mạch"
     re.IGNORECASE
 )
 _RE_NHIP_THO = re.compile(
@@ -128,7 +128,7 @@ _RE_LY_DO_FALLBACK = re.compile(
 # ─── Tái khám patterns ──────────────────────────────────────────────────────
 
 _RE_TAI_KHAM = re.compile(
-    r"(?:tái\s*kh[aá]m|tai\s*kh[aá]m|hẹn\s*lại|follow.?up)\s*(?:sau|after)?\s*(\d+)\s*(ngày|tuần|tháng)"
+    r"(?:t[aá]i\s*kh[aá](?:m|ng)|hẹn\s*lại|follow.?up)\s*(?:sau|after)?\s*(\d+)\s*(ngày|tuần|tháng)"
     r"([^.!?\n]*)",
     re.IGNORECASE
 )
@@ -136,11 +136,12 @@ _RE_TAI_KHAM = re.compile(
 # ─── Chẩn đoán patterns ─────────────────────────────────────────────────────
 
 _PRESCRIPTION_KW = (
-    r"(?:điều\s*trị|kê\s*(?:đơn|thuốc|toa)?|đơn\s*thuốc|toa\s*thuốc|"
-    r"tái\s*khám|hẹn|follow|cho\s*(?:\w+/?\w*\s*)?(?:uống|dùng))"
+    r"(?:điều\s*trị|(?:kê|chê|che)\s*(?:đơn|thuốc|toa|là)?|đơn\s*thuốc|toa\s*thuốc|"  # "chê"/"che" = PhoWhisper for "kê"
+    r"t[aá]i\s*kh[aá](?:m|ng)|hẹn|follow|cho\s*(?:\w+/?\w*\s*)?(?:uống|dùng))"  # "kháng" = PhoWhisper for "khám"
 )
 _RE_CHAN_DOAN = re.compile(
     r"(?:chẩn\s*đoán|diagnos\w*)[:\s]+"
+    r"(?:theo\s*(?:dõi|thì)\s+)?"                       # "theo dõi"/"theo thì" (PhoWhisper) filler — skip
     r"([^.,;!?\n]+?(?:\s+[A-Z]\d+(?:\.\d+)?)?)"        # VN diagnosis + optional ICD code
     # Two lookahead alternatives:
     #  A) inline keyword (no sentence break): "viêm họng cấp điều trị"
@@ -164,7 +165,7 @@ _RE_CHAN_DOAN_FALLBACK = re.compile(
 # e.g. "tái khám tăng huyết áp", "tái khám bệnh đái tháo đường".
 # Stops at digits, "đo", sentence breaks — avoids capturing BP measurement text.
 _RE_TAI_KHAM_DIAGNOSIS = re.compile(
-    r"(?:tái\s*kh[aá]m|t[aá]i\s*kh[aá]m)\s+(?:bệnh\s+)?"
+    r"t[aá]i\s*kh[aá](?:m|ng)\s+(?:bệnh\s+)?"
     r"((?:viêm|tăng|đái|gout|suy|nhồi|thiếu|đau|gãy|loét|rối\s*loạn|hội\s*chứng)"
     r"(?:\s+(?!(?:đo|lần|lúc|bên|bị|kê|\d)\b)\w+){0,3})",
     re.IGNORECASE
@@ -222,7 +223,7 @@ _WN  = r"(?:" + _WH + r"|" + _WCOLLQ + r"|" + _WTG + r"|" + _W10 + r"|" + _WSH +
 _RE_BP_WORDS  = re.compile(r"\b(" + _WN + r")\s+(?:trên|tri)\s+(" + _WN + r")\b", re.I | re.U)
 # Digit-form BP with spoken "trên" connector + filler word: "120 trên cao 80" / "120 trên thấp 80" → "120/80"
 _RE_BP_DIGITS = re.compile(r"\b(\d{2,3})\s+(?:trên|tri)\s+(?:cao|thấp)?\s*(\d{2,3})\b", re.I | re.U)
-_RE_DEC_WORDS = re.compile(r"\b(" + _WN + r"|" + _WO + r")\s+phẩy\s+(" + _WO + r")\b", re.I | re.U)
+_RE_DEC_WORDS = re.compile(r"\b(" + _WN + r"|" + _WO + r")\s+(?:phẩy|chấm)\s+(" + _WO + r")\b", re.I | re.U)  # "chấm" = PhoWhisper alt for "phẩy" (decimal point)
 _RE_RUOI      = re.compile(r"\b(" + _WN + r"|" + _WO + r")\s+(?:độ\s+)?rưỡi\b", re.I | re.U)
 _RE_WINT      = re.compile(r"\b" + _WN + r"\b", re.I | re.U)
 _WU           = r"\s*(?:viên|lần|ngày|tuần|tháng|kg|kilogram|g(?:ram)?|mg|miligam|ml|mililit|mcg|microgam|ống|gói|giọt)"

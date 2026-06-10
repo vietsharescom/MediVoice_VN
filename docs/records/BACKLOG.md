@@ -46,6 +46,21 @@
   - `tests/unit/test_l0_vad_chunk.py` — 18 tests PASS | Total: 514/514
   - `_vad_model` cached module-level (tránh reload silero-vad mỗi request)
   - 🔴 ĐÃ THỬ wire vào `/transcribe` (2026-06-09 đêm) → REVERTED ngay — Andy test thực tế: transcript "KHÔNG NHẬN DẠNG ĐƯỢC GÌ LUÔN" (regression nặng, per-chunk PhoWhisper hallucination). Cần debug riêng (CT-019) trước khi wire lại — KHÔNG tự ý wire lại nếu chưa có A/B test.
+  - **CT-019 offline A/B (2026-06-10)**: `scripts/debug_a2_vad_chunk.py` chạy trên 3 file pilot thật (12.2s/28.5s/92.6s) — per-chunk transcript = whole-file hoặc TỐT HƠN, KHÔNG hallucination, `initial_prompt` (drug_db) KHÔNG ảnh hưởng (output giống hệt có/không). KHÔNG reproduce được lỗi của Andy → cần audio thật bị lỗi (CT-016) để test trực tiếp trước khi wire lại.
+  - **CT-016 ground truth nhận được (2026-06-10)**: Andy gửi script gốc 3 clip (BS Phan Đình Hiệp/Hà Nội, ca Ngô Thị Liên đau bụng/sốt/tiêu hoá) + transcript thực tế từ live test → phát sinh 3 task mới:
+    - `CT-020` 🟡 NER miss Mạch (pulse) khi ASR "Mạch"→"mật" + mất "lần"
+    - `CT-021` 🟡 NER miss Chẩn đoán + ICD-10 khi ASR "theo dõi"→"theo thì"
+    - `CT-022` 🔴 SAFETY: L1b fuzzy match nhầm "Oresol" (bù nước, KHÔNG có trong drug_db) → "Xylometazoline" (thuốc nhỏ mũi) trong đơn thuốc draft
+    - Cả 3 cần raw transcript (trước L1b) hoặc audio 3 clip từ Andy để xác nhận root cause trước khi fix.
+  - **CT-025 🔴 CRITICAL (2026-06-10)**: Test demo Groq cloud (`medivoice-vn-demo.streamlit.app`, `demo/app.py` — whisper-large-v3 + llama-3.3-70b) với script W1-001 (3 thuốc) → LLM tự BỊA THÊM 9 thuốc không có trong audio (Clopidogrel, Valsartan, Vitamin D3, Meloxicam, Sertraline, Enalapril, Paracetamol...), hiện "12/12 thuốc đã xác nhận". Vi phạm Absolute Rule #7. Kết luận: KHÔNG dùng kiến trúc Groq LLM-extraction cho production — giữ TECH DECISIONS LOCKED (PhoWhisper + PhoBERT/CRF deterministic NER, không hallucinate thuốc mới).
+  - **CT-022 ✅ DONE (2026-06-10)**: thêm "Oresol" vào `data/reference/drug_db_v200.json` (155 drugs) — Layer 1 exact match thắng trước fuzzy → hết nhầm Xylometazoline. Branch `experiment/local-accuracy`.
+  - **Test thật Clip 1/2/3 (2026-06-10, BS Phan Đình/Q.Tân Phú HCM, BN Nguyễn Văn An, viêm họng cấp)** → phát sinh 5 task mới, branch `experiment/local-accuracy`:
+    - `CT-030` ✅ DONE — Nhiệt độ decimal mất khi ASR "phẩy"→"chấm" (37.9°C → đọc thành 37.0). Fix `_RE_DEC_WORDS`.
+    - `CT-031` ✅ DONE — Chẩn đoán/ICD-10/Tái khám trống khi ASR "Kê"→"che" (không dấu). Fix `_PRESCRIPTION_KW`.
+    - `CT-032` ✅ DONE — Tái khám trống khi ASR "tái khám"→"tái kháng". Fix `_RE_TAI_KHAM`/`_RE_TAI_KHAM_DIAGNOSIS`/`_PRESCRIPTION_KW` (`kh[aá]m`→`kh[aá](?:m|ng)`).
+    - `CT-033` 🔴 PENDING — SAFETY: "Vitamin D3" hallucinated vào đơn thuốc từ ASR garble câu khám "amidan sưng nhẹ" → literal "Vitamin D3 xương nhẹ" → L1b match đúng kỹ thuật nhưng sai ngữ nghĩa. Không sửa được bằng regex — mitigation = CT-023.
+    - `CT-034` 🟡 PENDING — Drug recall miss: "Paracetamol"→"pha ra citamon" không match (phần CT-027).
+    - 825/825 tests PASS sau CT-030/031/032.
 - [x] **A3-DIALECT-NORM** ✅ Dialect normalization + abbreviation expansion (2026-06-09)
   - `src/core/dialect_norm.py` — DIALECT_MAP 200+ entries (central/southern/northern/medical_abbrev)
   - `detect_region()` + `normalize_dialect()` + `expand_abbreviations()` + `normalize_text()`

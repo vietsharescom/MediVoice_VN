@@ -64,6 +64,27 @@ class TestChanDoanBoundary:
         ent = extract_entities(t)
         assert ent.chan_doan == "đau lưng cấp"
 
+    def test_chan_doan_theo_thi_che_la(self):
+        # CT-021: ASR "Chẩn đoán theo dõi nhiễm khuẩn đường tiêu hóa. Kê Ciprofloxacin..."
+        # → "chẩn đoán theo thì nhiễm khuẩn đường tiêu hoá chê là Ciprofloxacin..."
+        t = (
+            "chẩn đoán theo thì nhiễm khuẩn đường tiêu hoá chê là Ciprofloxacin "
+            "năm trăm mg uống hai lần mỗi ngày"
+        )
+        ent = extract_entities(t)
+        assert ent.chan_doan == "nhiễm khuẩn đường tiêu hoá"
+
+    def test_chan_doan_theo_doi_still_works(self):
+        t = "chẩn đoán theo dõi tăng huyết áp kê đơn Amlodipine mười mg"
+        ent = extract_entities(t)
+        assert ent.chan_doan == "tăng huyết áp"
+
+    def test_chan_doan_che_no_diacritic(self):
+        # CT-031: ASR "Kê" -> "che" (không dấu, khác "chê" của CT-021)
+        t = "chẩn đoán viêm phẩm cấp che Amoxicillin năm trăm mg uống ba lần mỗi ngày"
+        ent = extract_entities(t)
+        assert ent.chan_doan == "viêm phẩm cấp"
+
 
 # ── Bug #2: temperature decimal dropped when "phẩy" missing ──────────────────
 # PhoWhisper often drops "phẩy" → "ba mươi bảy tám" → should be 37.8, not 37.0
@@ -97,6 +118,12 @@ class TestTemperatureDecimalWithoutPhay:
         t = "nhiệt độ ba mươi bảy độ"
         ent = extract_entities(t)
         assert ent.nhiet_do == pytest.approx(37.0)
+
+    def test_temp_cham_alias_for_phay(self):
+        # CT-030: ASR "ba mươi bảy phẩy tám" -> "ba mươi bảy chấm chín" (PhoWhisper "chấm" thay "phẩy")
+        t = "nhiệt độ ba mươi bảy chấm chín độ c"
+        ent = extract_entities(t)
+        assert ent.nhiet_do == pytest.approx(37.9)
 
 
 # ── Bug #3: patient self-medication creates false drug entry ──────────────────
@@ -335,6 +362,12 @@ class TestBugB_MachAlias:
         ent = extract_entities(_TRANSCRIPT_A04)
         assert ent.mach == pytest.approx(80)
 
+    def test_mat_alias_word_form(self):
+        # CT-020: "Mạch bảy mươi lăm lần một phút" → ASR "mật bảy mươi lăm một phút"
+        t = "huyết áp một trăm hai mươi trên tám mươi mật bảy mươi lăm một phút"
+        ent = extract_entities(t)
+        assert ent.mach == pytest.approx(75)
+
 
 class TestBugC_NhanVienOccupation:
     """BUG-C: 'nhân viên văn phòng' occupation skip in ly_do fallback"""
@@ -485,6 +518,23 @@ class TestBugN_TaiKhamDiagnosis:
         # "tái khám sau X ngày" — no disease name → chan_doan stays empty
         ent = extract_entities("bệnh nhân tái khám sau năm ngày")
         assert ent.chan_doan == ""
+
+
+class TestBugO_TaiKhangAlias:
+    """CT-032: ASR "tái khám" -> "tái kháng" (PhoWhisper bỏ dấu/đổi vần cuối).
+    Trước fix: tai_kham trống vì _RE_TAI_KHAM chỉ nhận "kh[aá]m".
+    """
+
+    def test_tai_khang_extracts_tai_kham(self):
+        t = "tái kháng sau năm ngày hoặc sớm hơn nếu kéo dài"
+        ent = extract_entities(t)
+        assert ent.tai_kham != ""
+        assert "5 ngày" in ent.tai_kham
+
+    def test_tai_khang_diagnosis_hint(self):
+        t = "tái kháng tăng huyết áp sau hai tuần"
+        ent = extract_entities(t)
+        assert "tăng huyết áp" in ent.chan_doan.lower()
 
 
 class TestBugK_SGColloquialBP:

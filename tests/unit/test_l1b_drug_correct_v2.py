@@ -73,6 +73,15 @@ class TestLayer1Exact:
         txt, matches = correct_drug_names_v2("a moc xi lin 500mg")
         assert any(m.inn == "Amoxicillin" for m in matches)
 
+    def test_oresol_exact_not_xylometazoline(self):
+        # CT-022: ASR garble "o re sol pha với nước" trước đây bị fuzzy-match
+        # nhầm sang Xylometazoline (phonetic_variant "xylo me ta zo li ne").
+        # Sau khi thêm Oresol vào drug_db (CT-027), Layer 1 exact match phải
+        # thắng trước khi rơi xuống Layer 2 fuzzy.
+        txt, matches = correct_drug_names_v2("uống o re sol pha với nước sau mỗi lần đi ngoài")
+        assert any(m.inn == "Oresol" and m.match_layer == 1 for m in matches)
+        assert not any(m.inn == "Xylometazoline" for m in matches)
+
 
 # ─── LAYER 2 — Fuzzy match ────────────────────────────────────────────────────
 
