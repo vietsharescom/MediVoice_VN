@@ -113,11 +113,21 @@ def _xai_call(messages: list, model: str = "grok-3",
     )
 
 
+def _openrouter_call(messages: list, model: str = "meta-llama/llama-3.3-70b-instruct:free",
+                      max_tokens: int = 800, temperature: float = 0.3) -> dict:
+    api_key = _load_key("OPENROUTER_API_KEY", "openrouter_api_key")
+    return _openai_compatible_call(
+        "https://openrouter.ai/api/v1/chat/completions",
+        api_key, messages, model, max_tokens, temperature,
+    )
+
+
 # Provider registry for multi-AI consultation
 _PROVIDERS = {
     "Groq/LLaMA-3.3-70B": _groq_call,
     "OpenAI/GPT-4o-mini": _openai_call,
     "xAI/Grok-3": _xai_call,
+    "OpenRouter/LLaMA-3.3-70B-free": _openrouter_call,
 }
 
 

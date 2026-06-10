@@ -1,0 +1,30 @@
+{
+  "type": "consultation",
+  "topic": "ORCH-001-DEMO2",
+  "question": "Trong 1 cau, ban la AI nao va model gi?",
+  "responses": {
+    "Groq/LLaMA-3.3-70B": {
+      "model": "llama-3.3-70b-versatile",
+      "response": "Tôi là Technical Consultant cho MediVoice VN, sử dụng phần mềm AI voice-to-form với các model như PhoWhisper-medium cho nhận dạng giọng nói và PhoBERT+CRF cho xử lý ngôn ngữ tự nhiên.",
+      "usage": {
+        "queue_time": 0.10697034,
+        "prompt_tokens": 188,
+        "prompt_time": 0.025839778,
+        "completion_tokens": 48,
+        "completion_time": 0.185964992,
+        "total_tokens": 236,
+        "total_time": 0.21180477
+      }
+    },
+    "OpenAI/GPT-4o-mini": {
+      "error": "HTTP 429: {\n    \"error\": {\n        \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/gu"
+    },
+    "xAI/Grok-3": {
+      "error": "HTTP 403: {\"code\":\"permission-denied\",\"error\":\"Your newly created team doesn't have any credits or licenses yet. You can purchase those on https://console.x.ai/team/2c812287-5c53-4bdc-913e-6414f70b422a.\"}"
+    },
+    "OpenRouter/LLaMA-3.3-70B-free": {
+      "error": "HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"meta-llama/llama-3.3-70b-instruct:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to ac"
+    }
+  },
+  "timestamp": "2026-06-09T20:03:35.629687"
+}

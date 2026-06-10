@@ -115,15 +115,16 @@
   - Source: `Andy/Improvements.md` → `docs/dev/SESSION_CAPTURE_RULES.md`
   - File: `scripts/orchestrator.py` (~250 LOC) — CLI: `start | consult | check | close`
   - **Done**: `start_session()` (load ISO audit + LAST_SESSION + BACKLOG + PENDING) ✅
-  - **Done**: `multi_ai_consult()` + `_PROVIDERS` registry — Groq/OpenAI/xAI qua `_openai_compatible_call()` chung ✅
+  - **Done**: `multi_ai_consult()` + `_PROVIDERS` registry — Groq/OpenAI/xAI/OpenRouter qua `_openai_compatible_call()` chung ✅
   - **Done**: `consult(topic, question)` — gọi tất cả providers, lưu JSON evidence vào `docs/records/consultations/` ✅
   - **Done**: `consistency_check(topic, question)` — query tất cả providers + Groq phân tích AGREEMENTS/CONFLICTS/RECOMMENDATION ✅
   - **Done**: `close_session()` — in checklist 6 bước (chưa tự động hóa, chỉ reminder)
   - **Provider status (2026-06-09)**:
-    - Groq/LLaMA-3.3-70B ✅ hoạt động (free tier)
+    - Groq/LLaMA-3.3-70B ✅ hoạt động (free tier) — model thật trả lời bằng tiếng Việt
     - OpenAI/GPT-4o-mini ⚠️ key hợp lệ nhưng HTTP 429 — hết quota/chưa add billing (`platform.openai.com`)
-    - xAI/Grok-2 ⚠️ key hợp lệ nhưng HTTP 403 — team chưa có credits (`console.x.ai`)
-  - **Demo evidence**: `docs/records/consultations/ORCH-CONSULT-20260609-184913.json`, `*-184931.json`, `*-195003.json` (multi-provider, Groq output thật + OpenAI/xAI skip reasons)
+    - xAI/Grok-3 ⚠️ key hợp lệ, model name đúng (grok-3) nhưng HTTP 403 — team chưa có credits (`console.x.ai`)
+    - OpenRouter/LLaMA-3.3-70B-free ⚠️ key hợp lệ nhưng HTTP 429 — model `:free` đang bị rate-limit upstream (thử lại sau hoặc thêm key riêng)
+  - **Demo evidence**: `docs/records/consultations/ORCH-CONSULT-20260609-184913.json`, `*-184931.json`, `*-195003.json`, `*-195413.json`, `*-200335.json` (multi-provider, Groq output thật + OpenAI/xAI/OpenRouter skip reasons)
   - **Chưa làm**: `detect_confusion()`, `create_consultation_request()` (CONSULTATION_TEMPLATE format), tự động hóa `close_session()` (chưa tự update docs)
   - Prerequisite for full v1.0: FID cần Andy approve (> 100 LOC tổng + new module + ghi đè LAST_SESSION tự động)
   - Priority: Phase 1 (sau pilot Đà Nẵng — khi cần scale multi-AI consultation)
