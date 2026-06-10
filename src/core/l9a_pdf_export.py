@@ -9,6 +9,25 @@ from datetime import datetime
 from pathlib import Path
 
 _EXPORTS_DIR = Path(os.getenv("MEDIVOICE_EXPORTS", "exports"))
+_FONTS_DIR = Path(__file__).parent.parent.parent / "assets" / "fonts"
+_FONT_REGULAR = "DejaVuSans"
+_FONT_BOLD = "DejaVuSans-Bold"
+
+
+def _register_fonts() -> None:
+    """Register Unicode (Vietnamese-capable) fonts — Helvetica has no diacritics."""
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+
+    if _FONT_REGULAR in pdfmetrics.getRegisteredFontNames():
+        return
+    pdfmetrics.registerFont(TTFont(_FONT_REGULAR, str(_FONTS_DIR / "DejaVuSans.ttf")))
+    pdfmetrics.registerFont(TTFont(_FONT_BOLD, str(_FONTS_DIR / "DejaVuSans-Bold.ttf")))
+    # <b>...</b> in Paragraph markup resolves via the registered font family
+    pdfmetrics.registerFontFamily(
+        _FONT_REGULAR, normal=_FONT_REGULAR, bold=_FONT_BOLD,
+        italic=_FONT_REGULAR, boldItalic=_FONT_BOLD,
+    )
 
 
 def export_pdf(benh_an, output_dir: Path | None = None) -> str:
@@ -27,6 +46,8 @@ def export_pdf(benh_an, output_dir: Path | None = None) -> str:
     from reportlab.pdfbase import pdfmetrics
     from reportlab.pdfbase.ttfonts import TTFont
 
+    _register_fonts()
+
     out_dir = output_dir or _EXPORTS_DIR
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -44,7 +65,8 @@ def export_pdf(benh_an, output_dir: Path | None = None) -> str:
     )
 
     styles = getSampleStyleSheet()
-    bold = ParagraphStyle("bold", parent=styles["Normal"], fontName="Helvetica-Bold")
+    styles["Normal"].fontName = _FONT_REGULAR
+    bold = ParagraphStyle("bold", parent=styles["Normal"], fontName=_FONT_BOLD)
     center = ParagraphStyle("center", parent=styles["Normal"], alignment=TA_CENTER)
     center_bold = ParagraphStyle("center_bold", parent=bold, alignment=TA_CENTER)
     small = ParagraphStyle("small", parent=styles["Normal"], fontSize=8)
@@ -81,9 +103,10 @@ def export_pdf(benh_an, output_dir: Path | None = None) -> str:
     ]
     t = Table(admin_data, colWidths=[3.5*cm, 6*cm, 3*cm, 5*cm])
     t.setStyle(TableStyle([
+        ("FONTNAME", (0,0), (-1,-1), _FONT_REGULAR),
         ("FONTSIZE", (0,0), (-1,-1), 9),
-        ("FONTNAME", (0,0), (0,-1), "Helvetica-Bold"),
-        ("FONTNAME", (2,0), (2,-1), "Helvetica-Bold"),
+        ("FONTNAME", (0,0), (0,-1), _FONT_BOLD),
+        ("FONTNAME", (2,0), (2,-1), _FONT_BOLD),
         ("VALIGN", (0,0), (-1,-1), "TOP"),
         ("TOPPADDING", (0,0), (-1,-1), 2),
         ("BOTTOMPADDING", (0,0), (-1,-1), 2),
@@ -115,9 +138,10 @@ def export_pdf(benh_an, output_dir: Path | None = None) -> str:
     ]
     vt = Table(vitals_data, colWidths=[3*cm, 4.5*cm, 3*cm, 4.5*cm])
     vt.setStyle(TableStyle([
+        ("FONTNAME", (0,0), (-1,-1), _FONT_REGULAR),
         ("FONTSIZE", (0,0), (-1,-1), 9),
-        ("FONTNAME", (0,0), (0,-1), "Helvetica-Bold"),
-        ("FONTNAME", (2,0), (2,-1), "Helvetica-Bold"),
+        ("FONTNAME", (0,0), (0,-1), _FONT_BOLD),
+        ("FONTNAME", (2,0), (2,-1), _FONT_BOLD),
         ("GRID", (0,0), (-1,-1), 0.5, colors.lightgrey),
         ("TOPPADDING", (0,0), (-1,-1), 2),
         ("BOTTOMPADDING", (0,0), (-1,-1), 2),
@@ -147,7 +171,8 @@ def export_pdf(benh_an, output_dir: Path | None = None) -> str:
             ])
         dt = Table(drug_rows, colWidths=[1*cm, 5*cm, 3*cm, 3*cm, 3*cm, 2.5*cm])
         dt.setStyle(TableStyle([
-            ("FONTNAME", (0,0), (-1,0), "Helvetica-Bold"),
+            ("FONTNAME", (0,0), (-1,-1), _FONT_REGULAR),
+            ("FONTNAME", (0,0), (-1,0), _FONT_BOLD),
             ("FONTSIZE", (0,0), (-1,-1), 9),
             ("GRID", (0,0), (-1,-1), 0.5, colors.black),
             ("BACKGROUND", (0,0), (-1,0), colors.lightgrey),
@@ -169,9 +194,10 @@ def export_pdf(benh_an, output_dir: Path | None = None) -> str:
     ]
     st = Table(sig_data, colWidths=[8.5*cm, 8.5*cm])
     st.setStyle(TableStyle([
+        ("FONTNAME", (0,0), (-1,-1), _FONT_REGULAR),
         ("FONTSIZE", (0,0), (-1,-1), 9),
         ("ALIGN", (0,0), (-1,-1), "CENTER"),
-        ("FONTNAME", (0,1), (-1,1), "Helvetica-Bold"),
+        ("FONTNAME", (0,1), (-1,1), _FONT_BOLD),
     ]))
     story.append(st)
 

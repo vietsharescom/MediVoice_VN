@@ -85,6 +85,11 @@ SPECIALTY_DRUG_CLASSES: dict[str, list[str] | None] = {
         "ssri", "benzodiazepine", "sedative_hypnotic",
     ],
     "co_xuong_khop": ["nsaid", "corticosteroid", "uric_acid_lowering", "gout_acute"],
+    "ho_hap": [
+        "beta2_agonist", "corticosteroid", "antihistamine_2nd_gen",
+        "macrolide", "quinolone", "penicillin", "cephalosporin_3g",
+        "analgesic_antipyretic",
+    ],
     "lam_sang": None,  # all drugs
 }
 
