@@ -1,6 +1,20 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.11] — 2026-06-11 — Pre-gen audio mẫu phát âm (gTTS) + ưu tiên phonetic_variants.north
+
+### Pronunciation library + heuristic fix (Andy feedback)
+- feat(data): chạy `scripts/gen_pronunciation_audio.py` (gTTS) — sinh 149 file mp3
+  (`src/api/static/audio/pronunciation/*.mp3`) + `_cache.json` cho 155 INN trong
+  drug_db (audio mẫu đọc tên thuốc gốc tiếng Anh, KHÔNG phải audio Merriam-Webster
+  có bản quyền — xem giải thích trong session)
+- fix(scripts): `gen_pronunciation_audio.py` — `sys.stdout.reconfigure(encoding="utf-8")`
+  để tránh `UnicodeEncodeError` khi in tên thuốc có dấu trên Windows console
+- fix(core): `get_reference_phonetic()` — ưu tiên `phonetic_variants.north[0]` từ
+  drug_db trước khi fallback heuristic transliteration. Heuristic tạo cụm phụ âm
+  không tồn tại trong tiếng Việt (vd "Azithromycin" -> "a dith rô my xin", âm tiết
+  "dith" không đọc được) — nay dùng "a zi thro my xin" đã được ghi nhận sẵn
+
 ## [v0.11.10] — 2026-06-11 — Lab Hiệu chỉnh Giọng nói: hiển thị thông tin Bác sĩ (personality) trước test
 
 ### Follow-up FID-VN-018 (Andy feedback PA-021)

@@ -38,6 +38,7 @@ def _slug(inn: str) -> str:
 
 
 def main() -> None:
+    sys.stdout.reconfigure(encoding="utf-8")
     from gtts import gTTS
     import librosa
     from src.core.vtln import extract_f0_contour

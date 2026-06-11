@@ -179,10 +179,17 @@ def get_reference_phonetic(
     pronunciation_en: str | None = None,
 ) -> str:
     """
-    Lấy phiên âm chuẩn cho 1 INN — ưu tiên brand variant đã có trong drug_db
-    (kiểu "para xê ta môn", lowercase, nhiều âm tiết cách nhau bằng dấu cách),
-    nếu không có thì dùng heuristic transliteration trên từ đầu tiên của INN
-    (vd "Aspirin (Acetylsalicylic acid)" -> "Aspirin").
+    Lấy phiên âm chuẩn cho 1 INN, theo thứ tự ưu tiên:
+      1. Brand variant đã có trong drug_db (kiểu "para xê ta môn", lowercase,
+         nhiều âm tiết cách nhau bằng dấu cách).
+      2. `phonetic_variants.north[0]` trong drug_db (đã được con người ghi
+         nhận theo giọng đọc thực tế — tránh các cụm phụ âm tiếng Anh không
+         tồn tại trong tiếng Việt mà heuristic transliteration tạo ra, vd
+         "Azithromycin" -> "a dith rô my xin" KHÔNG đọc được, trong khi
+         `phonetic_variants.north` đã có sẵn "a zi thro my xin").
+      3. Heuristic transliteration trên từ đầu tiên của INN (vd "Aspirin
+         (Acetylsalicylic acid)" -> "Aspirin") — chỉ dùng khi drug_db chưa có
+         dữ liệu nào ở trên.
 
     FID-VN-017 §2 — nếu `pronunciation_en` được truyền vào, áp
     `apply_stress_hint()` lên kết quả trước khi trả về (gợi ý trọng âm).
@@ -196,6 +203,10 @@ def get_reference_phonetic(
                 and re.fullmatch(r"[a-zàáảãạăâêôơưđ\s]+", brand)
             ):
                 return apply_stress_hint(brand, pronunciation_en)
+
+        north_variants = drug_entry.get("phonetic_variants", {}).get("north")
+        if north_variants:
+            return apply_stress_hint(north_variants[0], pronunciation_en)
 
     first_word = re.split(r"[\s(]", inn.strip())[0]
     return apply_stress_hint(transliterate_to_vn_phonetic(first_word), pronunciation_en)

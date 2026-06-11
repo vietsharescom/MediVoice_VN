@@ -45,6 +45,30 @@ def test_get_reference_phonetic_no_brand_match_uses_heuristic():
     assert result == transliterate_to_vn_phonetic("Paracetamol")
 
 
+def test_get_reference_phonetic_uses_phonetic_variants_north_when_no_brand_match():
+    """Andy feedback 2026-06-11: heuristic transliteration tạo cụm phụ âm
+    không tồn tại trong tiếng Việt (vd "dith" cho Azithromycin) -> ưu tiên
+    `phonetic_variants.north[0]` đã được con người ghi nhận."""
+    drug_entry = {
+        "brands": ["Zithromax", "Azithromycin", "Azicin", "Azitro"],
+        "phonetic_variants": {"north": ["a zi thro my xin", "a zi tro my xin"]},
+    }
+    assert get_reference_phonetic("Azithromycin", drug_entry) == "a zi thro my xin"
+
+
+def test_get_reference_phonetic_azithromycin_real_drug_db_is_readable():
+    """Azithromycin trong drug_db thật phải dùng phonetic_variants.north,
+    KHÔNG phải heuristic "a dith rô my xin" (cụm "dith" không đọc được)."""
+    from src.core.l1b_drug_correct import _load_drug_db
+
+    drug_db = _load_drug_db()
+    drug_entry = drug_db["by_inn"]["Azithromycin"]
+    result = get_reference_phonetic("Azithromycin", drug_entry)
+
+    assert result == "a zi thro my xin"
+    assert "dith" not in result
+
+
 # ── FID-VN-016 — get_pronunciation_en / is_garbled_transcript ───────────────
 
 def test_get_pronunciation_en_returns_field_from_drug_entry():

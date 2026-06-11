@@ -184,7 +184,24 @@ def test_enroll_response_includes_phonetic_f0_contour_and_match_ratio(sample_pro
 # ── FID-VN-015 §3.2 — GET /api/pronunciation-reference/{inn} ────────────────
 
 def test_pronunciation_reference_fallback_when_no_cache():
-    """Chưa pre-gen audio mẫu -> audio_url=None, phonetic_text tính trực tiếp."""
+    """INN không có trong cache audio mẫu -> audio_url=None, phonetic_text vẫn tính trực tiếp."""
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    client = TestClient(app)
+    r = client.get("/api/pronunciation-reference/KhongTonTai")
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["inn"] == "KhongTonTai"
+    assert data["audio_url"] is None
+    assert data["phonetic_text"]
+    assert data["f0_contour"] == []
+
+
+def test_pronunciation_reference_returns_audio_when_cached():
+    """scripts/gen_pronunciation_audio.py đã pre-gen audio mẫu (gTTS) cho
+    Paracetamol -> audio_url trỏ tới mp3 + f0_contour không rỗng."""
     from fastapi.testclient import TestClient
     from src.api.main import app
 
@@ -194,9 +211,9 @@ def test_pronunciation_reference_fallback_when_no_cache():
     assert r.status_code == 200
     data = r.json()
     assert data["inn"] == "Paracetamol"
-    assert data["audio_url"] is None
+    assert data["audio_url"] == "/static/audio/pronunciation/paracetamol.mp3"
     assert data["phonetic_text"]
-    assert data["f0_contour"] == []
+    assert data["f0_contour"]
 
 
 def test_pronunciation_reference_unknown_drug_still_returns_phonetic():
