@@ -10,6 +10,9 @@ from dataclasses import dataclass, field
 
 @dataclass
 class MedicalEntities:
+    # Họ và tên bệnh nhân (chỉ khi BS nói rõ "tên ... là ...")
+    ho_ten: str = ""
+
     # Lý do khám / triệu chứng
     ly_do: str = ""
     trieu_chung: list[str] = field(default_factory=list)
@@ -111,6 +114,17 @@ _RE_ROUTE = re.compile(
     re.IGNORECASE
 )
 
+# ─── Tên bệnh nhân patterns ──────────────────────────────────────────────────
+# Chỉ extract khi BS nói rõ cue "tên (bệnh nhân) (là)..." — tránh đoán nhầm
+# tên BN từ transcript mơ hồ (an toàn lâm sàng > tự động hoá).
+
+_RE_PATIENT_NAME = re.compile(
+    r"(?:tên\s*bệnh\s*nhân|bệnh\s*nhân\s*tên)\s*(?:là\s*)?"
+    r"((?:[a-zà-ỹ]+\s+){1,3}[a-zà-ỹ]+)"
+    r"(?=\s*(?:[,.]|vào\s*khám|tuổi|nam\b|nữ\b|$))",
+    re.IGNORECASE,
+)
+
 # ─── Lý do khám patterns ─────────────────────────────────────────────────────
 
 _RE_LY_DO = re.compile(
@@ -122,6 +136,21 @@ _RE_LY_DO_FALLBACK = re.compile(
     r"\b\d+\s*tuổi[\s,.]+"
     r"(?:(?:nghề\s*nghiệp|nhân\s*viên)\s+[^,;.]{1,30}[,;.]?\s*)?"  # skip "nghề nghiệp X" / "nhân viên X"
     r"([^.!?\n]{5,}?)(?=\s*(?:tiền\s*sử|huyết\s*á|nhiệt\s*độ|mạch\s+\d|mặc\s+\d|mặt\s+\d|$))",  # "huyết á" without p
+    re.IGNORECASE,
+)
+# Fallback 2: "vào khám (vì/bị/do) <triệu chứng>" — dùng khi PhoWhisper bỏ sót
+# hoàn toàn cụm "<N> tuổi" (vd "...quáạm minh tuấn vào khám bị đau tay trái và
+# nghe kém ba ngày..." — _RE_LY_DO_FALLBACK không match vì thiếu "tuổi").
+_RE_LY_DO_FALLBACK2 = re.compile(
+    r"v[àaà]o\s*kh[áa]m\s+(?:(?:vì|bị|do)\s+)?"
+    r"([^.!?\n]{5,}?)"
+    r"(?=\s*(?:(?:vì\s+)?huyết\s*á|nhiệt\s*độ|mạch\s+\d|mặc\s+\d|mặt\s+\d|tiền\s*sử|sinh\s*hiệu|$))",
+    re.IGNORECASE,
+)
+# Yêu cầu ít nhất 1 từ khoá triệu chứng — tránh extract nhầm text hành chính
+# (vd "vào khám lúc 8 giờ sáng" không phải lý do khám lâm sàng)
+_RE_SYMPTOM_KW = re.compile(
+    r"\b(đau|sốt|ho\b|khó|mệt|chóng|buồn|nôn|tiểu|khát|ngứa|phù|tê|sưng|rát|chảy|nuốt|ợ|nghe\s*kém)\b",
     re.IGNORECASE,
 )
 
@@ -326,6 +355,11 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
     # Pre-process: convert VN word-form numbers → digits for regex matching
     t = _normalize_vn_numbers(transcript)
 
+    # Tên bệnh nhân — chỉ khi BS nói rõ "tên (bệnh nhân) (là) <tên>"
+    m = _RE_PATIENT_NAME.search(t)
+    if m:
+        ent.ho_ten = " ".join(w.capitalize() for w in m.group(1).split())
+
     # Sinh hiệu
     m = _RE_NHIET_DO.search(t)
     if m:
@@ -368,22 +402,21 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
     if m:
         ent.spo2 = float(m.group(1))
 
-    # Lý do khám — explicit prefix first, fallback to text after age mention
+    # Lý do khám — explicit prefix first, fallback to text after age mention,
+    # then fallback to "vào khám (vì/bị) <triệu chứng>" (PhoWhisper bỏ sót tuổi)
     m = _RE_LY_DO.search(t)
     if m:
         ent.ly_do = m.group(1).strip()
     else:
-        m = _RE_LY_DO_FALLBACK.search(t)
-        if m:
-            captured = m.group(1).strip()[:80]
-            # Only accept fallback if it contains at least one symptom keyword
-            # (avoids extracting occupation/admin text like "nghề nghiệp lái xe tái khám")
-            _symptom_kw = re.compile(
-                r"\b(đau|sốt|ho\b|khó|mệt|chóng|buồn|nôn|tiểu|khát|ngứa|phù|tê|sưng|rát|chảy|nuốt|ợ)\b",
-                re.IGNORECASE,
-            )
-            if _symptom_kw.search(captured):
-                ent.ly_do = captured
+        for fallback_re in (_RE_LY_DO_FALLBACK, _RE_LY_DO_FALLBACK2):
+            m = fallback_re.search(t)
+            if m:
+                captured = m.group(1).strip()[:80]
+                # Only accept fallback if it contains at least one symptom keyword
+                # (avoids extracting occupation/admin text like "nghề nghiệp lái xe tái khám")
+                if _RE_SYMPTOM_KW.search(captured):
+                    ent.ly_do = captured
+                    break
 
     # Chẩn đoán — try explicit keyword first, then tái-khám hint, then general fallback
     m = _RE_CHAN_DOAN.search(t)

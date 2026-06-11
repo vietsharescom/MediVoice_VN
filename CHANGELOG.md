@@ -1,6 +1,32 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.13] — 2026-06-11 — Fix 3 vấn đề còn lại từ pilot test (CT-048)
+
+### NER + UI fixes (Andy "LÀM HẾT TÔI THỬ LẠI")
+- feat(core): `src/core/l1c_ner.py` — thêm `MedicalEntities.ho_ten` +
+  `_RE_PATIENT_NAME` (extract tên BN chỉ khi có cue rõ ràng "tên bệnh
+  nhân"/"bệnh nhân tên" — KHÔNG đoán tên từ transcript mơ hồ, an toàn lâm
+  sàng > tự động hoá)
+- feat(core): `src/core/l1c_ner.py` — thêm `_RE_LY_DO_FALLBACK2` +
+  `_RE_SYMPTOM_KW`: bắt "vào khám (vì/bị/do) <triệu chứng>" khi PhoWhisper
+  bỏ sót hoàn toàn cụm "...tuổi" (yêu cầu ≥1 từ khoá triệu chứng để tránh
+  extract nhầm text hành chính)
+- feat(core): `src/core/l2_validate.py` — `form_data["ho_va_ten"]` từ
+  `entities.ho_ten`
+- feat(ui): `src/api/static/index.html` — tự điền `#patient-name` từ
+  `fd.ho_va_ten` nếu BS chưa gõ tay
+- fix(ui): `src/api/static/index.html` + `src/api/static/js/suggestions.js`
+  — gợi ý thuốc RAG (Salbutamol 78%/Amlodipine 77% không liên quan
+  transcript): root cause là gửi NGUYÊN transcript dài làm query cho
+  `hybrid_query_drug()` (thiết kế cho 1 token ASR-méo ngắn). Fix: chỉ gọi
+  `/api/drug-candidates` khi `don_thuoc` rỗng (chưa nhận dạng được thuốc
+  nào); thêm `Suggestions.dismissDrugChips()`
+- 4 tests mới (`tests/unit/test_l1c_ner_bugs.py`): `TestPatientNameExtraction`
+  (3 tests) + `test_ly_do_vao_kham_fallback_no_tuoi` → 939/939 PASS, bandit
+  0 HIGH/9 MEDIUM (pre-existing)
+- Resolves PA-023/CT-048 — chờ Andy re-test 3 clip TMH, đo hiệu quả
+
 ## [v0.11.12] — 2026-06-11 — Fix nhanh từ pilot test thật (TMH clip)
 
 ### NER + drug correction fixes (Andy pilot test feedback CT-047)

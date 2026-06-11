@@ -1,6 +1,12 @@
 # BACKLOG.md — MediVoice VN
-# v0.9.2 — Updated 2026-06-10
+# v0.9.2 — Updated 2026-06-11
 # Single source of truth cho tasks.
+
+## CT-048 — Pilot test fix round 2 (PA-023 items #1-3) [DONE 2026-06-11]
+- [x] Lý do khám trống → `_RE_LY_DO_FALLBACK2` + `_RE_SYMPTOM_KW` (`src/core/l1c_ner.py`)
+- [x] Tên BN không tự điền → `MedicalEntities.ho_ten` + `_RE_PATIENT_NAME` (cue rõ ràng) → `form_data.ho_va_ten` → autofill `#patient-name`
+- [x] Gợi ý thuốc RAG sai (Salbutamol/Amlodipine) → chỉ gọi `/api/drug-candidates` khi `don_thuoc` rỗng (`src/api/static/index.html` + `js/suggestions.js::dismissDrugChips()`)
+- 939/939 PASS, bandit 0 HIGH/9 MEDIUM (pre-existing) — chi tiết `docs/records/PENDING_REQUESTS.md` PA-023
 
 ---
 

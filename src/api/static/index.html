@@ -920,6 +920,11 @@ function displayDraft(data) {
 
   // Fill form fields
   const fd = data.form_data || {};
+  // CT-047: nếu BS chưa nhập tên BN tay, dùng tên AI nhận dạng được từ giọng nói
+  const patientNameEl = document.getElementById('patient-name');
+  if (fd.ho_va_ten && !patientNameEl.value.trim()) {
+    patientNameEl.value = fd.ho_va_ten;
+  }
   document.getElementById('f-ly-do').value = fd.ly_do || '';
   const sh = fd.sinh_hieu || {};
   document.getElementById('f-nhiet-do').value = sh.nhiet_do || '';
@@ -960,9 +965,14 @@ function displayDraft(data) {
   showToast('Đã xử lý xong — Bác sĩ vui lòng kiểm tra nháp');
 
   // UI-SUGGEST-001: drug chips + dialect badge sau khi có transcript
+  // CT-047: chỉ gợi ý thuốc khi đơn thuốc CHƯA nhận dạng được thuốc nào —
+  // tránh gợi ý nhiễu (vd Salbutamol/Amlodipine không liên quan) khi
+  // L1b đã match đúng thuốc rồi (vd Amoxicillin)
   const chanDoan = (data.form_data || {}).chan_doan || '';
-  if (window.Suggestions) {
+  if (window.Suggestions && (fd.don_thuoc || []).length === 0) {
     Suggestions.onTranscriptReady(data.transcript || '', chanDoan);
+  } else if (window.Suggestions) {
+    Suggestions.dismissDrugChips();
   }
 }
 
@@ -1053,6 +1063,7 @@ function updateApproveButton() {
 
 function buildEditedFormData() {
   const fd = Object.assign({}, currentFormData || {});
+  fd.ho_va_ten = document.getElementById('patient-name').value.trim();
   fd.ly_do = document.getElementById('f-ly-do').value;
   fd.chan_doan = document.getElementById('f-chan-doan').value;
   fd.icd_code = document.getElementById('f-icd').value.toUpperCase();

@@ -270,11 +270,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.11.12 |
-| Status | **FID-VN-017/018 IMPLEMENTED ✅** + Lab personality follow-up + Pronunciation audio library + pilot test fixes — FID-VN-017: mở rộng `pronunciation_en` cho 9 thuốc tim_mach + `apply_stress_hint()`; FID-VN-018: DVP form đảo thứ tự chuyên khoa trước vùng miền + `READING_PASSAGES_BY_REGION`/`REGION_TEST_SENTENCES` theo Bắc/Trung/Nam + `region_match`; v0.11.10: Lab Hiệu chỉnh Giọng nói hiển thị thông tin BS (personality) trước test; v0.11.11: pre-gen 149 audio mẫu gTTS (`src/api/static/audio/pronunciation/`) cho 155 thuốc + `get_reference_phonetic()` ưu tiên `phonetic_variants.north` (sửa lỗi heuristic "dith" không đọc được); v0.11.12: pilot test thật (TMH clip Andy) phát hiện 5 bug — đã fix 2 (chẩn đoán "thì" filler thừa, thiếu Amoxicillin biến thể "a mốt xi lin"), 3 còn lại (lý do khám trống/ASR, tên BN không tự điền, gợi ý thuốc RAG sai) → CT-047/PA-023, 935 tests |
-| Tests | **935/935 PASS** · bandit 0 HIGH (9 MEDIUM pre-existing, không liên quan) · conftest.py SKIP_QWEN |
-| Pending | **PA-023** (🟡 3 bug pilot test còn lại — Andy quyết ưu tiên) · **PA-020/PA-021** (Andy test UI FID-VN-017/018, audio mẫu giờ đã có) · **PA-015/PA-017/PA-018** (Andy test FID-VN-013/014/015/016 UI) · **CT-019** (🔴 A2 VAD-chunk regression) · CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039/CT-042/CT-044 ⏳ · VIETMED-FIX-001 |
-| Next task | **TRAIN-001** (PhoWhisper fine-tune, ưu tiên cao nhất per CT-028 — liên quan PA-023 #1) → PA-020/PA-021/PA-023 UI test song song · CT-019 debug A2-VAD nếu có audio |
+| Version | v0.11.13 |
+| Status | **CT-048 IMPLEMENTED ✅** — fix 3/3 vấn đề còn lại từ pilot test thật (PA-023, "LÀM HẾT TÔI THỬ LẠI"): (1) "Lý do khám" trống → `_RE_LY_DO_FALLBACK2`/`_RE_SYMPTOM_KW` (`src/core/l1c_ner.py`) bắt "vào khám (vì/bị/do) <triệu chứng>" khi ASR bỏ sót "...tuổi"; (2) "Tên bệnh nhân" không tự điền → `MedicalEntities.ho_ten` + `_RE_PATIENT_NAME` (chỉ extract khi có cue rõ ràng "tên bệnh nhân"/"bệnh nhân tên" — an toàn lâm sàng > đoán mò) → `form_data.ho_va_ten` → autofill `#patient-name`; (3) Gợi ý thuốc RAG sai (Salbutamol 78%/Amlodipine 77% không liên quan) → root cause: `fetchDrugCandidates()` gửi NGUYÊN transcript dài làm query cho `hybrid_query_drug()` (thiết kế cho 1 token ASR-méo ngắn) → fix: chỉ gọi `/api/drug-candidates` khi `don_thuoc` rỗng. v0.11.12 trước đó đã fix 2/5 bug (chẩn đoán "thì" filler, Amoxicillin "a mốt xi lin"). 939 tests |
+| Tests | **939/939 PASS** · bandit 0 HIGH (9 MEDIUM pre-existing, không liên quan) · conftest.py SKIP_QWEN |
+| Pending | **PA-023** (Andy re-test 3 clip TMH, đo hiệu quả CT-048) · **PA-020/PA-021** (Andy test UI FID-VN-017/018, audio mẫu giờ đã có) · **PA-015/PA-017/PA-018** (Andy test FID-VN-013/014/015/016 UI) · **CT-019** (🔴 A2 VAD-chunk regression) · CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039/CT-042/CT-044 ⏳ · VIETMED-FIX-001 |
+| Next task | **TRAIN-001** (PhoWhisper fine-tune, ưu tiên cao nhất per CT-028) → PA-023 re-test song song · CT-019 debug A2-VAD nếu có audio |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.1) · FID: `fids/FID-VN-010.md`, `fids/FID-VN-012.md`, `fids/FID-VN-013.md`, `fids/FID-VN-014.md`, `fids/FID-VN-015.md`, `fids/FID-VN-016.md`, `fids/FID-VN-017.md`, `fids/FID-VN-018.md` |
 
 ---

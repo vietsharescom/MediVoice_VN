@@ -270,6 +270,41 @@ class TestLyDoExtraction:
         assert ent.ly_do == ""
 
 
+class TestPatientNameExtraction:
+    def test_explicit_ten_la(self):
+        t = "bệnh nhân tên là phạm minh tuấn vào khám vì đau tai trái"
+        ent = extract_entities(t)
+        assert ent.ho_ten == "Phạm Minh Tuấn"
+
+    def test_ten_benh_nhan_la(self):
+        t = "tên bệnh nhân là nguyễn văn an, ba mươi tuổi, vào khám vì sốt"
+        ent = extract_entities(t)
+        assert ent.ho_ten == "Nguyễn Văn An"
+
+    def test_no_name_cue_stays_empty(self):
+        # Andy pilot test 2026-06-11: transcript không có cue "tên..." rõ ràng
+        # (ASR garble "Phạm Minh Tuấn" -> "quáạm minh tuấn") → KHÔNG đoán tên,
+        # an toàn lâm sàng hơn là điền sai tên BN
+        t = "quáạm minh tuấn vào khám bị đau tay trái và nghe kém ba ngày nay"
+        ent = extract_entities(t)
+        assert ent.ho_ten == ""
+
+
+class TestLyDoExtraction2:
+    def test_ly_do_vao_kham_fallback_no_tuoi(self):
+        # Andy pilot test 2026-06-11 (TMH clip): PhoWhisper bỏ sót hoàn toàn
+        # cụm "mười tám tuổi" → "...quáạm minh tuấn vào khám bị đau tay trái và
+        # nghe kém ba ngày nay sau khi bị giảm lạnh vì huyết áp là hiện nay..."
+        t = (
+            "quáạm minh tuấn vào khám bị đau tay trái và nghe kém ba ngày nay "
+            "sau khi bị giảm lạnh vì huyết áp là hiện nay của anh là một trăm "
+            "mười trên bảy mươi"
+        )
+        ent = extract_entities(t)
+        assert "đau tay trái" in ent.ly_do
+        assert "huyết áp" not in ent.ly_do
+
+
 # ── Feature: ngưng filter — discontinuation not in prescription ──────────────
 # "ngưng X" = stop taking X (patient instruction) → NOT added to don_thuoc
 

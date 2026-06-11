@@ -95,6 +95,11 @@ const Suggestions = (() => {
     if (badge) badge.classList.add('hidden');
   }
 
+  function dismissDrugChips() {
+    const panel = document.getElementById('suggest-drug-panel');
+    if (panel) panel.classList.add('hidden');
+  }
+
   // ─── Terminology Sidebar ──────────────────────────────────────────────────
 
   async function fetchTerms(specialty) {
@@ -218,6 +223,7 @@ const Suggestions = (() => {
     onSpecialtyChange,
     init,
     dismissDialectBadge,
+    dismissDrugChips,
     toggleTermList,
     // Expose for tests
     _fetchDrugCandidates: fetchDrugCandidates,
