@@ -138,12 +138,54 @@ def is_garbled_transcript(transcript: str, expected_inn: str) -> bool:
     return len(words) > 3 * expected_syllables
 
 
-def get_reference_phonetic(inn: str, drug_entry: dict | None = None) -> str:
+def apply_stress_hint(vn_phonetic: str, pronunciation_en: str | None) -> str:
+    """
+    FID-VN-017 §2 — gợi ý trọng âm: ánh xạ vị trí âm tiết viết HOA trong
+    `pronunciation_en` (vd "par-a-SEE-ta-mol") sang âm tiết tương ứng trong
+    `vn_phonetic` (vd "pa ra xê ta môn" -> "pa ra XÊ ta môn"), theo tỉ lệ vị
+    trí (idx_en/total_en ~ idx_vn/total_vn). Heuristic, không chính xác tuyệt
+    đối — chỉ là gợi ý "đọc nhấn vào đây".
+
+    Trả nguyên `vn_phonetic` nếu `pronunciation_en` rỗng/None hoặc không tìm
+    thấy âm tiết viết HOA.
+    """
+    if not pronunciation_en:
+        return vn_phonetic
+
+    en_segments = pronunciation_en.split("-")
+    total_en = len(en_segments)
+    idx_en = next(
+        (i for i, seg in enumerate(en_segments) if any(c.isupper() for c in seg)),
+        None,
+    )
+    if idx_en is None or total_en == 0:
+        return vn_phonetic
+
+    vn_syllables = vn_phonetic.split()
+    total_vn = len(vn_syllables)
+    if total_vn == 0:
+        return vn_phonetic
+
+    idx_vn = round((idx_en / total_en) * total_vn)
+    idx_vn = max(0, min(total_vn - 1, idx_vn))
+
+    vn_syllables[idx_vn] = vn_syllables[idx_vn].upper()
+    return " ".join(vn_syllables)
+
+
+def get_reference_phonetic(
+    inn: str,
+    drug_entry: dict | None = None,
+    pronunciation_en: str | None = None,
+) -> str:
     """
     Lấy phiên âm chuẩn cho 1 INN — ưu tiên brand variant đã có trong drug_db
     (kiểu "para xê ta môn", lowercase, nhiều âm tiết cách nhau bằng dấu cách),
     nếu không có thì dùng heuristic transliteration trên từ đầu tiên của INN
     (vd "Aspirin (Acetylsalicylic acid)" -> "Aspirin").
+
+    FID-VN-017 §2 — nếu `pronunciation_en` được truyền vào, áp
+    `apply_stress_hint()` lên kết quả trước khi trả về (gợi ý trọng âm).
     """
     if drug_entry:
         for brand in drug_entry.get("brands", []):
@@ -153,7 +195,7 @@ def get_reference_phonetic(inn: str, drug_entry: dict | None = None) -> str:
                 and brand != inn.lower()
                 and re.fullmatch(r"[a-zàáảãạăâêôơưđ\s]+", brand)
             ):
-                return brand
+                return apply_stress_hint(brand, pronunciation_en)
 
     first_word = re.split(r"[\s(]", inn.strip())[0]
-    return transliterate_to_vn_phonetic(first_word)
+    return apply_stress_hint(transliterate_to_vn_phonetic(first_word), pronunciation_en)

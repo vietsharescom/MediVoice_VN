@@ -9,16 +9,54 @@ from __future__ import annotations
 
 import numpy as np
 
-# Đoạn văn chuẩn (~90 từ) — đa dạng âm tiết tiếng Việt + vài thuật ngữ y khoa
-# phổ biến, tương tự triết lý "Rainbow Passage" (speech pathology) nhưng bằng
-# tiếng Việt. Hiển thị cố định trên UI cho BS đọc (~30-45s).
-READING_PASSAGE_VI = (
-    "Hôm nay trời nắng đẹp, bệnh nhân đến phòng khám để kiểm tra sức khỏe định kỳ. "
-    "Bác sĩ hỏi thăm về tiền sử bệnh tăng huyết áp và đái tháo đường của gia đình. "
-    "Sau khi đo huyết áp và nhịp tim, bác sĩ ghi nhận chỉ số trong giới hạn bình thường. "
-    "Bệnh nhân chia sẻ rằng gần đây hay bị đau đầu, mất ngủ và mệt mỏi vào buổi chiều. "
-    "Bác sĩ khuyên nên giảm muối, tập thể dục đều đặn và tái khám sau hai tuần nữa."
-)
+# FID-VN-018 §2 (CT-043) — đoạn văn chuẩn (~90 từ) cho Phần 2, theo vùng miền
+# (double-check `profile.region` BS tự khai qua từ ngữ/phong cách giọng đọc).
+# `central`/`southern` dùng marker từ `dialect_norm._CENTRAL_MARKERS` /
+# `_SOUTHERN_MARKERS` để có thể double-check qua detect_region(transcript).
+READING_PASSAGES_BY_REGION: dict[str, str] = {
+    "northern": (
+        "Hôm nay trời nắng đẹp, bệnh nhân đến phòng khám để kiểm tra sức khỏe định kỳ. "
+        "Bác sĩ hỏi thăm về tiền sử bệnh tăng huyết áp và đái tháo đường của gia đình. "
+        "Sau khi đo huyết áp và nhịp tim, bác sĩ ghi nhận chỉ số trong giới hạn bình thường. "
+        "Bệnh nhân chia sẻ rằng gần đây hay bị đau đầu, mất ngủ và mệt mỏi vào buổi chiều. "
+        "Bác sĩ khuyên nên giảm muối, tập thể dục đều đặn và tái khám sau hai tuần nữa."
+    ),
+    "central": (
+        "Bữa ni trời nắng đẹp, bệnh nhân tới phòng khám để khám sức khỏe định kỳ. "
+        "Bác sĩ hỏi mô răng rứa về tiền sử bệnh tăng huyết áp và đái tháo đường của gia đình. "
+        "Sau khi đo huyết áp và nhịp tim, bác sĩ ghi nhận chỉ số ở mức bình thường. "
+        "Bệnh nhân nói rứa tê, dạo ni hay bị đau đầu, mất ngủ và mệt mỏi vào buổi chiều. "
+        "Bác sĩ khuyên mần giảm muối, tập thể dục đều đặn và tái khám sau hai tuần nớ."
+    ),
+    "southern": (
+        "Bữa nay trời nắng đẹp, bệnh nhân tới phòng khám để khám sức khỏe định kỳ nha. "
+        "Bác sĩ hỏi thăm về tiền sử bịnh tăng huyết áp và tiểu đường của gia đình. "
+        "Sau khi đo huyết áp và nhịp tim, bác sĩ ghi nhận chỉ số ở mức bình thường nghen. "
+        "Bệnh nhân nói hổng biết sao gần đây hay bị đau đầu, mất ngủ và mệt mỏi vào buổi chiều. "
+        "Bác sĩ khuyên giảm muối, tập thể dục đều đặn và tái khám sau hai tuần nữa hen."
+    ),
+}
+
+# Backward-compat alias — test cũ FID-VN-014 tham chiếu hằng số đơn này.
+READING_PASSAGE_VI = READING_PASSAGES_BY_REGION["northern"]
+
+# FID-VN-018 §2 — câu mẫu ngắn (~10-15s) cho Phần 1, theo vùng miền. `central`
+# giữ nguyên câu hiện có (CT-038, đã hardcode trong index.html).
+REGION_TEST_SENTENCES: dict[str, str] = {
+    "northern": "Bác sĩ ơi, cháu bị đau đầu và mệt mỏi mấy hôm nay rồi ạ.",
+    "central": "Bác sĩ ơi, mô răng rứa mà bệnh nhân ni đau hoài rứa hè?",
+    "southern": "Bác sĩ ơi, con bị đau đầu hoài hổng biết sao nha.",
+}
+
+
+def get_passage_for_region(region: str | None) -> str:
+    """FID-VN-018 §2 — đoạn văn Phần 2 theo vùng miền, fallback 'northern'."""
+    return READING_PASSAGES_BY_REGION.get(region, READING_PASSAGES_BY_REGION["northern"])
+
+
+def get_region_sentence(region: str | None) -> str:
+    """FID-VN-018 §2 — câu mẫu Phần 1 theo vùng miền, fallback 'northern'."""
+    return REGION_TEST_SENTENCES.get(region, REGION_TEST_SENTENCES["northern"])
 
 SILENCE_RMS = 0.01
 DEFAULT_FRAME_MS = 100

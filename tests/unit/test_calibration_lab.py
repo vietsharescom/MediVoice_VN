@@ -375,6 +375,137 @@ def test_passage_404_when_doctor_not_registered():
     assert r.status_code == 404
 
 
+# ── FID-VN-018 §2 — READING_PASSAGES_BY_REGION / REGION_TEST_SENTENCES ──────
+
+def test_reading_passage_vi_alias_is_northern():
+    """Backward-compat — READING_PASSAGE_VI === READING_PASSAGES_BY_REGION["northern"]."""
+    assert calibration_metrics.READING_PASSAGE_VI == calibration_metrics.READING_PASSAGES_BY_REGION["northern"]
+
+
+def test_get_passage_for_region_central_contains_central_marker():
+    from src.core.dialect_norm import _CENTRAL_MARKERS
+
+    passage = calibration_metrics.get_passage_for_region("central")
+    assert any(m in passage.lower() for m in _CENTRAL_MARKERS)
+
+
+def test_get_passage_for_region_southern_contains_southern_marker():
+    from src.core.dialect_norm import _SOUTHERN_MARKERS
+
+    passage = calibration_metrics.get_passage_for_region("southern")
+    assert any(m in passage.lower() for m in _SOUTHERN_MARKERS)
+
+
+def test_get_passage_for_region_fallback_northern():
+    assert calibration_metrics.get_passage_for_region(None) == calibration_metrics.READING_PASSAGES_BY_REGION["northern"]
+    assert calibration_metrics.get_passage_for_region("invalid") == calibration_metrics.READING_PASSAGES_BY_REGION["northern"]
+
+
+def test_get_region_sentence_central_matches_existing_lab_sentence():
+    """central giữ nguyên câu CT-038 đã hardcode trong index.html."""
+    sentence = calibration_metrics.get_region_sentence("central")
+    assert "mô răng rứa" in sentence
+
+
+def test_get_region_sentence_fallback_northern():
+    assert calibration_metrics.get_region_sentence(None) == calibration_metrics.REGION_TEST_SENTENCES["northern"]
+    assert calibration_metrics.get_region_sentence("invalid") == calibration_metrics.REGION_TEST_SENTENCES["northern"]
+
+
+# ── FID-VN-018 §3 — /api/calibration/passage-text & region-sentence (region-aware) ─
+
+def test_passage_text_endpoint_no_cchn_falls_back_northern():
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    client = TestClient(app)
+    r = client.get("/api/calibration/passage-text")
+
+    assert r.status_code == 200
+    assert r.json()["passage"] == calibration_metrics.READING_PASSAGES_BY_REGION["northern"]
+
+
+def test_passage_text_endpoint_uses_profile_region(sample_profile):
+    import dataclasses
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    central_profile = dataclasses.replace(sample_profile, region="central")
+    with patch("src.api.main.load_doctor_profile", return_value=central_profile):
+        client = TestClient(app)
+        r = client.get(f"/api/calibration/passage-text?cchn={sample_profile.cchn}")
+
+    assert r.status_code == 200
+    assert r.json()["passage"] == calibration_metrics.READING_PASSAGES_BY_REGION["central"]
+
+
+def test_region_sentence_endpoint_uses_profile_region(sample_profile):
+    import dataclasses
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    southern_profile = dataclasses.replace(sample_profile, region="southern")
+    with patch("src.api.main.load_doctor_profile", return_value=southern_profile):
+        client = TestClient(app)
+        r = client.get(f"/api/calibration/region-sentence?cchn={sample_profile.cchn}")
+
+    assert r.status_code == 200
+    assert r.json()["sentence"] == calibration_metrics.REGION_TEST_SENTENCES["southern"]
+
+
+def test_region_sentence_endpoint_no_cchn_falls_back_northern():
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    client = TestClient(app)
+    r = client.get("/api/calibration/region-sentence")
+
+    assert r.status_code == 200
+    assert r.json()["sentence"] == calibration_metrics.REGION_TEST_SENTENCES["northern"]
+
+
+# ── FID-VN-018 §3 — calibration_region(): region_match field ───────────────
+
+def test_calibration_region_match_true_when_detected_matches_declared(sample_profile):
+    """sample_profile.region == 'northern', transcript trung tính -> region_match=True."""
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    with patch("src.api.main.load_doctor_profile", return_value=sample_profile):
+        with patch("src.core.l1a_asr.transcribe", return_value="xin chào bác sĩ"):
+            with patch("src.api.main.update_calibration_results"):
+                client = TestClient(app)
+                r = client.post(
+                    f"/api/doctors/{sample_profile.cchn}/calibration/region",
+                    files={"audio": ("t.wav", _wav_bytes(), "audio/wav")},
+                )
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["region"] == "northern"
+    assert data["region_match"] is True
+
+
+def test_calibration_region_match_false_when_detected_differs_from_declared(sample_profile):
+    """sample_profile.region == 'northern', transcript giọng Trung -> region_match=False."""
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    with patch("src.api.main.load_doctor_profile", return_value=sample_profile):
+        with patch("src.core.l1a_asr.transcribe", return_value="mô răng rứa hè"):
+            with patch("src.api.main.update_calibration_results"):
+                client = TestClient(app)
+                r = client.post(
+                    f"/api/doctors/{sample_profile.cchn}/calibration/region",
+                    files={"audio": ("t.wav", _wav_bytes(), "audio/wav")},
+                )
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["region"] == "central"
+    assert data["region_match"] is False
+
+
 def test_ac006_purge_audio_called_after_passage_test(sample_profile):
     """AC-006: audio purge ngay sau xử lý — passage test."""
     from fastapi.testclient import TestClient

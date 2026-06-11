@@ -349,6 +349,54 @@ def test_pronunciation_reference_returns_vn_phonetic_user_after_confirm(tmp_db, 
     assert r.json()["vn_phonetic_user"] == "pa ra xi ta môn"
 
 
+# ── FID-VN-017 §2 — pronunciation-reference: stress hint trên vn_phonetic_default ─
+
+def test_pronunciation_reference_default_has_stress_hint_when_pronunciation_en_available():
+    """Paracetamol có pronunciation_en -> vn_phonetic_default có 1 âm tiết viết HOA."""
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    client = TestClient(app)
+    r = client.get("/api/pronunciation-reference/Paracetamol")
+
+    assert r.status_code == 200
+    data = r.json()
+    syllables = data["vn_phonetic_default"].split()
+    assert any(s.isupper() for s in syllables)
+
+
+def test_pronunciation_reference_default_unchanged_without_pronunciation_en():
+    """Ibuprofen không có pronunciation_en -> vn_phonetic_default không bị viết HOA."""
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    client = TestClient(app)
+    r = client.get("/api/pronunciation-reference/Ibuprofen")
+
+    assert r.status_code == 200
+    data = r.json()
+    syllables = data["vn_phonetic_default"].split()
+    assert not any(s.isupper() for s in syllables)
+
+
+def test_pronunciation_reference_user_not_affected_by_stress_hint(tmp_db, sample_profile):
+    """vn_phonetic_user (BS confirm) giữ nguyên, không bị viết HOA stress hint."""
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    save_doctor_profile(sample_profile, tmp_db)
+    add_confirmed_alias(sample_profile.cchn, "pa ra xi ta môn", "Paracetamol", tmp_db)
+
+    with patch("src.core.l7_storage._DB_PATH", tmp_db):
+        client = TestClient(app)
+        r = client.get(
+            f"/api/pronunciation-reference/Paracetamol?cchn={sample_profile.cchn}"
+        )
+
+    assert r.status_code == 200
+    assert r.json()["vn_phonetic_user"] == "pa ra xi ta môn"
+
+
 # ── FID-VN-016 §1 — pronunciation-enroll: retry_needed cho transcript lộn xộn
 
 def test_enroll_returns_retry_needed_for_garbled_transcript(sample_profile):
@@ -370,3 +418,16 @@ def test_enroll_returns_retry_needed_for_garbled_transcript(sample_profile):
     data = r.json()
     assert data["retry_needed"] is True
     assert data["alias_needed"] is False
+
+
+# ── FID-VN-018 §1 (CT-043) — dvp-form: chuyên khoa TRƯỚC vùng miền ──────────
+
+def test_dvp_form_specialty_fields_before_region():
+    """DOM order: dvp-primary-specialty phải xuất hiện TRƯỚC dvp-region."""
+    from pathlib import Path
+
+    html = Path("src/api/static/index.html").read_text(encoding="utf-8")
+    idx_specialty = html.index('id="dvp-primary-specialty"')
+    idx_region = html.index('id="dvp-region"')
+
+    assert idx_specialty < idx_region

@@ -513,9 +513,11 @@ async def pronunciation_reference(inn: str, cchn: str | None = None):
     Anh, pre-generated bởi scripts/gen_pronunciation_audio.py) + 2 dòng phiên
     âm cho Wizard:
       - pronunciation_en: chuẩn USAN (dòng 1, None nếu chưa có pilot data)
-      - vn_phonetic_default: heuristic VN (dòng 2 mặc định)
+      - vn_phonetic_default: heuristic VN (dòng 2 mặc định) — FID-VN-017 §2:
+        nếu có pronunciation_en, 1 âm tiết được viết HOA = gợi ý trọng âm
       - vn_phonetic_user: cách đọc BS đã confirm gần nhất (dòng 2 ưu tiên,
-        None nếu BS chưa confirm — cần truyền ?cchn=... để tra)
+        None nếu BS chưa confirm — cần truyền ?cchn=... để tra; KHÔNG bị áp
+        stress hint, giữ nguyên transcript BS đọc)
     `phonetic_text` giữ lại (= vn_phonetic_default) cho tương thích ngược.
     Nếu chưa pre-gen audio (cache trống) → audio_url=None, f0_contour=[].
     """
@@ -523,8 +525,8 @@ async def pronunciation_reference(inn: str, cchn: str | None = None):
     drug_db = _get_drug_db()
     drug_entry = drug_db.get("by_inn", {}).get(inn)
 
-    vn_phonetic_default = get_reference_phonetic(inn, drug_entry)
     pronunciation_en = get_pronunciation_en(inn, drug_entry)
+    vn_phonetic_default = get_reference_phonetic(inn, drug_entry, pronunciation_en)
     vn_phonetic_user = get_latest_confirmed_alias(cchn, inn) if cchn else None
 
     cache = _load_pronunciation_cache()
@@ -679,9 +681,26 @@ async def pronunciation_confirm(
 # ── FID-VN-014 — Voice Calibration Lab (3-Part Standardized Test) ────────
 
 @app.get("/api/calibration/passage-text")
-async def calibration_passage_text():
-    """Đoạn văn chuẩn (~90 từ) cho Phần 2 — Standardized Reading Passage Test."""
-    return {"passage": calibration_metrics.READING_PASSAGE_VI}
+async def calibration_passage_text(cchn: str | None = None):
+    """
+    FID-VN-018 §3 (CT-043) — Đoạn văn chuẩn (~90 từ) cho Phần 2, theo
+    `profile.region` (BS đã khai khi đăng ký DVP). Thiếu `cchn`/profile
+    not found -> fallback "northern".
+    """
+    profile = load_doctor_profile(cchn) if cchn else None
+    region = profile.region if profile else "northern"
+    return {"passage": calibration_metrics.get_passage_for_region(region)}
+
+
+@app.get("/api/calibration/region-sentence")
+async def calibration_region_sentence(cchn: str | None = None):
+    """
+    FID-VN-018 §3 (CT-043) — Câu mẫu ngắn (~10-15s) cho Phần 1, theo
+    `profile.region`. Thiếu `cchn`/profile not found -> fallback "northern".
+    """
+    profile = load_doctor_profile(cchn) if cchn else None
+    region = profile.region if profile else "northern"
+    return {"sentence": calibration_metrics.get_region_sentence(region)}
 
 
 @app.post("/api/doctors/{cchn}/calibration/region")
@@ -709,13 +728,16 @@ async def calibration_region(cchn: str, audio: UploadFile = File(...)):
             audio_arr, drug_db=drug_db, specialty=profile.primary_specialty
         )
 
-        region = detect_region(transcript) if transcript.strip() else profile.region
+        declared_region = profile.region
+        region = detect_region(transcript) if transcript.strip() else declared_region
+        region_match = region == declared_region
         update_calibration_results(cchn, region=region)
 
         return {
             "cchn": cchn,
             "transcript": transcript,
             "region": region,
+            "region_match": region_match,
         }
     finally:
         l0_normalize.purge_audio(tmp.name)

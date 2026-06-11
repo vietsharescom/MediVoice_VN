@@ -1,6 +1,22 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.9] — 2026-06-11 — FID-VN-018: DVP chuyên khoa trước + Lab passages theo vùng miền
+
+### FID-VN-018 implementation [SES-20260611, FID-VN-018]
+- feat(ui): `dvp-form` — đổi thứ tự: Chuyên khoa chính/phụ lên TRƯỚC Vùng miền + English level/Speaking speed, thêm hint "Chọn chuyên khoa trước..."
+- feat(core): `src/core/calibration_metrics.py` — `READING_PASSAGES_BY_REGION`/`REGION_TEST_SENTENCES` (3 biến thể Bắc/Trung/Nam, dùng marker từ `dialect_norm`), helper `get_passage_for_region()`/`get_region_sentence()`; giữ alias `READING_PASSAGE_VI = READING_PASSAGES_BY_REGION["northern"]`
+- feat(api): `GET /api/calibration/passage-text?cchn=` trả đoạn văn theo `profile.region`; endpoint mới `GET /api/calibration/region-sentence?cchn=`; `calibration_region()` trả thêm `region_match: bool` (so `detect_region(transcript)` với `profile.region` đã khai)
+- feat(ui): Calibration Lab Step 1/2 load câu mẫu/đoạn văn động theo region; hiện cảnh báo "⚠️ Giọng đọc có vẻ khác với vùng miền đã khai" khi `region_match=false` (tái dùng dropdown sửa tay CT-038)
+
+## [v0.11.8] — 2026-06-11 — FID-VN-017: mở rộng pronunciation_en (tim_mach) + gợi ý trọng âm/bật hơi
+
+### FID-VN-017 implementation [SES-20260611, FID-VN-017]
+- feat(data): `data/reference/drug_db_v200.json` — thêm `pronunciation_en`/`pronunciation_en_source` (Merriam-Webster-style, xem `docs/records/consultations/CONS-20260611-001.md`) cho 9 thuốc tim_mach còn thiếu (Warfarin, Clopidogrel, Telmisartan, Olmesartan, Irbesartan, Nifedipine, Lercanidipine, Metoprolol, Indapamide) — top-20 wordlist `noi_khoa` + `tim_mach` đều có `pronunciation_en`
+- feat(core): `src/core/pronunciation_phonetic.py` — `apply_stress_hint(vn_phonetic, pronunciation_en)` — viết HOA âm tiết VN tương ứng vị trí trọng âm (CAPS) trong `pronunciation_en`, theo tỉ lệ vị trí; `get_reference_phonetic()` nhận thêm param `pronunciation_en` tuỳ chọn
+- feat(api): `GET /api/pronunciation-reference/{inn}` — `vn_phonetic_default` áp `apply_stress_hint()` khi có `pronunciation_en`; `vn_phonetic_user` không bị ảnh hưởng
+- feat(ui): Wizard Part 3 — tip "💡 Tiếng Anh: chữ in hoa = trọng âm... p/t/k đọc bật hơi" hiện khi `pronunciation_en` có âm tiết bắt đầu p/t/k (không phải ph/th/kh)
+
 ## [v0.11.7] — 2026-06-11 — FID-VN-016: Pronunciation Lab 2-dòng phiên âm (chuẩn thế giới + cá nhân hoá VN) + CT-038 region manual override
 
 ### CT-038 — sửa lỗi nhận dạng vùng miền (Huế bị nhận "Miền Bắc")

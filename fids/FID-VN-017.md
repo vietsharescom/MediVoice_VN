@@ -1,6 +1,6 @@
 # FID-VN-017 — Pronunciation Lab: mở rộng pronunciation_en (tim_mạch) + gợi ý trọng âm/phát âm EN
 # MediVoice VN | Feature Intent Document
-# Status: DRAFT — chờ Andy duyệt
+# Status: IMPLEMENTED — v0.11.8
 # Author: Claude | Created: 2026-06-11
 
 | Field | Value |
@@ -10,8 +10,8 @@
 | LOC estimate | ~110 LOC (data ~15, backend ~60, frontend ~35) |
 | Risk level | LOW |
 | Created | 2026-06-11 |
-| Approved by | (chờ) |
-| Approved date | (chờ) |
+| Approved by | Andy |
+| Approved date | 2026-06-11 |
 | Refs | CT-040, CT-041 (`docs/records/BACKLOG.md`), FID-VN-016 (`fids/FID-VN-016.md`) |
 
 ---
@@ -115,17 +115,17 @@ paste) để follow-up sau.
 
 ## ACCEPTANCE CRITERIA
 
-- [ ] Tests 100% PASS (unit mới cho `apply_stress_hint`, data check 9 thuốc
+- [x] Tests 100% PASS (unit mới cho `apply_stress_hint`, data check 9 thuốc
       tim_mach có `pronunciation_en`)
-- [ ] `get_drugs_by_specialty(db, "tim_mach", n=20)` — tất cả 20 thuốc có
+- [x] `get_drugs_by_specialty(db, "tim_mach", n=20)` — tất cả 20 thuốc có
       `pronunciation_en` không None
-- [ ] `vn_phonetic_default` trả về có 1 âm tiết viết HOA (stress hint) khi
+- [x] `vn_phonetic_default` trả về có 1 âm tiết viết HOA (stress hint) khi
       `pronunciation_en` có sẵn; không đổi khi không có
-- [ ] `vn_phonetic_user` (sau confirm) KHÔNG bị áp stress hint — giữ nguyên
+- [x] `vn_phonetic_user` (sau confirm) KHÔNG bị áp stress hint — giữ nguyên
       transcript BS đọc
-- [ ] Tip "bật hơi/trọng âm" hiện đúng điều kiện (có pronunciation_en + chứa
+- [x] Tip "bật hơi/trọng âm" hiện đúng điều kiện (có pronunciation_en + chứa
       p/t/k đầu âm tiết không phải ph/th/kh)
-- [ ] CHANGELOG entry + FID status → IMPLEMENTED
+- [x] CHANGELOG entry + FID status → IMPLEMENTED
 
 ## RISKS
 
@@ -137,12 +137,12 @@ paste) để follow-up sau.
 
 ## TESTS REQUIRED
 
-- [ ] `tests/unit/test_pronunciation_phonetic.py` — `apply_stress_hint`
+- [x] `tests/unit/test_pronunciation_phonetic.py` — `apply_stress_hint`
       (có/không `pronunciation_en`, vị trí stress đúng cho vài ví dụ)
-- [ ] `tests/unit/test_dvp_wizard.py` — `pronunciation-reference` trả
+- [x] `tests/unit/test_dvp_wizard.py` — `pronunciation-reference` trả
       `vn_phonetic_default` có stress hint khi có `pronunciation_en`,
       `vn_phonetic_user` không bị ảnh hưởng
-- [ ] Data test — 9 thuốc tim_mach mới có `pronunciation_en` non-empty
+- [x] Data test — 9 thuốc tim_mach mới có `pronunciation_en` non-empty
 
 ## COMMIT FORMAT
 

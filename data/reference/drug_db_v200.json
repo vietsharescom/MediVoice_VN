@@ -3015,7 +3015,9 @@
       "compatible_diagnoses": [
         "rung nhĩ",
         "huyết khối tĩnh mạch"
-      ]
+      ],
+      "pronunciation_en": "WOR-fa-rin",
+      "pronunciation_en_source": "Merriam-Webster-style (manual, dựa kiến thức chung — CHƯA verify trực tiếp với merriam-webster.com do WebFetch bị chặn 403, xem CONS-20260611-001). CAPS = trọng âm chính (tương đương dấu ˈ của MW)."
     },
     "Clopidogrel": {
       "inn": "Clopidogrel",
@@ -3062,7 +3064,9 @@
         "hội chứng vành cấp",
         "đột quỵ",
         "phòng ngừa tim mạch"
-      ]
+      ],
+      "pronunciation_en": "kloh-PID-oh-grel",
+      "pronunciation_en_source": "Merriam-Webster-style (manual, dựa kiến thức chung — CHƯA verify trực tiếp với merriam-webster.com do WebFetch bị chặn 403, xem CONS-20260611-001). CAPS = trọng âm chính (tương đương dấu ˈ của MW)."
     },
     "Isosorbide Dinitrate": {
       "inn": "Isosorbide Dinitrate",
@@ -5977,7 +5981,9 @@
         "tăng huyết áp",
         "bệnh thận đái tháo đường"
       ],
-      "inn": "Telmisartan"
+      "inn": "Telmisartan",
+      "pronunciation_en": "tel-mi-SAR-tan",
+      "pronunciation_en_source": "Merriam-Webster-style (manual, dựa kiến thức chung — CHƯA verify trực tiếp với merriam-webster.com do WebFetch bị chặn 403, xem CONS-20260611-001). CAPS = trọng âm chính (tương đương dấu ˈ của MW)."
     },
     "Olmesartan": {
       "brands": [
@@ -6026,7 +6032,9 @@
       "compatible_diagnoses": [
         "tăng huyết áp"
       ],
-      "inn": "Olmesartan"
+      "inn": "Olmesartan",
+      "pronunciation_en": "ol-me-SAR-tan",
+      "pronunciation_en_source": "Merriam-Webster-style (manual, dựa kiến thức chung — CHƯA verify trực tiếp với merriam-webster.com do WebFetch bị chặn 403, xem CONS-20260611-001). CAPS = trọng âm chính (tương đương dấu ˈ của MW)."
     },
     "Irbesartan": {
       "brands": [
@@ -6076,7 +6084,9 @@
         "tăng huyết áp",
         "bệnh thận đái tháo đường"
       ],
-      "inn": "Irbesartan"
+      "inn": "Irbesartan",
+      "pronunciation_en": "ir-be-SAR-tan",
+      "pronunciation_en_source": "Merriam-Webster-style (manual, dựa kiến thức chung — CHƯA verify trực tiếp với merriam-webster.com do WebFetch bị chặn 403, xem CONS-20260611-001). CAPS = trọng âm chính (tương đương dấu ˈ của MW)."
     },
     "Nifedipine": {
       "brands": [
@@ -6127,7 +6137,9 @@
         "tăng huyết áp",
         "đau thắt ngực"
       ],
-      "inn": "Nifedipine"
+      "inn": "Nifedipine",
+      "pronunciation_en": "nye-FED-ih-peen",
+      "pronunciation_en_source": "Merriam-Webster-style (manual, dựa kiến thức chung — CHƯA verify trực tiếp với merriam-webster.com do WebFetch bị chặn 403, xem CONS-20260611-001). CAPS = trọng âm chính (tương đương dấu ˈ của MW)."
     },
     "Lercanidipine": {
       "brands": [
@@ -6174,7 +6186,9 @@
       "compatible_diagnoses": [
         "tăng huyết áp"
       ],
-      "inn": "Lercanidipine"
+      "inn": "Lercanidipine",
+      "pronunciation_en": "ler-ka-ni-DIP-een",
+      "pronunciation_en_source": "Merriam-Webster-style (manual, dựa kiến thức chung — CHƯA verify trực tiếp với merriam-webster.com do WebFetch bị chặn 403, xem CONS-20260611-001). CAPS = trọng âm chính (tương đương dấu ˈ của MW)."
     },
     "Metoprolol": {
       "brands": [
@@ -6228,7 +6242,9 @@
         "suy tim",
         "rối loạn nhịp tim"
       ],
-      "inn": "Metoprolol"
+      "inn": "Metoprolol",
+      "pronunciation_en": "me-TOH-pro-lol",
+      "pronunciation_en_source": "Merriam-Webster-style (manual, dựa kiến thức chung — CHƯA verify trực tiếp với merriam-webster.com do WebFetch bị chặn 403, xem CONS-20260611-001). CAPS = trọng âm chính (tương đương dấu ˈ của MW)."
     },
     "Indapamide": {
       "brands": [
@@ -6275,7 +6291,9 @@
       "compatible_diagnoses": [
         "tăng huyết áp"
       ],
-      "inn": "Indapamide"
+      "inn": "Indapamide",
+      "pronunciation_en": "in-DAP-a-mide",
+      "pronunciation_en_source": "Merriam-Webster-style (manual, dựa kiến thức chung — CHƯA verify trực tiếp với merriam-webster.com do WebFetch bị chặn 403, xem CONS-20260611-001). CAPS = trọng âm chính (tương đương dấu ˈ của MW)."
     },
     "Rabeprazole": {
       "brands": [

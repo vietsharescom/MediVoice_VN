@@ -354,14 +354,10 @@
         <label>Tên bác sĩ *</label>
         <input type="text" id="dvp-name" placeholder="VD: BS. Nguyễn Văn A">
       </div>
-      <div class="form-row">
-        <label>Vùng miền *</label>
-        <select id="dvp-region">
-          <option value="northern">Miền Bắc</option>
-          <option value="central">Miền Trung</option>
-          <option value="southern">Miền Nam</option>
-        </select>
-      </div>
+      <p style="font-size:0.8rem;color:var(--text-secondary);margin:0.25rem 0 0.5rem">
+        Chọn chuyên khoa trước — các bài luyện giọng/đọc thuốc bên dưới sẽ tự
+        điều chỉnh theo chuyên khoa của bạn.
+      </p>
       <div class="form-row">
         <label>Chuyên khoa chính *</label>
         <select id="dvp-primary-specialty"></select>
@@ -369,6 +365,14 @@
       <div class="form-row">
         <label>Chuyên khoa phụ (nếu có)</label>
         <select id="dvp-secondary-specialty"></select>
+      </div>
+      <div class="form-row">
+        <label>Vùng miền *</label>
+        <select id="dvp-region">
+          <option value="northern">Miền Bắc</option>
+          <option value="central">Miền Trung</option>
+          <option value="southern">Miền Nam</option>
+        </select>
       </div>
       <div class="form-row">
         <label>Trình độ tiếng Anh</label>
@@ -564,6 +568,7 @@
     <div style="text-align:center;margin-bottom:0.5rem;font-size:0.85rem;color:var(--text-secondary)">
       <div id="wizard-phonetic-en"></div>
       <div id="wizard-phonetic-vn"></div>
+      <div id="wizard-phonetic-tip" style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.25rem"></div>
     </div>
     <canvas id="wizard-pitch-canvas" width="380" height="80" style="width:100%;max-width:380px;display:block;margin:0 auto 0.5rem;background:#f7f7f7;border-radius:6px"></canvas>
     <audio id="wizard-ref-audio" class="hidden"></audio>
@@ -1287,6 +1292,7 @@ const Wizard = {
     document.getElementById('wizard-next-btn').disabled = true;
     document.getElementById('wizard-phonetic-en').textContent = '';
     document.getElementById('wizard-phonetic-vn').textContent = '';
+    document.getElementById('wizard-phonetic-tip').textContent = '';
     const btn = document.getElementById('wizard-record-btn');
     btn.classList.remove('processing', 'recording');
     document.getElementById('wizard-record-label').textContent = 'Nhấn để đọc';
@@ -1309,6 +1315,12 @@ const Wizard = {
       const vnPhonetic = data.vn_phonetic_user || data.vn_phonetic_default;
       document.getElementById('wizard-phonetic-vn').textContent =
         vnPhonetic ? `🇻🇳 ${vnPhonetic}` : '';
+      // FID-VN-017 §3 (CT-041b) — tip bật hơi/trọng âm khi pronunciation_en
+      // có chứa âm tiết bắt đầu bằng p/t/k (không phải ph/th/kh)
+      const hasPtkSyllable = data.pronunciation_en && /\b[ptk][^h]/i.test(data.pronunciation_en);
+      document.getElementById('wizard-phonetic-tip').textContent = hasPtkSyllable
+        ? '💡 Tiếng Anh: chữ in hoa = trọng âm (đọc nhấn). "p/t/k" đọc bật hơi mạnh hơn tiếng Việt (gần giống "ph/th/kh").'
+        : '';
       if (this.referenceContour.length) {
         this._drawContour(this.referenceContour, '#4a90d9', true);
       }
@@ -1498,6 +1510,7 @@ const CalibLab = {
     this.cchn = cchn;
     document.getElementById('calib-lab-modal').classList.remove('hidden');
     this._loadAvatar();
+    await this._loadRegionSentence();
     if (!this.passageLoaded) await this._loadPassage();
     this.goStep(1);
   },
@@ -1522,13 +1535,24 @@ const CalibLab = {
 
   async _loadPassage() {
     try {
-      const resp = await fetch('/api/calibration/passage-text');
+      const resp = await fetch(`/api/calibration/passage-text?cchn=${encodeURIComponent(this.cchn)}`);
       const data = await resp.json();
       document.getElementById('lab-passage-text').textContent = data.passage;
       this.passageLoaded = true;
     } catch (e) {
       document.getElementById('lab-passage-text').textContent =
         '(Không tải được đoạn văn — kiểm tra kết nối)';
+    }
+  },
+
+  // FID-VN-018 §4 (CT-043) — câu mẫu Phần 1 theo profile.region (double-check)
+  async _loadRegionSentence() {
+    try {
+      const resp = await fetch(`/api/calibration/region-sentence?cchn=${encodeURIComponent(this.cchn)}`);
+      const data = await resp.json();
+      document.getElementById('lab-region-sentence').textContent = `"${data.sentence}"`;
+    } catch (e) {
+      // giữ câu mặc định trong HTML nếu lỗi
     }
   },
 
@@ -1691,10 +1715,15 @@ const CalibLab = {
     const options = Object.entries(DVP_REGIONS)
       .map(([val, label]) => `<option value="${val}"${val === data.region ? ' selected' : ''}>${label}</option>`)
       .join('');
+    const mismatchWarning = data.region_match === false
+      ? `<div class="note" style="color:#c0392b;margin:0.25rem 0">` +
+        `⚠️ Giọng đọc có vẻ khác với vùng miền đã khai. Vui lòng chọn lại nếu cần:</div>`
+      : '';
     box.innerHTML =
       `Phát hiện giọng: <b>${regionLabel}</b> — Trợ lý sẽ áp dụng từ điển phương ngữ ` +
       `tương ứng để chuẩn hoá thuật ngữ khi nghe Bác sĩ đọc.<br>` +
       `<span class="note">Trợ lý nghe được: "${data.transcript}"</span><br>` +
+      mismatchWarning +
       `<span class="note">Đã lưu vào hồ sơ giọng nói. Nếu sai, chọn lại: ` +
       `<select id="lab-region-manual">${options}</select></span>`;
     document.getElementById('lab-region-manual').onchange = (e) => this._correctRegion(e.target.value);
