@@ -20,4 +20,4 @@ Thư mục này lưu tất cả consultation requests và synthesis results.
 
 | File | Topic | Date | Status | Decision |
 |---|---|---|---|---|
-| *(no consultations yet)* | | | | |
+| [CONS-20260611-001.md](CONS-20260611-001.md) | Từ điển phiên âm Anh→Việt cho tên thuốc (CT-039/040/041) | 2026-06-11 | RESOLVED | Merriam-Webster (Medical) Dictionary là nguồn — cite trong `pronunciation_en_source` |
