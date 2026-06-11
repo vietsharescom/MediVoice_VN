@@ -185,7 +185,9 @@
         "đau đầu",
         "đau cơ",
         "cảm cúm"
-      ]
+      ],
+      "pronunciation_en": "par-a-SEE-ta-mol",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Ibuprofen": {
       "inn": "Ibuprofen",
@@ -1430,7 +1432,9 @@
         "dị ứng",
         "mề đay",
         "viêm mũi dị ứng"
-      ]
+      ],
+      "pronunciation_en": "se-TIR-ih-zeen",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Loratadine": {
       "inn": "Loratadine",
@@ -1478,7 +1482,9 @@
       "compatible_diagnoses": [
         "dị ứng",
         "viêm mũi dị ứng"
-      ]
+      ],
+      "pronunciation_en": "lor-AT-a-deen",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Fexofenadine": {
       "inn": "Fexofenadine",
@@ -1612,7 +1618,9 @@
         "viêm",
         "dị ứng nặng",
         "hen phế quản"
-      ]
+      ],
+      "pronunciation_en": "pred-NISS-oh-lone",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Dexamethasone": {
       "inn": "Dexamethasone",
@@ -1727,7 +1735,9 @@
       "compatible_diagnoses": [
         "loét dạ dày",
         "trào ngược dạ dày thực quản"
-      ]
+      ],
+      "pronunciation_en": "oh-MEP-ra-zole",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Esomeprazole": {
       "inn": "Esomeprazole",
@@ -1774,7 +1784,9 @@
       "compatible_diagnoses": [
         "loét dạ dày",
         "trào ngược dạ dày thực quản"
-      ]
+      ],
+      "pronunciation_en": "es-oh-MEP-ra-zole",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Pantoprazole": {
       "inn": "Pantoprazole",
@@ -1823,7 +1835,9 @@
       "compatible_diagnoses": [
         "loét dạ dày",
         "trào ngược dạ dày thực quản"
-      ]
+      ],
+      "pronunciation_en": "pan-TOH-pra-zole",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Famotidine": {
       "inn": "Famotidine",
@@ -2345,7 +2359,9 @@
         "amlodiphin",
         "am lo din",
         "amlodiphine"
-      ]
+      ],
+      "pronunciation_en": "am-LOH-dih-peen",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Losartan": {
       "inn": "Losartan",
@@ -2412,7 +2428,9 @@
         "lo xi tan",
         "lo si tan",
         "lo xi tang"
-      ]
+      ],
+      "pronunciation_en": "loh-SAR-tan",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Valsartan": {
       "inn": "Valsartan",
@@ -2461,7 +2479,9 @@
       "compatible_diagnoses": [
         "tăng huyết áp",
         "suy tim"
-      ]
+      ],
+      "pronunciation_en": "val-SAR-tan",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Enalapril": {
       "inn": "Enalapril",
@@ -2513,7 +2533,9 @@
       "compatible_diagnoses": [
         "tăng huyết áp",
         "suy tim"
-      ]
+      ],
+      "pronunciation_en": "e-NAL-a-pril",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Perindopril": {
       "inn": "Perindopril",
@@ -2563,7 +2585,9 @@
       "compatible_diagnoses": [
         "tăng huyết áp",
         "suy tim"
-      ]
+      ],
+      "pronunciation_en": "per-IN-doh-pril",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Bisoprolol": {
       "inn": "Bisoprolol",
@@ -2622,7 +2646,9 @@
         "bi so pro lo",
         "bisoprolo",
         "biso polo"
-      ]
+      ],
+      "pronunciation_en": "by-SOH-proh-lol",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Atenolol": {
       "inn": "Atenolol",
@@ -2669,7 +2695,9 @@
       "compatible_diagnoses": [
         "tăng huyết áp",
         "đau thắt ngực"
-      ]
+      ],
+      "pronunciation_en": "a-TEN-oh-lol",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Furosemide": {
       "inn": "Furosemide",
@@ -2721,7 +2749,9 @@
         "phù",
         "tăng huyết áp",
         "suy tim"
-      ]
+      ],
+      "pronunciation_en": "fyoor-OH-se-mide",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Hydrochlorothiazide": {
       "inn": "Hydrochlorothiazide",
@@ -2823,7 +2853,9 @@
         "atobastatin",
         "atovastatin",
         "a to va sta tin"
-      ]
+      ],
+      "pronunciation_en": "a-TOR-va-sta-tin",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Rosuvastatin": {
       "inn": "Rosuvastatin",
@@ -2877,7 +2909,9 @@
       "compatible_diagnoses": [
         "rối loạn lipid máu",
         "phòng ngừa tim mạch"
-      ]
+      ],
+      "pronunciation_en": "roh-SOO-va-sta-tin",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Simvastatin": {
       "inn": "Simvastatin",
@@ -2927,7 +2961,9 @@
       "drug_class": "statin",
       "compatible_diagnoses": [
         "rối loạn lipid máu"
-      ]
+      ],
+      "pronunciation_en": "SIM-va-sta-tin",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Warfarin": {
       "inn": "Warfarin",
@@ -3183,7 +3219,9 @@
         "metfomin",
         "met fo min",
         "me pho min"
-      ]
+      ],
+      "pronunciation_en": "met-FOR-min",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Glibenclamide": {
       "inn": "Glibenclamide",
@@ -3273,7 +3311,9 @@
       "drug_class": "sulfonylurea",
       "compatible_diagnoses": [
         "đái tháo đường type 2"
-      ]
+      ],
+      "pronunciation_en": "GLY-kla-zide",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Glimepiride": {
       "inn": "Glimepiride",
@@ -3336,7 +3376,9 @@
       "drug_class": "sulfonylurea",
       "compatible_diagnoses": [
         "đái tháo đường type 2"
-      ]
+      ],
+      "pronunciation_en": "gly-MEP-ih-ride",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Insulin Regular": {
       "inn": "Insulin Regular",
@@ -3424,7 +3466,9 @@
       "drug_class": "dpp4_inhibitor",
       "compatible_diagnoses": [
         "đái tháo đường type 2"
-      ]
+      ],
+      "pronunciation_en": "SIT-a-GLIP-tin",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Gabapentin": {
       "inn": "Gabapentin",
@@ -5640,7 +5684,9 @@
         "suy tim",
         "bệnh thận mạn"
       ],
-      "inn": "Empagliflozin"
+      "inn": "Empagliflozin",
+      "pronunciation_en": "EM-pa-gli-FLOH-zin",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Dapagliflozin": {
       "brands": [
@@ -5691,7 +5737,9 @@
         "suy tim",
         "bệnh thận mạn"
       ],
-      "inn": "Dapagliflozin"
+      "inn": "Dapagliflozin",
+      "pronunciation_en": "DAP-a-gli-FLOH-zin",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Canagliflozin": {
       "brands": [
@@ -5739,7 +5787,9 @@
       "compatible_diagnoses": [
         "đái tháo đường type 2"
       ],
-      "inn": "Canagliflozin"
+      "inn": "Canagliflozin",
+      "pronunciation_en": "KAN-a-gli-FLOH-zin",
+      "pronunciation_en_source": "USAN-style (manual, FID-VN-016 pilot, chưa verify từng entry với AMA USAN guide)"
     },
     "Vildagliptin": {
       "brands": [

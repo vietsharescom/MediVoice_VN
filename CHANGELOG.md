@@ -1,6 +1,22 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.7] — 2026-06-11 — FID-VN-016: Pronunciation Lab 2-dòng phiên âm (chuẩn thế giới + cá nhân hoá VN) + CT-038 region manual override
+
+### CT-038 — sửa lỗi nhận dạng vùng miền (Huế bị nhận "Miền Bắc")
+- fix(api): `POST /api/doctors/{cchn}/calibration/region-manual` — BS tự sửa giọng vùng miền nếu auto-detect (lexical, dựa transcript ASR) nhận sai
+- feat(ui): hiển thị transcript ASR nghe được + dropdown chọn lại vùng miền trong kết quả Lab step 1
+
+### FID-VN-016 implementation [SES-20260611, FID-VN-016]
+- feat(core): `src/core/pronunciation_phonetic.py` — `get_pronunciation_en()` (phiên âm chuẩn USAN-style từ drug_db, dòng 1 Wizard), `is_garbled_transcript()` (phát hiện đọc lặp ≥2 lần để yêu cầu đọc lại thay vì đề xuất alias từ transcript lộn xộn)
+- feat(db): `src/core/l7_storage.py` — `get_latest_confirmed_alias()` (alias VN cá nhân hoá mới nhất của BS cho 1 INN, dòng 2 Wizard)
+- feat(data): `data/reference/drug_db_v200.json` — thêm `pronunciation_en`/`pronunciation_en_source` (USAN-style, chưa verify từng entry — xem CT-039) cho 25 thuốc pilot noi_khoa
+- feat(api): `GET /api/pronunciation-reference/{inn}` mở rộng — `pronunciation_en`, `vn_phonetic_default`, `vn_phonetic_user` (param `?cchn=`); `pronunciation-enroll` trả `retry_needed=true` khi transcript lộn xộn
+- feat(scripts): `scripts/gen_pronunciation_audio.py` — audio "Nghe mẫu" đổi sang gTTS tiếng Anh đọc tên INN gốc (chuẩn thế giới) thay vì phiên âm Việt heuristic
+- feat(ui): Wizard modal — hiển thị 2 dòng phiên âm (🌐 chuẩn thế giới / 🇻🇳 VN — ưu tiên bản BS đã confirm), reload sau confirm để cập nhật dòng 2, ẩn nút xác nhận khi `retry_needed=true`
+- tests: `tests/unit/test_pronunciation_phonetic.py` (+5), `tests/unit/test_dvp_wizard.py` (+5), `tests/unit/test_calibration_lab.py` (+3 cho CT-038) — 901/901 PASS, bandit 0 HIGH/0 new MEDIUM
+- docs: `fids/FID-VN-016.md` IMPLEMENTED ✅ (approved "đồng ý" 2026-06-11); CT-039 (`docs/records/PENDING_REQUESTS.md`) — disclosure nguồn phiên âm, Phase 1 plan
+
 ## [v0.11.6] — 2026-06-11 — FID-VN-015: Pronunciation Recognition Lab (Part 3 redesign) + jitter/shimmer
 
 ### FID-VN-015 implementation [SES-20260611, FID-VN-015]

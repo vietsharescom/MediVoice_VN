@@ -109,6 +109,35 @@ def transliterate_to_vn_phonetic(name: str) -> str:
     return " ".join(syllables)
 
 
+def get_pronunciation_en(inn: str, drug_entry: dict | None = None) -> str | None:
+    """
+    FID-VN-016 §1 — phiên âm chuẩn y dược thế giới (kiểu USAN respelling, vd
+    "par-a-SEE-ta-mol"), dòng 1 hiển thị Wizard. Lấy từ field `pronunciation_en`
+    trong drug_db (pilot subset, có nguồn AMA/USP USAN — xem CT-039).
+    Trả None nếu thuốc chưa có data (Phase B sẽ bổ sung dần).
+    """
+    if drug_entry:
+        value = drug_entry.get("pronunciation_en")
+        if value:
+            return value
+    return None
+
+
+def is_garbled_transcript(transcript: str, expected_inn: str) -> bool:
+    """
+    FID-VN-016 §1 — phát hiện transcript đọc lặp nhiều lần/nhiều biến thể
+    trong 1 lần ghi âm (vd BS đọc thử 4-5 lần liên tiếp). Heuristic: số từ
+    trong transcript vượt quá 3 lần số âm tiết kỳ vọng của INN.
+    Trả True -> Wizard yêu cầu đọc lại 1 lần duy nhất, KHÔNG đề xuất alias.
+    """
+    words = transcript.strip().split()
+    if not words:
+        return False
+
+    expected_syllables = max(1, len(transliterate_to_vn_phonetic(expected_inn).split()))
+    return len(words) > 3 * expected_syllables
+
+
 def get_reference_phonetic(inn: str, drug_entry: dict | None = None) -> str:
     """
     Lấy phiên âm chuẩn cho 1 INN — ưu tiên brand variant đã có trong drug_db

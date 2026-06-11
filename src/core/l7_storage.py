@@ -407,3 +407,20 @@ def get_active_aliases(cchn: str, db_path: Path | None = None) -> list[DoctorAli
     ).fetchall()
     conn.close()
     return [DoctorAlias(**dict(zip(_ALIAS_COLS, r))) for r in rows]
+
+
+def get_latest_confirmed_alias(cchn: str, inn: str, db_path: Path | None = None) -> str | None:
+    """
+    FID-VN-016 §2 — phiên âm Việt "cá nhân hoá" (dòng 2 Wizard): cách đọc
+    riêng của BS cho 1 INN, lấy bản confirm gần nhất nhất (created_at DESC).
+    Trả None nếu BS chưa confirm lần nào cho INN này -> UI fallback heuristic.
+    """
+    conn = _get_conn(db_path)
+    row = conn.execute(
+        """SELECT alias_text FROM doctor_aliases
+           WHERE cchn=? AND inn=? AND confirmed_by_bs=1
+           ORDER BY created_at DESC LIMIT 1""",
+        (cchn, inn),
+    ).fetchone()
+    conn.close()
+    return row[0] if row else None

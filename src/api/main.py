@@ -26,12 +26,14 @@ from ..core.l7_storage import (
     init_db, _get_conn,
     save_doctor_profile, load_doctor_profile,
     get_pending_aliases, confirm_alias,
-    update_calibration_results,
+    update_calibration_results, get_latest_confirmed_alias,
 )
 from ..core.dialect_norm import normalize_text as _dialect_normalize
 from ..core.dialect_norm import detect_region
 from ..core import vtln, calibration_metrics
-from ..core.pronunciation_phonetic import get_reference_phonetic
+from ..core.pronunciation_phonetic import (
+    get_reference_phonetic, get_pronunciation_en, is_garbled_transcript,
+)
 from difflib import SequenceMatcher
 from ..models.clinical_record import ClinicalRecord, RecordStatus
 from ..models.doctor_profile import DoctorProfile, VALID_SPECIALTIES, VALID_REGIONS
@@ -505,31 +507,39 @@ def _load_pronunciation_cache() -> dict:
 
 
 @app.get("/api/pronunciation-reference/{inn}")
-async def pronunciation_reference(inn: str):
+async def pronunciation_reference(inn: str, cchn: str | None = None):
     """
-    FID-VN-015 §3.2 — Audio mẫu (gTTS, pre-generated bởi
-    scripts/gen_pronunciation_audio.py) + phiên âm chuẩn + f0 contour cho 1
-    INN. Nếu chưa pre-gen (cache trống) → trả phonetic_text tính trực tiếp,
-    audio_url=None, f0_contour=[].
+    FID-VN-015 §3.2 / FID-VN-016 §1 — Audio mẫu chuẩn thế giới (gTTS tiếng
+    Anh, pre-generated bởi scripts/gen_pronunciation_audio.py) + 2 dòng phiên
+    âm cho Wizard:
+      - pronunciation_en: chuẩn USAN (dòng 1, None nếu chưa có pilot data)
+      - vn_phonetic_default: heuristic VN (dòng 2 mặc định)
+      - vn_phonetic_user: cách đọc BS đã confirm gần nhất (dòng 2 ưu tiên,
+        None nếu BS chưa confirm — cần truyền ?cchn=... để tra)
+    `phonetic_text` giữ lại (= vn_phonetic_default) cho tương thích ngược.
+    Nếu chưa pre-gen audio (cache trống) → audio_url=None, f0_contour=[].
     """
-    cache = _load_pronunciation_cache()
-    entry = cache.get(inn)
-    if entry:
-        return {
-            "inn": inn,
-            "audio_url": f"/static/audio/pronunciation/{entry['audio_file']}",
-            "phonetic_text": entry["phonetic_text"],
-            "f0_contour": entry["f0_contour"],
-        }
-
     from ..core.l1b_drug_correct import _load_drug_db as _get_drug_db
     drug_db = _get_drug_db()
     drug_entry = drug_db.get("by_inn", {}).get(inn)
+
+    vn_phonetic_default = get_reference_phonetic(inn, drug_entry)
+    pronunciation_en = get_pronunciation_en(inn, drug_entry)
+    vn_phonetic_user = get_latest_confirmed_alias(cchn, inn) if cchn else None
+
+    cache = _load_pronunciation_cache()
+    entry = cache.get(inn)
+    audio_url = f"/static/audio/pronunciation/{entry['audio_file']}" if entry else None
+    f0_contour = entry["f0_contour"] if entry else []
+
     return {
         "inn": inn,
-        "audio_url": None,
-        "phonetic_text": get_reference_phonetic(inn, drug_entry),
-        "f0_contour": [],
+        "audio_url": audio_url,
+        "phonetic_text": vn_phonetic_default,
+        "pronunciation_en": pronunciation_en,
+        "vn_phonetic_default": vn_phonetic_default,
+        "vn_phonetic_user": vn_phonetic_user,
+        "f0_contour": f0_contour,
     }
 
 
@@ -600,6 +610,22 @@ async def pronunciation_enroll(
                 "match_ratio": match_ratio,
                 "alias_needed": False,
                 "message": "Phát âm khớp với tên chuẩn — không cần học thêm.",
+            }
+
+        if is_garbled_transcript(transcript_clean, expected_inn):
+            return {
+                "cchn": cchn,
+                "expected_inn": expected_inn,
+                "transcript": transcript_raw,
+                "phonetic_text": phonetic_text,
+                "f0_contour": f0_contour,
+                "match_ratio": match_ratio,
+                "alias_needed": False,
+                "retry_needed": True,
+                "message": (
+                    "Trợ lý nghe không rõ (có thể đã đọc lặp nhiều lần). "
+                    "Vui lòng đọc lại 1 lần duy nhất, theo cách thoải mái nhất."
+                ),
             }
 
         return {
@@ -695,6 +721,24 @@ async def calibration_region(cchn: str, audio: UploadFile = File(...)):
         l0_normalize.purge_audio(tmp.name)
         if 'wav_path' in locals():
             l0_normalize.purge_audio(wav_path)
+
+
+@app.post("/api/doctors/{cchn}/calibration/region-manual")
+async def calibration_region_manual(cchn: str, region: str = Form(...)):
+    """
+    Phần 1 — BS tự chọn lại giọng vùng miền nếu auto-detect (lexical, dựa vào
+    transcript ASR) nhận sai — vd giọng Huế bị ASR phiên âm lệch sang chuẩn,
+    khiến detect_region() không thấy marker miền Trung và fallback "northern".
+    """
+    if region not in ("northern", "central", "southern"):
+        raise HTTPException(400, "region phải là northern/central/southern")
+
+    profile = load_doctor_profile(cchn)
+    if not profile:
+        raise HTTPException(404, f"Doctor {cchn} chưa đăng ký DVP")
+
+    update_calibration_results(cchn, region=region)
+    return {"cchn": cchn, "region": region}
 
 
 @app.post("/api/doctors/{cchn}/calibration/passage")

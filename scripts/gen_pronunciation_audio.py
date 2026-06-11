@@ -1,12 +1,16 @@
 # scripts/gen_pronunciation_audio.py
-# FID-VN-015 §3.2 — Pre-generate audio mẫu (gTTS) + f0 contour cache cho
-# Pronunciation Recognition Lab (Part 3).
+# FID-VN-015 §3.2 / FID-VN-016 §1 — Pre-generate audio mẫu (gTTS) + f0 contour
+# cache cho Pronunciation Recognition Lab (Part 3).
 #
 # Chạy 1 LẦN (offline, cần internet cho gTTS), output:
 #   src/api/static/audio/pronunciation/<inn_slug>.mp3
 #   src/api/static/audio/pronunciation/_cache.json
 #       { "<inn>": {"phonetic_text": "...", "audio_file": "<inn_slug>.mp3",
 #                    "f0_contour": [...]} }
+#
+# FID-VN-016: audio mẫu đọc theo CHUẨN THẾ GIỚI (gTTS tiếng Anh đọc tên INN
+# gốc) — không phải phiên âm Việt heuristic. `phonetic_text` (VN heuristic)
+# vẫn lưu trong cache để UI hiển thị dòng phiên âm Việt mặc định (dòng 2).
 #
 # KHÔNG đụng pipeline L0->L10 — chỉ sinh static assets cho UI.
 # Audio mẫu (gTTS) KHÔNG chứa giọng BS — không phải biometric data.
@@ -53,7 +57,9 @@ def main() -> None:
         slug = _slug(inn)
         mp3_path = OUT_DIR / f"{slug}.mp3"
         if not mp3_path.exists():
-            gTTS(text=phonetic, lang="vi").save(str(mp3_path))
+            # FID-VN-016: audio chuẩn thế giới — gTTS tiếng Anh đọc tên INN gốc
+            en_text = re.split(r"[\s(]", inn.strip())[0]
+            gTTS(text=en_text, lang="en").save(str(mp3_path))
 
         y, sr = librosa.load(str(mp3_path), sr=16000, mono=True)
         f0_contour = extract_f0_contour(y, sr=sr)

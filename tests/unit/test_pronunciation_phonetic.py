@@ -7,6 +7,8 @@ from __future__ import annotations
 from src.core.pronunciation_phonetic import (
     transliterate_to_vn_phonetic,
     get_reference_phonetic,
+    get_pronunciation_en,
+    is_garbled_transcript,
 )
 
 
@@ -40,3 +42,28 @@ def test_get_reference_phonetic_no_brand_match_uses_heuristic():
     drug_entry = {"brands": ["Panadol"]}  # không phải lowercase nhiều âm tiết
     result = get_reference_phonetic("Paracetamol", drug_entry)
     assert result == transliterate_to_vn_phonetic("Paracetamol")
+
+
+# ── FID-VN-016 — get_pronunciation_en / is_garbled_transcript ───────────────
+
+def test_get_pronunciation_en_returns_field_from_drug_entry():
+    drug_entry = {"pronunciation_en": "par-a-SEE-ta-mol"}
+    assert get_pronunciation_en("Paracetamol", drug_entry) == "par-a-SEE-ta-mol"
+
+
+def test_get_pronunciation_en_returns_none_when_missing():
+    assert get_pronunciation_en("Paracetamol", {"brands": []}) is None
+    assert get_pronunciation_en("Paracetamol", None) is None
+
+
+def test_is_garbled_transcript_false_for_normal_reading():
+    assert is_garbled_transcript("pa ra xê ta môn", "Paracetamol") is False
+
+
+def test_is_garbled_transcript_true_for_repeated_reading():
+    transcript = " ".join(["paracetamol"] * 16)  # > 3 x 5 âm tiết kỳ vọng
+    assert is_garbled_transcript(transcript, "Paracetamol") is True
+
+
+def test_is_garbled_transcript_false_for_empty_transcript():
+    assert is_garbled_transcript("", "Paracetamol") is False

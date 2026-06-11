@@ -270,12 +270,12 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.11.6 |
-| Status | **FID-VN-015 IMPLEMENTED ✅** — Pronunciation Recognition Lab (Part 3 redesign: nghe mẫu + pitch contour canvas + match badge) + jitter/shimmer (Pham 2003 §2.4) + cơ sở khoa học mở rộng vùng miền/thanh điệu, 887 tests |
-| Tests | **887/887 PASS** · bandit 0 HIGH/0 MEDIUM (new code) · conftest.py SKIP_QWEN |
-| Pending | **PA-015/PA-017** (Andy test FID-VN-013/014/015 UI trên trình duyệt thật, gTTS chưa cài nên audio mẫu fallback) · **CT-019** (🔴 A2 VAD-chunk regression) · CT-016/CT-017/CT-014/CT-035/CT-036/CT-037 ⏳ · VIETMED-FIX-001 |
-| Next task | **TRAIN-001** (PhoWhisper fine-tune, ưu tiên cao nhất per CT-028) → PA-015/PA-017 UI test song song · CT-019 debug A2-VAD nếu có audio |
-| Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.1) · FID: `fids/FID-VN-010.md`, `fids/FID-VN-012.md`, `fids/FID-VN-013.md`, `fids/FID-VN-014.md`, `fids/FID-VN-015.md` |
+| Version | v0.11.7 |
+| Status | **FID-VN-016 IMPLEMENTED ✅** — Pronunciation Lab 2-dòng phiên âm (🌐 chuẩn thế giới USAN-style + 🇻🇳 cá nhân hoá VN, cập nhật theo bản BS confirm gần nhất) + retry_needed cho transcript lộn xộn + CT-038 (BS tự sửa vùng miền nếu auto-detect sai), 901 tests |
+| Tests | **901/901 PASS** · bandit 0 HIGH/0 MEDIUM (new code) · conftest.py SKIP_QWEN |
+| Pending | **PA-015/PA-017/PA-018** (Andy test FID-VN-013/014/015/016 UI trên trình duyệt thật, gTTS chưa cài nên audio mẫu fallback) · **CT-019** (🔴 A2 VAD-chunk regression) · CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039 ⏳ · VIETMED-FIX-001 |
+| Next task | **TRAIN-001** (PhoWhisper fine-tune, ưu tiên cao nhất per CT-028) → PA-015/PA-017/PA-018 UI test song song · CT-019 debug A2-VAD nếu có audio |
+| Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.1) · FID: `fids/FID-VN-010.md`, `fids/FID-VN-012.md`, `fids/FID-VN-013.md`, `fids/FID-VN-014.md`, `fids/FID-VN-015.md`, `fids/FID-VN-016.md` |
 
 ---
 

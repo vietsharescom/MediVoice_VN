@@ -560,7 +560,10 @@
     <div id="wizard-drug-name" style="font-size:1.4rem;font-weight:700;text-align:center;color:var(--primary);padding:1rem 0"></div>
     <div style="text-align:center;margin-bottom:0.5rem">
       <button class="btn" id="wizard-listen-btn" style="background:var(--border);color:var(--text)" onclick="Wizard.playReference()">🔊 Nghe mẫu</button>
-      <span id="wizard-phonetic" style="font-size:0.85rem;color:var(--text-secondary);margin-left:0.5rem"></span>
+    </div>
+    <div style="text-align:center;margin-bottom:0.5rem;font-size:0.85rem;color:var(--text-secondary)">
+      <div id="wizard-phonetic-en"></div>
+      <div id="wizard-phonetic-vn"></div>
     </div>
     <canvas id="wizard-pitch-canvas" width="380" height="80" style="width:100%;max-width:380px;display:block;margin:0 auto 0.5rem;background:#f7f7f7;border-radius:6px"></canvas>
     <audio id="wizard-ref-audio" class="hidden"></audio>
@@ -1282,7 +1285,8 @@ const Wizard = {
     document.getElementById('wizard-confirm-row').classList.add('hidden');
     document.getElementById('wizard-match-badge').classList.add('hidden');
     document.getElementById('wizard-next-btn').disabled = true;
-    document.getElementById('wizard-phonetic').textContent = '';
+    document.getElementById('wizard-phonetic-en').textContent = '';
+    document.getElementById('wizard-phonetic-vn').textContent = '';
     const btn = document.getElementById('wizard-record-btn');
     btn.classList.remove('processing', 'recording');
     document.getElementById('wizard-record-label').textContent = 'Nhấn để đọc';
@@ -1295,13 +1299,16 @@ const Wizard = {
 
   async _loadReference(inn) {
     try {
-      const resp = await fetch(`/api/pronunciation-reference/${encodeURIComponent(inn)}`);
+      const resp = await fetch(`/api/pronunciation-reference/${encodeURIComponent(inn)}?cchn=${encodeURIComponent(this.cchn)}`);
       if (!resp.ok) return;
       const data = await resp.json();
       this.referenceContour = data.f0_contour || [];
       this.referenceAudioUrl = data.audio_url;
-      document.getElementById('wizard-phonetic').textContent =
-        data.phonetic_text ? `(${data.phonetic_text})` : '';
+      document.getElementById('wizard-phonetic-en').textContent =
+        data.pronunciation_en ? `🌐 ${data.pronunciation_en}` : '';
+      const vnPhonetic = data.vn_phonetic_user || data.vn_phonetic_default;
+      document.getElementById('wizard-phonetic-vn').textContent =
+        vnPhonetic ? `🇻🇳 ${vnPhonetic}` : '';
       if (this.referenceContour.length) {
         this._drawContour(this.referenceContour, '#4a90d9', true);
       }
@@ -1316,7 +1323,8 @@ const Wizard = {
       audio.src = this.referenceAudioUrl;
       audio.play();
     } else {
-      const phonetic = document.getElementById('wizard-phonetic').textContent;
+      const phonetic = document.getElementById('wizard-phonetic-en').textContent
+        || document.getElementById('wizard-phonetic-vn').textContent;
       showToast('Chưa có audio mẫu — phiên âm tham khảo: ' + (phonetic || '(không có)'));
     }
   },
@@ -1413,7 +1421,7 @@ const Wizard = {
     msgBox.textContent = data.message || '';
     msgBox.classList.remove('empty');
     resultBox.classList.remove('hidden');
-    confirmRow.classList.toggle('hidden', !data.alias_needed);
+    confirmRow.classList.toggle('hidden', !data.alias_needed || !!data.retry_needed);
     document.getElementById('wizard-next-btn').disabled = false;
 
     if (data.f0_contour && data.f0_contour.length) {
@@ -1445,7 +1453,10 @@ const Wizard = {
     try {
       const resp = await fetch(`/api/doctors/${encodeURIComponent(this.cchn)}/pronunciation-confirm`, { method: 'POST', body: form });
       if (!resp.ok) throw new Error((await resp.json()).detail || 'Lỗi lưu');
-      if (yes) showToast('Đã ghi nhớ cách đọc');
+      if (yes) {
+        showToast('Đã ghi nhớ cách đọc');
+        await this._loadReference(this.drugs[this.idx]);
+      }
       document.getElementById('wizard-confirm-row').classList.add('hidden');
     } catch (e) {
       showToast('Lỗi: ' + e.message);
@@ -1677,10 +1688,29 @@ const CalibLab = {
     const box = document.getElementById('lab-region-result');
     box.classList.remove('hidden');
     const regionLabel = DVP_REGIONS[data.region] || data.region;
+    const options = Object.entries(DVP_REGIONS)
+      .map(([val, label]) => `<option value="${val}"${val === data.region ? ' selected' : ''}>${label}</option>`)
+      .join('');
     box.innerHTML =
       `Phát hiện giọng: <b>${regionLabel}</b> — Trợ lý sẽ áp dụng từ điển phương ngữ ` +
       `tương ứng để chuẩn hoá thuật ngữ khi nghe Bác sĩ đọc.<br>` +
-      `<span class="note">Đã lưu vào hồ sơ giọng nói.</span>`;
+      `<span class="note">Trợ lý nghe được: "${data.transcript}"</span><br>` +
+      `<span class="note">Đã lưu vào hồ sơ giọng nói. Nếu sai, chọn lại: ` +
+      `<select id="lab-region-manual">${options}</select></span>`;
+    document.getElementById('lab-region-manual').onchange = (e) => this._correctRegion(e.target.value);
+  },
+
+  async _correctRegion(region) {
+    try {
+      const form = new FormData();
+      form.append('region', region);
+      await fetch(`/api/doctors/${encodeURIComponent(this.cchn)}/calibration/region-manual`, {
+        method: 'POST', body: form,
+      });
+      showToast(`Đã cập nhật giọng vùng miền: ${DVP_REGIONS[region] || region}`);
+    } catch (e) {
+      showToast('Lỗi khi cập nhật giọng vùng miền');
+    }
   },
 
   _showPassageResult(data) {

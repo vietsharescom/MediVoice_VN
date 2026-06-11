@@ -282,3 +282,91 @@ def test_add_confirmed_alias_direct(tmp_db, sample_profile):
     assert active[0].confirmed_by_bs == 1
     assert active[0].session_count == 1
     assert active[0].occurrence_count == 1
+
+
+# ── FID-VN-016 — get_latest_confirmed_alias ─────────────────────────────────
+
+def test_get_latest_confirmed_alias_returns_none_when_no_confirm(tmp_db, sample_profile):
+    from src.core.l7_storage import get_latest_confirmed_alias
+
+    save_doctor_profile(sample_profile, tmp_db)
+    assert get_latest_confirmed_alias(sample_profile.cchn, "Paracetamol", tmp_db) is None
+
+
+def test_get_latest_confirmed_alias_returns_most_recent(tmp_db, sample_profile):
+    from src.core.l7_storage import get_latest_confirmed_alias
+
+    save_doctor_profile(sample_profile, tmp_db)
+    add_confirmed_alias(sample_profile.cchn, "pa ra xê ta môn", "Paracetamol", tmp_db)
+    add_confirmed_alias(sample_profile.cchn, "pa ra xi ta môn", "Paracetamol", tmp_db)
+
+    assert get_latest_confirmed_alias(sample_profile.cchn, "Paracetamol", tmp_db) == "pa ra xi ta môn"
+
+
+# ── FID-VN-016 §1 — pronunciation-reference: pronunciation_en / vn_phonetic ─
+
+def test_pronunciation_reference_includes_pronunciation_en_when_available():
+    """Paracetamol có pronunciation_en trong drug_db_v200.json (pilot data)."""
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    client = TestClient(app)
+    r = client.get("/api/pronunciation-reference/Paracetamol")
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["pronunciation_en"]
+    assert data["vn_phonetic_default"]
+    assert data["vn_phonetic_user"] is None
+
+
+def test_pronunciation_reference_unknown_drug_pronunciation_en_is_none():
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    client = TestClient(app)
+    r = client.get("/api/pronunciation-reference/Ibuprofen")
+
+    assert r.status_code == 200
+    assert r.json()["pronunciation_en"] is None
+
+
+def test_pronunciation_reference_returns_vn_phonetic_user_after_confirm(tmp_db, sample_profile):
+    """Sau khi BS confirm alias, vn_phonetic_user trả bản mới nhất khi truyền ?cchn=."""
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    save_doctor_profile(sample_profile, tmp_db)
+    add_confirmed_alias(sample_profile.cchn, "pa ra xi ta môn", "Paracetamol", tmp_db)
+
+    with patch("src.core.l7_storage._DB_PATH", tmp_db):
+        client = TestClient(app)
+        r = client.get(
+            f"/api/pronunciation-reference/Paracetamol?cchn={sample_profile.cchn}"
+        )
+
+    assert r.status_code == 200
+    assert r.json()["vn_phonetic_user"] == "pa ra xi ta môn"
+
+
+# ── FID-VN-016 §1 — pronunciation-enroll: retry_needed cho transcript lộn xộn
+
+def test_enroll_returns_retry_needed_for_garbled_transcript(sample_profile):
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    garbled = " ".join(["paracetamol"] * 16)
+
+    with patch("src.api.main.load_doctor_profile", return_value=sample_profile):
+        with patch("src.core.l1a_asr.transcribe", return_value=garbled):
+            client = TestClient(app)
+            r = client.post(
+                f"/api/doctors/{sample_profile.cchn}/pronunciation-enroll",
+                files={"audio": ("t.wav", _wav_bytes(), "audio/wav")},
+                data={"expected_inn": "Paracetamol"},
+            )
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["retry_needed"] is True
+    assert data["alias_needed"] is False

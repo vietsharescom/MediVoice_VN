@@ -254,6 +254,56 @@ def test_ac006_purge_audio_called_after_region_test(sample_profile):
     assert mock_purge.call_count >= 2
 
 
+# ── /api/doctors/{cchn}/calibration/region-manual ───────────────────────────
+# BS tự sửa giọng vùng miền khi auto-detect (lexical) nhận sai (vd Huế -> bị
+# detect "northern" do ASR phiên âm marker miền Trung không đúng)
+
+def test_region_manual_override_saves_region(sample_profile):
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    with patch("src.api.main.load_doctor_profile", return_value=sample_profile):
+        with patch("src.api.main.update_calibration_results") as mock_update:
+            client = TestClient(app)
+            r = client.post(
+                f"/api/doctors/{sample_profile.cchn}/calibration/region-manual",
+                data={"region": "central"},
+            )
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["region"] == "central"
+    mock_update.assert_called_once_with(sample_profile.cchn, region="central")
+
+
+def test_region_manual_invalid_region_returns_400(sample_profile):
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    with patch("src.api.main.load_doctor_profile", return_value=sample_profile):
+        client = TestClient(app)
+        r = client.post(
+            f"/api/doctors/{sample_profile.cchn}/calibration/region-manual",
+            data={"region": "invalid"},
+        )
+
+    assert r.status_code == 400
+
+
+def test_region_manual_404_when_doctor_not_registered():
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    with patch("src.api.main.load_doctor_profile", return_value=None):
+        client = TestClient(app)
+        r = client.post(
+            "/api/doctors/CCHN-NOTFOUND/calibration/region-manual",
+            data={"region": "central"},
+        )
+
+    assert r.status_code == 404
+
+
 # ── AC-002/003/004: /api/doctors/{cchn}/calibration/passage ─────────────────
 
 def test_ac002_003_004_passage_test_returns_metrics(sample_profile):
