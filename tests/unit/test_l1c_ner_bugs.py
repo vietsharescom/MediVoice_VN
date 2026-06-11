@@ -656,3 +656,75 @@ class TestBugM_NangKyWithoutCan:
     def test_can_nang_standard_still_works(self):
         ent = extract_entities("cân nặng bảy mươi ki lô")
         assert ent.can_nang == pytest.approx(70, abs=0.5)
+
+
+class TestBugN_ChanDoanThuocUongLa:
+    """BUG-N (CT-049, pilot TMH 2026-06-11): "chẩn đoán <bệnh> thuốc uống là <thuốc>"
+    — _PRESCRIPTION_KW không nhận "thuốc uống là" làm boundary, nên chẩn đoán
+    bị nuốt luôn cả đơn thuốc + dặn dò phía sau.
+    Fix: thêm alternative "thuốc\\s+(?:uống|tiêm|bôi|nhỏ|dán|xịt|là)\\b" vào _PRESCRIPTION_KW.
+    """
+
+    def test_chan_doan_stops_before_thuoc_uong_la(self):
+        t = (
+            "chẩn đoán viêm tai giữa cấp thuốc uống là Amoxicillin năm trăm milygam "
+            "uống ba lần một ngày"
+        )
+        ent = extract_entities(t)
+        assert ent.chan_doan == "viêm tai giữa cấp", f"chan_doan={ent.chan_doan!r}"
+
+    def test_chan_doan_full_pilot_transcript(self):
+        t = (
+            "bình dân nam mười tám tuổi phạm văn tuấn đau tay trái nghe kém ban ngày nay "
+            "sau khi bị cảm lạnh huyết áp bằng một trăm mười trên bảy mươi mặt tám mươi "
+            "hai lần nhiệt độ bám mươi tám độ bệnh nhân tỉnh táo không chống mạch chẩn "
+            "đoán viêm tai giữa cấp thuốc uống là Amoxicillin năm trăm milygam uống ba "
+            "lần một ngày"
+        )
+        ent = extract_entities(t)
+        assert ent.chan_doan == "viêm tai giữa cấp", f"chan_doan={ent.chan_doan!r}"
+
+
+class TestBugO_TuoiGioiTinhVaTenBenhNhan:
+    """BUG-O (CT-049, pilot TMH 2026-06-11): câu mở đầu chuẩn bệnh án
+    "<nam/nữ> <N> tuổi, <Họ Tên>, <triệu chứng>..." chưa trích xuất được
+    tuổi/giới tính/tên bệnh nhân — "tên bệnh nhân và tuổi chưa trích xuất
+    và điền vào hồ sơ".
+    Fix: _RE_GIOI_TINH_TUOI / _RE_TUOI / _RE_PATIENT_NAME_AGE.
+    """
+
+    def test_tuoi_gioi_tinh_extracted(self):
+        ent = extract_entities("nam mười tám tuổi phạm văn tuấn đau tay trái")
+        assert ent.tuoi == 18
+        assert ent.gioi_tinh == "Nam"
+
+    def test_gioi_tinh_nu(self):
+        ent = extract_entities("nữ hai mươi lăm tuổi nguyễn thị lan đau bụng")
+        assert ent.tuoi == 25
+        assert ent.gioi_tinh == "Nữ"
+
+    def test_patient_name_extracted_from_age_opener(self):
+        ent = extract_entities("nam mười tám tuổi phạm văn tuấn đau tay trái nghe kém")
+        assert ent.ho_ten == "Phạm Văn Tuấn", f"ho_ten={ent.ho_ten!r}"
+
+    def test_ly_do_does_not_repeat_patient_name(self):
+        t = (
+            "bình dân nam mười tám tuổi phạm văn tuấn đau tay trái nghe kém ban ngày "
+            "nay sau khi bị cảm lạnh huyết áp bằng một trăm mười trên bảy mươi"
+        )
+        ent = extract_entities(t)
+        assert ent.ho_ten == "Phạm Văn Tuấn"
+        assert not ent.ly_do.lower().startswith("phạm văn tuấn"), f"ly_do={ent.ly_do!r}"
+        assert "đau tay trái" in ent.ly_do
+
+    def test_explicit_cue_name_unaffected(self):
+        # _RE_PATIENT_NAME (cue "tên bệnh nhân là") vẫn ưu tiên hơn fallback tuổi
+        ent = extract_entities("tên bệnh nhân là nguyễn văn an, ba mươi tuổi, đau bụng")
+        assert ent.ho_ten == "Nguyễn Văn An"
+        assert ent.tuoi == 30
+
+    def test_no_age_no_extraction(self):
+        ent = extract_entities("bệnh nhân đau đầu chóng mặt")
+        assert ent.tuoi is None
+        assert ent.gioi_tinh == ""
+        assert ent.ho_ten == ""

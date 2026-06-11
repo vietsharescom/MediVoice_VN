@@ -406,6 +406,18 @@
       <input type="text" id="patient-name" placeholder="Họ và tên">
     </div>
     <div class="form-row">
+      <label>Tuổi</label>
+      <input type="number" id="patient-age" placeholder="Tuổi" min="0" max="150">
+    </div>
+    <div class="form-row">
+      <label>Giới tính</label>
+      <select id="patient-gender">
+        <option value="">-- Chọn --</option>
+        <option value="Nam">Nam</option>
+        <option value="Nữ">Nữ</option>
+      </select>
+    </div>
+    <div class="form-row">
       <label>Chuyên khoa</label>
       <select id="specialty-select" onchange="Suggestions.onSpecialtyChange(this.value)">
         <option value="noi_khoa">Nội khoa tổng quát</option>
@@ -925,6 +937,14 @@ function displayDraft(data) {
   if (fd.ho_va_ten && !patientNameEl.value.trim()) {
     patientNameEl.value = fd.ho_va_ten;
   }
+  const patientAgeEl = document.getElementById('patient-age');
+  if (fd.tuoi && !patientAgeEl.value.trim()) {
+    patientAgeEl.value = fd.tuoi;
+  }
+  const patientGenderEl = document.getElementById('patient-gender');
+  if (fd.gioi_tinh && !patientGenderEl.value) {
+    patientGenderEl.value = fd.gioi_tinh;
+  }
   document.getElementById('f-ly-do').value = fd.ly_do || '';
   const sh = fd.sinh_hieu || {};
   document.getElementById('f-nhiet-do').value = sh.nhiet_do || '';
@@ -1064,6 +1084,9 @@ function updateApproveButton() {
 function buildEditedFormData() {
   const fd = Object.assign({}, currentFormData || {});
   fd.ho_va_ten = document.getElementById('patient-name').value.trim();
+  const ageVal = document.getElementById('patient-age').value.trim();
+  fd.tuoi = ageVal ? parseInt(ageVal, 10) : null;
+  fd.gioi_tinh = document.getElementById('patient-gender').value;
   fd.ly_do = document.getElementById('f-ly-do').value;
   fd.chan_doan = document.getElementById('f-chan-doan').value;
   fd.icd_code = document.getElementById('f-icd').value.toUpperCase();

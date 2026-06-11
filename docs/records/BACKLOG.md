@@ -1,6 +1,12 @@
 # BACKLOG.md — MediVoice VN
-# v0.9.2 — Updated 2026-06-11
+# v0.9.3 — Updated 2026-06-11
 # Single source of truth cho tasks.
+
+## CT-049 — Pilot test fix round 3 [DONE 2026-06-11]
+- [x] Chẩn đoán nuốt đơn thuốc ("thuốc uống là <thuốc>") → `_PRESCRIPTION_KW` (`src/core/l1c_ner.py`) thêm `thuốc\s+(?:uống|tiêm|bôi|nhỏ|dán|xịt|là)\b`
+- [x] Thiếu Paracetamol (ASR "parasyte mode") → `phonetic_variants` + nới filter 2-từ ≥9 ký tự (`src/core/l1b_drug_correct.py::_build_alias_map()`)
+- [x] Tuổi/giới tính/tên BN chưa trích xuất từ "<nam/nữ> <N> tuổi, <Tên>..." → `MedicalEntities.tuoi`/`gioi_tinh` + `_RE_GIOI_TINH_TUOI`/`_RE_TUOI`/`_RE_PATIENT_NAME_AGE` (`src/core/l1c_ner.py`) → `form_data` → `HanhChinh.tuoi`/`gioi_tinh` (PDF) + UI input Tuổi/Giới tính
+- 948/948 PASS, bandit 0 HIGH/9 MEDIUM (pre-existing) — chi tiết `docs/records/PENDING_REQUESTS.md` CT-049
 
 ## CT-048 — Pilot test fix round 2 (PA-023 items #1-3) [DONE 2026-06-11]
 - [x] Lý do khám trống → `_RE_LY_DO_FALLBACK2` + `_RE_SYMPTOM_KW` (`src/core/l1c_ner.py`)

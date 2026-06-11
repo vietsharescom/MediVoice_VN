@@ -270,11 +270,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.11.13 |
-| Status | **CT-048 IMPLEMENTED ✅** — fix 3/3 vấn đề còn lại từ pilot test thật (PA-023, "LÀM HẾT TÔI THỬ LẠI"): (1) "Lý do khám" trống → `_RE_LY_DO_FALLBACK2`/`_RE_SYMPTOM_KW` (`src/core/l1c_ner.py`) bắt "vào khám (vì/bị/do) <triệu chứng>" khi ASR bỏ sót "...tuổi"; (2) "Tên bệnh nhân" không tự điền → `MedicalEntities.ho_ten` + `_RE_PATIENT_NAME` (chỉ extract khi có cue rõ ràng "tên bệnh nhân"/"bệnh nhân tên" — an toàn lâm sàng > đoán mò) → `form_data.ho_va_ten` → autofill `#patient-name`; (3) Gợi ý thuốc RAG sai (Salbutamol 78%/Amlodipine 77% không liên quan) → root cause: `fetchDrugCandidates()` gửi NGUYÊN transcript dài làm query cho `hybrid_query_drug()` (thiết kế cho 1 token ASR-méo ngắn) → fix: chỉ gọi `/api/drug-candidates` khi `don_thuoc` rỗng. v0.11.12 trước đó đã fix 2/5 bug (chẩn đoán "thì" filler, Amoxicillin "a mốt xi lin"). 939 tests |
-| Tests | **939/939 PASS** · bandit 0 HIGH (9 MEDIUM pre-existing, không liên quan) · conftest.py SKIP_QWEN |
-| Pending | **PA-023** (Andy re-test 3 clip TMH, đo hiệu quả CT-048) · **PA-020/PA-021** (Andy test UI FID-VN-017/018, audio mẫu giờ đã có) · **PA-015/PA-017/PA-018** (Andy test FID-VN-013/014/015/016 UI) · **CT-019** (🔴 A2 VAD-chunk regression) · CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039/CT-042/CT-044 ⏳ · VIETMED-FIX-001 |
-| Next task | **TRAIN-001** (PhoWhisper fine-tune, ưu tiên cao nhất per CT-028) → PA-023 re-test song song · CT-019 debug A2-VAD nếu có audio |
+| Version | v0.11.14 |
+| Status | **CT-049 IMPLEMENTED ✅** — fix 3 vấn đề mới từ pilot test vòng 2 (Andy re-test sau CT-048): (1) "chẩn đoán ghi chung với tên thuốc" → `_PRESCRIPTION_KW` (`src/core/l1c_ner.py`) thêm `thuốc\s+(?:uống\|tiêm\|bôi\|nhỏ\|dán\|xịt\|là)\b` để nhận "thuốc uống là Amoxicillin" làm boundary; (2) thiếu Paracetamol trong đơn thuốc (ASR "parasyte mode") → thêm vào `phonetic_variants` + nới filter 2-từ ≥9 ký tự trong `_build_alias_map()` (`src/core/l1b_drug_correct.py`); (3) tuổi/tên BN chưa trích xuất → `MedicalEntities.tuoi`/`gioi_tinh` + `_RE_GIOI_TINH_TUOI`/`_RE_TUOI`/`_RE_PATIENT_NAME_AGE` (`src/core/l1c_ner.py`) bắt câu mở đầu chuẩn "<nam/nữ> <N> tuổi, <Họ Tên>, ..." → wire `form_data`→`HanhChinh.tuoi`/`gioi_tinh` (PDF) + UI input Tuổi/Giới tính. 948 tests |
+| Tests | **948/948 PASS** · bandit 0 HIGH (9 MEDIUM pre-existing, không liên quan) · conftest.py SKIP_QWEN |
+| Pending | **CT-049** (Andy re-test clip TMH lần 3) · **PA-020/PA-021** (Andy test UI FID-VN-017/018, audio mẫu giờ đã có) · **PA-015/PA-017/PA-018** (Andy test FID-VN-013/014/015/016 UI) · **CT-019** (🔴 A2 VAD-chunk regression) · CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039/CT-042/CT-044 ⏳ · VIETMED-FIX-001 |
+| Next task | **TRAIN-001** (PhoWhisper fine-tune, ưu tiên cao nhất per CT-028) → CT-049 re-test song song · CT-019 debug A2-VAD nếu có audio |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.1) · FID: `fids/FID-VN-010.md`, `fids/FID-VN-012.md`, `fids/FID-VN-013.md`, `fids/FID-VN-014.md`, `fids/FID-VN-015.md`, `fids/FID-VN-016.md`, `fids/FID-VN-017.md`, `fids/FID-VN-018.md` |
 
 ---

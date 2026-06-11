@@ -85,6 +85,12 @@ class TestLayer1Exact:
         txt, matches = correct_drug_names_v2("uống pha ra citamon 500mg ba lần mỗi ngày")
         assert any(m.inn == "Paracetamol" and m.match_layer == 1 for m in matches)
 
+    def test_paracetamol_parasyte_mode_variant(self):
+        # CT-049: pilot TMH 2026-06-11 — ASR garble "Paracetamol" -> "parasyte mode"
+        # bị bỏ sót khỏi đơn thuốc (chỉ Amoxicillin được nhận diện)
+        txt, matches = correct_drug_names_v2("parasyte mode thì năm trăm miligam khi đau")
+        assert any(m.inn == "Paracetamol" and m.match_layer == 1 for m in matches)
+
     def test_oresol_exact_not_xylometazoline(self):
         # CT-022: ASR garble "o re sol pha với nước" trước đây bị fuzzy-match
         # nhầm sang Xylometazoline (phonetic_variant "xylo me ta zo li ne").

@@ -150,21 +150,24 @@
           "pa ra xe ta mol",
           "pa ra xê ta mol",
           "pha ra citamon",
-          "pha ra xitamon"
+          "pha ra xitamon",
+          "parasyte mode"
         ],
         "central": [
           "pa ra xe ta mol",
           "pa ra xê ta môl",
           "pa ra xê ta",
           "pha ra citamon",
-          "pha ra xitamon"
+          "pha ra xitamon",
+          "parasyte mode"
         ],
         "south": [
           "pa ra",
           "pa ra xe ta",
           "pa ra xe ta mol",
           "pha ra citamon",
-          "pha ra xitamon"
+          "pha ra xitamon",
+          "parasyte mode"
         ]
       },
       "valid_doses_mg": [

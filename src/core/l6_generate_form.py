@@ -17,6 +17,7 @@ _mod = _ilu.module_from_spec(_spec)
 _spec.loader.exec_module(_mod)
 
 BenhAnNgoaiTru = _mod.BenhAnNgoaiTru
+GioiTinh = _mod.GioiTinh
 HanhChinh = _mod.HanhChinh
 KhamBenh = _mod.KhamBenh
 SinhHieu = _mod.SinhHieu
@@ -82,6 +83,15 @@ def generate_benh_an(
     # Hành chính từ patient_data hoặc form_data (patient_name nếu có)
     if not patient_data and form_data.get("ho_va_ten"):
         record.hanh_chinh.ho_va_ten = form_data.get("ho_va_ten", "")
+
+    # Tuổi / giới tính — từ NER (câu mở đầu "<nam/nữ> <N> tuổi"), BS đã review trên UI
+    if form_data.get("tuoi") is not None:
+        record.hanh_chinh.tuoi = form_data.get("tuoi")
+    gioi_tinh_str = form_data.get("gioi_tinh", "")
+    if gioi_tinh_str == "Nam":
+        record.hanh_chinh.gioi_tinh = GioiTinh.NAM
+    elif gioi_tinh_str == "Nữ":
+        record.hanh_chinh.gioi_tinh = GioiTinh.NU
 
     # Khám bệnh
     record.kham_benh.toan_than = form_data.get("toan_than", "")

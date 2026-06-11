@@ -86,8 +86,12 @@ def _build_alias_map() -> dict[str, str]:
         for _region, variants in pv.items():
             for v in variants:
                 normalized = _normalize(v)
-                if normalized.count(" ") < 2:
-                    continue  # skip 1- and 2-syllable phonetic prefixes
+                # Skip 1- and 2-syllable phonetic prefixes (too generic, match
+                # common Vietnamese words) — UNLESS the 2-word phrase is long
+                # enough (>=9 chars) to be a distinctive English-loanword garble
+                # (e.g. "parasyte mode" for Paracetamol, CT-049).
+                if normalized.count(" ") < 2 and len(normalized) < 9:
+                    continue
                 alias_map[normalized] = inn
     return alias_map
 

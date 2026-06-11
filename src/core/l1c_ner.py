@@ -10,8 +10,13 @@ from dataclasses import dataclass, field
 
 @dataclass
 class MedicalEntities:
-    # Họ và tên bệnh nhân (chỉ khi BS nói rõ "tên ... là ...")
+    # Họ và tên bệnh nhân (chỉ khi BS nói rõ "tên ... là ..."
+    # hoặc câu mở đầu chuẩn "<nam/nữ> <N> tuổi, <Họ Tên>, ...")
     ho_ten: str = ""
+
+    # Tuổi / giới tính (từ câu mở đầu "<nam/nữ> <N> tuổi")
+    tuoi: int | None = None
+    gioi_tinh: str = ""
 
     # Lý do khám / triệu chứng
     ly_do: str = ""
@@ -125,6 +130,32 @@ _RE_PATIENT_NAME = re.compile(
     re.IGNORECASE,
 )
 
+# Fallback: câu mở đầu CHUẨN bệnh án lâm sàng VN — "<nam/nữ> <N> tuổi, <Họ Tên>, <triệu chứng>..."
+# Tên BN nằm ngay sau "<N> tuổi" và trước từ khoá triệu chứng đầu tiên.
+# An toàn: chỉ match khi có cấu trúc "<số> tuổi" ngay trước — không đoán mò
+# từ văn bản tự do (đồng nhất với CT-048: cue rõ ràng > đoán).
+_NAME_STOP_KW = (
+    r"(?:đau|sốt|ho\b|khó|mệt|chóng|buồn|nôn|tiểu|khát|ngứa|phù|tê|sưng|rát|chảy|nuốt|ợ|nghe|vào\s*khám)"
+)
+_RE_PATIENT_NAME_AGE = re.compile(
+    r"\b\d{1,3}\s*tuổi[,\s]+"
+    r"((?:(?!" + _NAME_STOP_KW + r")[a-zà-ỹ]+\s*){1,4}?)"
+    r"(?=\s*(?:" + _NAME_STOP_KW + r"|[,.]|$))",
+    re.IGNORECASE,
+)
+
+# ─── Tuổi / giới tính patterns ────────────────────────────────────────────────
+# "nam/nữ <N> tuổi" — câu mở đầu chuẩn bệnh án. Bắt cả giới tính + tuổi cùng lúc.
+_RE_GIOI_TINH_TUOI = re.compile(
+    r"\b(nam|nữ)\s*(\d{1,3})\s*tuổi\b",
+    re.IGNORECASE,
+)
+# Fallback: chỉ "<N> tuổi" không có giới tính đi kèm (hoặc giới tính ở chỗ khác)
+_RE_TUOI = re.compile(
+    r"\b(\d{1,3})\s*tuổi\b",
+    re.IGNORECASE,
+)
+
 # ─── Lý do khám patterns ─────────────────────────────────────────────────────
 
 _RE_LY_DO = re.compile(
@@ -166,7 +197,8 @@ _RE_TAI_KHAM = re.compile(
 
 _PRESCRIPTION_KW = (
     r"(?:điều\s*trị|(?:kê|chê|che)\s*(?:đơn|thuốc|toa|là)?|đơn\s*thuốc|toa\s*thuốc|"  # "chê"/"che" = PhoWhisper for "kê"
-    r"t[aá]i\s*kh[aá](?:m|ng)|hẹn|follow|cho\s*(?:\w+/?\w*\s*)?(?:uống|dùng))"  # "kháng" = PhoWhisper for "khám"
+    r"t[aá]i\s*kh[aá](?:m|ng)|hẹn|follow|cho\s*(?:\w+/?\w*\s*)?(?:uống|dùng)|"  # "kháng" = PhoWhisper for "khám"
+    r"thuốc\s+(?:uống|tiêm|bôi|nhỏ|dán|xịt|là)\b)"  # ASR "Kê" -> "thuốc uống là <thuốc>"
 )
 _RE_CHAN_DOAN = re.compile(
     r"(?:chẩn\s*đoán|diagnos\w*)[:\s]+"
@@ -359,6 +391,21 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
     m = _RE_PATIENT_NAME.search(t)
     if m:
         ent.ho_ten = " ".join(w.capitalize() for w in m.group(1).split())
+    else:
+        # Fallback: câu mở đầu chuẩn "<nam/nữ> <N> tuổi, <Họ Tên>, <triệu chứng>..."
+        m = _RE_PATIENT_NAME_AGE.search(t)
+        if m:
+            ent.ho_ten = " ".join(w.capitalize() for w in m.group(1).split())
+
+    # Tuổi / giới tính — "<nam/nữ> <N> tuổi" hoặc bare "<N> tuổi"
+    m = _RE_GIOI_TINH_TUOI.search(t)
+    if m:
+        ent.gioi_tinh = "Nam" if m.group(1).lower() == "nam" else "Nữ"
+        ent.tuoi = int(m.group(2))
+    else:
+        m = _RE_TUOI.search(t)
+        if m:
+            ent.tuoi = int(m.group(1))
 
     # Sinh hiệu
     m = _RE_NHIET_DO.search(t)
@@ -412,6 +459,10 @@ def extract_entities(transcript: str, drug_candidates: list[dict] | None = None)
             m = fallback_re.search(t)
             if m:
                 captured = m.group(1).strip()[:80]
+                # Tên BN (nếu trích từ "<N> tuổi, <Họ Tên>, ...") đã tách riêng
+                # vào ent.ho_ten — bỏ phần này khỏi lý do khám để tránh trùng lặp.
+                if ent.ho_ten and captured.lower().startswith(ent.ho_ten.lower()):
+                    captured = captured[len(ent.ho_ten):].strip()
                 # Only accept fallback if it contains at least one symptom keyword
                 # (avoids extracting occupation/admin text like "nghề nghiệp lái xe tái khám")
                 if _RE_SYMPTOM_KW.search(captured):

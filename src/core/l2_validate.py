@@ -53,6 +53,8 @@ def validate(entities: MedicalEntities) -> tuple[dict, dict[str, float], float]:
     # form_data là dict đã sẵn để merge vào ClinicalRecord
     form_data: dict = {
         "ho_va_ten": entities.ho_ten,
+        "tuoi": entities.tuoi,
+        "gioi_tinh": entities.gioi_tinh,
         "ly_do": entities.ly_do,
         "trieu_chung": entities.trieu_chung,
         "sinh_hieu": {

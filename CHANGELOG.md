@@ -1,6 +1,39 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.14] — 2026-06-11 — Fix 3 vấn đề mới từ pilot test vòng 2 (CT-049)
+
+### NER + L1b + UI fixes (Andy re-test clip TMH lần 2)
+- fix(core): `src/core/l1c_ner.py` — `_PRESCRIPTION_KW` thêm
+  `thuốc\s+(?:uống|tiêm|bôi|nhỏ|dán|xịt|là)\b` để nhận "thuốc uống là
+  <thuốc>" (ASR garble "Kê" → "thuốc uống là Amoxicillin") làm boundary —
+  trước đây "Chẩn đoán" nuốt luôn cả đơn thuốc + dặn dò phía sau
+- fix(data): `data/reference/drug_db_v200.json` — thêm "parasyte mode" vào
+  `phonetic_variants` (north/central/south) của Paracetamol (ASR garble
+  2-từ tiếng Anh)
+- fix(core): `src/core/l1b_drug_correct.py::_build_alias_map()` — nới filter
+  loại bỏ phonetic_variants <3 từ: cho phép biến thể 2-từ nếu dài ≥9 ký tự
+  (loại trừ 58 prefix tiếng Việt 2 âm tiết hiện có trong drug_db, max 8 ký
+  tự, ví dụ "ga ba"/"am lo" — vẫn bị chặn để tránh false-positive)
+- feat(core): `src/core/l1c_ner.py` — thêm `MedicalEntities.tuoi`/`gioi_tinh`
+  + `_RE_GIOI_TINH_TUOI`/`_RE_TUOI`/`_RE_PATIENT_NAME_AGE`: extract
+  tuổi/giới tính/tên BN từ câu mở đầu chuẩn bệnh án "<nam/nữ> <N> tuổi,
+  <Họ Tên>, <triệu chứng>..." (cấu trúc rõ ràng, không phải đoán mò — đồng
+  nhất triết lý CT-048); strip tên BN khỏi `ly_do` để tránh trùng lặp
+- feat(core): `src/core/l2_validate.py` — `form_data["tuoi"]`/`["gioi_tinh"]`
+  từ `entities.tuoi`/`entities.gioi_tinh`
+- feat(core): `src/core/l6_generate_form.py` — wire `form_data["tuoi"]` →
+  `HanhChinh.tuoi`, `form_data["gioi_tinh"]` → `HanhChinh.gioi_tinh`
+  (hiển thị trên PDF Mẫu 15/BV1 thay vì "---")
+- feat(ui): `src/api/static/index.html` — thêm input "Tuổi" + select
+  "Giới tính" cạnh "Tên bệnh nhân", tự điền từ `fd.tuoi`/`fd.gioi_tinh`
+  nếu BS chưa nhập (giống CT-047/048), đưa vào `buildEditedFormData()`
+- 9 tests mới: `TestBugN_ChanDoanThuocUongLa`,
+  `TestBugO_TuoiGioiTinhVaTenBenhNhan` (`tests/unit/test_l1c_ner_bugs.py`),
+  `test_paracetamol_parasyte_mode_variant`
+  (`tests/unit/test_l1b_drug_correct_v2.py`)
+- 948/948 tests PASS, bandit 0 HIGH/9 MEDIUM (pre-existing)
+
 ## [v0.11.13] — 2026-06-11 — Fix 3 vấn đề còn lại từ pilot test (CT-048)
 
 ### NER + UI fixes (Andy "LÀM HẾT TÔI THỬ LẠI")
