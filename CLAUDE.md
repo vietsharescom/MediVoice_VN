@@ -270,9 +270,9 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.11.9 |
-| Status | **FID-VN-017/018 IMPLEMENTED ✅** — FID-VN-017: mở rộng `pronunciation_en` cho 9 thuốc tim_mach + `apply_stress_hint()` (gợi ý trọng âm/bật hơi p/t/k cho `vn_phonetic_default` + tip Wizard Phần 3); FID-VN-018: DVP form đảo thứ tự chuyên khoa trước vùng miền + `READING_PASSAGES_BY_REGION`/`REGION_TEST_SENTENCES` theo Bắc/Trung/Nam + endpoint `region-sentence` + `region_match` double-check, 926 tests |
-| Tests | **926/926 PASS** · bandit 0 HIGH (9 MEDIUM pre-existing, không liên quan) · conftest.py SKIP_QWEN |
+| Version | v0.11.10 |
+| Status | **FID-VN-017/018 IMPLEMENTED ✅** + Lab personality follow-up — FID-VN-017: mở rộng `pronunciation_en` cho 9 thuốc tim_mach + `apply_stress_hint()` (gợi ý trọng âm/bật hơi p/t/k cho `vn_phonetic_default` + tip Wizard Phần 3); FID-VN-018: DVP form đảo thứ tự chuyên khoa trước vùng miền + `READING_PASSAGES_BY_REGION`/`REGION_TEST_SENTENCES` theo Bắc/Trung/Nam + endpoint `region-sentence` + `region_match` double-check; v0.11.10: Lab Hiệu chỉnh Giọng nói hiển thị thông tin BS (personality: tên/chuyên khoa/vùng miền + sửa) NGAY ĐẦU modal trước 3 bài test, 930 tests |
+| Tests | **930/930 PASS** · bandit 0 HIGH (9 MEDIUM pre-existing, không liên quan) · conftest.py SKIP_QWEN |
 | Pending | **PA-020/PA-021** (Andy test UI FID-VN-017/018) · **PA-015/PA-017/PA-018** (Andy test FID-VN-013/014/015/016 UI, gTTS chưa cài nên audio mẫu fallback) · **CT-019** (🔴 A2 VAD-chunk regression) · CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039/CT-042/CT-044 ⏳ · VIETMED-FIX-001 |
 | Next task | **TRAIN-001** (PhoWhisper fine-tune, ưu tiên cao nhất per CT-028) → PA-020/PA-021 UI test song song · CT-019 debug A2-VAD nếu có audio |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.1) · FID: `fids/FID-VN-010.md`, `fids/FID-VN-012.md`, `fids/FID-VN-013.md`, `fids/FID-VN-014.md`, `fids/FID-VN-015.md`, `fids/FID-VN-016.md`, `fids/FID-VN-017.md`, `fids/FID-VN-018.md` |

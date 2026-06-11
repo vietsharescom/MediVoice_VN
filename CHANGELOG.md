@@ -1,6 +1,12 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.10] — 2026-06-11 — Lab Hiệu chỉnh Giọng nói: hiển thị thông tin Bác sĩ (personality) trước test
+
+### Follow-up FID-VN-018 (Andy feedback PA-021)
+- feat(ui): `calib-lab-modal` — thêm khối "Thông tin Bác sĩ" (`#lab-doctor-info`) hiển thị tên/chuyên khoa/vùng miền + nút "Sửa thông tin" NGAY ĐẦU modal, TRƯỚC `lab-grid` (3 bài test)
+- feat(ui): `CalibLab.open()` gọi `_loadDoctorInfo()` (fetch profile DVP) trước `goStep(1)`; `CalibLab.editProfile()` đóng Lab và mở `DVP.edit()` để BS xem/sửa personality trước khi vào test giọng nói
+
 ## [v0.11.9] — 2026-06-11 — FID-VN-018: DVP chuyên khoa trước + Lab passages theo vùng miền
 
 ### FID-VN-018 implementation [SES-20260611, FID-VN-018]

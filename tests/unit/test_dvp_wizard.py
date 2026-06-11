@@ -431,3 +431,59 @@ def test_dvp_form_specialty_fields_before_region():
     idx_region = html.index('id="dvp-region"')
 
     assert idx_specialty < idx_region
+
+
+# ── Calibration Lab — hiển thị thông tin Bác sĩ (personality) trước test ────
+
+
+def test_calib_lab_modal_has_doctor_info_section():
+    """Lab Hiệu chỉnh Giọng nói phải hiển thị thông tin BS (personality)
+    TRƯỚC phần test giọng nói (lab-grid)."""
+    from pathlib import Path
+
+    html = Path("src/api/static/index.html").read_text(encoding="utf-8")
+    idx_modal = html.index('id="calib-lab-modal"')
+    idx_doctor_info = html.index('id="lab-doctor-info"')
+    idx_lab_grid = html.index('class="lab-grid"')
+
+    assert idx_modal < idx_doctor_info < idx_lab_grid
+
+
+def test_calib_lab_doctor_info_has_edit_link():
+    """Phần thông tin BS trong Lab phải có nút sửa thông tin (CalibLab.editProfile)."""
+    from pathlib import Path
+
+    html = Path("src/api/static/index.html").read_text(encoding="utf-8")
+    idx_doctor_info = html.index('id="lab-doctor-info"')
+    idx_lab_grid = html.index('class="lab-grid"')
+    section = html[idx_doctor_info:idx_lab_grid]
+
+    assert "CalibLab.editProfile()" in section
+
+
+def test_calib_lab_open_loads_doctor_info_before_steps():
+    """CalibLab.open() phải gọi _loadDoctorInfo() trước khi vào goStep(1)."""
+    from pathlib import Path
+
+    html = Path("src/api/static/index.html").read_text(encoding="utf-8")
+    idx_open = html.index("async open()")
+    idx_close = html.index("close()", idx_open)
+    open_body = html[idx_open:idx_close]
+
+    idx_load_info = open_body.index("_loadDoctorInfo()")
+    idx_go_step = open_body.index("goStep(1)")
+
+    assert idx_load_info < idx_go_step
+
+
+def test_calib_lab_edit_profile_closes_lab_and_opens_dvp_edit():
+    """CalibLab.editProfile() đóng Lab rồi mở form sửa thông tin DVP."""
+    from pathlib import Path
+
+    html = Path("src/api/static/index.html").read_text(encoding="utf-8")
+    idx_edit = html.index("editProfile() {")
+    idx_next_method = html.index("\n  },", idx_edit)
+    body = html[idx_edit:idx_next_method]
+
+    assert "this.close()" in body
+    assert "DVP.edit()" in body
