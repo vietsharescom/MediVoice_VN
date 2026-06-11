@@ -17,6 +17,10 @@ VALID_ENGLISH_LEVELS: frozenset[str] = frozenset({"Basic", "Intermediate", "Good
 
 VALID_SPEAKING_SPEEDS: frozenset[str] = frozenset({"Chậm", "Vừa", "Nhanh"})
 
+# FID-VN-014 — Voice Calibration Lab §2.2 (Standardized Reading Passage Test)
+VALID_SPEAKING_RATE_CLASSES: frozenset[str] = frozenset({"Chậm", "Vừa", "Nhanh"})
+VALID_PAUSE_STYLES: frozenset[str] = frozenset({"It_ngat", "Vua_phai", "Nhieu_ngat"})
+
 SPECIALTY_DISPLAY: dict[str, str] = {
     "noi_khoa":              "Nội khoa",
     "tim_mach":              "Tim mạch",
@@ -44,6 +48,14 @@ class DoctorProfile:
     speaking_speed: str = "Vừa"        # Chậm | Vừa | Nhanh
     created_at: str = ""
     updated_at: str = ""
+    # FID-VN-014 — Voice Calibration Lab §2.2, additive, default NULL/no-op
+    speaking_rate_class: Optional[str] = None   # VALID_SPEAKING_RATE_CLASSES
+    pause_style: Optional[str] = None           # VALID_PAUSE_STYLES
+    vtln_warp_factor: float = 1.0               # đo được, KHÔNG áp dụng (gate AC-013)
+    # FID-VN-015 §2.4 — jitter/shimmer (proxy creakiness/breathiness, Pham 2003)
+    # Hiển thị tham khảo, KHÔNG dùng để auto-adapt ASR.
+    jitter_pct: Optional[float] = None
+    shimmer_pct: Optional[float] = None
 
 
 @dataclass

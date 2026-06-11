@@ -1,0 +1,130 @@
+# src/core/pronunciation_phonetic.py
+# FID-VN-015 §3.1/Q4 — Phiên âm tiếng Việt cho tên thuốc (Pronunciation
+# Recognition Lab — Part 3)
+#
+# Pure functions, KHÔNG động tới pipeline L0->L10 (FROZEN). Sinh "phiên âm
+# tiếng Việt" tham khảo cho audio mẫu (gTTS) + so khớp transcript BS đọc.
+#
+# Heuristic transliteration v1 (Claude generate, Andy review sau — FID-VN-015
+# Q4). Nếu drug_db đã có 1 brand variant kiểu "para xê ta môn" (lowercase,
+# nhiều âm tiết cách nhau bằng dấu cách, khác INN gốc) thì ưu tiên dùng variant
+# đó (đã được con người ghi nhận, đáng tin hơn heuristic).
+
+from __future__ import annotations
+
+import re
+
+_VOWELS = set("aeiouyăâêôơư")
+
+# Thay thế nhiều ký tự (áp dụng trước, theo thứ tự) — ánh xạ cách đọc tiếng
+# Anh/Pháp phổ biến trong tên thuốc sang chữ viết kiểu tiếng Việt.
+_MULTI_SUBS = [
+    (re.compile(r"c([eiy])"), r"x\1"),   # "ce/ci/cy" -> "xe/xi/xy" (âm /s/)
+    (re.compile(r"ph"), "ph"),           # giữ nguyên (đã giống cách đọc VN)
+    (re.compile(r"qu"), "qu"),           # giữ nguyên
+    (re.compile(r"th"), "th"),           # giữ nguyên
+    (re.compile(r"ch"), "ch"),           # giữ nguyên
+    (re.compile(r"sh"), "s"),
+    (re.compile(r"^f"), "ph"),           # "f" đầu từ -> "ph"
+    (re.compile(r"f"), "ph"),
+]
+
+# Thay thế từng ký tự đơn (sau khi đã xử lý multi-char ở trên)
+_SINGLE_SUBS = {
+    "e": "ê",
+    "o": "ô",
+    "j": "gi",
+    "z": "d",
+    "w": "v",
+}
+
+# Phụ âm cuối tiếng Việt không có "l" — chuyển thành "n"
+_FINAL_CONSONANT_SUBS = {"l": "n"}
+
+
+def _apply_substitutions(name: str) -> str:
+    s = name.lower()
+    for pattern, repl in _MULTI_SUBS:
+        s = pattern.sub(repl, s)
+    s = "".join(_SINGLE_SUBS.get(ch, ch) for ch in s)
+    if s and s[-1] in _FINAL_CONSONANT_SUBS:
+        s = s[:-1] + _FINAL_CONSONANT_SUBS[s[-1]]
+    return s
+
+
+def _syllabify(s: str) -> list[str]:
+    """
+    Tách chuỗi đã transliterate thành các "âm tiết" kiểu VN: mỗi âm tiết gồm
+    (phụ âm đầu tùy chọn) + (nguyên âm) + (phụ âm cuối tùy chọn, chỉ khi
+    không còn nguyên âm nào theo sau cần phụ âm đầu).
+    """
+    n = len(s)
+    syllables: list[str] = []
+    current = ""
+    i = 0
+    while i < n:
+        c = s[i]
+        current += c
+        if c in _VOWELS:
+            j = i + 1
+            while j < n and s[j] in _VOWELS:
+                current += s[j]
+                j += 1
+            cons_start = j
+            while j < n and s[j] not in _VOWELS:
+                j += 1
+            cons = s[cons_start:j]
+            if j < n:
+                # Còn nguyên âm theo sau -> phụ âm cuối cùng làm âm đầu âm
+                # tiết tiếp theo, các phụ âm còn lại (nếu có) làm âm cuối.
+                if len(cons) >= 2:
+                    current += cons[:-1]
+                syllables.append(current)
+                current = cons[-1] if cons else ""
+                i = j
+                continue
+            else:
+                current += cons
+                syllables.append(current)
+                current = ""
+                i = j
+                continue
+        i += 1
+    if current:
+        syllables.append(current)
+    return syllables
+
+
+def transliterate_to_vn_phonetic(name: str) -> str:
+    """
+    Sinh phiên âm tiếng Việt heuristic cho 1 tên thuốc/thuật ngữ (vd
+    "Paracetamol" -> "pa ra xê ta môn"). Chỉ giữ chữ cái a-z, bỏ khoảng trắng/
+    dấu/ký tự khác. Trả về "" nếu input rỗng/không có chữ cái.
+    """
+    cleaned = re.sub(r"[^a-zA-Z]", "", name)
+    if not cleaned:
+        return ""
+    transformed = _apply_substitutions(cleaned)
+    syllables = _syllabify(transformed)
+    return " ".join(syllables)
+
+
+def get_reference_phonetic(inn: str, drug_entry: dict | None = None) -> str:
+    """
+    Lấy phiên âm chuẩn cho 1 INN — ưu tiên brand variant đã có trong drug_db
+    (kiểu "para xê ta môn", lowercase, nhiều âm tiết cách nhau bằng dấu cách),
+    nếu không có thì dùng heuristic transliteration trên từ đầu tiên của INN
+    (vd "Aspirin (Acetylsalicylic acid)" -> "Aspirin").
+    """
+    if drug_entry:
+        for brand in drug_entry.get("brands", []):
+            if (
+                " " in brand
+                and brand == brand.lower()
+                and brand != inn.lower()
+                and re.fullmatch(r"[a-zàáảãạăâêôơưđ\s]+", brand)
+            ):
+                return brand
+
+    first_word = re.split(r"[\s(]", inn.strip())[0]
+    return transliterate_to_vn_phonetic(first_word)

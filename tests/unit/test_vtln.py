@@ -7,7 +7,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from src.core.vtln import estimate_warp_factor, apply_vtln_warp, WARP_MIN, WARP_MAX
+from src.core.vtln import (
+    estimate_warp_factor, apply_vtln_warp, extract_f0_contour, WARP_MIN, WARP_MAX,
+)
 
 
 # ── AC-014: warp_factor=1.0 -> no-op (backward compat) ─────────────────────
@@ -63,3 +65,26 @@ def test_apply_vtln_warp_clips_extreme_factor():
     out_extreme = apply_vtln_warp(y, sr=sr, warp_factor=5.0)
     out_clipped = apply_vtln_warp(y, sr=sr, warp_factor=WARP_MAX)
     assert len(out_extreme) == len(out_clipped) == len(y)
+
+
+# ── extract_f0_contour (FID-VN-015 §2.5) ────────────────────────────────────
+
+def test_extract_f0_contour_empty_audio_returns_empty_list():
+    assert extract_f0_contour(np.array([]), sr=16000) == []
+    assert extract_f0_contour(None, sr=16000) == []
+
+
+def test_extract_f0_contour_silence_returns_empty_list():
+    """Audio im lặng (không có pitch voiced) -> []."""
+    y = np.zeros(16000, dtype=np.float32)
+    assert extract_f0_contour(y, sr=16000) == []
+
+
+def test_extract_f0_contour_tone_returns_n_points():
+    sr = 16000
+    t = np.linspace(0, 1.0, sr, endpoint=False)
+    y = 0.5 * np.sin(2 * np.pi * 150 * t).astype(np.float32)
+    contour = extract_f0_contour(y, sr=sr, n_points=20)
+    assert len(contour) == 20
+    assert all(isinstance(v, float) for v in contour)
+    assert all(v > 0 for v in contour)

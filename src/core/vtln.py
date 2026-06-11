@@ -50,6 +50,47 @@ def estimate_warp_factor(
     return float(np.clip(warp, WARP_MIN, WARP_MAX))
 
 
+def extract_f0_contour(
+    y: np.ndarray,
+    sr: int = 16000,
+    n_points: int = 50,
+) -> list[float]:
+    """
+    Trích đường cao độ (f0 contour, Hz) của 1 đoạn audio, time-normalized về
+    `n_points` điểm — dùng để vẽ/so sánh waveform cao độ (FID-VN-015 §2.5).
+
+    Unvoiced frames (NaN) được nội suy tuyến tính từ các điểm voiced lân cận.
+    Trả về [] nếu audio rỗng hoặc không phát hiện được pitch nào.
+    """
+    import librosa
+
+    if y is None or len(y) == 0:
+        return []
+
+    f0, voiced_flag, _ = librosa.pyin(
+        y.astype(np.float32),
+        fmin=librosa.note_to_hz("C2"),
+        fmax=librosa.note_to_hz("C7"),
+        sr=sr,
+    )
+    if f0 is None or f0.size == 0:
+        return []
+
+    voiced = voiced_flag.astype(bool) if voiced_flag is not None else ~np.isnan(f0)
+    if not np.any(voiced):
+        return []
+
+    # Nội suy NaN/unvoiced từ các điểm voiced lân cận
+    idx = np.arange(f0.size)
+    f0_filled = np.interp(idx, idx[voiced], f0[voiced])
+
+    # Time-normalize về n_points bằng resample tuyến tính
+    src_idx = np.linspace(0, f0_filled.size - 1, num=n_points)
+    contour = np.interp(src_idx, idx, f0_filled)
+
+    return [round(float(v), 1) for v in contour]
+
+
 def apply_vtln_warp(y: np.ndarray, sr: int, warp_factor: float) -> np.ndarray:
     """
     Áp frequency warp lên audio theo warp_factor (resample-based formant shift).

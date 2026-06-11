@@ -26,8 +26,13 @@ from ..core.l7_storage import (
     init_db, _get_conn,
     save_doctor_profile, load_doctor_profile,
     get_pending_aliases, confirm_alias,
+    update_calibration_results,
 )
 from ..core.dialect_norm import normalize_text as _dialect_normalize
+from ..core.dialect_norm import detect_region
+from ..core import vtln, calibration_metrics
+from ..core.pronunciation_phonetic import get_reference_phonetic
+from difflib import SequenceMatcher
 from ..models.clinical_record import ClinicalRecord, RecordStatus
 from ..models.doctor_profile import DoctorProfile, VALID_SPECIALTIES, VALID_REGIONS
 
@@ -486,6 +491,48 @@ async def confirm_doctor_alias(
     }
 
 
+# ── FID-VN-015 §3.2 — Pronunciation reference (gTTS sample + f0 contour) ──────
+
+_PRONUNCIATION_AUDIO_DIR = _STATIC / "audio" / "pronunciation"
+
+
+@lru_cache(maxsize=1)
+def _load_pronunciation_cache() -> dict:
+    cache_file = _PRONUNCIATION_AUDIO_DIR / "_cache.json"
+    if not cache_file.exists():
+        return {}
+    return json.loads(cache_file.read_text(encoding="utf-8"))
+
+
+@app.get("/api/pronunciation-reference/{inn}")
+async def pronunciation_reference(inn: str):
+    """
+    FID-VN-015 §3.2 — Audio mẫu (gTTS, pre-generated bởi
+    scripts/gen_pronunciation_audio.py) + phiên âm chuẩn + f0 contour cho 1
+    INN. Nếu chưa pre-gen (cache trống) → trả phonetic_text tính trực tiếp,
+    audio_url=None, f0_contour=[].
+    """
+    cache = _load_pronunciation_cache()
+    entry = cache.get(inn)
+    if entry:
+        return {
+            "inn": inn,
+            "audio_url": f"/static/audio/pronunciation/{entry['audio_file']}",
+            "phonetic_text": entry["phonetic_text"],
+            "f0_contour": entry["f0_contour"],
+        }
+
+    from ..core.l1b_drug_correct import _load_drug_db as _get_drug_db
+    drug_db = _get_drug_db()
+    drug_entry = drug_db.get("by_inn", {}).get(inn)
+    return {
+        "inn": inn,
+        "audio_url": None,
+        "phonetic_text": get_reference_phonetic(inn, drug_entry),
+        "f0_contour": [],
+    }
+
+
 # ── DVP §2.4 — Drug Pronunciation Enrollment Wizard (FID-VN-013) ──────────────
 
 @app.get("/api/doctors/{cchn}/pronunciation-wordlist")
@@ -536,11 +583,21 @@ async def pronunciation_enroll(
         transcript_clean = transcript_raw.strip().lower()
         expected_clean = expected_inn.strip().lower()
 
+        drug_entry = drug_db.get("by_inn", {}).get(expected_inn)
+        phonetic_text = get_reference_phonetic(expected_inn, drug_entry)
+        f0_contour = vtln.extract_f0_contour(audio_arr, sr=16000)
+        match_ratio = round(
+            SequenceMatcher(None, transcript_clean, phonetic_text).ratio(), 2
+        ) if transcript_clean and phonetic_text else 0.0
+
         if not transcript_clean or transcript_clean == expected_clean:
             return {
                 "cchn": cchn,
                 "expected_inn": expected_inn,
                 "transcript": transcript_raw,
+                "phonetic_text": phonetic_text,
+                "f0_contour": f0_contour,
+                "match_ratio": match_ratio,
                 "alias_needed": False,
                 "message": "Phát âm khớp với tên chuẩn — không cần học thêm.",
             }
@@ -549,6 +606,9 @@ async def pronunciation_enroll(
             "cchn": cchn,
             "expected_inn": expected_inn,
             "transcript": transcript_raw,
+            "phonetic_text": phonetic_text,
+            "f0_contour": f0_contour,
+            "match_ratio": match_ratio,
             "alias_needed": True,
             "alias_text": transcript_clean,
             "message": (
@@ -588,6 +648,115 @@ async def pronunciation_confirm(
         "inn": inn,
         "message": f'Trợ lý đã học: "{alias_text}" → {inn}',
     }
+
+
+# ── FID-VN-014 — Voice Calibration Lab (3-Part Standardized Test) ────────
+
+@app.get("/api/calibration/passage-text")
+async def calibration_passage_text():
+    """Đoạn văn chuẩn (~90 từ) cho Phần 2 — Standardized Reading Passage Test."""
+    return {"passage": calibration_metrics.READING_PASSAGE_VI}
+
+
+@app.post("/api/doctors/{cchn}/calibration/region")
+async def calibration_region(cchn: str, audio: UploadFile = File(...)):
+    """
+    Phần 1 — Region Detection Test: BS đọc 1 câu mẫu ngắn (~10-15s) →
+    detect_region(transcript) → lưu doctor_profiles.region.
+    """
+    profile = load_doctor_profile(cchn)
+    if not profile:
+        raise HTTPException(404, f"Doctor {cchn} chưa đăng ký DVP")
+
+    suffix = Path(audio.filename or "audio.wav").suffix or ".wav"
+    tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
+    try:
+        content = await audio.read()
+        tmp.write(content)
+        tmp.close()
+
+        audio_arr, wav_path = l0_normalize.normalize(tmp.name)
+
+        from ..core.l1b_drug_correct import _load_drug_db as _get_drug_db
+        drug_db = _get_drug_db()
+        transcript = l1a_asr.transcribe(
+            audio_arr, drug_db=drug_db, specialty=profile.primary_specialty
+        )
+
+        region = detect_region(transcript) if transcript.strip() else profile.region
+        update_calibration_results(cchn, region=region)
+
+        return {
+            "cchn": cchn,
+            "transcript": transcript,
+            "region": region,
+        }
+    finally:
+        l0_normalize.purge_audio(tmp.name)
+        if 'wav_path' in locals():
+            l0_normalize.purge_audio(wav_path)
+
+
+@app.post("/api/doctors/{cchn}/calibration/passage")
+async def calibration_passage(cchn: str, audio: UploadFile = File(...)):
+    """
+    Phần 2 — Standardized Reading Passage Test: BS đọc đoạn văn chuẩn
+    (~80-120 từ) → tính speaking_rate_class, pause_style, vtln_warp_factor
+    (đo nhưng KHÔNG áp dụng — gate AC-013) → lưu doctor_profiles.
+    """
+    profile = load_doctor_profile(cchn)
+    if not profile:
+        raise HTTPException(404, f"Doctor {cchn} chưa đăng ký DVP")
+
+    suffix = Path(audio.filename or "audio.wav").suffix or ".wav"
+    tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
+    try:
+        content = await audio.read()
+        tmp.write(content)
+        tmp.close()
+
+        audio_arr, wav_path = l0_normalize.normalize(tmp.name)
+
+        from ..core.l1b_drug_correct import _load_drug_db as _get_drug_db
+        drug_db = _get_drug_db()
+        transcript = l1a_asr.transcribe(
+            audio_arr, drug_db=drug_db, specialty=profile.primary_specialty
+        )
+
+        sr = 16000
+        duration_sec = len(audio_arr) / sr if audio_arr is not None else 0.0
+        word_count = len(transcript.split())
+
+        speaking_rate_class = calibration_metrics.classify_speaking_rate(word_count, duration_sec)
+        pauses = calibration_metrics.detect_pauses_from_audio(audio_arr, sr=sr)
+        pause_style = calibration_metrics.classify_pause_style(pauses)
+        vtln_warp_factor = vtln.estimate_warp_factor(audio_arr, sr=sr)
+        jitter_pct, shimmer_pct = calibration_metrics.compute_jitter_shimmer(audio_arr, sr=sr)
+
+        update_calibration_results(
+            cchn,
+            speaking_rate_class=speaking_rate_class,
+            pause_style=pause_style,
+            vtln_warp_factor=vtln_warp_factor,
+            jitter_pct=jitter_pct,
+            shimmer_pct=shimmer_pct,
+        )
+
+        return {
+            "cchn": cchn,
+            "transcript": transcript,
+            "duration_sec": round(duration_sec, 2),
+            "speaking_rate_class": speaking_rate_class,
+            "pause_style": pause_style,
+            "pause_count": len(pauses),
+            "vtln_warp_factor": round(vtln_warp_factor, 3),
+            "jitter_pct": jitter_pct,
+            "shimmer_pct": shimmer_pct,
+        }
+    finally:
+        l0_normalize.purge_audio(tmp.name)
+        if 'wav_path' in locals():
+            l0_normalize.purge_audio(wav_path)
 
 
 # ── UI-SUGGEST-001: Drug candidates, Terms, Dialect check ─────────────────

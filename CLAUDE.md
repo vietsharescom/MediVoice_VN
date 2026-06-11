@@ -34,14 +34,16 @@
 
 **Trigger:** `bắt đầu` · `start` · `begin` · `mở phiên` · hoặc tin nhắn đầu tiên bất kỳ
 
-**Làm 5 việc SONG SONG:**
+**Làm 4 việc SONG SONG:**
 ```
 A. Read docs/records/BACKLOG.md              → Next task từ IMMEDIATE
 B. Read docs/records/LAST_SESSION.md        → context phiên trước
 C. Read docs/records/PENDING_REQUESTS.md   → requests chưa xử lý
 D. Run: pytest tests/ -q                    → N tests PASS
-E. Run: python scripts/iso_audit.py         → ISO health + pending alerts
 ```
+
+> `scripts/iso_audit.py` KHÔNG chạy mỗi phiên (tốn thời gian) — chỉ chạy lúc đóng phiên
+> (BƯỚC 6 — `--increment-session`) hoặc khi Andy yêu cầu kiểm tra ISO health trực tiếp.
 
 **Nếu phiên có thiết kế / viết FID / implement module mới — đọc thêm:**
 ```
@@ -50,17 +52,10 @@ E. Read docs/records/DESIGN_REPORT_v1.1_20260606.md
    → nguồn chi tiết nhất cho product/UX/flow decisions
 ```
 
-**Khi iso_audit.py báo 🔴 ISSUE:**
-```
-→ Flag ngay trong báo cáo đầu phiên trước khi làm bất cứ điều gì
-→ Hỏi Andy: xử lý issue ngay hay tiếp tục task khác trước?
-→ KHÔNG bỏ qua ISO issue mà không thông báo
-```
-
 **5 TẦNG MEMORY — Claude đọc theo từng loại task:**
 ```
 TẦNG 1 (MỌI PHIÊN — bắt buộc):
-  CLAUDE.md + BACKLOG.md + LAST_SESSION.md + iso_audit.py output
+  CLAUDE.md + BACKLOG.md + LAST_SESSION.md + PENDING_REQUESTS.md
   Ước tính: ~600 lines, ~30-45 giây đọc, ~32K tokens
   → Context window: ~16% — KHÔNG ảnh hưởng đáng kể
 
@@ -266,7 +261,7 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 > `docs/archive/` — files cũ/done, không đọc trong workflow thường ngày.
 > `DESIGN_REPORT` — đọc theo section khi cần, không cần đọc toàn bộ mỗi phiên.
-> `scripts/iso_audit.py` — chạy mỗi phiên (Step D), output: ✅/⚠️/🔴.
+> `scripts/iso_audit.py` — chạy lúc đóng phiên (BƯỚC 6), output: ✅/⚠️/🔴.
 > Naming convention đầy đủ (task IDs, progress IDs, folder structure): `docs/dev/NAMING_CONVENTION.md`
 
 ---
@@ -275,12 +270,12 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.11.5 |
-| Status | **FID-VN-013 v2 IMPLEMENTED ✅** — Voice Calibration UX (waveform/mic-level/quality/region badge/tooltip) + Drug Pronunciation Wizard + VTLN research module, 852 tests |
-| Tests | **852/852 PASS** · bandit 0 HIGH/0 MEDIUM (new code) · conftest.py SKIP_QWEN |
-| Pending | **PA-015** (Andy test FID-VN-013 UI trên trình duyệt thật) · **CT-019** (🔴 A2 VAD-chunk regression) · CT-016/CT-017/CT-014/CT-035/CT-036/CT-037 ⏳ · VIETMED-FIX-001 |
-| Next task | **TRAIN-001** (PhoWhisper fine-tune, ưu tiên cao nhất per CT-028) → PA-015 UI test song song · CT-019 debug A2-VAD nếu có audio |
-| Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.1) · FID: `fids/FID-VN-010.md`, `fids/FID-VN-012.md`, `fids/FID-VN-013.md` |
+| Version | v0.11.6 |
+| Status | **FID-VN-015 IMPLEMENTED ✅** — Pronunciation Recognition Lab (Part 3 redesign: nghe mẫu + pitch contour canvas + match badge) + jitter/shimmer (Pham 2003 §2.4) + cơ sở khoa học mở rộng vùng miền/thanh điệu, 887 tests |
+| Tests | **887/887 PASS** · bandit 0 HIGH/0 MEDIUM (new code) · conftest.py SKIP_QWEN |
+| Pending | **PA-015/PA-017** (Andy test FID-VN-013/014/015 UI trên trình duyệt thật, gTTS chưa cài nên audio mẫu fallback) · **CT-019** (🔴 A2 VAD-chunk regression) · CT-016/CT-017/CT-014/CT-035/CT-036/CT-037 ⏳ · VIETMED-FIX-001 |
+| Next task | **TRAIN-001** (PhoWhisper fine-tune, ưu tiên cao nhất per CT-028) → PA-015/PA-017 UI test song song · CT-019 debug A2-VAD nếu có audio |
+| Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.1) · FID: `fids/FID-VN-010.md`, `fids/FID-VN-012.md`, `fids/FID-VN-013.md`, `fids/FID-VN-014.md`, `fids/FID-VN-015.md` |
 
 ---
 
@@ -514,7 +509,7 @@ SAU MỖI FID IMPLEMENTATION:
   → RTM.md update → CHANGELOG entry → iso_audit.py re-run
 
 CADENCE TỐI THIỂU:
-  Mỗi phiên:   iso_audit.py + BACKLOG update
+  Mỗi phiên đóng:   iso_audit.py --increment-session + BACKLOG update
   Mỗi commit:  100% tests PASS + bandit 0 HIGH
   Mỗi tháng:   MANAGEMENT_REVIEW entry (Andy)
   Mỗi quý:     Full ISO audit (như SES-20260606)

@@ -91,7 +91,12 @@ def init_db(db_path: Path | None = None) -> None:
             english_level       TEXT DEFAULT 'Basic',
             speaking_speed      TEXT DEFAULT 'Vừa',
             created_at          TEXT NOT NULL,
-            updated_at          TEXT NOT NULL
+            updated_at          TEXT NOT NULL,
+            speaking_rate_class TEXT,
+            pause_style         TEXT,
+            vtln_warp_factor    REAL DEFAULT 1.0,
+            jitter_pct          REAL,
+            shimmer_pct         REAL
         );
 
         CREATE TABLE IF NOT EXISTS doctor_aliases (
@@ -107,6 +112,18 @@ def init_db(db_path: Path | None = None) -> None:
             UNIQUE(cchn, alias_text)
         );
     """)
+    # Migration additive — FID-VN-014: cột mới cho doctor_profiles cũ (đã tạo
+    # trước v0.11.6) không có 3 cột Voice Calibration Lab.
+    existing_cols = {row[1] for row in conn.execute("PRAGMA table_info(doctor_profiles)")}
+    for col, ddl in (
+        ("speaking_rate_class", "ALTER TABLE doctor_profiles ADD COLUMN speaking_rate_class TEXT"),
+        ("pause_style", "ALTER TABLE doctor_profiles ADD COLUMN pause_style TEXT"),
+        ("vtln_warp_factor", "ALTER TABLE doctor_profiles ADD COLUMN vtln_warp_factor REAL DEFAULT 1.0"),
+        ("jitter_pct", "ALTER TABLE doctor_profiles ADD COLUMN jitter_pct REAL"),
+        ("shimmer_pct", "ALTER TABLE doctor_profiles ADD COLUMN shimmer_pct REAL"),
+    ):
+        if col not in existing_cols:
+            conn.execute(ddl)
     conn.commit()
     conn.close()
 
@@ -198,6 +215,8 @@ def update_pdf_path(record_id: str, pdf_path: str, db_path: Path | None = None) 
 _DVP_COLS = [
     "cchn", "name", "region", "primary_specialty", "secondary_specialty",
     "english_level", "speaking_speed", "created_at", "updated_at",
+    "speaking_rate_class", "pause_style", "vtln_warp_factor",
+    "jitter_pct", "shimmer_pct",
 ]
 
 _ALIAS_COLS = [
@@ -214,13 +233,18 @@ def save_doctor_profile(profile: DoctorProfile, db_path: Path | None = None) -> 
     conn.execute(
         """INSERT OR REPLACE INTO doctor_profiles
            (cchn, name, region, primary_specialty, secondary_specialty,
-            english_level, speaking_speed, created_at, updated_at)
-           VALUES (?,?,?,?,?,?,?,?,?)""",
+            english_level, speaking_speed, created_at, updated_at,
+            speaking_rate_class, pause_style, vtln_warp_factor,
+            jitter_pct, shimmer_pct)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
         (
             profile.cchn, profile.name, profile.region,
             profile.primary_specialty, profile.secondary_specialty,
             profile.english_level, profile.speaking_speed,
             profile.created_at or now, now,
+            profile.speaking_rate_class, profile.pause_style,
+            profile.vtln_warp_factor,
+            profile.jitter_pct, profile.shimmer_pct,
         ),
     )
     conn.commit()
@@ -232,7 +256,9 @@ def load_doctor_profile(cchn: str, db_path: Path | None = None) -> DoctorProfile
     conn = _get_conn(db_path)
     row = conn.execute(
         "SELECT cchn, name, region, primary_specialty, secondary_specialty,"
-        " english_level, speaking_speed, created_at, updated_at"
+        " english_level, speaking_speed, created_at, updated_at,"
+        " speaking_rate_class, pause_style, vtln_warp_factor,"
+        " jitter_pct, shimmer_pct"
         " FROM doctor_profiles WHERE cchn=?",
         (cchn,),
     ).fetchone()
@@ -240,6 +266,41 @@ def load_doctor_profile(cchn: str, db_path: Path | None = None) -> DoctorProfile
     if not row:
         return None
     return DoctorProfile(**dict(zip(_DVP_COLS, row)))
+
+
+def update_calibration_results(
+    cchn: str,
+    region: str | None = None,
+    speaking_rate_class: str | None = None,
+    pause_style: str | None = None,
+    vtln_warp_factor: float | None = None,
+    jitter_pct: float | None = None,
+    shimmer_pct: float | None = None,
+    db_path: Path | None = None,
+) -> None:
+    """
+    Lưu kết quả Voice Calibration Lab (FID-VN-014/015) vào doctor_profiles.
+    Chỉ update các trường được truyền (None = giữ nguyên giá trị cũ, qua COALESCE).
+    """
+    conn = _get_conn(db_path)
+    conn.execute(
+        """UPDATE doctor_profiles
+           SET region              = COALESCE(?, region),
+               speaking_rate_class = COALESCE(?, speaking_rate_class),
+               pause_style         = COALESCE(?, pause_style),
+               vtln_warp_factor    = COALESCE(?, vtln_warp_factor),
+               jitter_pct          = COALESCE(?, jitter_pct),
+               shimmer_pct         = COALESCE(?, shimmer_pct),
+               updated_at          = ?
+           WHERE cchn = ?""",
+        (
+            region, speaking_rate_class, pause_style, vtln_warp_factor,
+            jitter_pct, shimmer_pct,
+            datetime.now().isoformat(), cchn,
+        ),
+    )
+    conn.commit()
+    conn.close()
 
 
 def save_alias_occurrence(

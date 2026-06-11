@@ -268,6 +268,47 @@
     display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem;
     margin: 0.5rem 1rem 0;
   }
+
+  /* ── FID-VN-014 — Voice Calibration Lab ── */
+  .lab-modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 300; padding: 0.75rem;
+  }
+  .lab-modal {
+    background: white; border-radius: 12px; padding: 1rem;
+    width: 100%; max-width: 760px; max-height: 92vh; overflow-y: auto;
+  }
+  .lab-grid {
+    display: grid; grid-template-columns: 1fr; gap: 1rem;
+  }
+  @media (min-width: 640px) {
+    .lab-grid { grid-template-columns: 220px 1fr; }
+  }
+  .lab-avatar-col { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+  #lab-avatar-canvas {
+    width: 200px; height: 200px; border-radius: 50%;
+    background: #eceff1; border: 2px solid var(--border);
+  }
+  .lab-avatar-hint { font-size: 0.72rem; color: var(--text-secondary); text-align: center; }
+  .lab-steps { display: flex; gap: 0.4rem; margin-bottom: 0.75rem; flex-wrap: wrap; }
+  .lab-step-tab {
+    flex: 1; text-align: center; padding: 0.4rem 0.3rem; border-radius: 8px;
+    font-size: 0.74rem; font-weight: 600; background: var(--bg);
+    color: var(--text-secondary); border: 1px solid var(--border);
+  }
+  .lab-step-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .lab-step-tab.done { background: #e8f5e9; color: var(--success); border-color: #a5d6a7; }
+  .lab-passage-box {
+    background: #f3f8ff; border: 1px solid #c5cae9; border-radius: 8px;
+    padding: 0.75rem; font-size: 0.88rem; line-height: 1.6; margin-bottom: 0.75rem;
+  }
+  .lab-result-card {
+    background: #e8f5e9; border-left: 3px solid var(--success);
+    border-radius: 6px; padding: 0.6rem 0.8rem; font-size: 0.82rem;
+    margin-top: 0.75rem; line-height: 1.7;
+  }
+  .lab-result-card .note { color: var(--text-secondary); font-size: 0.74rem; }
 </style>
 </head>
 <body>
@@ -299,7 +340,7 @@
     <div id="dvp-greeting" class="dvp-greeting hidden">
       <span id="dvp-greeting-text"></span>
       <span style="flex-shrink:0">
-        <button class="dvp-edit" onclick="Wizard.start()">🎓 Luyện đọc thuốc</button>
+        <button class="dvp-edit" onclick="CalibLab.open()">🔬 Lab Hiệu chỉnh Giọng nói</button>
         <button class="dvp-edit" onclick="DVP.edit()">Sửa thông tin</button>
       </span>
     </div>
@@ -511,17 +552,24 @@
   display:flex;align-items:center;justify-content:center;z-index:200;padding:1rem;
 ">
   <div style="background:white;border-radius:12px;padding:1.25rem;width:100%;max-width:420px">
-    <h3 style="font-size:1rem;margin-bottom:0.5rem">🎓 Luyện đọc thuốc</h3>
+    <h3 style="font-size:1rem;margin-bottom:0.5rem">🩺 Nhận dạng giọng nói — Tên thuốc &amp; thuật ngữ chuyên ngành</h3>
     <p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.75rem">
       Đọc to tên thuốc bên dưới — Trợ lý sẽ học cách phát âm của Bác sĩ để nhận dạng chính xác hơn.
     </p>
     <div id="wizard-progress" style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:0.5rem"></div>
     <div id="wizard-drug-name" style="font-size:1.4rem;font-weight:700;text-align:center;color:var(--primary);padding:1rem 0"></div>
+    <div style="text-align:center;margin-bottom:0.5rem">
+      <button class="btn" id="wizard-listen-btn" style="background:var(--border);color:var(--text)" onclick="Wizard.playReference()">🔊 Nghe mẫu</button>
+      <span id="wizard-phonetic" style="font-size:0.85rem;color:var(--text-secondary);margin-left:0.5rem"></span>
+    </div>
+    <canvas id="wizard-pitch-canvas" width="380" height="80" style="width:100%;max-width:380px;display:block;margin:0 auto 0.5rem;background:#f7f7f7;border-radius:6px"></canvas>
+    <audio id="wizard-ref-audio" class="hidden"></audio>
     <button class="record-btn" id="wizard-record-btn" onclick="Wizard.toggleRecord()">
       <span class="record-icon">🎤</span>
       <span id="wizard-record-label">Nhấn để đọc</span>
     </button>
     <div id="wizard-result" class="hidden" style="margin-top:0.75rem">
+      <div id="wizard-match-badge" class="hidden" style="font-size:0.85rem;font-weight:600;margin-bottom:0.4rem"></div>
       <div id="wizard-result-msg" class="transcript-box" style="margin-bottom:0.5rem"></div>
       <div class="btn-row hidden" id="wizard-confirm-row">
         <button class="btn btn-approve" onclick="Wizard.confirm(true)">✅ Đúng vậy, ghi nhớ</button>
@@ -531,6 +579,80 @@
     <div class="btn-row" style="margin-top:1rem">
       <button class="btn" id="wizard-next-btn" style="background:var(--border);color:var(--text)" onclick="Wizard.next()" disabled>Tiếp theo →</button>
       <button class="btn" style="background:var(--border);color:var(--text)" onclick="Wizard.close()">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- FID-VN-014 — Voice Calibration Lab (3-Part Standardized Test) + Avatar Mirror -->
+<div id="calib-lab-modal" class="hidden lab-modal-overlay">
+  <div class="lab-modal">
+    <h3 style="font-size:1.05rem;margin-bottom:0.25rem">🔬 Lab Hiệu chỉnh Giọng nói</h3>
+    <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:0.75rem">
+      3 bài test ngắn giúp Trợ lý AI hiểu rõ giọng nói riêng của Bác sĩ — vùng miền,
+      tốc độ/ngắt nghỉ, và cách đọc thuật ngữ thuốc. Có thể làm lại bất cứ lúc nào.
+    </p>
+
+    <div class="lab-grid">
+      <!-- Avatar Mirror — Option A (canvas/CSS local, FID-VN-014 §2.4) -->
+      <div class="lab-avatar-col">
+        <canvas id="lab-avatar-canvas" width="200" height="200"></canvas>
+        <input type="file" id="lab-avatar-file" accept="image/*" style="font-size:0.75rem;width:100%">
+        <div class="lab-avatar-hint">
+          Ảnh chỉ lưu trên máy (trình duyệt), không gửi lên server.
+        </div>
+      </div>
+
+      <!-- 3-part flow -->
+      <div class="lab-flow-col">
+        <div class="lab-steps">
+          <div class="lab-step-tab" id="lab-tab-1" onclick="CalibLab.goStep(1)">1. Vùng miền</div>
+          <div class="lab-step-tab" id="lab-tab-2" onclick="CalibLab.goStep(2)">2. Bài đọc chuẩn</div>
+          <div class="lab-step-tab" id="lab-tab-3" onclick="CalibLab.goStep(3)">3. Nhận dạng tên thuốc</div>
+        </div>
+
+        <!-- Step 1: Region detection -->
+        <div id="lab-step-1" class="lab-step">
+          <p style="font-size:0.85rem;margin-bottom:0.5rem">
+            Đọc to câu sau (giọng tự nhiên của Bác sĩ):
+          </p>
+          <div class="lab-passage-box" id="lab-region-sentence">
+            "Bác sĩ ơi, mô răng rứa mà bệnh nhân ni đau hoài rứa hè?"
+          </div>
+          <button class="record-btn" id="lab-region-record-btn" onclick="CalibLab.toggleRecord(1)">
+            <span class="record-icon">🎤</span>
+            <span id="lab-region-record-label">Nhấn để đọc</span>
+          </button>
+          <div id="lab-region-result" class="lab-result-card hidden"></div>
+        </div>
+
+        <!-- Step 2: Standardized reading passage -->
+        <div id="lab-step-2" class="lab-step hidden">
+          <p style="font-size:0.85rem;margin-bottom:0.5rem">
+            Đọc to đoạn văn sau với tốc độ tự nhiên (~30-45 giây):
+          </p>
+          <div class="lab-passage-box" id="lab-passage-text">Đang tải đoạn văn…</div>
+          <button class="record-btn" id="lab-passage-record-btn" onclick="CalibLab.toggleRecord(2)">
+            <span class="record-icon">🎤</span>
+            <span id="lab-passage-record-label">Nhấn để đọc</span>
+          </button>
+          <div id="lab-passage-result" class="lab-result-card hidden"></div>
+        </div>
+
+        <!-- Step 3: Drug pronunciation wizard (reuse FID-VN-013 §2.4) -->
+        <div id="lab-step-3" class="lab-step hidden">
+          <p style="font-size:0.85rem;margin-bottom:0.75rem">
+            Đọc tên các thuốc thường dùng theo chuyên khoa — Trợ lý sẽ học cách
+            phát âm riêng của Bác sĩ.
+          </p>
+          <button class="btn btn-approve" onclick="CalibLab.startDrugWizard()">
+            🩺 Bắt đầu nhận dạng giọng nói — tên thuốc &amp; thuật ngữ
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row" style="margin-top:1rem">
+      <button class="btn" style="background:var(--border);color:var(--text)" onclick="CalibLab.close()">Đóng</button>
     </div>
   </div>
 </div>
@@ -1131,6 +1253,8 @@ const Wizard = {
   audioChunks: [],
   isRecording: false,
   lastResult: null,
+  referenceContour: [],
+  referenceAudioUrl: null,
 
   async start() {
     const cchn = document.getElementById('doctor-cchn').value.trim();
@@ -1141,7 +1265,7 @@ const Wizard = {
       if (!resp.ok) throw new Error((await resp.json()).detail || 'Lỗi tải danh sách thuốc');
       const data = await resp.json();
       this.drugs = data.drugs || [];
-      if (this.drugs.length === 0) { showToast('Không có thuốc để luyện đọc'); return; }
+      if (this.drugs.length === 0) { showToast('Không có thuốc để nhận dạng giọng nói'); return; }
       this.idx = 0;
       document.getElementById('wizard-modal').classList.remove('hidden');
       this._renderDrug();
@@ -1156,11 +1280,72 @@ const Wizard = {
     document.getElementById('wizard-drug-name').textContent = this.drugs[this.idx];
     document.getElementById('wizard-result').classList.add('hidden');
     document.getElementById('wizard-confirm-row').classList.add('hidden');
+    document.getElementById('wizard-match-badge').classList.add('hidden');
     document.getElementById('wizard-next-btn').disabled = true;
+    document.getElementById('wizard-phonetic').textContent = '';
     const btn = document.getElementById('wizard-record-btn');
     btn.classList.remove('processing', 'recording');
     document.getElementById('wizard-record-label').textContent = 'Nhấn để đọc';
     this.lastResult = null;
+    this.referenceContour = [];
+    this.referenceAudioUrl = null;
+    this._clearCanvas();
+    this._loadReference(this.drugs[this.idx]);
+  },
+
+  async _loadReference(inn) {
+    try {
+      const resp = await fetch(`/api/pronunciation-reference/${encodeURIComponent(inn)}`);
+      if (!resp.ok) return;
+      const data = await resp.json();
+      this.referenceContour = data.f0_contour || [];
+      this.referenceAudioUrl = data.audio_url;
+      document.getElementById('wizard-phonetic').textContent =
+        data.phonetic_text ? `(${data.phonetic_text})` : '';
+      if (this.referenceContour.length) {
+        this._drawContour(this.referenceContour, '#4a90d9', true);
+      }
+    } catch (e) {
+      // Tính năng tham khảo — không chặn luồng wizard nếu lỗi
+    }
+  },
+
+  playReference() {
+    if (this.referenceAudioUrl) {
+      const audio = document.getElementById('wizard-ref-audio');
+      audio.src = this.referenceAudioUrl;
+      audio.play();
+    } else {
+      const phonetic = document.getElementById('wizard-phonetic').textContent;
+      showToast('Chưa có audio mẫu — phiên âm tham khảo: ' + (phonetic || '(không có)'));
+    }
+  },
+
+  _clearCanvas() {
+    const canvas = document.getElementById('wizard-pitch-canvas');
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+  },
+
+  _drawContour(contour, color, clear) {
+    const canvas = document.getElementById('wizard-pitch-canvas');
+    const ctx = canvas.getContext('2d');
+    if (clear) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (!contour || contour.length < 2) return;
+    const valid = contour.filter(v => v > 0);
+    if (valid.length === 0) return;
+    const min = Math.min(...valid);
+    const max = Math.max(...valid);
+    const range = (max - min) || 1;
+    const w = canvas.width, h = canvas.height, pad = 6;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    contour.forEach((v, i) => {
+      const x = (i / (contour.length - 1)) * w;
+      const y = v > 0 ? h - pad - ((v - min) / range) * (h - 2 * pad) : h / 2;
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
   },
 
   async toggleRecord() {
@@ -1230,6 +1415,25 @@ const Wizard = {
     resultBox.classList.remove('hidden');
     confirmRow.classList.toggle('hidden', !data.alias_needed);
     document.getElementById('wizard-next-btn').disabled = false;
+
+    if (data.f0_contour && data.f0_contour.length) {
+      this._drawContour(this.referenceContour, '#4a90d9', true);
+      this._drawContour(data.f0_contour, '#43a047', false);
+    }
+
+    const badge = document.getElementById('wizard-match-badge');
+    if (typeof data.match_ratio === 'number' && data.match_ratio > 0) {
+      badge.classList.remove('hidden');
+      if (data.match_ratio >= 0.8) {
+        badge.textContent = `✅ Khớp tốt (${Math.round(data.match_ratio * 100)}%)`;
+        badge.style.color = '#2e7d32';
+      } else {
+        badge.textContent = `⚠️ Tạm chấp nhận — có thể đọc lại để cải thiện (${Math.round(data.match_ratio * 100)}%)`;
+        badge.style.color = '#e65100';
+      }
+    } else {
+      badge.classList.add('hidden');
+    }
   },
 
   async confirm(yes) {
@@ -1253,7 +1457,7 @@ const Wizard = {
       this.idx++;
       this._renderDrug();
     } else {
-      showToast('Đã hoàn thành luyện đọc!');
+      showToast('Đã hoàn thành nhận dạng giọng nói!');
       this.close();
     }
   },
@@ -1261,6 +1465,240 @@ const Wizard = {
   close() {
     if (this.isRecording) this._stopRecording();
     document.getElementById('wizard-modal').classList.add('hidden');
+  },
+};
+
+// FID-VN-014 — Voice Calibration Lab (3-Part Standardized Test) + Avatar Mirror
+const CalibLab = {
+  cchn: null,
+  step: 1,
+  mediaRecorder: null,
+  audioChunks: [],
+  isRecording: false,
+  passageLoaded: false,
+  avatarImg: null,
+  vizAudioCtx: null,
+  vizAnalyser: null,
+  vizRafId: null,
+
+  async open() {
+    const cchn = document.getElementById('doctor-cchn').value.trim();
+    if (!cchn) { showToast('Vui lòng nhập Mã CCHN Bác sĩ trước'); return; }
+    this.cchn = cchn;
+    document.getElementById('calib-lab-modal').classList.remove('hidden');
+    this._loadAvatar();
+    if (!this.passageLoaded) await this._loadPassage();
+    this.goStep(1);
+  },
+
+  close() {
+    if (this.isRecording) this._stopRecording();
+    document.getElementById('calib-lab-modal').classList.add('hidden');
+  },
+
+  goStep(n) {
+    this.step = n;
+    for (let i = 1; i <= 3; i++) {
+      document.getElementById(`lab-step-${i}`).classList.toggle('hidden', i !== n);
+      document.getElementById(`lab-tab-${i}`).classList.toggle('active', i === n);
+    }
+  },
+
+  _markDone(n) {
+    document.getElementById(`lab-tab-${n}`).classList.add('done');
+    document.getElementById(`lab-tab-${n}`).classList.remove('active');
+  },
+
+  async _loadPassage() {
+    try {
+      const resp = await fetch('/api/calibration/passage-text');
+      const data = await resp.json();
+      document.getElementById('lab-passage-text').textContent = data.passage;
+      this.passageLoaded = true;
+    } catch (e) {
+      document.getElementById('lab-passage-text').textContent =
+        '(Không tải được đoạn văn — kiểm tra kết nối)';
+    }
+  },
+
+  // ── Avatar Mirror — Option A: canvas/CSS local, ảnh + miệng (ellipse) co giãn theo RMS ──
+  _avatarKey() { return `mv_avatar_${this.cchn}`; },
+
+  _loadAvatar() {
+    const fileInput = document.getElementById('lab-avatar-file');
+    fileInput.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        localStorage.setItem(this._avatarKey(), ev.target.result);
+        this._setAvatarImage(ev.target.result);
+      };
+      reader.readAsDataURL(file);
+    };
+
+    const saved = localStorage.getItem(this._avatarKey());
+    if (saved) {
+      this._setAvatarImage(saved);
+    } else {
+      this._drawAvatar(0);
+    }
+  },
+
+  _setAvatarImage(dataUrl) {
+    const img = new Image();
+    img.onload = () => { this.avatarImg = img; this._drawAvatar(0); };
+    img.src = dataUrl;
+  },
+
+  _drawAvatar(mouthOpen) {
+    const canvas = document.getElementById('lab-avatar-canvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    if (this.avatarImg) {
+      ctx.drawImage(this.avatarImg, 0, 0, w, h);
+    } else {
+      ctx.fillStyle = '#cfd8dc';
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = '#90a4ae';
+      ctx.font = '0.8rem sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Tải ảnh chân dung', w / 2, h / 2);
+    }
+
+    // Mouth overlay — vị trí cố định (50% width, 70% height), co giãn theo RMS
+    const mx = w * 0.5, my = h * 0.7;
+    const mw = w * 0.18;
+    const mh = Math.max(2, mouthOpen * h * 0.16);
+    ctx.fillStyle = 'rgba(120,40,40,0.65)';
+    ctx.beginPath();
+    ctx.ellipse(mx, my, mw, mh, 0, 0, Math.PI * 2);
+    ctx.fill();
+  },
+
+  _startMouthViz(stream) {
+    if (typeof (window.AudioContext || window.webkitAudioContext) === 'undefined') return;
+    this.vizAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const source = this.vizAudioCtx.createMediaStreamSource(stream);
+    this.vizAnalyser = this.vizAudioCtx.createAnalyser();
+    this.vizAnalyser.fftSize = 1024;
+    source.connect(this.vizAnalyser);
+    this._drawMouthFrame();
+  },
+
+  _drawMouthFrame() {
+    if (!this.vizAnalyser) return;
+    const data = new Float32Array(this.vizAnalyser.fftSize);
+    this.vizAnalyser.getFloatTimeDomainData(data);
+    const rms = window.AudioQuality ? AudioQuality.computeRMS(data) : 0;
+    this._drawAvatar(Math.min(1, rms * 6));
+    this.vizRafId = requestAnimationFrame(() => this._drawMouthFrame());
+  },
+
+  _stopMouthViz() {
+    if (this.vizRafId) cancelAnimationFrame(this.vizRafId);
+    this.vizRafId = null;
+    if (this.vizAudioCtx) { this.vizAudioCtx.close(); this.vizAudioCtx = null; }
+    this.vizAnalyser = null;
+    this._drawAvatar(0);
+  },
+
+  // ── Recording — dùng chung cho step 1 (region) và step 2 (passage) ──
+  async toggleRecord(step) {
+    if (this.isRecording) {
+      this._stopRecording();
+    } else {
+      await this._startRecording(step);
+    }
+  },
+
+  async _startRecording(step) {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      this.audioChunks = [];
+      this.mediaRecorder.ondataavailable = e => this.audioChunks.push(e.data);
+      this.mediaRecorder.onstop = () => this._processRecording(step);
+      this.mediaRecorder.start(100);
+      this._startMouthViz(stream);
+      this.isRecording = true;
+
+      const btn = document.getElementById(`lab-${step === 1 ? 'region' : 'passage'}-record-btn`);
+      const label = document.getElementById(`lab-${step === 1 ? 'region' : 'passage'}-record-label`);
+      btn.classList.add('recording');
+      label.textContent = 'Đang ghi... (nhấn để dừng)';
+    } catch (e) {
+      showToast('Không thể truy cập microphone: ' + e.message);
+    }
+  },
+
+  _stopRecording() {
+    if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+      this.mediaRecorder.stop();
+      this.mediaRecorder.stream.getTracks().forEach(t => t.stop());
+    }
+    this.isRecording = false;
+    this._stopMouthViz();
+  },
+
+  async _processRecording(step) {
+    const idPrefix = step === 1 ? 'region' : 'passage';
+    const btn = document.getElementById(`lab-${idPrefix}-record-btn`);
+    const label = document.getElementById(`lab-${idPrefix}-record-label`);
+    btn.classList.remove('recording');
+    btn.classList.add('processing');
+    label.textContent = 'Đang xử lý...';
+
+    const blob = new Blob(this.audioChunks, { type: 'audio/webm' });
+    const form = new FormData();
+    form.append('audio', blob, 'recording.webm');
+
+    const endpoint = step === 1
+      ? `/api/doctors/${encodeURIComponent(this.cchn)}/calibration/region`
+      : `/api/doctors/${encodeURIComponent(this.cchn)}/calibration/passage`;
+
+    try {
+      const resp = await fetch(endpoint, { method: 'POST', body: form });
+      if (!resp.ok) throw new Error((await resp.json()).detail || 'Lỗi xử lý');
+      const data = await resp.json();
+      if (step === 1) this._showRegionResult(data); else this._showPassageResult(data);
+      this._markDone(step);
+    } catch (e) {
+      showToast('Lỗi: ' + e.message);
+    } finally {
+      btn.classList.remove('processing');
+      label.textContent = 'Đọc lại';
+    }
+  },
+
+  _showRegionResult(data) {
+    const box = document.getElementById('lab-region-result');
+    box.classList.remove('hidden');
+    const regionLabel = DVP_REGIONS[data.region] || data.region;
+    box.innerHTML =
+      `Phát hiện giọng: <b>${regionLabel}</b> — Trợ lý sẽ áp dụng từ điển phương ngữ ` +
+      `tương ứng để chuẩn hoá thuật ngữ khi nghe Bác sĩ đọc.<br>` +
+      `<span class="note">Đã lưu vào hồ sơ giọng nói.</span>`;
+  },
+
+  _showPassageResult(data) {
+    const box = document.getElementById('lab-passage-result');
+    box.classList.remove('hidden');
+    box.innerHTML =
+      `Tốc độ nói: <b>${data.speaking_rate_class}</b> | ` +
+      `Ngắt nghỉ: <b>${data.pause_count}</b> lần (${data.pause_style}) | ` +
+      `Tần số giọng: warp=${data.vtln_warp_factor} ` +
+      `<span class="note">(chưa áp dụng — đang nghiên cứu)</span><br>` +
+      `Jitter: <b>${data.jitter_pct}%</b> | Shimmer: <b>${data.shimmer_pct}%</b> ` +
+      `<span class="note">(đặc trưng thanh điệu — tham khảo, theo Pham 2003)</span><br>` +
+      `<span class="note">Đã lưu vào hồ sơ giọng nói.</span>`;
+  },
+
+  startDrugWizard() {
+    this.close();
+    Wizard.start();
   },
 };
 

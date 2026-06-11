@@ -302,6 +302,21 @@ v2 xác nhận lại):
 > muốn đầu tư personalization theo từng BS (Option B) hay giữ triết lý universal
 > model?"
 
+**Addendum (2026-06-11) — kỹ thuật bổ sung cho Option B nếu mở lại:**
+> Andy paste 1 phân tích kỹ thuật (nguồn AI khác) về voice calibration. Hầu hết đã
+> cover (VTLN §2.5, pause/speed visualization §2.1). Phần MỚI, thuộc Option B, ghi
+> chú lại để dùng khi gating conditions đạt:
+> - **Speaker embedding (i-vector/x-vector)**: trích vector đại diện giọng BS (pitch,
+>   timbre, accent) từ vài câu mẫu — dùng làm "context" cho model thay vì chỉ 1 scalar
+>   warp factor. Cần đánh giá lại biometric classification (NĐ13/2023 + Luật
+>   91/2025/QH15) — rủi ro CAO hơn VTLN scalar.
+> - **Jitter/shimmer + time-smoothing**: đo độ ổn định pitch (giọng hay "lắp") →
+>   feature smoothing/CMVN trước ASR.
+> - **Decode-time adapt** (beam width, LM weight theo profile BS): khó áp dụng với
+>   PhoWhisper qua `transformers` (không expose dễ) — cần research riêng nếu theo
+>   hướng này.
+> Không hành động gì bây giờ — chỉ là tài liệu tham khảo khi viết FID Option B.
+
 ---
 
 ## 7. DECISION NEEDED — Andy approve

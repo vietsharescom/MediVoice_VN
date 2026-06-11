@@ -1,6 +1,20 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.6] — 2026-06-11 — FID-VN-015: Pronunciation Recognition Lab (Part 3 redesign) + jitter/shimmer
+
+### FID-VN-015 implementation [SES-20260611, FID-VN-015]
+- feat(research): §2.1-2.7 — mở rộng cơ sở khoa học cho Voice Calibration Lab Part 1/2/3 (phương ngữ VN, kỹ thuật nhận dạng vùng miền, phonation type theo Pham 2003 — breathiness/creakiness > pitch-only cho thanh điệu, CAPT techniques, TTS reference survey, Phase 1 research bibliography — chưa verify)
+- feat(audio): `src/core/vtln.py` — `extract_f0_contour()` (librosa.pyin, time-normalized n_points, dùng cho pitch contour UI)
+- feat(audio): `src/core/calibration_metrics.py` — `compute_jitter_shimmer()` (jitter/shimmer % — proxy creakiness/breathiness, hiển thị tham khảo Lab step 2, KHÔNG auto-adapt ASR)
+- feat(core): `src/core/pronunciation_phonetic.py` — heuristic VN transliteration cho tên thuốc (`transliterate_to_vn_phonetic`, `get_reference_phonetic`, ưu tiên brand variant đã có trong drug_db)
+- feat(scripts): `scripts/gen_pronunciation_audio.py` — pre-gen audio mẫu gTTS + f0 contour cache (`_cache.json`), chạy offline 1 lần (gTTS chưa cài — endpoint fallback nếu chưa chạy)
+- feat(api): `GET /api/pronunciation-reference/{inn}` — audio mẫu + phiên âm chuẩn + f0 contour; `pronunciation-enroll` mở rộng trả `phonetic_text`/`f0_contour`/`match_ratio` (Levenshtein, ngưỡng 0.8); `calibration/passage` mở rộng trả + lưu `jitter_pct`/`shimmer_pct`
+- feat(db): `doctor_profiles` — 2 cột mới `jitter_pct`, `shimmer_pct` (additive migration)
+- feat(ui): Wizard modal (Pronunciation Recognition Lab) — nút "🔊 Nghe mẫu", canvas pitch contour (tham chiếu vs BS), match badge (✅ khớp tốt / ⚠️ tạm chấp nhận); Lab step 2 hiển thị jitter/shimmer
+- tests: `tests/unit/test_vtln.py` (+3), `tests/unit/test_calibration_lab.py` (+5), `tests/unit/test_pronunciation_phonetic.py` (mới, 6), `tests/unit/test_dvp_wizard.py` (+3) — 887/887 PASS, bandit 0 HIGH/0 new MEDIUM
+- docs: `fids/FID-VN-015.md` IMPLEMENTED ✅ (approved "đồng ý" 2026-06-11)
+
 ## [v0.11.5] — 2026-06-10 — FID-VN-013 v2: Voice Calibration UX + Drug Pronunciation Wizard + VTLN research
 
 ### FID-VN-013 v2 implementation [SES-20260610, FID-VN-013]

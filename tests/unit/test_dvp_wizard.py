@@ -158,6 +158,59 @@ def test_ac012_purge_audio_called_after_enroll(sample_profile):
     assert mock_purge.call_count >= 2
 
 
+# ── FID-VN-015 §3.2 — pronunciation-enroll extended fields ──────────────────
+
+def test_enroll_response_includes_phonetic_f0_contour_and_match_ratio(sample_profile):
+    """pronunciation-enroll trả thêm phonetic_text, f0_contour, match_ratio."""
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    with patch("src.api.main.load_doctor_profile", return_value=sample_profile):
+        with patch("src.core.l1a_asr.transcribe", return_value="Metformin"):
+            client = TestClient(app)
+            r = client.post(
+                f"/api/doctors/{sample_profile.cchn}/pronunciation-enroll",
+                files={"audio": ("t.wav", _wav_bytes(), "audio/wav")},
+                data={"expected_inn": "Metformin"},
+            )
+
+    assert r.status_code == 200
+    data = r.json()
+    assert "phonetic_text" in data and data["phonetic_text"]
+    assert "f0_contour" in data and isinstance(data["f0_contour"], list)
+    assert "match_ratio" in data and isinstance(data["match_ratio"], (int, float))
+
+
+# ── FID-VN-015 §3.2 — GET /api/pronunciation-reference/{inn} ────────────────
+
+def test_pronunciation_reference_fallback_when_no_cache():
+    """Chưa pre-gen audio mẫu -> audio_url=None, phonetic_text tính trực tiếp."""
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    client = TestClient(app)
+    r = client.get("/api/pronunciation-reference/Paracetamol")
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["inn"] == "Paracetamol"
+    assert data["audio_url"] is None
+    assert data["phonetic_text"]
+    assert data["f0_contour"] == []
+
+
+def test_pronunciation_reference_unknown_drug_still_returns_phonetic():
+    from fastapi.testclient import TestClient
+    from src.api.main import app
+
+    client = TestClient(app)
+    r = client.get("/api/pronunciation-reference/Ibuprofen")
+
+    assert r.status_code == 200
+    data = r.json()
+    assert data["phonetic_text"]
+
+
 # ── AC-011: pronunciation-confirm immediate confirmed_by_bs=1 ──────────────
 
 def test_ac011_confirm_yes_inserts_active_alias(tmp_db, sample_profile):
