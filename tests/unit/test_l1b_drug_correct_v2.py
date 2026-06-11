@@ -73,6 +73,13 @@ class TestLayer1Exact:
         txt, matches = correct_drug_names_v2("a moc xi lin 500mg")
         assert any(m.inn == "Amoxicillin" for m in matches)
 
+    def test_phonetic_amot_xi_lin_variant(self):
+        # Andy pilot test 2026-06-11 (TMH clip): "kê thuốc là a mốt xi lin năm
+        # trăm miligam" — biến thể "mốt" (không có trong phonetic_variants gốc)
+        # bị bỏ sót khỏi đơn thuốc
+        txt, matches = correct_drug_names_v2("a mốt xi lin năm trăm miligam")
+        assert any(m.inn == "Amoxicillin" and m.match_layer == 1 for m in matches)
+
     def test_paracetamol_pha_ra_citamon(self):
         # CT-034: ASR garble "Paracetamol" -> "pha ra citamon" (Clip 1-3 test)
         txt, matches = correct_drug_names_v2("uống pha ra citamon 500mg ba lần mỗi ngày")

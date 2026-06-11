@@ -141,7 +141,7 @@ _PRESCRIPTION_KW = (
 )
 _RE_CHAN_DOAN = re.compile(
     r"(?:chẩn\s*đoán|diagnos\w*)[:\s]+"
-    r"(?:theo\s*(?:dõi|thì)\s+)?"                       # "theo dõi"/"theo thì" (PhoWhisper) filler — skip
+    r"(?:(?:theo\s*(?:dõi|thì)|thì)\s+)?"               # "theo dõi"/"theo thì"/bare "thì" (PhoWhisper) filler — skip
     r"([^.,;!?\n]+?(?:\s+[A-Z]\d+(?:\.\d+)?)?)"        # VN diagnosis + optional ICD code
     # Two lookahead alternatives:
     #  A) inline keyword (no sentence break): "viêm họng cấp điều trị"

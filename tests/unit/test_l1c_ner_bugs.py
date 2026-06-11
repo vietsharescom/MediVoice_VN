@@ -85,6 +85,17 @@ class TestChanDoanBoundary:
         ent = extract_entities(t)
         assert ent.chan_doan == "viêm phẩm cấp"
 
+    def test_chan_doan_bare_thi_filler(self):
+        # Andy pilot test 2026-06-11 (TMH clip): "chẩn đoán thì viêm tai giữa cấp
+        # kê thuốc là a mốt xi lin..." — bare "thì" (không có "theo") trước chẩn
+        # đoán bị giữ lại làm "thì viêm tai giữa cấp" thay vì "viêm tai giữa cấp"
+        t = (
+            "chẩn đoán thì viêm tai giữa cấp kê thuốc là amoxicillin năm trăm "
+            "miligam uống ba lần mỗi ngày"
+        )
+        ent = extract_entities(t)
+        assert ent.chan_doan == "viêm tai giữa cấp"
+
 
 # ── Bug #2: temperature decimal dropped when "phẩy" missing ──────────────────
 # PhoWhisper often drops "phẩy" → "ba mươi bảy tám" → should be 37.8, not 37.0

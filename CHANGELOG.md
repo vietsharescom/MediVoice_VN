@@ -1,6 +1,21 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.12] — 2026-06-11 — Fix nhanh từ pilot test thật (TMH clip)
+
+### NER + drug correction fixes (Andy pilot test feedback CT-047)
+- fix(core): `src/core/l1c_ner.py` — `_RE_CHAN_DOAN` thêm filler bare "thì"
+  (vd "chẩn đoán thì viêm tai giữa cấp" → chẩn đoán đúng "viêm tai giữa cấp",
+  trước đó giữ luôn "thì" thừa)
+- fix(data): `data/reference/drug_db_v200.json` — thêm brand variant "a mốt
+  xi lin" cho Amoxicillin (ASR pilot transcribe biến thể này, trước đó bị bỏ
+  sót khỏi đơn thuốc)
+- 2 tests mới: `test_chan_doan_bare_thi_filler`, `test_phonetic_amot_xi_lin_variant`
+  → 935/935 PASS
+- 3 vấn đề còn lại (lý do khám trống do ASR bỏ "tuổi", tên BN không tự điền,
+  gợi ý thuốc RAG sai) ghi chi tiết trong `docs/records/BACKLOG.md` CT-047 +
+  `docs/records/PENDING_REQUESTS.md` PA-023, chờ Andy quyết ưu tiên
+
 ## [v0.11.11] — 2026-06-11 — Pre-gen audio mẫu phát âm (gTTS) + ưu tiên phonetic_variants.north
 
 ### Pronunciation library + heuristic fix (Andy feedback)
