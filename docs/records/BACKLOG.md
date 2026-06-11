@@ -1,5 +1,5 @@
 # BACKLOG.md — MediVoice VN
-# v0.9.1 — Updated 2026-06-09
+# v0.9.2 — Updated 2026-06-10
 # Single source of truth cho tasks.
 
 ---
@@ -30,6 +30,27 @@
   - Missed drugs: Ciprofloxacin · Paracetamol · Vitamin B1 · Folic acid
   - Root cause drug miss: BS spell-out phonetic "MÉt PHỐT min" → L1b không nhận → cần TRAIN-001
   - ✅ PA-009 done: Andy điền đủ 57/57 GT clips
+
+### FID-VN-013 v2 — Voice Calibration UX + Drug Pronunciation Wizard + VTLN [DONE, chờ Andy review]
+> FID: `fids/FID-VN-013.md` | Consensus: `docs/records/consultations/CONS-20260610-005.md` (8-AI, 85%)
+
+- [x] **2.1-2.3 Visualization** ✅ Waveform/mic-level/pause-detection/quality-score/behavioral-hint/dialect-badge/calib-tooltip — client-side only, AC-008 (no audio stored/sent)
+  - `src/api/static/js/audio_quality.js` — `computeRMS`, `qualityFromStats`, `computeQualityScore`, `getBehavioralHint`, `detectPauses` (UMD, Node-tested)
+  - `src/api/static/index.html` — `#audio-viz` waveform canvas + mic-level bar trong card "Ghi âm", `#region-badge` (AC-006), `#calib-tooltip` (AC-007, dismiss → localStorage)
+  - `tests/unit/test_audio_quality.py` — 11 tests PASS
+- [x] **2.4 Drug Pronunciation Enrollment Wizard** ✅ Active enrollment (bypass passive ≥3×≥2 promote rule)
+  - `src/core/l7_storage.py` — `add_confirmed_alias()` insert trực tiếp confirmed_by_bs=1
+  - `src/api/main.py` — 3 endpoints: `GET /api/doctors/{cchn}/pronunciation-wordlist`, `POST .../pronunciation-enroll`, `POST .../pronunciation-confirm`
+  - `src/api/static/index.html` — nút "🎓 Luyện đọc thuốc" trong DVP greeting card + `Wizard` modal
+  - `tests/unit/test_dvp_wizard.py` — 9 tests PASS (AC-010/011/012, purge_audio verified)
+  - 2.4.1 `global_aliases`/`doctor_overrides` — KHÔNG implement (Phase 1.5 per ChatGPT proposal)
+- [x] **2.5 VTLN research module** ✅ AC-013 gate research (chưa wire vào L0)
+  - `src/core/vtln.py` — `estimate_warp_factor()` (librosa.pyin) + `apply_vtln_warp()` (resample-based, no-op tại warp=1.0, AC-014)
+  - `scripts/vtln_poc.py` — CLI POC, đo WER trước/sau VTLN, gate ≥3% relative reduction
+  - `tests/unit/test_vtln.py` — 6 tests PASS
+  - **CT-037** ⏳ POC chưa chạy — cần audio pilot + ground-truth transcript text đầy đủ (xem PENDING_REQUESTS.md)
+- 852/852 tests PASS, bandit 0 HIGH/0 MEDIUM
+- **PA-015** ⏳ Andy test UI (ghi âm + wizard) trên trình duyệt thật, confirm OK
 
 ### FID-VN-010 PIPELINE REDESIGN — Phase 0 [IMMEDIATE, sau BENCH-002b pending]
 > Evidence: BENCH-002b 2026-06-08 | FID: `fids/FID-VN-010.md` | Prerequisite: A1+A2+A3 trước khi bật bất kỳ ML layer mới

@@ -232,6 +232,42 @@
     background: none; border: none; cursor: pointer;
     font-size: 0.85rem; color: var(--primary); float: right;
   }
+
+  /* ── FID-VN-013 §2.1 — Recording visualization (client-side only) ── */
+  .audio-viz { margin-top: 0.75rem; }
+  #waveform-canvas {
+    width: 100%; height: 56px; display: block;
+    background: #f0f4f8; border-radius: 8px;
+  }
+  .mic-level-wrap {
+    margin-top: 0.4rem; height: 8px; background: var(--border);
+    border-radius: 4px; overflow: hidden;
+  }
+  .mic-level-fill {
+    height: 100%; width: 0%; background: var(--success);
+    transition: width 0.05s linear, background-color 0.2s;
+  }
+  .mic-level-fill.warn { background: var(--warn); }
+  .mic-level-fill.danger { background: var(--danger); }
+  .behavioral-hint {
+    font-size: 0.78rem; color: var(--warn); margin-top: 0.4rem;
+  }
+
+  /* AC-006 — Dialect/region badge trong màn L4 review */
+  .region-badge {
+    background: #e3f2fd; border-left: 3px solid var(--primary);
+    padding: 0.4rem 0.75rem; border-radius: 4px;
+    font-size: 0.78rem; color: #0d47a1; margin-top: 0.5rem;
+  }
+
+  /* AC-007 — Tooltip / disclaimer cho tính năng visualization */
+  .calib-tooltip {
+    background: #e8f5e9; border-left: 4px solid var(--success);
+    padding: 0.6rem 0.85rem; border-radius: 4px;
+    font-size: 0.78rem; color: #1b5e20;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem;
+    margin: 0.5rem 1rem 0;
+  }
 </style>
 </head>
 <body>
@@ -244,6 +280,16 @@
   ⚠️ AI tạo nháp — Bác sĩ chịu trách nhiệm hoàn toàn về nội dung bệnh án
 </div>
 
+<!-- FID-VN-013 §2.3 — Tooltip/disclaimer cho tính năng hiển thị chất lượng ghi âm -->
+<div id="calib-tooltip" class="calib-tooltip hidden">
+  <span>
+    ℹ️ AI dùng 1 lần ghi âm mẫu để tinh chỉnh nhẹ (âm lượng/tần số) và học cách
+    Bác sĩ đọc tên thuốc — Bác sĩ có thể làm lại hoặc bỏ qua bất cứ lúc nào trong
+    Cài đặt. AI <b>không</b> tự động thay đổi cách xử lý liên tục theo giọng nói.
+  </span>
+  <button class="badge-dismiss" onclick="dismissCalibTooltip()" title="Đóng">×</button>
+</div>
+
 <div class="container">
 
   <!-- DVP card — Trợ lý AI cá nhân hóa theo BS (FID-VN-012 Layer 1) -->
@@ -252,7 +298,10 @@
 
     <div id="dvp-greeting" class="dvp-greeting hidden">
       <span id="dvp-greeting-text"></span>
-      <button class="dvp-edit" onclick="DVP.edit()">Sửa thông tin</button>
+      <span style="flex-shrink:0">
+        <button class="dvp-edit" onclick="Wizard.start()">🎓 Luyện đọc thuốc</button>
+        <button class="dvp-edit" onclick="DVP.edit()">Sửa thông tin</button>
+      </span>
     </div>
 
     <div id="dvp-form">
@@ -343,6 +392,13 @@
       <span id="record-label">Nhấn để ghi âm</span>
       <span class="timer hidden" id="timer">00:00</span>
     </button>
+    <!-- FID-VN-013 §2.1 — Waveform + mic level (client-side, không gửi/lưu) -->
+    <div class="audio-viz hidden" id="audio-viz">
+      <canvas id="waveform-canvas" height="56"></canvas>
+      <div class="mic-level-wrap"><div class="mic-level-fill" id="mic-level-fill"></div></div>
+      <div class="behavioral-hint hidden" id="behavioral-hint"></div>
+    </div>
+
     <div class="form-row" style="margin-top:0.75rem">
       <div class="section-title">Transcript</div>
       <div class="transcript-box empty" id="transcript-box">
@@ -370,6 +426,7 @@
   <!-- Draft review card -->
   <div class="card hidden" id="card-draft">
     <h2>Xem xét nháp bệnh án</h2>
+    <div id="region-badge" class="region-badge hidden"></div>
     <div id="pii-warn" class="pii-warn hidden"></div>
 
     <div class="form-row">
@@ -448,12 +505,51 @@
   </div>
 </div>
 
+<!-- Drug Pronunciation Enrollment Wizard (FID-VN-013 §2.4) -->
+<div id="wizard-modal" class="hidden" style="
+  position:fixed;inset:0;background:rgba(0,0,0,0.5);
+  display:flex;align-items:center;justify-content:center;z-index:200;padding:1rem;
+">
+  <div style="background:white;border-radius:12px;padding:1.25rem;width:100%;max-width:420px">
+    <h3 style="font-size:1rem;margin-bottom:0.5rem">🎓 Luyện đọc thuốc</h3>
+    <p style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.75rem">
+      Đọc to tên thuốc bên dưới — Trợ lý sẽ học cách phát âm của Bác sĩ để nhận dạng chính xác hơn.
+    </p>
+    <div id="wizard-progress" style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:0.5rem"></div>
+    <div id="wizard-drug-name" style="font-size:1.4rem;font-weight:700;text-align:center;color:var(--primary);padding:1rem 0"></div>
+    <button class="record-btn" id="wizard-record-btn" onclick="Wizard.toggleRecord()">
+      <span class="record-icon">🎤</span>
+      <span id="wizard-record-label">Nhấn để đọc</span>
+    </button>
+    <div id="wizard-result" class="hidden" style="margin-top:0.75rem">
+      <div id="wizard-result-msg" class="transcript-box" style="margin-bottom:0.5rem"></div>
+      <div class="btn-row hidden" id="wizard-confirm-row">
+        <button class="btn btn-approve" onclick="Wizard.confirm(true)">✅ Đúng vậy, ghi nhớ</button>
+        <button class="btn btn-reject" onclick="Wizard.confirm(false)">Bỏ qua</button>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:1rem">
+      <button class="btn" id="wizard-next-btn" style="background:var(--border);color:var(--text)" onclick="Wizard.next()" disabled>Tiếp theo →</button>
+      <button class="btn" style="background:var(--border);color:var(--text)" onclick="Wizard.close()">Đóng</button>
+    </div>
+  </div>
+</div>
+
 <script>
 let mediaRecorder = null;
 let audioChunks = [];
 let isRecording = false;
 let timerInterval = null;
 let seconds = 0;
+
+// FID-VN-013 §2.1 — visualization state (client-side only, AC-008: không lưu/gửi)
+let vizAudioCtx = null;
+let vizAnalyser = null;
+let vizRafId = null;
+let vizSampleCount = 0;
+let vizSumSq = 0;
+let vizClipCount = 0;
+let vizRmsHistory = [];
 let currentRecordId = null;
 let currentFormData = null;
 let _drugTotal = 0;
@@ -485,6 +581,9 @@ async function startRecording() {
     mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
     mediaRecorder.onstop = processRecording;
     mediaRecorder.start(100);
+
+    // FID-VN-013 §2.1 — waveform + mic level (client-side, AC-008: không lưu/gửi)
+    _startViz(stream);
 
     isRecording = true;
     const btn = document.getElementById('record-btn');
@@ -523,6 +622,126 @@ function stopRecording() {
   btn.classList.add('processing');
   document.getElementById('record-label').textContent = 'Đang xử lý...';
   document.getElementById('timer').classList.add('hidden');
+
+  _stopViz();
+}
+
+// ── FID-VN-013 §2.1 — Waveform + mic level + quality hint (client-side only) ──
+
+function _startViz(stream) {
+  const canvas = document.getElementById('waveform-canvas');
+  if (!canvas || typeof (window.AudioContext || window.webkitAudioContext) === 'undefined') return;
+
+  vizAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const source = vizAudioCtx.createMediaStreamSource(stream);
+  vizAnalyser = vizAudioCtx.createAnalyser();
+  vizAnalyser.fftSize = 2048;
+  source.connect(vizAnalyser);
+
+  vizSampleCount = 0;
+  vizSumSq = 0;
+  vizClipCount = 0;
+  vizRmsHistory = [];
+
+  document.getElementById('audio-viz').classList.remove('hidden');
+  document.getElementById('behavioral-hint').classList.add('hidden');
+
+  _drawViz();
+}
+
+function _drawViz() {
+  if (!vizAnalyser) return;
+
+  const bufferLength = vizAnalyser.fftSize;
+  const data = new Float32Array(bufferLength);
+  vizAnalyser.getFloatTimeDomainData(data);
+
+  // AC-001: waveform realtime
+  const canvas = document.getElementById('waveform-canvas');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width = canvas.clientWidth;
+  const h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  ctx.strokeStyle = '#1565c0';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  const sliceWidth = w / bufferLength;
+  let x = 0;
+  for (let i = 0; i < bufferLength; i++) {
+    const y = (0.5 - data[i] * 0.45) * h;
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    x += sliceWidth;
+  }
+  ctx.stroke();
+
+  // RMS + clipping for this frame
+  let sumSq = 0, clipCount = 0;
+  const clipThreshold = window.AudioQuality ? window.AudioQuality.CLIP_THRESHOLD : 0.95;
+  for (let i = 0; i < bufferLength; i++) {
+    sumSq += data[i] * data[i];
+    if (Math.abs(data[i]) >= clipThreshold) clipCount++;
+  }
+  const frameRms = Math.sqrt(sumSq / bufferLength);
+
+  vizSampleCount += bufferLength;
+  vizSumSq += sumSq;
+  vizClipCount += clipCount;
+  vizRmsHistory.push(frameRms);
+
+  // AC-002: mic level indicator (VU-meter)
+  const fill = document.getElementById('mic-level-fill');
+  const noiseFloor = window.AudioQuality ? window.AudioQuality.NOISE_FLOOR_RMS : 0.5;
+  fill.style.width = Math.min(100, frameRms * 250) + '%';
+  fill.classList.toggle('danger', clipCount / bufferLength > 0.001);
+  fill.classList.toggle('warn', clipCount / bufferLength <= 0.001 && frameRms > noiseFloor);
+
+  vizRafId = requestAnimationFrame(_drawViz);
+}
+
+function _stopViz() {
+  if (vizRafId) cancelAnimationFrame(vizRafId);
+  vizRafId = null;
+  if (vizAudioCtx) {
+    vizAudioCtx.close();
+    vizAudioCtx = null;
+  }
+  vizAnalyser = null;
+
+  if (vizSampleCount === 0 || !window.AudioQuality) return;
+
+  // AC-004/AC-005: quality score + behavioral hint từ toàn bộ phiên ghi âm
+  const rms = Math.sqrt(vizSumSq / vizSampleCount);
+  const clipRatio = vizClipCount / vizSampleCount;
+  const quality = AudioQuality.qualityFromStats(rms, clipRatio);
+  const hint = AudioQuality.getBehavioralHint(quality);
+  const hintEl = document.getElementById('behavioral-hint');
+  if (hint) {
+    hintEl.textContent = '💡 ' + hint;
+    hintEl.classList.remove('hidden');
+  } else {
+    hintEl.classList.add('hidden');
+  }
+
+  // AC-003: đánh dấu khoảng lặng > 1.5s trên waveform
+  if (vizRmsHistory.length > 1 && seconds > 0) {
+    const frameDurationMs = (seconds * 1000) / vizRmsHistory.length;
+    const pauses = AudioQuality.detectPauses(vizRmsHistory, frameDurationMs, 1500);
+    const canvas = document.getElementById('waveform-canvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    pauses.forEach(p => {
+      const x1 = (p.startFrame / vizRmsHistory.length) * w;
+      const x2 = ((p.endFrame + 1) / vizRmsHistory.length) * w;
+      ctx.fillStyle = 'rgba(198,40,40,0.25)';
+      ctx.fillRect(x1, 0, Math.max(2, x2 - x1), h);
+    });
+  }
+}
+
+// AC-007 — Tooltip/disclaimer dismissible (localStorage)
+function dismissCalibTooltip() {
+  localStorage.setItem('mv_calib_tooltip_dismissed', '1');
+  document.getElementById('calib-tooltip').classList.add('hidden');
 }
 
 async function processRecording() {
@@ -580,6 +799,16 @@ function displayDraft(data) {
 
   // Drug list — L4-REDESIGN-001: per-drug confirm (Luật KCB 2023 Đ.62)
   renderDrugConfirmList(fd.don_thuoc || []);
+
+  // AC-006: dialect badge — hiển thị dvp_region từ /transcribe response
+  const regionBadge = document.getElementById('region-badge');
+  const regionLabels = { northern: 'Miền Bắc', central: 'Miền Trung', southern: 'Miền Nam' };
+  if (data.dvp_region && regionLabels[data.dvp_region]) {
+    regionBadge.textContent = `🗺️ Vùng miền phát hiện: ${regionLabels[data.dvp_region]}`;
+    regionBadge.classList.remove('hidden');
+  } else {
+    regionBadge.classList.add('hidden');
+  }
 
   // PII warning
   if (data.pii_detected && data.pii_detected.length > 0) {
@@ -893,12 +1122,158 @@ const DVP = {
   },
 };
 
+// FID-VN-013 §2.4 — Drug Pronunciation Enrollment Wizard
+const Wizard = {
+  drugs: [],
+  idx: 0,
+  cchn: null,
+  mediaRecorder: null,
+  audioChunks: [],
+  isRecording: false,
+  lastResult: null,
+
+  async start() {
+    const cchn = document.getElementById('doctor-cchn').value.trim();
+    if (!cchn) { showToast('Vui lòng nhập Mã CCHN Bác sĩ trước'); return; }
+    this.cchn = cchn;
+    try {
+      const resp = await fetch(`/api/doctors/${encodeURIComponent(cchn)}/pronunciation-wordlist?n=15`);
+      if (!resp.ok) throw new Error((await resp.json()).detail || 'Lỗi tải danh sách thuốc');
+      const data = await resp.json();
+      this.drugs = data.drugs || [];
+      if (this.drugs.length === 0) { showToast('Không có thuốc để luyện đọc'); return; }
+      this.idx = 0;
+      document.getElementById('wizard-modal').classList.remove('hidden');
+      this._renderDrug();
+    } catch (e) {
+      showToast('Lỗi: ' + e.message);
+    }
+  },
+
+  _renderDrug() {
+    document.getElementById('wizard-progress').textContent =
+      `Thuốc ${this.idx + 1}/${this.drugs.length}`;
+    document.getElementById('wizard-drug-name').textContent = this.drugs[this.idx];
+    document.getElementById('wizard-result').classList.add('hidden');
+    document.getElementById('wizard-confirm-row').classList.add('hidden');
+    document.getElementById('wizard-next-btn').disabled = true;
+    const btn = document.getElementById('wizard-record-btn');
+    btn.classList.remove('processing', 'recording');
+    document.getElementById('wizard-record-label').textContent = 'Nhấn để đọc';
+    this.lastResult = null;
+  },
+
+  async toggleRecord() {
+    if (this.isRecording) {
+      this._stopRecording();
+    } else {
+      await this._startRecording();
+    }
+  },
+
+  async _startRecording() {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      this.audioChunks = [];
+      this.mediaRecorder.ondataavailable = e => this.audioChunks.push(e.data);
+      this.mediaRecorder.onstop = () => this._processRecording();
+      this.mediaRecorder.start(100);
+      this.isRecording = true;
+      const btn = document.getElementById('wizard-record-btn');
+      btn.classList.add('recording');
+      document.getElementById('wizard-record-label').textContent = 'Đang ghi... (nhấn để dừng)';
+    } catch (e) {
+      showToast('Không thể truy cập microphone: ' + e.message);
+    }
+  },
+
+  _stopRecording() {
+    if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+      this.mediaRecorder.stop();
+      this.mediaRecorder.stream.getTracks().forEach(t => t.stop());
+    }
+    this.isRecording = false;
+    const btn = document.getElementById('wizard-record-btn');
+    btn.classList.remove('recording');
+    btn.classList.add('processing');
+    document.getElementById('wizard-record-label').textContent = 'Đang xử lý...';
+  },
+
+  async _processRecording() {
+    const blob = new Blob(this.audioChunks, { type: 'audio/webm' });
+    const form = new FormData();
+    form.append('audio', blob, 'recording.webm');
+    form.append('expected_inn', this.drugs[this.idx]);
+
+    try {
+      const resp = await fetch(`/api/doctors/${encodeURIComponent(this.cchn)}/pronunciation-enroll`, { method: 'POST', body: form });
+      if (!resp.ok) throw new Error((await resp.json()).detail || 'Lỗi xử lý');
+      const data = await resp.json();
+      this.lastResult = data;
+      this._showResult(data);
+    } catch (e) {
+      showToast('Lỗi: ' + e.message);
+    } finally {
+      const btn = document.getElementById('wizard-record-btn');
+      btn.classList.remove('processing');
+      document.getElementById('wizard-record-label').textContent = 'Đọc lại';
+    }
+  },
+
+  _showResult(data) {
+    const resultBox = document.getElementById('wizard-result');
+    const msgBox = document.getElementById('wizard-result-msg');
+    const confirmRow = document.getElementById('wizard-confirm-row');
+    msgBox.textContent = data.message || '';
+    msgBox.classList.remove('empty');
+    resultBox.classList.remove('hidden');
+    confirmRow.classList.toggle('hidden', !data.alias_needed);
+    document.getElementById('wizard-next-btn').disabled = false;
+  },
+
+  async confirm(yes) {
+    if (!this.lastResult) return;
+    const form = new FormData();
+    form.append('alias_text', this.lastResult.alias_text || '');
+    form.append('inn', this.lastResult.expected_inn || '');
+    form.append('confirmed', yes ? 'yes' : 'no');
+    try {
+      const resp = await fetch(`/api/doctors/${encodeURIComponent(this.cchn)}/pronunciation-confirm`, { method: 'POST', body: form });
+      if (!resp.ok) throw new Error((await resp.json()).detail || 'Lỗi lưu');
+      if (yes) showToast('Đã ghi nhớ cách đọc');
+      document.getElementById('wizard-confirm-row').classList.add('hidden');
+    } catch (e) {
+      showToast('Lỗi: ' + e.message);
+    }
+  },
+
+  next() {
+    if (this.idx < this.drugs.length - 1) {
+      this.idx++;
+      this._renderDrug();
+    } else {
+      showToast('Đã hoàn thành luyện đọc!');
+      this.close();
+    }
+  },
+
+  close() {
+    if (this.isRecording) this._stopRecording();
+    document.getElementById('wizard-modal').classList.add('hidden');
+  },
+};
+
 // UI-SUGGEST-001: init terminology sidebar on page load
 window.addEventListener('DOMContentLoaded', () => {
   DVP.init();
   if (window.Suggestions) {
     const sel = document.getElementById('specialty-select');
     Suggestions.init(sel ? sel.value : 'noi_khoa');
+  }
+  // AC-007: hiện tooltip disclaimer 1 lần (dismissible)
+  if (!localStorage.getItem('mv_calib_tooltip_dismissed')) {
+    document.getElementById('calib-tooltip').classList.remove('hidden');
   }
 });
 
@@ -914,6 +1289,7 @@ function showToast(msg) {
   toastTimeout = setTimeout(() => el.remove(), 3500);
 }
 </script>
+<script src="/static/js/audio_quality.js"></script>
 <script src="/static/js/suggestions.js"></script>
 </body>
 </html>

@@ -1,6 +1,20 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.5] — 2026-06-10 — FID-VN-013 v2: Voice Calibration UX + Drug Pronunciation Wizard + VTLN research
+
+### FID-VN-013 v2 implementation [SES-20260610, FID-VN-013]
+- feat(ui): §2.1-2.3 — client-side waveform/mic-level/pause-detection/quality-score/behavioral-hint visualization in card "Ghi âm" (AC-008: no audio stored/sent), region badge on draft (AC-006), dismissible calibration tooltip (AC-007)
+- feat(audio): `src/api/static/js/audio_quality.js` — UMD module `computeRMS`/`qualityFromStats`/`computeQualityScore`/`getBehavioralHint`/`detectPauses`, tested via Node subprocess (`tests/unit/test_audio_quality.py`, 11 tests)
+- feat(dvp): §2.4 — Drug Pronunciation Enrollment Wizard ("🎓 Luyện đọc thuốc" in DVP greeting card)
+  - `src/core/l7_storage.py` — `add_confirmed_alias()` active enrollment, bypasses passive ≥3×≥2 promote rule
+  - `src/api/main.py` — `GET/POST /api/doctors/{cchn}/pronunciation-wordlist|enroll|confirm` (3 endpoints), L0 `purge_audio()` enforced
+  - `tests/unit/test_dvp_wizard.py` — 9 tests PASS (AC-010/011/012)
+  - 2.4.1 `global_aliases`/`doctor_overrides` deferred to Phase 1.5 (not implemented)
+- feat(research): §2.5 — `src/core/vtln.py` (estimate_warp_factor + apply_vtln_warp, no-op at warp=1.0) + `scripts/vtln_poc.py` CLI (AC-013 WER gate, ≥3% relative reduction); NOT wired into L0 pipeline. `tests/unit/test_vtln.py` — 6 tests PASS
+- docs: `fids/FID-VN-013.md` marked IMPLEMENTED v2; PENDING_REQUESTS.md PA-015 (Andy UI test) + CT-037 (VTLN POC run, needs pilot audio + ground-truth transcript)
+- 852/852 tests PASS, bandit 0 HIGH/0 MEDIUM (new code)
+
 ## [v0.11.4] — 2026-06-10 — CT-030/031/032/034 NER+drug fixes · CT-023 L4 delete-drug UI · CT-028 decision (no Groq hybrid)
 
 ### Production fixes from real-voice testing + L4 safety UI [SES-20260610]

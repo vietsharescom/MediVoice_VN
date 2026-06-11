@@ -486,6 +486,110 @@ async def confirm_doctor_alias(
     }
 
 
+# ── DVP §2.4 — Drug Pronunciation Enrollment Wizard (FID-VN-013) ──────────────
+
+@app.get("/api/doctors/{cchn}/pronunciation-wordlist")
+async def pronunciation_wordlist(cchn: str, n: int = 15):
+    """
+    Lấy danh sách N thuốc phổ biến theo specialty của BS — dùng cho wizard
+    "Luyện đọc thuốc" (BS đọc từng thuốc, hệ thống học cách phát âm).
+    """
+    profile = load_doctor_profile(cchn)
+    if not profile:
+        raise HTTPException(404, f"Doctor {cchn} chưa đăng ký DVP")
+
+    from ..core.l1b_drug_correct import _load_drug_db as _get_drug_db
+    drug_db = _get_drug_db()
+    drugs = l1a_asr.get_drugs_by_specialty(drug_db, profile.primary_specialty, n=n)
+    return {"cchn": cchn, "specialty": profile.primary_specialty, "drugs": drugs}
+
+
+@app.post("/api/doctors/{cchn}/pronunciation-enroll")
+async def pronunciation_enroll(
+    cchn: str,
+    audio: UploadFile = File(...),
+    expected_inn: str = Form(...),
+):
+    """
+    BS đọc 1 thuốc trong wordlist → ASR transcribe → so với expected_inn (ground
+    truth — thuốc đang yêu cầu đọc). Nếu khác → đề xuất alias cho BS confirm.
+    """
+    profile = load_doctor_profile(cchn)
+    if not profile:
+        raise HTTPException(404, f"Doctor {cchn} chưa đăng ký DVP")
+
+    suffix = Path(audio.filename or "audio.wav").suffix or ".wav"
+    tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
+    try:
+        content = await audio.read()
+        tmp.write(content)
+        tmp.close()
+
+        audio_arr, wav_path = l0_normalize.normalize(tmp.name)
+
+        from ..core.l1b_drug_correct import _load_drug_db as _get_drug_db
+        drug_db = _get_drug_db()
+        transcript_raw = l1a_asr.transcribe(
+            audio_arr, drug_db=drug_db, specialty=profile.primary_specialty
+        )
+
+        transcript_clean = transcript_raw.strip().lower()
+        expected_clean = expected_inn.strip().lower()
+
+        if not transcript_clean or transcript_clean == expected_clean:
+            return {
+                "cchn": cchn,
+                "expected_inn": expected_inn,
+                "transcript": transcript_raw,
+                "alias_needed": False,
+                "message": "Phát âm khớp với tên chuẩn — không cần học thêm.",
+            }
+
+        return {
+            "cchn": cchn,
+            "expected_inn": expected_inn,
+            "transcript": transcript_raw,
+            "alias_needed": True,
+            "alias_text": transcript_clean,
+            "message": (
+                f'Trợ lý nghe được "{transcript_raw}" khi BS đọc "{expected_inn}". '
+                "Xác nhận để Trợ lý ghi nhớ cách đọc này?"
+            ),
+        }
+    finally:
+        # SRS-L0-003: xóa audio enrollment ngay sau transcribe — NĐ13/2023
+        l0_normalize.purge_audio(tmp.name)
+        if 'wav_path' in locals():
+            l0_normalize.purge_audio(wav_path)
+
+
+@app.post("/api/doctors/{cchn}/pronunciation-confirm")
+async def pronunciation_confirm(
+    cchn: str,
+    alias_text: str = Form(...),
+    inn: str = Form(...),
+    confirmed: str = Form(...),  # "yes" | "no"
+):
+    """
+    BS confirm/reject alias đề xuất từ wizard (Human Gate — Luật KCB 2023 Đ.62).
+    Confirmed → lưu ngay vào doctor_aliases (confirmed_by_bs=1), KHÔNG cần chờ
+    ≥3 corrections × ≥2 sessions như passive flow (FID-VN-012 Layer 3).
+    """
+    is_confirmed = confirmed.lower() in ("yes", "true", "1", "có")
+    if not is_confirmed:
+        return {"cchn": cchn, "status": "skipped"}
+
+    from ..core.l7_storage import add_confirmed_alias
+    add_confirmed_alias(cchn, alias_text, inn)
+    return {
+        "cchn": cchn,
+        "status": "confirmed",
+        "alias_text": alias_text,
+        "inn": inn,
+        "message": f'Trợ lý đã học: "{alias_text}" → {inn}',
+    }
+
+
 # ── UI-SUGGEST-001: Drug candidates, Terms, Dialect check ─────────────────
 # FID-VN-010 — Prerequisite: A3 + RAG-001 done
 

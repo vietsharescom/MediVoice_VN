@@ -309,6 +309,31 @@ def confirm_alias(alias_id: int, confirmed: bool, db_path: Path | None = None) -
     conn.close()
 
 
+def add_confirmed_alias(
+    cchn: str,
+    alias_text: str,
+    inn: str,
+    db_path: Path | None = None,
+) -> None:
+    """
+    Thêm alias đã được BS confirm ngay (FID-VN-013 §2.4 — Drug Pronunciation
+    Enrollment Wizard). Khác với save_alias_occurrence() (passive learning, cần
+    ≥3 occurrences × ≥2 sessions): ground truth đã biết chắc chắn lúc enrollment
+    nên confirmed_by_bs=1 ngay, session_count=1, occurrence_count=1.
+    """
+    now = datetime.now().isoformat()
+    conn = _get_conn(db_path)
+    conn.execute(
+        """INSERT OR REPLACE INTO doctor_aliases
+           (cchn, alias_text, inn, session_count, occurrence_count,
+            confirmed_by_bs, created_at, last_seen)
+           VALUES (?,?,?,1,1,1,?,?)""",
+        (cchn, alias_text, inn, now, now),
+    )
+    conn.commit()
+    conn.close()
+
+
 def get_active_aliases(cchn: str, db_path: Path | None = None) -> list[DoctorAlias]:
     """Aliases đã được BS confirm (confirmed_by_bs=1)."""
     conn = _get_conn(db_path)

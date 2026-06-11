@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-10 | v0.11.4
+# Cập nhật: 2026-06-10 | v0.11.5
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -188,6 +188,11 @@
 | P0.6.14e | │  ├─ CT-028 quyết định | Andy: GIỮ 100% local pipeline, KHÔNG hybrid Groq. Ưu tiên TRAIN-001. `experiment/groq-degallucination` giữ làm reference, mở lại khi cần so sánh | 🟢 | CT-028 | SES-20260610 | `docs/records/PENDING_REQUESTS.md` |
 | P0.6.14f | │  └─ CT-023 L4 nút Xóa thuốc | Per-drug "🗑️ Xóa" trong L4 confirm list — `_currentDrugs`/`_drugConfirmed`, `buildEditedFormData()` dùng list sau khi xóa → mitigates CT-022/CT-033 | 🟢 | CT-023 | SES-20260610 | `src/api/static/index.html` commit `2c3186a` |
 | | │ | | | | | |
+| **P0.6.15** | **├─ 🔵 FID-VN-013 v2 Voice Calibration UX + Drug Wizard + VTLN** | **3-layer: Visualization + Drug Pronunciation Wizard + VTLN research** | **🔵** | **FID-VN-013** | SES-20260610 | v0.11.4→v0.11.5 · 852/852 PASS · chờ PA-015 (Andy test UI) |
+| P0.6.15a | │  ├─ §2.1-2.3 Visualization | Waveform/mic-level/pause-detection/quality-score/behavioral-hint/region-badge/calib-tooltip — client-side, AC-008 (no audio stored/sent) | 🟢 | FID-VN-013 | SES-20260610 | `src/api/static/js/audio_quality.js` + `index.html` — 11 tests |
+| P0.6.15b | │  ├─ §2.4 Drug Pronunciation Wizard | Active enrollment (bypass passive ≥3×≥2) — "🎓 Luyện đọc thuốc" trong DVP greeting | 🟢 | FID-VN-013 | SES-20260610 | `add_confirmed_alias()` + 3 endpoints + Wizard modal — 9 tests |
+| P0.6.15c | │  └─ §2.5 VTLN research | `estimate_warp_factor`/`apply_vtln_warp` (no-op@1.0) + `vtln_poc.py` CLI — AC-013 gate ≥3% WER | 🔵 | FID-VN-013 | SES-20260610 | `src/core/vtln.py` — 6 tests · CT-037 POC chưa chạy (cần audio+GT) |
+| | │ | | | | | |
 | **P0.7** | **└─ 🟡 PILOT Đà Nẵng + SG** | **5 BS dùng thật + thu audio thực tế** | **🟡** | — | — | Chờ P0.6 done + PA-006 |
 | P0.7a |    ├─ BS Onboarding | Andy trực tiếp cài + hướng dẫn | 🔵 | ONBOARD-001 | SES-20260606 | BS onboarding checklist ĐÃ KÝ |
 | P0.7b |    ├─ DPA ký | Hợp đồng xử lý dữ liệu | 🟡 | PA-003 | — | Luật sư review xong → ký |
@@ -245,10 +250,11 @@
 
 ## PHIÊN TIẾP THEO — LÀM GÌ?
 
-### ⚡ NGAY BÂY GIỜ — v0.11.4 · TRAIN-001 ưu tiên cao nhất (per CT-028)
+### ⚡ NGAY BÂY GIỜ — v0.11.5 · TRAIN-001 ưu tiên cao nhất (per CT-028)
 
 | # | Task | Ai | Điều kiện |
 |---|---|---|---|
+| 0 | **PA-015** — Test UI FID-VN-013 v2 (waveform/mic-level/calib-tooltip + Drug Pronunciation Wizard) trên trình duyệt thật, confirm OK | Andy | Server local sẵn sàng `http://localhost:8000` — cần đăng ký DVP (Xác nhận & Lưu) trước khi thấy nút "🎓 Luyện đọc thuốc" |
 | 1 | **TRAIN-001 🔴** — Fine-tune PhoWhisper trên 50-100h audio thật | Andy + Claude | 🔴 Drug Recall 55.6%LB / Diag CEER chưa đạt — quyết định CT-028 (2026-06-10): KHÔNG hybrid Groq, chỉ fine-tune giải quyết được |
 | 2 | **CT-019 🔴** — Debug A2 VAD-chunk regression: A/B test per-chunk vs whole-file transcript offline (script riêng, KHÔNG wire vào `/transcribe` cho đến khi rõ nguyên nhân hallucination) | Claude | Cần audio mẫu (data/audio/) |
 | 3 | **ORCH-001 FID** — Viết FID cho Orchestrator v1.0 đầy đủ (`detect_confusion`, `create_consultation_request`, tự động `close_session`) | Claude | Andy approve scope trước khi +100 LOC |
@@ -266,11 +272,11 @@
 
 ---
 
-## METRICS HIỆN TẠI (2026-06-10 · v0.11.4)
+## METRICS HIỆN TẠI (2026-06-10 · v0.11.5)
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | **826/826** | 🟢 |
+| Tests PASS | 100% | **852/852** | 🟢 |
 | **Drug Recall Groq vs local (CT-029)** | ≥70% | Groq=88.9% (hallucination chưa fix) vs local=55.6%LB | 🔴 TRAIN-001 required (Groq REJECTED — CT-028) |
 | **Diag CEER Groq vs local (CT-029)** | <30% | local=0.286 vs Groq=0.429 | 🟢 local thắng |
 | bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
@@ -329,8 +335,9 @@
 | SES-20260609i | 2026-06-09 | v0.11.1 | ORCH-001 PROTOTYPE ✅ — `scripts/orchestrator.py` start/consult/check/close · Groq API real test (consult + consistency check) · SESSION_CAPTURE_RULES integrated (commit `c9e1392`) · 6-category LAST_SESSION template demo |
 | SES-20260609j | 2026-06-09 | v0.11.2→v0.11.3 | CT-018 ✅ NER fix (BP digits + nhiệt độ "là") · CT-015 ✅ DVP Layer 1 registration UI · A2-VAD wired vào `/transcribe` rồi REVERTED ngay (CT-019 🔴 — live test "KHÔNG NHẬN DẠNG ĐƯỢC GÌ LUÔN") · 817/817 PASS |
 | SES-20260610 | 2026-06-10 | v0.11.3→v0.11.4 | CT-030/031/032 ✅ NER fix Real Clip 1-3 · CT-034 ✅ drug alias "pha ra citamon" + RAG rebuild · merge `experiment/local-accuracy`→master · CT-029 ✅ Groq benchmark 57 clips (local thắng WER/Drug Precision/Diag CEER) · CT-028 ✅ quyết định: 100% local, KHÔNG hybrid Groq, ưu tiên TRAIN-001 · `experiment/groq-degallucination` giữ làm reference (KHÔNG merge) · CT-023 ✅ L4 nút "🗑️ Xóa thuốc" · 826/826 PASS |
+| SES-20260610c | 2026-06-10 | v0.11.4→v0.11.5 | FID-VN-013 v2 ✅ IMPLEMENT (Andy "vậy triển khai") — §2.1-2.3 Visualization (waveform/mic-level/pause/quality-score/behavioral-hint/region-badge/calib-tooltip, AC-008 client-side only) · §2.4 Drug Pronunciation Wizard (`add_confirmed_alias()` active enrollment + 3 endpoints + modal UI) · §2.5 VTLN research module (`src/core/vtln.py` + `scripts/vtln_poc.py`, AC-013 gate ≥3% WER, KHÔNG wire L0) · 852/852 PASS, bandit 0 · PA-015 (Andy test UI) + CT-037 (VTLN POC run) PENDING |
 
 ---
 
-*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.9 | 2026-06-10*
+*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.10 | 2026-06-10*
 *Cập nhật mỗi phiên đóng. Đọc cùng BACKLOG.md + PENDING_REQUESTS.md*
