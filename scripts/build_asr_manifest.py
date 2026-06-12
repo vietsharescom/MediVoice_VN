@@ -4,7 +4,7 @@
 # Sources:
 #   1. Reference voices (always available): data/eval/ref_voice_transcripts.json
 #      (57 real BS-voice clips, transcript_gt) -> ref_voice_manifest.jsonl
-#   2. VietMed (PA-024, needs HF_TOKEN): data/vietmed/{split}/metadata.jsonl
+#   2. VietMed (leduckhai/VietMed, MIT, not gated, no token needed): data/vietmed/{split}/metadata.jsonl
 #      + data/vietmed/{split}/audio/*.wav -> vietmed_manifest.jsonl (all splits combined)
 #   3. Pilot audio (not yet recorded, Colab/Kaggle exception 2026-06-11):
 #      <pilot_dir>/*.wav + sibling .json/.txt transcript -> pilot_manifest.jsonl

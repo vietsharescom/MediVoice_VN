@@ -2,6 +2,17 @@
 # v0.9.4 — Updated 2026-06-12
 # Single source of truth cho tasks.
 
+## CT-051 — L1b drug match window 1-4 → 1-6 words [DONE 2026-06-12]
+- [x] `src/core/l1b_drug_correct.py::_match_window()` window (4,3,2,1) → (6,5,4,3,2,1)
+- [x] Unlock 187 phonetic_variants 5-6 từ trong `drug_db_v200.json` (Azithromycin,
+  Ciprofloxacin "xi pro phlo xa xin", Atorvastatin, Rosuvastatin, Clarithromycin...)
+  trước đây KHÔNG THỂ MATCH (window cũ tối đa 4 từ)
+- [x] Exact-match only → không tăng false-positive risk
+- [x] 2 tests mới (`test_phonetic_5word_azithromycin`, `test_phonetic_5word_ciprofloxacin`)
+  — 958/958 PASS
+- Phần CT-027(5). Chưa fix riêng Ciprofloxacin "si pô lo siêu âm si" (CT-016, spelling khác,
+  cần thêm data trước khi thêm alias)
+
 ## CT-050 — Dev-machine bootstrap + test infra hardening [DONE 2026-06-12]
 - [x] `tests/conftest.py` gọi `init_db()` trực tiếp (FastAPI `startup` event không chạy
   khi `TestClient(app)` không dùng `with` → DB schema thiếu trên máy mới)
