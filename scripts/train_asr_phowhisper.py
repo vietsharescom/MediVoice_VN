@@ -115,13 +115,23 @@ def main():
         report_to=[],
     )
 
-    trainer = Seq2SeqTrainer(
+    # transformers >=4.46 renamed the `tokenizer=` kwarg to `processing_class=`
+    # (and later removed `tokenizer=` entirely) — support both versions.
+    import inspect
+
+    trainer_kwargs = dict(
         args=training_args,
         model=model,
         train_dataset=train_ds,
         data_collator=collator,
-        tokenizer=processor.feature_extractor,
     )
+    trainer_params = inspect.signature(Seq2SeqTrainer.__init__).parameters
+    if "processing_class" in trainer_params:
+        trainer_kwargs["processing_class"] = processor.feature_extractor
+    elif "tokenizer" in trainer_params:
+        trainer_kwargs["tokenizer"] = processor.feature_extractor
+
+    trainer = Seq2SeqTrainer(**trainer_kwargs)
     trainer.train()
 
     if not args.smoke_test:
