@@ -2,58 +2,73 @@
 # Ghi đè mỗi phiên — git history lưu lịch sử cũ tự động
 # ISO/IEC 42001:2023 Cl.9.1 (Performance evaluation)
 
-## Mã phiên: SES-20260611c
-## Thời gian: 2026-06-11
-## Version: v0.11.13 → v0.11.14
+## Mã phiên: SES-20260611e
+## Thời gian: 2026-06-11 (đóng phiên)
+## Version: v0.11.14 → v0.11.16
 
 ---
 
 ## Trạng thái đầu → cuối
-v0.11.13 | 939 tests → v0.11.14 | 948 tests
+v0.11.14 | 948/948 tests → v0.11.16 | 956/956 tests
 
 ## 1. Actions Completed
+- Files tạo:
+  - `docs/dev/COLAB_KAGGLE_TRAINING.md` — Colab/Kaggle GPU setup guide (clone → HF_TOKEN secret
+    → download VietMed → build manifest → smoke-test → full run → cleanup PII)
 - Files sửa:
-  - `src/core/l1c_ner.py` — thêm `MedicalEntities.tuoi`/`gioi_tinh`, regex `_RE_PATIENT_NAME_AGE`/`_RE_GIOI_TINH_TUOI`/`_RE_TUOI`/`_NAME_STOP_KW`, wire vào `extract_entities()` (patient name fallback + tuổi/giới tính + ly_do dedup)
-  - `src/core/l1b_drug_correct.py` — `_build_alias_map()`: nới filter phonetic_variants 2-từ cho phép nếu normalized ≥9 ký tự (cho "parasyte mode")
-  - `data/reference/drug_db_v200.json` — Paracetamol `phonetic_variants` đã có "parasyte mode" (3 vùng miền, từ phiên trước)
-  - `src/core/l2_validate.py` — `form_data` thêm `tuoi`, `gioi_tinh`
-  - `src/core/l6_generate_form.py` — import `GioiTinh`, wire `form_data.tuoi`/`gioi_tinh` → `record.hanh_chinh`
-  - `src/api/static/index.html` — thêm input Tuổi + select Giới tính trong `#card-setup`, autofill từ `displayDraft()`, đọc lại trong `buildEditedFormData()`
-  - `tests/unit/test_l1c_ner_bugs.py` — +8 tests (TestBugN_ChanDoanThuocUongLa, TestBugO_TuoiGioiTinhVaTenBenhNhan)
-  - `tests/unit/test_l1b_drug_correct_v2.py` — +1 test (`test_paracetamol_parasyte_mode_variant`)
-  - `docs/records/PENDING_REQUESTS.md` — CT-049 row DONE, PA-023 cập nhật
-  - `CHANGELOG.md` — entry v0.11.14
-  - `CLAUDE.md` — CURRENT STATE → v0.11.14
-  - `docs/records/BACKLOG.md` — section CT-049 [DONE]
-- Code generated: ~120 LOC (regex + wiring + UI inputs)
-- Tests chạy: 948/948 PASS (+9 mới), bandit 0 HIGH / 9 MEDIUM (pre-existing) / 2 LOW
-- Commit code: `2d3f4ae` — 12 files, +226/-15
+  - `scripts/build_asr_manifest.py` — thêm `build_vietmed_manifest()` (đọc
+    `data/vietmed/{split}/metadata.jsonl`, tolerant transcript field
+    text/transcription/sentence/transcript, trả `[]` nếu chưa download) +
+    `build_pilot_manifest(pilot_dir)` (quét `*.wav` + `.txt`/`.json` transcript liền kề,
+    trả `[]` nếu rỗng) + CLI `--vietmed --pilot <dir> --combined`
+  - `scripts/train_asr_phowhisper.py` — thêm `--fp16` (mixed-precision cho GPU Colab/Kaggle T4/P100)
+  - `tests/unit/test_build_asr_manifest.py` — +8 tests mới (`TestBuildVietmedManifest`,
+    `TestBuildPilotManifest`)
+  - `fids/FID-VN-007.md` — v2: cập nhật theo hướng Colab/Kaggle, ACCEPTANCE CRITERIA mới,
+    R-007-2 đổi thành rủi ro pilot-audio-PII-trên-Colab/Kaggle
+  - `docs/records/DECISIONS.md` — thêm ADR 2026-06-11 **Pilot Phase Exception #2**
+  - `docs/compliance/RISK_REGISTER.md` — R-P03 cập nhật thêm Exception #2
+  - `docs/records/BACKLOG.md`, `docs/records/PENDING_REQUESTS.md` (PA-025 mới), `CHANGELOG.md`,
+    `CLAUDE.md` (CURRENT STATE → v0.11.16), `docs/records/PROJECT_PROGRESS.md`
+- Code generated: ~340 LOC (manifest builders + tests + docs + ADR)
+- Tests chạy: 956/956 PASS (+8 từ 948), bandit src/ 0 HIGH/9 MEDIUM/2 LOW (pre-existing, không đổi)
+- Design/Benchmark cập nhật: không
 
 ## 2. Decisions
-- Owner Decisions (Andy): re-test pilot vòng 2 phát hiện 3 vấn đề mới (CT-049) → ưu tiên fix ngay trước TRAIN-001
+- Owner Decisions (Andy):
+  - "tôi đã có consent nên không lo. làm đi" (2026-06-11) — chấp thuận dùng Colab/Kaggle GPU
+    (thay VNG/FPT cho giai đoạn pilot) cho TRAIN-001, bao gồm cả pilot audio thật có PII,
+    với consent BS+BN+luật sư đã có sẵn (cùng phạm vi CT-024 2026-06-10)
 - Technical Decisions (Claude):
-  - Dùng câu mở đầu chuẩn "<nam/nữ> <N> tuổi, <Họ Tên>, <triệu chứng>..." làm fallback pattern cho `ho_ten`/`tuoi`/`gioi_tinh` khi không có cue rõ ràng ("tên là", "bệnh nhân tên")
-  - Mở filter alias 2-từ trong `_build_alias_map()` chỉ khi normalized ≥9 ký tự — verify 58 alias 2-từ hiện có đều ≤8 ký tự, chỉ "parasyte mode" (13 ký tự) lọt qua → tránh false positive
+  - Theo precedent CT-024 (PILOT PHASE EXCEPTION format trong DECISIONS.md), ghi ADR mới
+    "Pilot Phase Exception #2" — TẠM THỜI, chỉ training run, xóa audio khỏi Colab/Kaggle
+    ngay sau khi train xong, chỉ giữ checkpoint model (không chứa PII)
+  - VietMed (MIT, public, không PII) không bị ảnh hưởng bởi exception này — luôn được phép
 
 ## 3. Architecture Changes
-- L1c NER: thêm 2 field mới (`tuoi: int|None`, `gioi_tinh: str`) vào `MedicalEntities` — không phá pipeline L0→L10, chỉ extend (Tầng 2 pattern, theo precedent CT-038/043/048)
-- L2→L6: `form_data` → `HanhChinh.tuoi`/`gioi_tinh` → PDF Mẫu 15/BV1
-- UI: thêm 2 input mới trong card setup (Tuổi, Giới tính), BS review/sửa trước khi confirm (L4 Human Gate giữ nguyên)
+- Không thay đổi pipeline L0→L10 (tooling ngoài pipeline, FID-VN-007 v2)
 
 ## 4. Tasks Created
-- (không có task mới — CT-049 đã DONE trong phiên)
+- (không có CT/TP mới — PA-025 đã DONE ngay trong phiên, ghi vào PENDING_REQUESTS để track)
 
 ## 5. Pending Items
-- [CT-049] Andy re-test clip TMH lần 3 — confirm chẩn đoán/đơn thuốc/tuổi-tên đúng trên PDF
-- [PA-020/PA-021] Andy test UI FID-VN-017/018 (audio mẫu giờ đã có)
-- [PA-015/PA-017/PA-018] Andy test UI FID-VN-013/014/015/016
-- [CT-019] 🔴 A2 VAD-chunk regression — cần audio mẫu để debug
-- [TRAIN-001] PhoWhisper fine-tune — vẫn ưu tiên cao nhất per CT-028, song song với CT-049 re-test
+- **PA-024** — Andy tạo HF_TOKEN cho VietMed (login huggingface.co + accept license
+  `doof-ferb/VietMed` + Read token + `set HF_TOKEN=hf_xxx`)
+- **TRAIN-001** — vẫn BLOCKED: chờ PA-024 + 50-100h pilot audio (chưa ghi âm,
+  `data/audio/pilot/` trống). Khi đủ → chạy theo `docs/dev/COLAB_KAGGLE_TRAINING.md`
+- **CT-049** — Andy re-test clip TMH lần 3
+- **PA-020/PA-021/PA-015/PA-017/PA-018** — Andy test UI (FID-VN-013/014/015/016/017/018)
+- **CT-019** 🔴 — A2 VAD-chunk regression debug (cần audio mẫu)
 
 ## 6. Risks / Confusions
-- (không có — cả 3 fix CT-049 đều straightforward, verified end-to-end với transcript pilot thật)
+- R-007-2 (FID-VN-007): pilot audio có PII upload Colab/Kaggle (ngoài VN, NĐ13/2023) —
+  kiểm soát bằng Pilot Phase Exception #2 (`docs/records/DECISIONS.md` 2026-06-11),
+  TẠM THỜI, phải xóa ngay sau training run, production phải chuyển VN Cloud trước launch
+- Không có chỗ confidence <70%
 
 ## Phiên tiếp theo — thứ tự ưu tiên
-1. TRAIN-001 — PhoWhisper fine-tune (ưu tiên cao nhất per CT-028)
-2. CT-049 — chờ Andy re-test clip TMH lần 3, fix tiếp nếu còn vấn đề
-3. CT-019 — debug A2-VAD nếu Andy cung cấp audio mẫu
+1. **PA-024** — Andy tạo HF_TOKEN cho VietMed (5-10 phút)
+2. **CT-049** — Andy re-test clip TMH lần 3
+3. **TRAIN-001** — khi có PA-024 + pilot audio → chạy trên Colab/Kaggle theo
+   `docs/dev/COLAB_KAGGLE_TRAINING.md`
+4. **CT-019** debug A2-VAD (nếu có audio mẫu) · các PA UI test khác (PA-015/017/018/020/021)
