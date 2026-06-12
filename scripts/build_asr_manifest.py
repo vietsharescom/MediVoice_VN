@@ -5,7 +5,7 @@
 #   1. Reference voices (always available): data/eval/ref_voice_transcripts.json
 #      (57 real BS-voice clips, transcript_gt) -> ref_voice_manifest.jsonl
 #   2. VietMed (PA-024, needs HF_TOKEN): data/vietmed/{split}/metadata.jsonl
-#      + data/vietmed/{split}/audio/*.wav -> vietmed_{split}_manifest.jsonl
+#      + data/vietmed/{split}/audio/*.wav -> vietmed_manifest.jsonl (all splits combined)
 #   3. Pilot audio (not yet recorded, Colab/Kaggle exception 2026-06-11):
 #      <pilot_dir>/*.wav + sibling .json/.txt transcript -> pilot_manifest.jsonl
 #
@@ -71,11 +71,14 @@ def _vietmed_text(entry: dict) -> str | None:
     return None
 
 
-def build_vietmed_manifest(vietmed_root: Path = VIETMED_ROOT, splits: tuple[str, ...] = ("train",)) -> list[dict]:
+def build_vietmed_manifest(
+    vietmed_root: Path = VIETMED_ROOT, splits: tuple[str, ...] = ("train", "dev", "test", "cv")
+) -> list[dict]:
     """Build manifest entries from data/vietmed/{split}/metadata.jsonl + audio/.
 
     Each metadata.jsonl line is expected to carry a transcript under one of
-    _VIETMED_TEXT_FIELDS and an audio filename under "audio" or "file_name"
+    _VIETMED_TEXT_FIELDS and an audio filename under "wav_file" (written by
+    download_vietmed.py), falling back to "audio"/"file_name"/"audio_name"
     (resolved against {split}/audio/). Entries with missing audio files or
     unrecognized transcript fields are skipped. Returns [] if vietmed_root
     or a split's metadata.jsonl does not exist (dataset not downloaded yet).
@@ -96,7 +99,7 @@ def build_vietmed_manifest(vietmed_root: Path = VIETMED_ROOT, splits: tuple[str,
                 text = _vietmed_text(entry)
                 if text is None:
                     continue
-                audio_name = entry.get("audio") or entry.get("file_name")
+                audio_name = entry.get("wav_file") or entry.get("audio") or entry.get("file_name") or entry.get("audio_name")
                 if audio_name is None:
                     continue
                 audio_path = audio_dir / audio_name
@@ -155,7 +158,7 @@ def main():
 
     if args.vietmed:
         vietmed_manifest = build_vietmed_manifest()
-        vietmed_out = MANIFEST_DIR / "vietmed_train_manifest.jsonl"
+        vietmed_out = MANIFEST_DIR / "vietmed_manifest.jsonl"
         _write_manifest(vietmed_manifest, vietmed_out)
         print(f"Wrote {len(vietmed_manifest)} entries -> {vietmed_out}")
         combined.extend(vietmed_manifest)

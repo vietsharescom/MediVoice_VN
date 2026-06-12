@@ -21,7 +21,11 @@
 !pip install -q transformers datasets librosa soundfile accelerate evaluate jiwer
 ```
 
-## 3. Set HF_TOKEN (for VietMed, PA-024)
+## 3. (Optional) Set HF_TOKEN — higher rate limits only
+
+`leduckhai/VietMed` (correct dataset, verified 2026-06-12) is **NOT gated** — no
+token required to download. `HF_TOKEN` is optional and only raises HuggingFace
+rate limits if you hit them.
 
 In Colab: use the "Secrets" panel (key icon) to store `HF_TOKEN`, then:
 
@@ -36,6 +40,11 @@ In Kaggle: Settings → Secrets → add `HF_TOKEN`, then access via `kaggle_secr
 **Never paste the token directly into a notebook cell or commit it.**
 
 ## 4. Download VietMed (always allowed, no PII)
+
+VietMed (16h, MIT, `leduckhai/VietMed`) can also be downloaded and fine-tuned
+**locally** — Colab/Kaggle is not required for VietMed itself. Use Colab/Kaggle for
+(a) stronger GPU than local, or (b) pilot audio (PII) per
+`docs/records/DECISIONS.md` 2026-06-11.
 
 ```bash
 !python -X utf8 scripts/download_vietmed.py

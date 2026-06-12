@@ -48,10 +48,10 @@ class TestBuildVietmedManifest:
         metadata = split_dir / "metadata.jsonl"
         metadata.write_text(
             "\n".join([
-                json.dumps({"audio": "train_00000.wav", "text": "xin chao"}),
-                json.dumps({"audio": "train_00001.wav", "sentence": "cam on"}),
-                json.dumps({"audio": "missing.wav", "text": "skip me"}),
-                json.dumps({"audio": "train_00000.wav"}),
+                json.dumps({"wav_file": "train_00000.wav", "text": "xin chao"}),
+                json.dumps({"wav_file": "train_00001.wav", "sentence": "cam on"}),
+                json.dumps({"wav_file": "missing.wav", "text": "skip me"}),
+                json.dumps({"wav_file": "train_00000.wav"}),
             ]),
             encoding="utf-8",
         )

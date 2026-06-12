@@ -1,6 +1,28 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.17] — 2026-06-12 — VIETMED-FIX-001 v2: dataset ID + audio decode fix (FID-VN-007 v3)
+
+### VietMed dataset — real fix (PA-024 closed, not needed)
+- fix(train): `scripts/download_vietmed.py` — `DATASET_ID` was wrong (`doof-ferb/VietMed`,
+  404, never existed). Correct dataset is **`leduckhai/VietMed`** (16h labeled VN medical
+  speech, MIT, 4 splits train/dev/test/cv) and is **NOT gated** — no HF_TOKEN required.
+  PA-024 (HF_TOKEN request) is now closed/obsolete.
+- fix(train): `scripts/download_vietmed.py` — audio decoding crashed via
+  `Audio(sampling_rate=16000)` → torchcodec (incompatible with this venv's torch). Fixed by
+  `Audio(decode=False)` + manual decode via `soundfile`/`librosa` resample to 16kHz.
+- feat(train): `download_vietmed.py` now writes `wav_file` field in `metadata.jsonl`;
+  `scripts/build_asr_manifest.py::build_vietmed_manifest()` resolves audio via `wav_file`
+  (with `audio`/`file_name`/`audio_name` fallbacks), defaults to all 4 splits, output renamed
+  to `data/asr_manifest/vietmed_manifest.jsonl`
+- chore: `.gitignore` — `data/vietmed/` (16h dataset, large) + generated
+  `vietmed_manifest.jsonl`/`pilot_manifest.jsonl`/`combined_manifest.jsonl`
+- Verified end-to-end: downloaded real `cv` split (85 samples, 17MB, no token), built manifest,
+  ran `train_asr_phowhisper.py --smoke-test` against real VietMed audio — pipeline OK.
+- 956/956 PASS, bandit unchanged.
+- **TRAIN-001 now blocked only by 50-100h pilot audio** (not yet recorded). VietMed 16h is
+  ready to fine-tune now (local or Colab/Kaggle, no PII concerns).
+
 ## [v0.11.16] — 2026-06-11 — TRAIN-001 prep v2: Colab/Kaggle GPU pipeline (FID-VN-007 v2)
 
 ### Colab/Kaggle GPU training direction (PA-025)

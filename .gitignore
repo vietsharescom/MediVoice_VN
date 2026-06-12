@@ -17,6 +17,10 @@ logs/
 *.db
 data/memory/
 data/audio/
+data/vietmed/
+data/asr_manifest/vietmed_manifest.jsonl
+data/asr_manifest/pilot_manifest.jsonl
+data/asr_manifest/combined_manifest.jsonl
 # ML model weights (top-level only — NOT src/models/ Python package)
 /models/
 *.pt

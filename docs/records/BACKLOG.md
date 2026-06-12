@@ -189,6 +189,9 @@
     `docs/dev/COLAB_KAGGLE_TRAINING.md`. ADR `docs/records/DECISIONS.md` 2026-06-11
     (Pilot Phase Exception #2 — audio PII tạm upload Colab/Kaggle, xóa ngay sau run).
     956/956 PASS, bandit unchanged. Full run vẫn chờ PA-024 (HF_TOKEN) + pilot audio recording.
+  - [x] **FID-VN-007 v3** ✅ VIETMED-FIX-001 v2 (2026-06-12): dataset ID đúng `leduckhai/VietMed`
+    (không gated, PA-024 đóng) + audio decode fix. VietMed 16h sẵn sàng train ngay (local hoặc
+    Colab/Kaggle). TRAIN-001 full run chỉ còn chặn bởi 50-100h pilot audio.
 
 ### FID-VN-017/018 IMPLEMENTED — Phonetic guidance + DVP flow reorder [2026-06-11]
 > Andy feedback session 2026-06-11 (sau FID-VN-016 test) — 4 ý lớn. CT-040/041 →
@@ -315,10 +318,14 @@
   - Layer 4: Safety Rule Engine — hard dose validation per drug, ambiguity → flag không auto-commit
   - Depend: CONS-002-IMPL (phonetic_variants trong drug_db_v200)
 - [x] **VIETMED-FIX-001** ✅ Fix `scripts/download_vietmed.py` — bỏ `trust_remote_code`, thêm HF_TOKEN auth (commit `3fd6990`, đã verify code OK 2026-06-11)
-  - Dataset `doof-ferb/VietMed` vẫn **gated trên HuggingFace** (401 nếu không có token) — Andy
-    cần đăng nhập huggingface.co, accept license tại `huggingface.co/datasets/doof-ferb/VietMed`,
-    tạo Read token, `set HF_TOKEN=hf_xxx` → xem **PA-024**
-  - Dùng cho: TRAIN-001 PhoWhisper fine-tune (FID-VN-007)
+- [x] **VIETMED-FIX-001 v2** ✅ (2026-06-12) — root cause thật: dataset ID SAI `doof-ferb/VietMed`
+  (404, không tồn tại) từ đầu. Đúng là **`leduckhai/VietMed`** — 16h labeled, MIT, **KHÔNG gated**,
+  KHÔNG cần HF_TOKEN (PA-024 đóng, không cần nữa). Splits: train(2773)/dev(2912)/test(3437)/cv(85).
+  Cũng fix audio decode: `Audio(decode=False)` + soundfile/librosa resample (torchcodec
+  incompatible với torch version trong venv). Verify: download thật split `cv` (85 samples, 17MB)
+  + smoke-test `train_asr_phowhisper.py` chạy OK với audio thật. `data/vietmed/` + manifest
+  generated files → `.gitignore`. 956/956 PASS.
+  - Dùng cho: TRAIN-001 PhoWhisper fine-tune (FID-VN-007) — chỉ còn chặn bởi 50-100h pilot audio
 - [x] **BUG-K2** ✅ "một sáu lăm"=165 abbreviated SG tens fixed (2026-06-10) — `_WABR` pattern + `_WCOLLQ` extended. +1 test `test_sg_bp_colloquial_165_abbreviated` → 409/409 PASS
 - [x] **BUG-N** ✅ chan_doan rỗng cho follow-up visits (2026-06-10) — BS nói "tái khám tăng huyết áp" mà không có "chẩn đoán:" keyword. Fix: `_RE_TAI_KHAM_DIAGNOSIS` checked trước `_RE_CHAN_DOAN_FALLBACK`. +4 tests → 408/408 PASS
 - [~] **DATASET-001** 🔵 PARTIAL — Download P1 public datasets (VietMed family — MIT/Apache-2.0)
@@ -381,12 +388,14 @@
 - [ ] **ACCOUNT-API-001:** Kế toán export API (MISA/Fast CSV + REST)
 
 ### Training
-- [ ] **TRAIN-001:** Fine-tune PhoWhisper trên VietMed (16h labeled MIT) + pilot audio (50–100h)
-  - Datasets: `data/external/VietMed` + `data/external/ViMedCSS` + pilot audio
+- [ ] **TRAIN-001:** Fine-tune PhoWhisper trên VietMed (16h labeled MIT, leduckhai/VietMed) + pilot audio (50–100h)
+  - Datasets: `data/vietmed/` (leduckhai/VietMed, KHÔNG gated — verify 2026-06-12) + pilot audio
   - Target: WER 35–40% → <20% | Drug CEER 0.90 → <0.10
   - GPU: **Colab/Kaggle free-tier** (quyết định 2026-06-11, thay VNG/FPT cho giai đoạn pilot) —
-    setup guide `docs/dev/COLAB_KAGGLE_TRAINING.md` | **FID-VN-007 ✅ DONE (2026-06-11, v2)** —
-    pipeline scaffold + Colab/Kaggle manifests/fp16 sẵn sàng, chờ PA-024 (HF_TOKEN) + pilot audio
+    setup guide `docs/dev/COLAB_KAGGLE_TRAINING.md` | **FID-VN-007 ✅ DONE (v1+v2+v3, 2026-06-11/12)**
+    — pipeline + Colab/Kaggle manifests/fp16 + VietMed fix (dataset ID đúng, không gated, audio
+    decode fix) sẵn sàng. **VietMed 16h có thể train ngay** (local hoặc Colab/Kaggle, không PII).
+    Full run (đủ 50-100h) vẫn chờ pilot audio.
 - [x] **TRAIN-002** ✅ Fine-tune PhoBERT+CRF NER trên synthetic 10K — HOÀN TẤT (2026-06-10)
   - Epoch 1: F1=**98.95%** P=98.98% R=98.91% | Epoch 2: F1=**98.73%** | Epoch 3: F1=**99.44%** ← BEST
   - Best model: `models/ner_phobert/best/` (512.8MB, checkpoint-3000) ✅

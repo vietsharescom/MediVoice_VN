@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # scripts/download_vietmed.py — DATASET-001: Download VietMed from HuggingFace
-# Dataset: doof-ferb/VietMed (MIT license, ~16h labeled Vietnamese medical speech)
+# Dataset: leduckhai/VietMed (MIT license, ~16h labeled Vietnamese medical speech)
+#   NOT gated — no HF_TOKEN required (verified 2026-06-12, fixes earlier wrong
+#   dataset ID "doof-ferb/VietMed" which 404s).
 # Output: data/vietmed/
-# Usage: python scripts/download_vietmed.py [--split train|validation|test|all]
-# Requires: HF_TOKEN env var — huggingface.co/settings/tokens (read token)
+# Usage: python scripts/download_vietmed.py [--split train|dev|test|cv|all]
+# Optional: HF_TOKEN env var (higher rate limits) — huggingface.co/settings/tokens
 
 import argparse
 import json
@@ -26,12 +28,12 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 OUT_DIR = ROOT / "data" / "vietmed"
-DATASET_ID = "doof-ferb/VietMed"
+DATASET_ID = "leduckhai/VietMed"
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--split", default="all", choices=["train", "validation", "test", "all"])
+    parser.add_argument("--split", default="all", choices=["train", "dev", "test", "cv", "all"])
     parser.add_argument("--cache-dir", default=None)
     args = parser.parse_args()
 
@@ -44,17 +46,9 @@ def main():
         log.error("datasets not installed: pip install datasets")
         sys.exit(1)
 
-    hf_token = os.environ.get("HF_TOKEN")
-    if not hf_token:
-        log.warning(
-            "HF_TOKEN not set — doof-ferb/VietMed is a gated dataset.\n"
-            "  1. Đăng nhập huggingface.co → Settings → Access Tokens → New token (Read)\n"
-            "  2. Chấp nhận license tại huggingface.co/datasets/doof-ferb/VietMed\n"
-            "  3. Chạy: set HF_TOKEN=hf_xxx  (Windows) hoặc export HF_TOKEN=hf_xxx (Linux)\n"
-            "Tiếp tục thử không dùng token (sẽ fail nếu dataset chưa public)..."
-        )
+    hf_token = os.environ.get("HF_TOKEN")  # optional — leduckhai/VietMed is not gated
 
-    splits = ["train", "validation", "test"] if args.split == "all" else [args.split]
+    splits = ["train", "dev", "test", "cv"] if args.split == "all" else [args.split]
 
     for split in splits:
         log.info(f"Downloading {DATASET_ID} split={split}...")
@@ -74,6 +68,10 @@ def main():
 
         log.info(f"  {split}: {len(ds)} samples — features: {list(ds.features.keys())}")
 
+        # decode=False: keep raw audio bytes, avoid torchcodec (incompatible with
+        # this venv's torch version) — we decode manually via soundfile below.
+        ds = ds.cast_column("audio", Audio(decode=False))
+
         split_dir = OUT_DIR / split
         split_dir.mkdir(exist_ok=True)
 
@@ -82,6 +80,7 @@ def main():
         with open(meta_path, "w", encoding="utf-8") as mf:
             for i, row in enumerate(ds):
                 meta = {k: v for k, v in row.items() if k != "audio"}
+                meta["wav_file"] = f"{split}_{i:05d}.wav"
                 mf.write(json.dumps(meta, ensure_ascii=False) + "\n")
                 if i % 500 == 0:
                     log.info(f"    {split}: {i}/{len(ds)} metadata rows written...")
@@ -92,17 +91,20 @@ def main():
         audio_dir = split_dir / "audio"
         audio_dir.mkdir(exist_ok=True)
 
-        ds = ds.cast_column("audio", Audio(sampling_rate=16000))
+        import io
+        import librosa
+        import soundfile as sf
+
         for i, row in enumerate(ds):
             if i % 100 == 0:
                 log.info(f"    {split}: saving audio {i}/{len(ds)}...")
-            audio_data = row["audio"]
             wav_path = audio_dir / f"{split}_{i:05d}.wav"
             if wav_path.exists():
                 continue
-            import soundfile as sf
-            import numpy as np
-            arr = np.array(audio_data["array"], dtype=np.float32)
+            audio_bytes = row["audio"]["bytes"]
+            arr, sr = sf.read(io.BytesIO(audio_bytes), dtype="float32")
+            if sr != 16000:
+                arr = librosa.resample(arr, orig_sr=sr, target_sr=16000)
             sf.write(str(wav_path), arr, samplerate=16000, subtype="PCM_16")
 
         log.info(f"  Audio saved → {audio_dir}  ({len(ds)} files)")

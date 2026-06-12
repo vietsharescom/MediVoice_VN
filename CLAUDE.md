@@ -270,11 +270,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.11.16 |
-| Status | **FID-VN-007 v2 DONE ✅ (TRAIN-001 prep — Colab/Kaggle direction)** — Andy 2026-06-11: "đã có consent nên không lo. làm đi" → GPU = Colab/Kaggle free-tier (thay VNG/FPT cho pilot). Thêm `build_vietmed_manifest()`/`build_pilot_manifest()` (`scripts/build_asr_manifest.py`, tolerant transcript field, an toàn khi data chưa có), `--fp16` (`scripts/train_asr_phowhisper.py`), setup guide `docs/dev/COLAB_KAGGLE_TRAINING.md`. ADR mới: `docs/records/DECISIONS.md` 2026-06-11 **Pilot Phase Exception #2** (audio PII tạm upload Colab/Kaggle, xóa ngay sau run) + `docs/compliance/RISK_REGISTER.md` R-P03 cập nhật. 956 tests. **TRAIN-001 full run vẫn BLOCKED**: cần (1) PA-024 HF_TOKEN cho VietMed (16h, dataset gated), (2) 50-100h pilot audio (chưa ghi âm). |
+| Version | v0.11.17 |
+| Status | **FID-VN-007 v3 DONE ✅ (VIETMED-FIX-001 v2, 2026-06-12)** — phát hiện `scripts/download_vietmed.py` dùng SAI dataset ID `doof-ferb/VietMed` (404, không tồn tại) từ đầu. Đúng là **`leduckhai/VietMed`** (16h labeled VN medical speech, MIT, **KHÔNG gated**, KHÔNG cần HF_TOKEN) → **PA-024 ĐÓNG** (không cần nữa). Cũng fix audio decode (`Audio(decode=False)` + soundfile/librosa resample, tránh torchcodec incompatible với torch venv). Verified: download thật split `cv` (85 samples, 17MB) + smoke-test `train_asr_phowhisper.py` chạy OK với audio thật. `data/vietmed/` + manifest generated → `.gitignore`. 956 tests. **TRAIN-001 giờ chỉ còn chặn bởi 50-100h pilot audio** (chưa ghi âm) — VietMed 16h sẵn sàng train ngay (local hoặc Colab/Kaggle). |
 | Tests | **956/956 PASS** · bandit src/ 0 HIGH (9 MEDIUM/2 LOW pre-existing, không đổi) · conftest.py SKIP_QWEN |
-| Pending | **PA-024** (HF_TOKEN cho VietMed) · **CT-049** (Andy re-test clip TMH lần 3) · **PA-020/PA-021** (Andy test UI FID-VN-017/018, audio mẫu giờ đã có) · **PA-015/PA-017/PA-018** (Andy test FID-VN-013/014/015/016 UI) · **CT-019** (🔴 A2 VAD-chunk regression) · CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039/CT-042/CT-044 ⏳ |
-| Next task | **TRAIN-001 vẫn BLOCKED** (chờ PA-024 + pilot audio; chạy trên Colab/Kaggle theo `docs/dev/COLAB_KAGGLE_TRAINING.md`) → CT-049 re-test · CT-019 debug A2-VAD nếu có audio · các PA UI test khác |
+| Pending | **CT-049** (Andy re-test clip TMH lần 3) · **PA-020/PA-021** (Andy test UI FID-VN-017/018, audio mẫu giờ đã có) · **PA-015/PA-017/PA-018** (Andy test FID-VN-013/014/015/016 UI) · **CT-019** (🔴 A2 VAD-chunk regression) · CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039/CT-042/CT-044 ⏳ |
+| Next task | **TRAIN-001** chỉ còn chặn bởi 50-100h pilot audio (chưa ghi âm) — VietMed 16h có thể fine-tune ngay (local hoặc Colab/Kaggle theo `docs/dev/COLAB_KAGGLE_TRAINING.md`) → CT-049 re-test · CT-019 debug A2-VAD nếu có audio · các PA UI test khác |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.1) · FID: `fids/FID-VN-007.md`, `fids/FID-VN-010.md`, `fids/FID-VN-012.md`, `fids/FID-VN-013.md`, `fids/FID-VN-014.md`, `fids/FID-VN-015.md`, `fids/FID-VN-016.md`, `fids/FID-VN-017.md`, `fids/FID-VN-018.md` |
 
 ---

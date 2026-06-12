@@ -29,15 +29,21 @@ sẵn sàng có thể chạy ngay.
 - `data/eval/ref_voice_transcripts.json` — 57 clip giọng BS thật (HN/DN/SG), `transcript_gt`
   đã có sẵn, tổng ~17 phút audio tại `data/audio/reference_voices/{BS_hanoi,BS_danang,BS_saigon}/`
 
-**Input (tương lai):**
-- VietMed (16h, MIT, KHÔNG PII) — `scripts/download_vietmed.py` đã sửa xong (VIETMED-FIX-001, commit
-  `3fd6990`) nhưng dataset **gated trên HuggingFace** → cần Andy: đăng nhập huggingface.co, accept
-  license tại `huggingface.co/datasets/doof-ferb/VietMed`, tạo Read token, `set HF_TOKEN=hf_xxx` (PA-024)
+**Input (sẵn sàng, 2026-06-12):**
+- VietMed (16h, MIT, KHÔNG PII) — **ĐÃ FIX HOÀN TOÀN** (VIETMED-FIX-001 v2, 2026-06-12):
+  dataset ID đúng là `leduckhai/VietMed` (KHÔNG phải `doof-ferb/VietMed` — 404, sai từ đầu),
+  **KHÔNG gated** → KHÔNG cần HF_TOKEN. PA-024 ĐÓNG (không cần nữa). 4 splits: train (2773) /
+  dev (2912) / test (3437) / cv (85). Đã verify download thật split `cv` (85 samples, 17MB) +
+  smoke-test pipeline chạy OK với audio thật.
+
+**Input (chờ Andy):**
 - Pilot audio 50-100h từ phòng khám Đà Nẵng/Sài Gòn — chưa ghi âm (Pilot chưa launch). Khi có,
   upload lên Colab/Kaggle để train CẦN tuân `docs/records/DECISIONS.md` 2026-06-11 (Pilot Phase
   Exception #2 — consent đã có, xóa audio ngay sau training run).
 - GPU: **Colab/Kaggle free-tier GPU** (T4/P100, Andy đã có account) — quyết định 2026-06-11,
   thay cho VNG/FPT cloud VM ở giai đoạn pilot. Xem `docs/dev/COLAB_KAGGLE_TRAINING.md`.
+  **VietMed có thể tải/train ngay trên máy local** (không PII, không cần Colab/Kaggle) —
+  Colab/Kaggle chỉ bắt buộc khi train với pilot audio (PII) hoặc cần GPU mạnh hơn local.
 
 **Output (FID này, mở rộng 2026-06-11):**
 - `scripts/build_asr_manifest.py`:
@@ -45,7 +51,7 @@ sẵn sàng có thể chạy ngay.
     (HN→BS_hanoi, DN→BS_danang, SG→BS_saigon) → `data/asr_manifest/ref_voice_manifest.jsonl`
     (57 dòng `{"audio": <path>, "text": <transcript_gt>}`)
   - `build_vietmed_manifest()` — đọc `data/vietmed/{split}/metadata.jsonl` + `audio/` →
-    `data/asr_manifest/vietmed_{split}_manifest.jsonl` (trả `[]` nếu chưa download)
+    `data/asr_manifest/vietmed_manifest.jsonl` (tất cả splits gộp, trả `[]` nếu chưa download)
   - `build_pilot_manifest(pilot_dir)` — quét `*.wav` + transcript `.txt`/`.json` liền kề →
     `data/asr_manifest/pilot_manifest.jsonl` (trả `[]` nếu dir trống)
   - CLI flags `--vietmed --pilot <dir> --combined` → `combined_manifest.jsonl`
@@ -69,12 +75,16 @@ production qua FID riêng SAU KHI đạt GO criteria (WER <20%, Drug CEER <0.10)
   parse đúng khi có (transcript field tolerant: text/transcription/sentence/transcript)
 - [x] `--fp16` flag cho `train_asr_phowhisper.py` (GPU Colab/Kaggle)
 - [x] `docs/dev/COLAB_KAGGLE_TRAINING.md` — setup guide + compliance note (Pilot Exception #2)
+- [x] **VIETMED-FIX-001 v2** (2026-06-12): fix dataset ID `leduckhai/VietMed` (đúng, không gated)
+  + fix audio decode (`Audio(decode=False)` + soundfile/librosa, tránh torchcodec incompatible) —
+  verified bằng download thật split `cv` (85 samples) + smoke-test pipeline với audio thật OK
 - [x] Unit test `tests/unit/test_build_asr_manifest.py` — 100% PASS
 - [x] CHANGELOG entry
 - [x] Pipeline L0→L10 không đổi
-- [ ] **OUT OF SCOPE (CT mới)**: full fine-tune run thật — chờ (1) HF_TOKEN cho VietMed (PA-024),
-  (2) 50-100h pilot audio. Khi đủ → chạy `train_asr_phowhisper.py --fp16` trên Colab/Kaggle,
-  GO/NO-GO theo WER<20%/Drug CEER<0.10.
+- [ ] **OUT OF SCOPE (CT mới)**: full fine-tune run thật — chờ **50-100h pilot audio** (chưa ghi
+  âm, điều kiện duy nhất còn lại). VietMed 16h đã sẵn sàng — Andy có thể quyết định chạy fine-tune
+  trung gian chỉ với VietMed (16h, local hoặc Colab/Kaggle) trước khi có pilot audio. GO/NO-GO
+  theo WER<20%/Drug CEER<0.10.
 
 ## RISKS
 
@@ -83,7 +93,7 @@ production qua FID riêng SAU KHI đạt GO criteria (WER <20%, Drug CEER <0.10)
 | R-007-1 | Fine-tune trên 17 phút data sẽ overfit/làm hỏng model | `--smoke-test` CHỈ validate pipeline (1 step, không save checkpoint dùng production); full run chờ ≥50h |
 | R-007-2 | Pilot audio có PII upload Colab/Kaggle (ngoài VN) | Pilot Phase Exception #2 (`docs/records/DECISIONS.md` 2026-06-11) — consent đã có, xóa audio ngay sau run, chỉ giữ checkpoint |
 | R-007-3 | Checkpoint PhoWhisper fine-tune (~3GB) không được commit | `/models/` đã trong `.gitignore` |
-| R-007-4 | VietMed dataset gated (401) | Cần Andy tạo HF_TOKEN — PA-024 |
+| R-007-4 | ~~VietMed dataset gated (401)~~ | **RESOLVED 2026-06-12**: dataset ID sai (`doof-ferb`→`leduckhai`), `leduckhai/VietMed` KHÔNG gated, không cần token |
 
 ## TESTS REQUIRED
 
