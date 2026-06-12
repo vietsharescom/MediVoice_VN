@@ -39,7 +39,9 @@ def build_dataset(manifest: list[dict], processor):
     from datasets import Dataset
 
     def _prepare(example):
-        audio, _ = librosa.load(example["audio"], sr=16000)
+        # Whisper only uses the first 30s of audio per sample — cap load duration so
+        # a handful of long recordings don't blow up preprocessing time/memory.
+        audio, _ = librosa.load(example["audio"], sr=16000, duration=30.0)
         features = processor.feature_extractor(audio, sampling_rate=16000)
         labels = processor.tokenizer(example["text"]).input_ids
         return {"input_features": features.input_features[0], "labels": labels}
