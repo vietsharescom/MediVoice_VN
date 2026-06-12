@@ -4,10 +4,16 @@
 import json
 from pathlib import Path
 
-from scripts.build_asr_manifest import build_manifest, build_pilot_manifest, build_vietmed_manifest
+import pytest
+
+from scripts.build_asr_manifest import AUDIO_ROOT, build_manifest, build_pilot_manifest, build_vietmed_manifest
+
+_NO_PILOT_AUDIO = not AUDIO_ROOT.exists()
+_SKIP_REASON = f"pilot audio absent on this machine ({AUDIO_ROOT}) — gitignored, NĐ13/2023 local-only"
 
 
 class TestBuildManifest:
+    @pytest.mark.skipif(_NO_PILOT_AUDIO, reason=_SKIP_REASON)
     def test_manifest_has_57_entries(self):
         manifest = build_manifest()
         assert len(manifest) == 57
@@ -19,6 +25,7 @@ class TestBuildManifest:
             assert "text" in entry
             assert entry["text"].strip()
 
+    @pytest.mark.skipif(_NO_PILOT_AUDIO, reason=_SKIP_REASON)
     def test_audio_paths_exist(self):
         manifest = build_manifest()
         for entry in manifest:

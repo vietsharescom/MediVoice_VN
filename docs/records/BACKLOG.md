@@ -1,6 +1,15 @@
 # BACKLOG.md — MediVoice VN
-# v0.9.3 — Updated 2026-06-11
+# v0.9.4 — Updated 2026-06-12
 # Single source of truth cho tasks.
+
+## CT-050 — Dev-machine bootstrap + test infra hardening [DONE 2026-06-12]
+- [x] `tests/conftest.py` gọi `init_db()` trực tiếp (FastAPI `startup` event không chạy
+  khi `TestClient(app)` không dùng `with` → DB schema thiếu trên máy mới)
+- [x] Tạo lại fixture local `data/audio/ground_truth_lam_sang_template.json` (gitignored)
+- [x] `tests/unit/test_build_asr_manifest.py` — `@pytest.mark.skipif` khi
+  `data/audio/reference_voices/` (pilot audio gitignored) không có local — tránh false 🔴
+- 954/956 PASS + 2 skipped (skip = pilot-audio-absent, không phải lỗi code), bandit 0 HIGH
+- Không thay đổi pipeline/feature — env-only, máy dev mới
 
 ## CT-049 — Pilot test fix round 3 [DONE 2026-06-11]
 - [x] Chẩn đoán nuốt đơn thuốc ("thuốc uống là <thuốc>") → `_PRESCRIPTION_KW` (`src/core/l1c_ner.py`) thêm `thuốc\s+(?:uống|tiêm|bôi|nhỏ|dán|xịt|là)\b`

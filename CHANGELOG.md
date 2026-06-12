@@ -23,6 +23,23 @@
 - **TRAIN-001 now blocked only by 50-100h pilot audio** (not yet recorded). VietMed 16h is
   ready to fine-tune now (local or Colab/Kaggle, no PII concerns).
 
+## [v0.11.17] — 2026-06-12 — Dev-machine bootstrap fix (env-only)
+
+### Fixed
+- fix(test): `tests/conftest.py` gọi `init_db()` trực tiếp — `TestClient(app)` không dùng
+  `with` không kích hoạt FastAPI `startup` event nên DB schema (`doctor_profiles`, ...)
+  không được tạo, gây 500 trên các test integration
+- fix(test): `tests/unit/test_build_asr_manifest.py` — thêm `@pytest.mark.skipif` cho
+  `test_manifest_has_57_entries`/`test_audio_paths_exist` khi `data/audio/reference_voices/`
+  (pilot audio, gitignored) không có local — tránh false 🔴 trên máy dev chưa có pilot audio
+
+### Chore
+- chore(deps): cài `silero-vad==6.2.1` trong venv máy mới (đã có trong requirements.txt,
+  thiếu vì venv mới)
+- chore(test): tạo lại fixture local `data/audio/ground_truth_lam_sang_template.json`
+  (gitignored, 7 entries dựa trên pattern NER đã verify trong
+  `tests/unit/test_l1c_vn_numbers.py`/`test_l1c_ner_bugs.py`)
+
 ## [v0.11.16] — 2026-06-11 — TRAIN-001 prep v2: Colab/Kaggle GPU pipeline (FID-VN-007 v2)
 
 ### Colab/Kaggle GPU training direction (PA-025)
