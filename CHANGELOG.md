@@ -1,6 +1,22 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.18] — 2026-06-12 — L1b drug match window 4→6 words (CT-027 follow-up)
+
+### Fixed
+- fix(l1b): `src/core/l1b_drug_correct.py::_match_window()` — Layer 1 exact match
+  only tried windows of 1-4 words, but `data/reference/drug_db_v200.json`
+  `phonetic_variants` curated since DRUG-ALIAS-001/CONS-20260610-001/002/DRUG-DB-002
+  include **187 entries of 5-6 words** (e.g. Azithromycin "a zi thro my xin",
+  Ciprofloxacin "xi pro phlo xa xin", Atorvastatin/Rosuvastatin/Clarithromycin/...).
+  These could never match. Extended window to (6,5,4,3,2,1) — exact-match only,
+  longer windows are strictly more specific so no new false-positive risk.
+- 958/958 PASS (+2 new tests: `test_phonetic_5word_azithromycin`,
+  `test_phonetic_5word_ciprofloxacin` in `tests/unit/test_l1b_drug_correct_v2.py`).
+- Note: does NOT fix CT-016's exact Ciprofloxacin garble "si pô lo siêu âm si"
+  (different spelling than curated "xi pro phlo..." variants) — still needs more
+  audio samples per CT-027.
+
 ## [v0.11.17] — 2026-06-12 — VIETMED-FIX-001 v2: dataset ID + audio decode fix (FID-VN-007 v3)
 
 ### VietMed dataset — real fix (PA-024 closed, not needed)

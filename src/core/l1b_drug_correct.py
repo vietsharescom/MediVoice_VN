@@ -181,7 +181,10 @@ def _run_safety(match: DrugMatch, transcript_fragment: str, session_context: dic
 
 def _match_window(words: list[str], i: int, alias_map: dict[str, str]) -> tuple[str | None, int, float]:
     """Layer 1 exact match. Returns (inn, n_words_consumed, confidence)."""
-    for n in (4, 3, 2, 1):
+    # Window up to 6 words: drug_db_v200 phonetic_variants for multi-syllable
+    # English drug names (e.g. "a zi thro my xin" for Azithromycin) are
+    # 5-6 words — without this they can never match (CT-027 follow-up).
+    for n in (6, 5, 4, 3, 2, 1):
         if i + n > len(words):
             continue
         candidate = " ".join(words[i:i+n])

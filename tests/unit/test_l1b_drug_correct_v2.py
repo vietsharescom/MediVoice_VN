@@ -100,6 +100,18 @@ class TestLayer1Exact:
         assert any(m.inn == "Oresol" and m.match_layer == 1 for m in matches)
         assert not any(m.inn == "Xylometazoline" for m in matches)
 
+    def test_phonetic_5word_azithromycin(self):
+        # CT-027 follow-up: drug_db_v200 có 187 phonetic_variants dài 5-6 từ
+        # (vd "a zi thro my xin" cho Azithromycin) nhưng _match_window cũ chỉ
+        # thử window 1-4 từ -> các variant này KHÔNG THỂ MATCH. Mở rộng window
+        # lên 6 từ để unlock số liệu đã curate sẵn.
+        txt, matches = correct_drug_names_v2("ke don a zi thro my xin 500mg uong ngay 1 vien")
+        assert any(m.inn == "Azithromycin" and m.match_layer == 1 for m in matches)
+
+    def test_phonetic_5word_ciprofloxacin(self):
+        txt, matches = correct_drug_names_v2("ke don xi pro phlo xa xin 500mg")
+        assert any(m.inn == "Ciprofloxacin" and m.match_layer == 1 for m in matches)
+
 
 # ─── LAYER 2 — Fuzzy match ────────────────────────────────────────────────────
 
