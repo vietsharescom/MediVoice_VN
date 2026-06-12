@@ -17,6 +17,8 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
+(ROOT / "logs").mkdir(exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(message)s",
@@ -37,7 +39,6 @@ def main():
     parser.add_argument("--cache-dir", default=None)
     args = parser.parse_args()
 
-    (ROOT / "logs").mkdir(exist_ok=True)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     try:
