@@ -270,12 +270,12 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.11.14 |
-| Status | **CT-049 IMPLEMENTED ✅** — fix 3 vấn đề mới từ pilot test vòng 2 (Andy re-test sau CT-048): (1) "chẩn đoán ghi chung với tên thuốc" → `_PRESCRIPTION_KW` (`src/core/l1c_ner.py`) thêm `thuốc\s+(?:uống\|tiêm\|bôi\|nhỏ\|dán\|xịt\|là)\b` để nhận "thuốc uống là Amoxicillin" làm boundary; (2) thiếu Paracetamol trong đơn thuốc (ASR "parasyte mode") → thêm vào `phonetic_variants` + nới filter 2-từ ≥9 ký tự trong `_build_alias_map()` (`src/core/l1b_drug_correct.py`); (3) tuổi/tên BN chưa trích xuất → `MedicalEntities.tuoi`/`gioi_tinh` + `_RE_GIOI_TINH_TUOI`/`_RE_TUOI`/`_RE_PATIENT_NAME_AGE` (`src/core/l1c_ner.py`) bắt câu mở đầu chuẩn "<nam/nữ> <N> tuổi, <Họ Tên>, ..." → wire `form_data`→`HanhChinh.tuoi`/`gioi_tinh` (PDF) + UI input Tuổi/Giới tính. 948 tests |
-| Tests | **948/948 PASS** · bandit 0 HIGH (9 MEDIUM pre-existing, không liên quan) · conftest.py SKIP_QWEN |
-| Pending | **CT-049** (Andy re-test clip TMH lần 3) · **PA-020/PA-021** (Andy test UI FID-VN-017/018, audio mẫu giờ đã có) · **PA-015/PA-017/PA-018** (Andy test FID-VN-013/014/015/016 UI) · **CT-019** (🔴 A2 VAD-chunk regression) · CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039/CT-042/CT-044 ⏳ · VIETMED-FIX-001 |
-| Next task | **TRAIN-001** (PhoWhisper fine-tune, ưu tiên cao nhất per CT-028) → CT-049 re-test song song · CT-019 debug A2-VAD nếu có audio |
-| Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.1) · FID: `fids/FID-VN-010.md`, `fids/FID-VN-012.md`, `fids/FID-VN-013.md`, `fids/FID-VN-014.md`, `fids/FID-VN-015.md`, `fids/FID-VN-016.md`, `fids/FID-VN-017.md`, `fids/FID-VN-018.md` |
+| Version | v0.11.15 |
+| Status | **FID-VN-007 DONE ✅ (TRAIN-001 prep)** — PhoWhisper fine-tune pipeline scaffold: `scripts/build_asr_manifest.py::build_manifest()` (57 clip giọng BS thật → `data/asr_manifest/ref_voice_manifest.jsonl`) + `scripts/train_asr_phowhisper.py --smoke-test` (`Seq2SeqTrainer`/`WhisperProcessor`, 1 step verified OK trên CPU). 952 tests. **TRAIN-001 full run vẫn BLOCKED**: cần (1) HF_TOKEN cho VietMed (16h, dataset gated — PA-024), (2) 50-100h pilot audio (chưa ghi âm), (3) GPU/cloud VM. |
+| Tests | **952/952 PASS** · bandit src/ 0 HIGH (9 MEDIUM/2 LOW pre-existing, không đổi) · conftest.py SKIP_QWEN |
+| Pending | **PA-024** (HF_TOKEN cho VietMed — mới) · **CT-049** (Andy re-test clip TMH lần 3) · **PA-020/PA-021** (Andy test UI FID-VN-017/018, audio mẫu giờ đã có) · **PA-015/PA-017/PA-018** (Andy test FID-VN-013/014/015/016 UI) · **CT-019** (🔴 A2 VAD-chunk regression) · CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039/CT-042/CT-044 ⏳ |
+| Next task | **TRAIN-001 vẫn BLOCKED** (chờ PA-024 + pilot audio + GPU/cloud) → CT-049 re-test · CT-019 debug A2-VAD nếu có audio · các PA UI test khác |
+| Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.1) · FID: `fids/FID-VN-007.md`, `fids/FID-VN-010.md`, `fids/FID-VN-012.md`, `fids/FID-VN-013.md`, `fids/FID-VN-014.md`, `fids/FID-VN-015.md`, `fids/FID-VN-016.md`, `fids/FID-VN-017.md`, `fids/FID-VN-018.md` |
 
 ---
 

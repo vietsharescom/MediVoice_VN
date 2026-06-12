@@ -1,6 +1,23 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.15] — 2026-06-11 — TRAIN-001 prep: PhoWhisper fine-tune pipeline (FID-VN-007)
+
+### Training pipeline scaffold
+- feat(train): `fids/FID-VN-007.md` — FID cho PhoWhisper fine-tune pipeline (prerequisite
+  TRAIN-001, per CT-028 ưu tiên #1)
+- feat(train): `scripts/build_asr_manifest.py::build_manifest()` — build manifest
+  (`data/asr_manifest/ref_voice_manifest.jsonl`) từ 57 clip giọng BS thật
+  (`data/eval/ref_voice_transcripts.json` + `data/audio/reference_voices/`)
+- feat(train): `scripts/train_asr_phowhisper.py` — fine-tune `vinai/PhoWhisper-medium`
+  qua `Seq2SeqTrainer`/`WhisperProcessor`; `--smoke-test` chạy 1 step trên CPU để
+  validate pipeline (verified OK, không lưu checkpoint)
+- test: `tests/unit/test_build_asr_manifest.py` — 4 tests mới
+- 952/952 PASS (+4), bandit src/ 0 HIGH/9 MEDIUM/2 LOW (pre-existing, không đổi)
+- **Full fine-tune run (TRAIN-001 thật) vẫn BLOCKED**: cần (1) HF_TOKEN cho VietMed
+  (16h, dataset gated), (2) 50-100h pilot audio (chưa ghi âm), (3) GPU/cloud VM —
+  xem `fids/FID-VN-007.md` §RISKS
+
 ## [v0.11.14] — 2026-06-11 — Fix 3 vấn đề mới từ pilot test vòng 2 (CT-049)
 
 ### NER + L1b + UI fixes (Andy re-test clip TMH lần 2)

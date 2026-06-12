@@ -180,6 +180,9 @@
   - Prerequisite for full v1.0: FID cần Andy approve (> 100 LOC tổng + new module + ghi đè LAST_SESSION tự động)
   - Priority: Phase 1 (sau pilot Đà Nẵng — khi cần scale multi-AI consultation)
 - [ ] **TRAIN-001** ⏳ Fine-tune PhoWhisper trên 50-100h real clinical audio — cần audio thật từ pilot
+  - [x] **FID-VN-007** ✅ Prep pipeline (2026-06-11): `scripts/build_asr_manifest.py` +
+    `scripts/train_asr_phowhisper.py --smoke-test` (verified OK trên CPU, 57-clip/17min manifest).
+    952/952 PASS. Full run BLOCKED: HF_TOKEN (VietMed gated) + 50-100h pilot audio + GPU/cloud VM.
 
 ### FID-VN-017/018 IMPLEMENTED — Phonetic guidance + DVP flow reorder [2026-06-11]
 > Andy feedback session 2026-06-11 (sau FID-VN-016 test) — 4 ý lớn. CT-040/041 →
@@ -305,10 +308,11 @@
   - Layer 3: Phonetic prefix + context (session_context: diagnosis, drug_class)
   - Layer 4: Safety Rule Engine — hard dose validation per drug, ambiguity → flag không auto-commit
   - Depend: CONS-002-IMPL (phonetic_variants trong drug_db_v200)
-- [ ] **VIETMED-FIX-001** 🟢 Fix `scripts/download_vietmed.py` — bỏ `trust_remote_code`, thêm HF_TOKEN auth
-  - Lỗi hiện tại: `trust_remote_code is not supported anymore` + 401 Unauthorized
-  - Dataset `doof-ferb/VietMed` cần HuggingFace login để download (~2.5GB, 16h audio MIT)
-  - Dùng cho: TRAIN-001 PhoWhisper fine-tune (Phase 1 — không block Phase 0)
+- [x] **VIETMED-FIX-001** ✅ Fix `scripts/download_vietmed.py` — bỏ `trust_remote_code`, thêm HF_TOKEN auth (commit `3fd6990`, đã verify code OK 2026-06-11)
+  - Dataset `doof-ferb/VietMed` vẫn **gated trên HuggingFace** (401 nếu không có token) — Andy
+    cần đăng nhập huggingface.co, accept license tại `huggingface.co/datasets/doof-ferb/VietMed`,
+    tạo Read token, `set HF_TOKEN=hf_xxx` → xem **PA-024**
+  - Dùng cho: TRAIN-001 PhoWhisper fine-tune (FID-VN-007)
 - [x] **BUG-K2** ✅ "một sáu lăm"=165 abbreviated SG tens fixed (2026-06-10) — `_WABR` pattern + `_WCOLLQ` extended. +1 test `test_sg_bp_colloquial_165_abbreviated` → 409/409 PASS
 - [x] **BUG-N** ✅ chan_doan rỗng cho follow-up visits (2026-06-10) — BS nói "tái khám tăng huyết áp" mà không có "chẩn đoán:" keyword. Fix: `_RE_TAI_KHAM_DIAGNOSIS` checked trước `_RE_CHAN_DOAN_FALLBACK`. +4 tests → 408/408 PASS
 - [~] **DATASET-001** 🔵 PARTIAL — Download P1 public datasets (VietMed family — MIT/Apache-2.0)
@@ -374,7 +378,8 @@
 - [ ] **TRAIN-001:** Fine-tune PhoWhisper trên VietMed (16h labeled MIT) + pilot audio (50–100h)
   - Datasets: `data/external/VietMed` + `data/external/ViMedCSS` + pilot audio
   - Target: WER 35–40% → <20% | Drug CEER 0.90 → <0.10
-  - Cần: GPU/cloud VM (VNG/FPT) | FID-VN-007 trước khi implement
+  - Cần: GPU/cloud VM (VNG/FPT) | **FID-VN-007 ✅ DONE (2026-06-11)** — pipeline scaffold sẵn sàng,
+    chờ HF_TOKEN + pilot audio + GPU/cloud để chạy full run
 - [x] **TRAIN-002** ✅ Fine-tune PhoBERT+CRF NER trên synthetic 10K — HOÀN TẤT (2026-06-10)
   - Epoch 1: F1=**98.95%** P=98.98% R=98.91% | Epoch 2: F1=**98.73%** | Epoch 3: F1=**99.44%** ← BEST
   - Best model: `models/ner_phobert/best/` (512.8MB, checkpoint-3000) ✅
