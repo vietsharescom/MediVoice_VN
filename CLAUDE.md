@@ -270,11 +270,11 @@ v{trước} | {N} tests → v{sau} | {N} tests
 
 | Field | Value |
 |---|---|
-| Version | v0.11.16 |
-| Status | **FID-VN-007 v2 DONE ✅ (TRAIN-001 prep — Colab/Kaggle direction)** — Andy 2026-06-11: "đã có consent nên không lo. làm đi" → GPU = Colab/Kaggle free-tier (thay VNG/FPT cho pilot). Thêm `build_vietmed_manifest()`/`build_pilot_manifest()` (`scripts/build_asr_manifest.py`, tolerant transcript field, an toàn khi data chưa có), `--fp16` (`scripts/train_asr_phowhisper.py`), setup guide `docs/dev/COLAB_KAGGLE_TRAINING.md`. ADR mới: `docs/records/DECISIONS.md` 2026-06-11 **Pilot Phase Exception #2** (audio PII tạm upload Colab/Kaggle, xóa ngay sau run) + `docs/compliance/RISK_REGISTER.md` R-P03 cập nhật. 956 tests. **TRAIN-001 full run vẫn BLOCKED**: cần (1) PA-024 HF_TOKEN cho VietMed (16h, dataset gated), (2) 50-100h pilot audio (chưa ghi âm). |
-| Tests | **956/956 PASS** · bandit src/ 0 HIGH (9 MEDIUM/2 LOW pre-existing, không đổi) · conftest.py SKIP_QWEN |
-| Pending | **PA-024** (HF_TOKEN cho VietMed) · **CT-049** (Andy re-test clip TMH lần 3) · **PA-020/PA-021** (Andy test UI FID-VN-017/018, audio mẫu giờ đã có) · **PA-015/PA-017/PA-018** (Andy test FID-VN-013/014/015/016 UI) · **CT-019** (🔴 A2 VAD-chunk regression) · CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039/CT-042/CT-044 ⏳ |
-| Next task | **TRAIN-001 vẫn BLOCKED** (chờ PA-024 + pilot audio; chạy trên Colab/Kaggle theo `docs/dev/COLAB_KAGGLE_TRAINING.md`) → CT-049 re-test · CT-019 debug A2-VAD nếu có audio · các PA UI test khác |
+| Version | v0.11.17 |
+| Status | **Dev-machine bootstrap fix (env-only, no feature change)** — máy mới thiếu `silero-vad==6.2.1` (đã `pip install`), `medivoice.db` rỗng 0 tables (FastAPI `startup` event không chạy khi `TestClient(app)` không dùng `with` → `tests/conftest.py` gọi `init_db()` trực tiếp), thiếu fixture local `data/audio/ground_truth_lam_sang_template.json` (gitignored, đã tạo lại 7 entries từ pattern NER đã verify). `tests/unit/test_build_asr_manifest.py::test_manifest_has_57_entries`/`test_audio_paths_exist` thêm `@pytest.mark.skipif` khi `data/audio/reference_voices/` (pilot audio gitignored) không tồn tại local — tránh false 🔴 trên máy chưa có pilot audio. |
+| Tests | **954/956 PASS + 2 skipped** (skip = pilot-audio-absent trên máy này, không phải lỗi code) · bandit src/ 0 HIGH (9 MEDIUM/2 LOW pre-existing, không đổi) · conftest.py SKIP_QWEN + init_db() |
+| Pending | **CT-042** 🔴 (BACKLOG IMMEDIATE — L1b phonological correction p↔b/t↔d/k↔g, cần FID trước khi sửa pipeline FROZEN) · **PA-024** (HF_TOKEN cho VietMed) · **CT-049** (Andy re-test clip TMH lần 3) · **PA-020/PA-021** (Andy test UI FID-VN-017/018) · **PA-015/PA-017/PA-018** (Andy test FID-VN-013/014/015/016 UI) · **CT-019** (🔴 A2 VAD-chunk regression) · CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039/CT-044 ⏳ |
+| Next task | **CT-042** viết FID trước (🔴 HIGH, IMMEDIATE) · **TRAIN-001 vẫn BLOCKED** (chờ PA-024 + pilot audio; chạy trên Colab/Kaggle theo `docs/dev/COLAB_KAGGLE_TRAINING.md`) → CT-049 re-test · CT-019 debug A2-VAD nếu có audio · các PA UI test khác |
 | Design | `docs/records/DESIGN_REPORT_v1.1_20260606.md` (§15 v2.1) · FID: `fids/FID-VN-007.md`, `fids/FID-VN-010.md`, `fids/FID-VN-012.md`, `fids/FID-VN-013.md`, `fids/FID-VN-014.md`, `fids/FID-VN-015.md`, `fids/FID-VN-016.md`, `fids/FID-VN-017.md`, `fids/FID-VN-018.md` |
 
 ---

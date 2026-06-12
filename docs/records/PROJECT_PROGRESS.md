@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-11 | v0.11.16
+# Cập nhật: 2026-06-12 | v0.11.17
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -250,17 +250,18 @@
 
 ## PHIÊN TIẾP THEO — LÀM GÌ?
 
-### ⚡ NGAY BÂY GIỜ — v0.11.16 · TRAIN-001 ưu tiên cao nhất (per CT-028)
+### ⚡ NGAY BÂY GIỜ — v0.11.17 · CT-042 🔴 + TRAIN-001 ưu tiên cao nhất (per CT-028)
 
 | # | Task | Ai | Điều kiện |
 |---|---|---|---|
+| -1 | **CT-042 🔴 BACKLOG IMMEDIATE** — Viết FID cho L1b phonological correction (p↔b/t↔d/k↔g normalization) trước khi sửa code — touches FROZEN pipeline | Claude | Cần Andy approve FID trước implement |
 | 0 | **PA-024** — Tạo HF_TOKEN cho VietMed (login huggingface.co + accept license `doof-ferb/VietMed` + Read token, `set HF_TOKEN=hf_xxx`) | Andy | 5-10 phút, làm được ngay |
 | 1 | **CT-049** — Andy re-test clip TMH lần 3 (đã fix: chẩn đoán nuốt đơn thuốc, thiếu Paracetamol "parasyte mode", tuổi/giới tính/tên BN) | Andy | Server local `http://localhost:8000` |
 | 2 | **TRAIN-001 🔴** — Fine-tune PhoWhisper trên Colab/Kaggle GPU (`docs/dev/COLAB_KAGGLE_TRAINING.md`) — chờ PA-024 + 50-100h pilot audio | Andy + Claude | 🔴 Drug Recall 55.6%LB / Diag CEER chưa đạt — quyết định CT-028 (2026-06-10): KHÔNG hybrid Groq, chỉ fine-tune giải quyết được. GPU pipeline ready (FID-VN-007 v2). |
 | 3 | **CT-019 🔴** — Debug A2 VAD-chunk regression: A/B test per-chunk vs whole-file transcript offline (script riêng, KHÔNG wire vào `/transcribe` cho đến khi rõ nguyên nhân hallucination) | Claude | Cần audio mẫu (data/audio/) |
 | 4 | **PA-020/PA-021** — Andy test UI FID-VN-017/018 (audio mẫu giờ đã có) | Andy | Server local sẵn sàng |
 | 5 | **PA-015/PA-017/PA-018** — Andy test UI FID-VN-013/014/015/016 | Andy | Server local sẵn sàng |
-| 6 | **CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039/CT-042/CT-044** — chờ Andy cung cấp audio+GT / mô tả flow | Andy | Chờ Andy |
+| 6 | **CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039/CT-044** — chờ Andy cung cấp audio+GT / mô tả flow | Andy | Chờ Andy |
 | 7 | **Pilot Đà Nẵng** — Cài install.bat thật tại phòng khám → thu audio → TRAIN-001 | Andy | Code sẵn sàng · DVP needs real doctor CCHN |
 
 ### 🟡 BENCHMARK TIẾP THEO
@@ -272,11 +273,11 @@
 
 ---
 
-## METRICS HIỆN TẠI (2026-06-11 · v0.11.16)
+## METRICS HIỆN TẠI (2026-06-12 · v0.11.17)
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | **956/956** | 🟢 |
+| Tests PASS | 100% | **954/956 + 2 skipped** (skip = pilot-audio-absent trên máy dev, không phải lỗi) | 🟢 |
 | **Drug Recall Groq vs local (CT-029)** | ≥70% | Groq=88.9% (hallucination chưa fix) vs local=55.6%LB | 🔴 TRAIN-001 required (Groq REJECTED — CT-028) |
 | **Diag CEER Groq vs local (CT-029)** | <30% | local=0.286 vs Groq=0.429 | 🟢 local thắng |
 | bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
@@ -339,8 +340,9 @@
 | SES-20260610...20260611b | 2026-06-10/11 | v0.11.5→v0.11.13 | CT-023/026/028/029/030-034/039-048 — docs sync + per-drug delete UI + Voice Calibration UX + Drug Wizard + VTLN follow-ups (xem CHANGELOG.md cho chi tiết từng version) |
 | SES-20260611c | 2026-06-11 | v0.11.13→v0.11.14 | CT-049 ✅ — fix 3 vấn đề pilot test vòng 2 (TMH clip): (1) chẩn đoán nuốt đơn thuốc "thuốc uống là <thuốc>" → `_PRESCRIPTION_KW` (`src/core/l1c_ner.py`); (2) thiếu Paracetamol (ASR "parasyte mode") → `phonetic_variants` + nới filter alias 2-từ ≥9 ký tự (`src/core/l1b_drug_correct.py`); (3) tuổi/giới tính/tên BN từ câu mở "<nam/nữ> <N> tuổi, <Tên>..." → `MedicalEntities.tuoi`/`gioi_tinh` + regex mới (`src/core/l1c_ner.py`) → `form_data` → PDF + UI input · 948/948 PASS (+9), bandit 0 HIGH/9 MEDIUM (pre-existing) |
 | SES-20260611d...e | 2026-06-11 | v0.11.14→v0.11.16 | FID-VN-007 v1+v2 ✅ — TRAIN-001 prep: `scripts/build_asr_manifest.py` (`build_manifest`/`build_vietmed_manifest`/`build_pilot_manifest`) + `scripts/train_asr_phowhisper.py` (`--smoke-test`/`--fp16`) + `docs/dev/COLAB_KAGGLE_TRAINING.md`. ADR `docs/records/DECISIONS.md` 2026-06-11 Pilot Phase Exception #2 (audio PII tạm upload Colab/Kaggle, consent đã có — Andy "làm đi") + RISK_REGISTER R-P03. PA-024 (HF_TOKEN VietMed) + PA-025 (Colab/Kaggle pipeline DONE). 956/956 PASS (+8), bandit 0 HIGH/9 MEDIUM (pre-existing) |
+| SES-20260612 | 2026-06-12 | v0.11.16→v0.11.17 | CT-050 ✅ — dev-machine bootstrap (env-only, no feature change): `tests/conftest.py` gọi `init_db()` trực tiếp (FastAPI `startup` event không chạy khi `TestClient(app)` không dùng `with` → schema thiếu trên máy mới); cài `silero-vad==6.2.1`; tạo lại fixture local `data/audio/ground_truth_lam_sang_template.json` (gitignored, 7 entries); `tests/unit/test_build_asr_manifest.py` thêm `@pytest.mark.skipif` khi pilot audio (`data/audio/reference_voices/`, gitignored) absent local. 954/956 PASS + 2 skipped, bandit 0 HIGH. CT-042 🔴 flagged (BACKLOG IMMEDIATE, cần FID trước khi sửa L1b FROZEN) |
 
 ---
 
-*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.12 | 2026-06-11*
+*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.12 | 2026-06-12*
 *Cập nhật mỗi phiên đóng. Đọc cùng BACKLOG.md + PENDING_REQUESTS.md*
