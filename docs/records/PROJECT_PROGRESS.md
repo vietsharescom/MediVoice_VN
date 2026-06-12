@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-10 | v0.11.5
+# Cập nhật: 2026-06-11 | v0.11.14
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -250,18 +250,18 @@
 
 ## PHIÊN TIẾP THEO — LÀM GÌ?
 
-### ⚡ NGAY BÂY GIỜ — v0.11.5 · TRAIN-001 ưu tiên cao nhất (per CT-028)
+### ⚡ NGAY BÂY GIỜ — v0.11.14 · TRAIN-001 ưu tiên cao nhất (per CT-028)
 
 | # | Task | Ai | Điều kiện |
 |---|---|---|---|
-| 0 | **PA-015** — Test UI FID-VN-013 v2 (waveform/mic-level/calib-tooltip + Drug Pronunciation Wizard) trên trình duyệt thật, confirm OK | Andy | Server local sẵn sàng `http://localhost:8000` — cần đăng ký DVP (Xác nhận & Lưu) trước khi thấy nút "🎓 Luyện đọc thuốc" |
+| 0 | **CT-049** — Andy re-test clip TMH lần 3 (đã fix: chẩn đoán nuốt đơn thuốc, thiếu Paracetamol "parasyte mode", tuổi/giới tính/tên BN) | Andy | Server local `http://localhost:8000` |
 | 1 | **TRAIN-001 🔴** — Fine-tune PhoWhisper trên 50-100h audio thật | Andy + Claude | 🔴 Drug Recall 55.6%LB / Diag CEER chưa đạt — quyết định CT-028 (2026-06-10): KHÔNG hybrid Groq, chỉ fine-tune giải quyết được |
 | 2 | **CT-019 🔴** — Debug A2 VAD-chunk regression: A/B test per-chunk vs whole-file transcript offline (script riêng, KHÔNG wire vào `/transcribe` cho đến khi rõ nguyên nhân hallucination) | Claude | Cần audio mẫu (data/audio/) |
-| 3 | **ORCH-001 FID** — Viết FID cho Orchestrator v1.0 đầy đủ (`detect_confusion`, `create_consultation_request`, tự động `close_session`) | Claude | Andy approve scope trước khi +100 LOC |
-| 4 | **VIETMED-FIX-001** — Fix `scripts/download_vietmed.py` remove `trust_remote_code` + HF_TOKEN (~5 LOC) | Claude | Làm được ngay |
-| 5 | **CT-016/CT-017/CT-014** — chờ Andy cung cấp audio+GT / GG Drive JSON key path / mô tả flow calibration | Andy | Chờ Andy |
-| 6 | **Pilot Đà Nẵng** — Cài install.bat thật tại phòng khám → thu audio → TRAIN-001 | Andy | Code sẵn sàng · DVP needs real doctor CCHN |
-| 7 | **PA-013** — Revoke `medivoice-bench` Groq API key trên console.groq.com (KHÔNG đụng `medivoice-demo`) | Andy | Key đã expose trong chat phiên CT-029 |
+| 3 | **PA-020/PA-021** — Andy test UI FID-VN-017/018 (audio mẫu giờ đã có) | Andy | Server local sẵn sàng |
+| 4 | **PA-015/PA-017/PA-018** — Andy test UI FID-VN-013/014/015/016 | Andy | Server local sẵn sàng |
+| 5 | **VIETMED-FIX-001** — Fix `scripts/download_vietmed.py` remove `trust_remote_code` + HF_TOKEN (~5 LOC) | Claude | Làm được ngay |
+| 6 | **CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039/CT-042/CT-044** — chờ Andy cung cấp audio+GT / mô tả flow | Andy | Chờ Andy |
+| 7 | **Pilot Đà Nẵng** — Cài install.bat thật tại phòng khám → thu audio → TRAIN-001 | Andy | Code sẵn sàng · DVP needs real doctor CCHN |
 
 ### 🟡 BENCHMARK TIẾP THEO
 
@@ -272,11 +272,11 @@
 
 ---
 
-## METRICS HIỆN TẠI (2026-06-10 · v0.11.5)
+## METRICS HIỆN TẠI (2026-06-11 · v0.11.14)
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | **852/852** | 🟢 |
+| Tests PASS | 100% | **948/948** | 🟢 |
 | **Drug Recall Groq vs local (CT-029)** | ≥70% | Groq=88.9% (hallucination chưa fix) vs local=55.6%LB | 🔴 TRAIN-001 required (Groq REJECTED — CT-028) |
 | **Diag CEER Groq vs local (CT-029)** | <30% | local=0.286 vs Groq=0.429 | 🟢 local thắng |
 | bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
@@ -336,8 +336,10 @@
 | SES-20260609j | 2026-06-09 | v0.11.2→v0.11.3 | CT-018 ✅ NER fix (BP digits + nhiệt độ "là") · CT-015 ✅ DVP Layer 1 registration UI · A2-VAD wired vào `/transcribe` rồi REVERTED ngay (CT-019 🔴 — live test "KHÔNG NHẬN DẠNG ĐƯỢC GÌ LUÔN") · 817/817 PASS |
 | SES-20260610 | 2026-06-10 | v0.11.3→v0.11.4 | CT-030/031/032 ✅ NER fix Real Clip 1-3 · CT-034 ✅ drug alias "pha ra citamon" + RAG rebuild · merge `experiment/local-accuracy`→master · CT-029 ✅ Groq benchmark 57 clips (local thắng WER/Drug Precision/Diag CEER) · CT-028 ✅ quyết định: 100% local, KHÔNG hybrid Groq, ưu tiên TRAIN-001 · `experiment/groq-degallucination` giữ làm reference (KHÔNG merge) · CT-023 ✅ L4 nút "🗑️ Xóa thuốc" · 826/826 PASS |
 | SES-20260610c | 2026-06-10 | v0.11.4→v0.11.5 | FID-VN-013 v2 ✅ IMPLEMENT (Andy "vậy triển khai") — §2.1-2.3 Visualization (waveform/mic-level/pause/quality-score/behavioral-hint/region-badge/calib-tooltip, AC-008 client-side only) · §2.4 Drug Pronunciation Wizard (`add_confirmed_alias()` active enrollment + 3 endpoints + modal UI) · §2.5 VTLN research module (`src/core/vtln.py` + `scripts/vtln_poc.py`, AC-013 gate ≥3% WER, KHÔNG wire L0) · 852/852 PASS, bandit 0 · PA-015 (Andy test UI) + CT-037 (VTLN POC run) PENDING |
+| SES-20260610...20260611b | 2026-06-10/11 | v0.11.5→v0.11.13 | CT-023/026/028/029/030-034/039-048 — docs sync + per-drug delete UI + Voice Calibration UX + Drug Wizard + VTLN follow-ups (xem CHANGELOG.md cho chi tiết từng version) |
+| SES-20260611c | 2026-06-11 | v0.11.13→v0.11.14 | CT-049 ✅ — fix 3 vấn đề pilot test vòng 2 (TMH clip): (1) chẩn đoán nuốt đơn thuốc "thuốc uống là <thuốc>" → `_PRESCRIPTION_KW` (`src/core/l1c_ner.py`); (2) thiếu Paracetamol (ASR "parasyte mode") → `phonetic_variants` + nới filter alias 2-từ ≥9 ký tự (`src/core/l1b_drug_correct.py`); (3) tuổi/giới tính/tên BN từ câu mở "<nam/nữ> <N> tuổi, <Tên>..." → `MedicalEntities.tuoi`/`gioi_tinh` + regex mới (`src/core/l1c_ner.py`) → `form_data` → PDF + UI input · 948/948 PASS (+9), bandit 0 HIGH/9 MEDIUM (pre-existing) |
 
 ---
 
-*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.10 | 2026-06-10*
+*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.11 | 2026-06-11*
 *Cập nhật mỗi phiên đóng. Đọc cùng BACKLOG.md + PENDING_REQUESTS.md*
