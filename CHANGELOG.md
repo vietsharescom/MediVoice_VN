@@ -1,6 +1,29 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.16] — 2026-06-11 — TRAIN-001 prep v2: Colab/Kaggle GPU pipeline (FID-VN-007 v2)
+
+### Colab/Kaggle GPU training direction (PA-025)
+- feat(train): `scripts/build_asr_manifest.py::build_vietmed_manifest()` — build manifest từ
+  `data/vietmed/{split}/metadata.jsonl` + audio, tolerant transcript field
+  (text/transcription/sentence/transcript), trả `[]` an toàn nếu chưa download
+- feat(train): `scripts/build_asr_manifest.py::build_pilot_manifest()` — build manifest từ
+  thư mục pilot audio (`*.wav` + `.txt`/`.json` transcript liền kề), trả `[]` nếu rỗng
+- feat(train): CLI `--vietmed --pilot <dir> --combined` cho `build_asr_manifest.py`
+- feat(train): `scripts/train_asr_phowhisper.py --fp16` — mixed-precision cho GPU
+  (Colab/Kaggle T4/P100)
+- docs: `docs/dev/COLAB_KAGGLE_TRAINING.md` — setup guide từng bước (clone → HF_TOKEN secret
+  → download VietMed → build manifest → smoke-test → full run → cleanup PII)
+- docs(compliance): `docs/records/DECISIONS.md` 2026-06-11 — **PILOT PHASE EXCEPTION #2**:
+  cho phép upload audio pilot có PII lên Colab/Kaggle (Google Cloud, ngoài VN) TẠM THỜI để
+  fine-tune, với consent đã xác nhận (Andy 2026-06-11), xóa ngay sau training run. Đồng bộ
+  `docs/compliance/RISK_REGISTER.md` R-P03.
+- test: `tests/unit/test_build_asr_manifest.py` — +4 tests mới
+  (`TestBuildVietmedManifest`, `TestBuildPilotManifest`)
+- 956/956 PASS (+4), bandit src/ 0 HIGH/9 MEDIUM/2 LOW (pre-existing, không đổi)
+- **Full fine-tune run (TRAIN-001 thật) vẫn BLOCKED**: cần (1) PA-024 HF_TOKEN cho VietMed
+  (16h, dataset gated), (2) 50-100h pilot audio (chưa ghi âm) — GPU đã có hướng (Colab/Kaggle)
+
 ## [v0.11.15] — 2026-06-11 — TRAIN-001 prep: PhoWhisper fine-tune pipeline (FID-VN-007)
 
 ### Training pipeline scaffold

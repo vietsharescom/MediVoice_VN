@@ -183,6 +183,12 @@
   - [x] **FID-VN-007** ✅ Prep pipeline (2026-06-11): `scripts/build_asr_manifest.py` +
     `scripts/train_asr_phowhisper.py --smoke-test` (verified OK trên CPU, 57-clip/17min manifest).
     952/952 PASS. Full run BLOCKED: HF_TOKEN (VietMed gated) + 50-100h pilot audio + GPU/cloud VM.
+  - [x] **FID-VN-007 v2** ✅ Colab/Kaggle GPU direction (2026-06-11, Andy: "đã có consent, làm đi"):
+    `build_vietmed_manifest()` + `build_pilot_manifest()` (`scripts/build_asr_manifest.py`),
+    `--fp16` flag (`scripts/train_asr_phowhisper.py`), setup guide
+    `docs/dev/COLAB_KAGGLE_TRAINING.md`. ADR `docs/records/DECISIONS.md` 2026-06-11
+    (Pilot Phase Exception #2 — audio PII tạm upload Colab/Kaggle, xóa ngay sau run).
+    956/956 PASS, bandit unchanged. Full run vẫn chờ PA-024 (HF_TOKEN) + pilot audio recording.
 
 ### FID-VN-017/018 IMPLEMENTED — Phonetic guidance + DVP flow reorder [2026-06-11]
 > Andy feedback session 2026-06-11 (sau FID-VN-016 test) — 4 ý lớn. CT-040/041 →
@@ -378,8 +384,9 @@
 - [ ] **TRAIN-001:** Fine-tune PhoWhisper trên VietMed (16h labeled MIT) + pilot audio (50–100h)
   - Datasets: `data/external/VietMed` + `data/external/ViMedCSS` + pilot audio
   - Target: WER 35–40% → <20% | Drug CEER 0.90 → <0.10
-  - Cần: GPU/cloud VM (VNG/FPT) | **FID-VN-007 ✅ DONE (2026-06-11)** — pipeline scaffold sẵn sàng,
-    chờ HF_TOKEN + pilot audio + GPU/cloud để chạy full run
+  - GPU: **Colab/Kaggle free-tier** (quyết định 2026-06-11, thay VNG/FPT cho giai đoạn pilot) —
+    setup guide `docs/dev/COLAB_KAGGLE_TRAINING.md` | **FID-VN-007 ✅ DONE (2026-06-11, v2)** —
+    pipeline scaffold + Colab/Kaggle manifests/fp16 sẵn sàng, chờ PA-024 (HF_TOKEN) + pilot audio
 - [x] **TRAIN-002** ✅ Fine-tune PhoBERT+CRF NER trên synthetic 10K — HOÀN TẤT (2026-06-10)
   - Epoch 1: F1=**98.95%** P=98.98% R=98.91% | Epoch 2: F1=**98.73%** | Epoch 3: F1=**99.44%** ← BEST
   - Best model: `models/ner_phobert/best/` (512.8MB, checkpoint-3000) ✅

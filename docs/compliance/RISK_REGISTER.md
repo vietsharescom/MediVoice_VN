@@ -13,7 +13,7 @@ Format: R-[PREFIX][NN] | Severity | Probability | Control
 |---|---|---|---|---|
 | R-P01 | BS khám tại nhà không đăng ký dùng app | HIGH | HIGH | Self-attestation CCHN; disclaimer rõ; platform không chịu TN |
 | R-P02 | Referral commission tracker vi phạm Luật KCB Đ.80 | HIGH | MEDIUM | M5 chỉ track volume + deal% trong config partner (không ghi tiền trong giao dịch). Thanh toán thực ngoài app. |
-| R-P03 | Data vi phạm NĐ13/2023 (lưu ngoài VN) | CRITICAL | LOW | SQLite local; VN Cloud only; no AWS/GCP. **Exception 2026-06-10 (PILOT ONLY)**: audio pilot có PII → tạm lưu GG Drive với consent BS+BN+luật sư (xem `docs/records/DECISIONS.md` 2026-06-10, CT-024). PHẢI chuyển VN Cloud trước launch chính thức. |
+| R-P03 | Data vi phạm NĐ13/2023 (lưu ngoài VN) | CRITICAL | LOW | SQLite local; VN Cloud only; no AWS/GCP. **Exception 2026-06-10 (PILOT ONLY)**: audio pilot có PII → tạm lưu GG Drive với consent BS+BN+luật sư (xem `docs/records/DECISIONS.md` 2026-06-10, CT-024). **Exception #2, 2026-06-11 (PILOT ONLY, TRAIN-001)**: audio pilot có PII → tạm upload Colab/Kaggle (Google Cloud) để fine-tune PhoWhisper GPU, cùng phạm vi consent, xóa ngay sau training run (xem `docs/records/DECISIONS.md` 2026-06-11). PHẢI chuyển VN Cloud trước launch chính thức. |
 | R-P04 | Không có conformity assessment trước 01/09/2027 | HIGH | MEDIUM | Budget 80-200M VND; track trong BACKLOG |
 | R-P05 | Bị xếp SaMD → cần đăng ký BYT | MEDIUM | LOW | Positioning "Documentation Assistant"; không tự chẩn đoán |
 | R-P06 | Vi phạm TT13/2025 deadline 31/12/2026 | HIGH | MEDIUM | Phase 2 roadmap; HL7 FHIR + chữ ký số |

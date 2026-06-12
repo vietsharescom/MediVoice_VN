@@ -13,6 +13,7 @@
 # Usage:
 #   python -X utf8 scripts/train_asr_phowhisper.py --smoke-test
 #   python -X utf8 scripts/train_asr_phowhisper.py --manifest <path> --epochs 3 --batch 4
+#   python -X utf8 scripts/train_asr_phowhisper.py --manifest <path> --fp16  # GPU (Colab/Kaggle)
 
 import argparse
 import json
@@ -74,6 +75,8 @@ def main():
     parser.add_argument("--batch", type=int, default=2)
     parser.add_argument("--smoke-test", action="store_true",
                          help="1 training step on 2 samples — validates pipeline only")
+    parser.add_argument("--fp16", action="store_true",
+                         help="mixed-precision training (GPU only, e.g. Colab/Kaggle T4/P100)")
     args = parser.parse_args()
 
     from transformers import (
@@ -108,6 +111,7 @@ def main():
         max_steps=1 if args.smoke_test else -1,
         save_strategy="no" if args.smoke_test else "epoch",
         logging_steps=1,
+        fp16=args.fp16,
         report_to=[],
     )
 
