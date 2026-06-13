@@ -65,17 +65,19 @@
 - Priority: 🟢 LOW — research note. CT-060d/e cùng nhóm "rule-based, no-GPU" với
   CT-060c, nên gộp khi viết FID phonetic-encoder (CT-053).
 
-### FID-VN-021 — L1b Phoneme-Key Re-scoring cho Drug Matching (CT-060d) [DRAFT 2026-06-13]
-- [ ] `fids/FID-VN-021.md` — DRAFT, chờ Andy approve (PA-025)
-- [ ] Scope: module mới `src/core/vn_phoneme.py` (decompose âm tiết VN ->
-  onset/rhyme/tone, bỏ tone -> phoneme key) + thêm 1 tầng re-scoring phụ trong
-  `_fuzzy_match()` (L1b), KHÔNG đổi alias_map 1913 entries (CT-042)
+### FID-VN-021 — L1b Phoneme-Key Re-scoring cho Drug Matching (CT-060d) [DONE — RESEARCH NOTE, 2026-06-13]
+- [x] `fids/FID-VN-021.md` — APPROVED by Andy
+- [x] Implemented trên branch `experiment/fid-vn-021-phoneme`: `src/core/vn_phoneme.py`
+  (decompose_syllable/phoneme_key, 25 tests) + `_fuzzy_match()` rewrite trong
+  `src/core/l1b_drug_correct.py` (phoneme-key 2nd pass, `PHONEME_WEIGHT=0.9`),
+  alias_map 1913 entries không đổi (CT-042). 1009/1009 PASS.
+- [x] A/B benchmark BENCH-002b (`data/eval/bench_002b_results_fid021.json`):
+  byte-identical với baseline (Drug Recall 0.615, Precision 1.0 unchanged)
+- [x] Quyết định (precedent CT-028): KHÔNG merge vào master — giữ làm
+  research note trên `experiment/fid-vn-021-phoneme`
 - [ ] CT-060c (dialect detection) + CT-060e (F0/formant acoustic) bị defer khỏi
   FID này — cần audio thật, giữ trong CT-053/Phase 2
-- [ ] Nếu approve: implement trên branch `experiment/*`, A/B benchmark
-  BENCH-002b trước khi merge (precedent CT-054) — chỉ merge nếu Drug Recall
-  tăng/giữ nguyên VÀ Precision không giảm >2pp
-- Priority: 🟡 MEDIUM — chờ Andy review fids/FID-VN-021.md
+- Priority: ✅ DONE (research note) — không cần action thêm trừ khi có audio mới cho CT-053
 
 ## CT-053 — Vietnamese Medical Phonetic Encoder (Phase 2, supersedes CT-052) [NEW 2026-06-12]
 - [ ] Phát sinh từ FID-VN-019 v3 (CT-042 revision, CONS-20260612-001 ChatGPT+Grok

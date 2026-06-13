@@ -1,6 +1,30 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.24] — 2026-06-13 — docs sync: catch-up v0.11.20-23 + FID-VN-021 research note
+
+### Docs
+- Catch-up session: v0.11.20 (FID-VN-020/CT-011 Orchestrator automation done),
+  v0.11.21 (CT-054), v0.11.22 (CT-055), v0.11.23 (CT-056) were committed to master but never
+  reflected in `CLAUDE.md` CURRENT STATE, `docs/records/PROJECT_PROGRESS.md`,
+  or `docs/records/LAST_SESSION.md`. Backfilled all three with the regenerated
+  BENCH-002b baseline (Drug Recall 61.5%, Precision 100%, Diag CEER 21.4%,
+  Vitals CEER 28.9%) and current pending/next-task state.
+- `docs/records/PENDING_REQUESTS.md`: CT-011/CT-054/CT-055/CT-056/FID-VN-021
+  marked DONE with version numbers and benchmark deltas.
+- `docs/records/BACKLOG.md`: FID-VN-021 section updated DRAFT → DONE (research
+  note).
+
+### Research (not merged)
+- FID-VN-021 (CT-060d, L1b phoneme-key re-scoring): `src/core/vn_phoneme.py`
+  (`decompose_syllable`/`phoneme_key`, 25 tests) + `_fuzzy_match()` rewrite in
+  `src/core/l1b_drug_correct.py` (phoneme-key 2nd pass, `PHONEME_WEIGHT=0.9`).
+  1009/1009 PASS. A/B benchmark byte-identical to baseline
+  (`data/eval/bench_002b_results_fid021.json`). Per CT-028 precedent: kept as
+  research note on `experiment/fid-vn-021-phoneme`, NOT merged to master.
+
+984/984 tests PASS (master). Pipeline L0-L10 unchanged on master.
+
 ## [v0.11.23] — 2026-06-12 — CT-056: fix patient-name/gender UI bugs + temp audio path to D drive
 
 ### Fixed

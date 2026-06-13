@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-12 | v0.11.19
+# Cập nhật: 2026-06-13 | v0.11.24
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -250,19 +250,18 @@
 
 ## PHIÊN TIẾP THEO — LÀM GÌ?
 
-### ⚡ NGAY BÂY GIỜ — v0.11.18 · CT-042 🔴 + TRAIN-001 ưu tiên cao nhất (per CT-028)
+### ⚡ NGAY BÂY GIỜ — v0.11.24 · TRAIN-001 ưu tiên cao nhất (per CT-028)
 
 | # | Task | Ai | Điều kiện |
 |---|---|---|---|
-| -1 | **CT-042 🔴 BACKLOG IMMEDIATE** — Viết FID cho L1b phonological correction (p↔b/t↔d/k↔g normalization) trước khi sửa code — touches FROZEN pipeline | Claude | Cần Andy approve FID trước implement |
-| 0 | **CT-027 (Ciprofloxacin alias)** — "si pô lo siêu âm si" (CT-016 garble) chưa match `phonetic_variants` hiện có — cần thêm audio mẫu khác trước khi thêm alias (tránh FP với "siêu âm") | Andy + Claude | Chờ audio mẫu mới |
-| 1 | **CT-049** — Andy re-test clip TMH lần 3 (đã fix: chẩn đoán nuốt đơn thuốc, thiếu Paracetamol "parasyte mode", tuổi/giới tính/tên BN) | Andy | Server local `http://localhost:8000` |
-| 2 | **TRAIN-001 🔴** — Full fine-tune PhoWhisper trên VietMed 9207 samples, nhiều epoch, GPU mạnh hơn (Kaggle 30h/tuần) hoặc pilot audio (`docs/dev/COLAB_KAGGLE_TRAINING.md`) — smoke-test 85 samples/1 epoch/batch 2 đã PASS trên Colab 2026-06-12 (pipeline OK, không có giá trị fine-tune thật) | Andy + Claude | 🔴 Drug Recall 55.6%LB / Diag CEER chưa đạt — quyết định CT-028 (2026-06-10): KHÔNG hybrid Groq, chỉ fine-tune giải quyết được. GPU pipeline ready (FID-VN-007 v3). |
-| 3 | **CT-019 🔴** — Debug A2 VAD-chunk regression: A/B test per-chunk vs whole-file transcript offline (script riêng, KHÔNG wire vào `/transcribe` cho đến khi rõ nguyên nhân hallucination) | Claude | Cần audio mẫu (data/audio/) |
-| 4 | **PA-020/PA-021** — Andy test UI FID-VN-017/018 (audio mẫu giờ đã có) | Andy | Server local sẵn sàng |
-| 5 | **PA-015/PA-017/PA-018** — Andy test UI FID-VN-013/014/015/016 | Andy | Server local sẵn sàng |
-| 6 | **CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039/CT-044** — chờ Andy cung cấp audio+GT / mô tả flow | Andy | Chờ Andy |
-| 7 | **Pilot Đà Nẵng** — Cài install.bat thật tại phòng khám → thu audio → TRAIN-001 | Andy | Code sẵn sàng · DVP needs real doctor CCHN |
+| 1 | **CT-027 (Ciprofloxacin alias)** — "si pô lo siêu âm si" (CT-016 garble) chưa match `phonetic_variants` hiện có — cần thêm audio mẫu khác trước khi thêm alias (tránh FP với "siêu âm") | Andy + Claude | Chờ audio mẫu mới |
+| 2 | **CT-049** — Andy re-test clip TMH lần 3 (đã fix: chẩn đoán nuốt đơn thuốc, thiếu Paracetamol "parasyte mode", tuổi/giới tính/tên BN) | Andy | Server local `http://localhost:8000` |
+| 3 | **TRAIN-001 🔴** — Full fine-tune PhoWhisper trên VietMed 9207 samples, nhiều epoch, GPU mạnh hơn (Kaggle 30h/tuần) hoặc pilot audio (`docs/dev/COLAB_KAGGLE_TRAINING.md`) — smoke-test 85 samples/1 epoch/batch 2 đã PASS trên Colab 2026-06-12 (pipeline OK, không có giá trị fine-tune thật) | Andy + Claude | 🔴 Drug Recall 61.5% / Diag CEER 21.4% chưa đạt — quyết định CT-028 (2026-06-10): KHÔNG hybrid Groq, chỉ fine-tune giải quyết được. GPU pipeline ready (FID-VN-007 v3). |
+| 4 | **CT-019 🔴** — Debug A2 VAD-chunk regression: A/B test per-chunk vs whole-file transcript offline (script riêng, KHÔNG wire vào `/transcribe` cho đến khi rõ nguyên nhân hallucination) | Claude | Cần audio mẫu (data/audio/) |
+| 5 | **PA-020/PA-021** — Andy test UI FID-VN-017/018 (audio mẫu giờ đã có) | Andy | Server local sẵn sàng |
+| 6 | **PA-015/PA-017/PA-018** — Andy test UI FID-VN-013/014/015/016 | Andy | Server local sẵn sàng |
+| 7 | **CT-016/CT-017/CT-014/CT-035/CT-036/CT-037/CT-039/CT-044** — chờ Andy cung cấp audio+GT / mô tả flow | Andy | Chờ Andy |
+| 8 | **Pilot Đà Nẵng** — Cài install.bat thật tại phòng khám → thu audio → TRAIN-001 | Andy | Code sẵn sàng · DVP needs real doctor CCHN |
 
 ### 🟡 BENCHMARK TIẾP THEO
 
@@ -273,30 +272,31 @@
 
 ---
 
-## METRICS HIỆN TẠI (2026-06-12 · v0.11.18)
+## METRICS HIỆN TẠI (2026-06-13 · v0.11.24)
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | **958/958** | 🟢 |
-| **Drug Recall Groq vs local (CT-029)** | ≥70% | Groq=88.9% (hallucination chưa fix) vs local=55.6%LB | 🔴 TRAIN-001 required (Groq REJECTED — CT-028) |
-| **Diag CEER Groq vs local (CT-029)** | <30% | local=0.286 vs Groq=0.429 | 🟢 local thắng |
-| bandit | 0 HIGH/MEDIUM | 0/0 | 🟢 |
+| Tests PASS | 100% | **984/984** (master) — 1009/1009 trên `experiment/fid-vn-021-phoneme` | 🟢 |
+| **Drug Recall Groq vs local (CT-029)** | ≥70% | Groq=88.9% (hallucination chưa fix) vs local=61.5% | 🔴 TRAIN-001 required (Groq REJECTED — CT-028) |
+| **Diag CEER Groq vs local (CT-029)** | <30% | local=0.214 vs Groq=0.429 | 🟢 local thắng |
+| bandit | 0 HIGH/MEDIUM | 0/9 (9 MEDIUM pre-existing, không đổi) | 🟢 |
 | Vital extraction (TC audio) | >0% | bench tc_001/tc_002: vital=True | 🟢 fixed FID-VN-005 |
 | WER semi-synthetic | <30% | SG 25.8% · CT 30.4% · HN 34.6% | 🟡 cần fine-tune |
-| **WER real BS voice (BENCH-002b)** | **<20%** | **ALL=18.4%✅ · DN/SG=16.3%✅ · HN=29.3%⚠️** | **🟢 OK (untuned)** |
+| **WER real BS voice (BENCH-002b)** | **<20%** | **ALL=18.3%✅ · DN/SG=16.3%✅ · HN=29.2%⚠️** | **🟢 OK (untuned)** |
 | NER BS1 (Bắc chuẩn, WER=8%) | >80% | **7/7 = 100%** | 🟢 |
 | NER BS2 (Nam nhanh, WER=19%) | >80% | **6/7 = 86%** (post-fix BUG-K/L/M) | 🟢 |
 | CEER Drug (semi-synthetic) | <10% | 0.967 (Drug 97%) | ✅ |
 | CEER Diag (semi-synthetic) | <10% | 0.667 | ⚠️ cần pilot thật |
-| **Drug Recall real (BENCH-002b LB)** | **≥70%** | **55.6% LB** (GT phonetic miss → actual lower) | **🔴 TRAIN-001 required** |
-| **Diag CEER real (BENCH-002b)** | **<30%** | ALL=71.4% · DN/SG=83.3%✅ · HN=0%🔴 | 🟡 HN blocked by WER |
-| **Vitals CEER real (BENCH-002b)** | **<30%** | 69.3% ALL | 🟡 |
+| **Drug Recall real (BENCH-002b, sau CT-054/055)** | **≥70%** | **61.5%** (TP=8/FN=5/FP=0 — tăng từ 55.6%LB sau khi fix GT spacing bug) | **🔴 TRAIN-001 required** |
+| **Drug Precision real (BENCH-002b, sau CT-054/055)** | **≥70%** | **100%** (FP=0, tăng từ 71.4%/83.3%) | **🟢** |
+| **Diag CEER real (BENCH-002b, sau CT-054/055)** | **<30%** | ALL=21.4% (giảm từ 71.4% sau fix GT) | 🟢 |
+| **Vitals CEER real (BENCH-002b, sau CT-054/055)** | **<30%** | 28.9% ALL | 🟡 |
 | TRAIN-002 PhoBERT NER | F1 > 0.70 | **F1=99.44%** (epoch 3, synthetic data) | ✅ |
 | **Drug Recall (CONS-002-EVAL, synthetic)** | **≥88%** | **99.5%** | **✅ GO (synthetic)** |
 | **Silent FP Rate (CONS-002-EVAL)** | **≤10%** | **0.0%** | **✅ GO** |
 | **Safety Catch (CONS-002-EVAL)** | **≥80%** | **92.1%** | **✅ GO** |
 | **Phonetic Recall (CONS-002-EVAL)** | **≥85%** | **98.7%** | **✅ GO** |
-| **Drug Recall real BS voice (local pipeline)** | **≥70%** | **55.6%LB** (BENCH-002b) | **🔴 CRITICAL GAP** |
+| **Drug Recall real BS voice (local pipeline)** | **≥70%** | **61.5%** (BENCH-002b, post CT-054/055) | **🔴 CRITICAL GAP** |
 | **L4 Human Gate safety** | 0 drug substitution | Per-drug confirm gate ✅ DONE | 🟢 L4-REDESIGN-001 SES-20260609b |
 | BS approve rate | >85% | ❓ chưa pilot | ⏳ |
 | NPS | >7/10 | ❓ chưa pilot | ⏳ |
@@ -343,8 +343,10 @@
 | SES-20260612 | 2026-06-12 | v0.11.16→v0.11.17 | CT-050 ✅ — dev-machine bootstrap (env-only, no feature change): `tests/conftest.py` gọi `init_db()` trực tiếp (FastAPI `startup` event không chạy khi `TestClient(app)` không dùng `with` → schema thiếu trên máy mới); cài `silero-vad==6.2.1`; tạo lại fixture local `data/audio/ground_truth_lam_sang_template.json` (gitignored, 7 entries); `tests/unit/test_build_asr_manifest.py` thêm `@pytest.mark.skipif` khi pilot audio (`data/audio/reference_voices/`, gitignored) absent local. 954/956 PASS + 2 skipped, bandit 0 HIGH. CT-042 🔴 flagged (BACKLOG IMMEDIATE, cần FID trước khi sửa L1b FROZEN) |
 | SES-20260612b | 2026-06-12 | v0.11.17→v0.11.18 | VIETMED-FIX-001 v2 ✅ DONE (FID-VN-007 v3, fix dataset ID `leduckhai/VietMed` + audio decode) + COLAB_KAGGLE_TRAINING.md updated + Colab smoke-test thật chạy OK (85 samples, `--batch 2`, loss 2.613, không download checkpoint vì chưa có giá trị fine-tune). CT-051 ✅ — `_match_window()` (`src/core/l1b_drug_correct.py`) window 1-4→1-6 từ, unlock 187 `phonetic_variants` 5-6 từ (Azithromycin/Ciprofloxacin/Atorvastatin/Rosuvastatin...) curated nhưng không match được trước đó (CT-027 phần 5). 958/958 PASS (+2 tests) |
 | SES-20260612c | 2026-06-12 | v0.11.18→v0.11.19 | CT-042 ✅ DONE — FID-VN-019 v3 implemented: `_phonological_variants()` (4 rule groups: aspiration b↔p/d↔t/g↔k/c↔k/đ→t, coda drop multi-syllable, th→t/d, r/l/n region-split) + guards (first+last syllable, ambiguity-guard, min-length, 43-word blacklist) wired vào `_build_alias_map()` — 1028→1913 keys (+885), 21 collisions skipped. +15 tests (973/973 PASS), bandit 0 HIGH. A/B benchmark: Drug Recall/Precision unchanged vs master (CT-054 stale baseline noted separately). Merged fast-forward → `master` (`13aff3a`). FID-VN-020 (ORCH-001/CT-011 — orchestrator `detect_confusion`/`create_consultation_request`/`close_session`) APPROVED by Andy, implementation để phiên sau |
+| SES-20260612d...g | 2026-06-12 | v0.11.19→v0.11.23 | (catch-up, ghi nhận lùi) CT-054 ✅ regenerate `data/eval/bench_002b_results.json` baseline — phát hiện + fix GT spacing bug → Drug Recall 55.6%→61.5% (TP=8/FN=5/FP=0), Drug Precision →100%, Diag CEER 71.4%→21.4%, Vitals CEER →28.9% · CT-055 ✅ áp dụng baseline mới vào docs · CT-056 ✅ theo dõi/đóng các pending nhỏ liên quan. 984/984 PASS, bandit 0 HIGH/9 MEDIUM (pre-existing). (4 versions này đã commit vào master qua CHANGELOG.md nhưng chưa từng có LAST_SESSION.md/PROJECT_PROGRESS.md entry — bổ sung tại SES-20260613) |
+| SES-20260613 | 2026-06-13 | v0.11.23→v0.11.24 | FID-VN-021 (CT-060d, L1b phoneme-key re-scoring) ✅ implemented trên `experiment/fid-vn-021-phoneme`: `src/core/vn_phoneme.py` (decompose_syllable/phoneme_key, 25 tests) + `_fuzzy_match()` rewrite trong `src/core/l1b_drug_correct.py` (phoneme-key second pass, `PHONEME_WEIGHT=0.9`). 1009/1009 PASS. A/B benchmark byte-identical vs baseline (`data/eval/bench_002b_results_fid021.json`) → quyết định theo CT-028 precedent: giữ làm **research note**, KHÔNG merge vào master. Docs-sync session: PENDING_REQUESTS.md (CT-011/054/055/056/FID-VN-021 → DONE) + PROJECT_PROGRESS.md (metrics v0.11.24) + CLAUDE.md CURRENT STATE cập nhật |
 
 ---
 
-*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.12 | 2026-06-12*
+*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.13 | 2026-06-13*
 *Cập nhật mỗi phiên đóng. Đọc cùng BACKLOG.md + PENDING_REQUESTS.md*
