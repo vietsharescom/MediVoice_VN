@@ -77,6 +77,8 @@ def main():
     parser.add_argument("--batch", type=int, default=2)
     parser.add_argument("--grad-accum", type=int, default=1,
                          help="gradient accumulation steps (effective batch = --batch * --grad-accum)")
+    parser.add_argument("--limit", type=int, default=None,
+                         help="train on only the first N manifest entries (faster first run)")
     parser.add_argument("--smoke-test", action="store_true",
                          help="1 training step on 2 samples — validates pipeline only")
     parser.add_argument("--fp16", action="store_true",
@@ -94,6 +96,9 @@ def main():
     if args.smoke_test:
         manifest = manifest[:2]
         print(f"[smoke-test] using {len(manifest)} sample(s)")
+    elif args.limit:
+        manifest = manifest[:args.limit]
+        print(f"[limit] using {len(manifest)} sample(s)")
 
     if not manifest:
         print("Manifest empty — nothing to do.")
