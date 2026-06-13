@@ -2,6 +2,81 @@
 # v0.9.4 — Updated 2026-06-12
 # Single source of truth cho tasks.
 
+## CT-060 — Research: dialect + drug phonetic matching (no-GPU paths) [NEW 2026-06-13]
+- [ ] 💡 IMPROVEMENT — Andy yêu cầu research bài học thuật mới (Andy/2605.24451v1.pdf
+  "Phonetic Modeling of Dialectal Variation in Vietnamese Speech", Andy/2602.10003v1.pdf
+  "ViSpeechFormer", Andy/2410.03458v1.pdf "ViMD dataset", Andy/XPhoneBERT
+  2305.19709v1.pdf) cho kiến trúc "Doctor Profile + Specialty Profile + Drug Alias
+  + Vietnamese Medical Phonetic Matching". Báo cáo đầy đủ đã trình bày trong chat
+  2026-06-13 — 3 đề xuất cụ thể, KHÔNG cần GPU:
+- [ ] **CT-060a** 🟢 Contextual biasing — inject danh sách 155 tên thuốc + thuật
+  ngữ chuyên khoa vào `initial_prompt` của PhoWhisper theo route L3 (lam_sang/
+  cdha/nha_khoa). Kỹ thuật rẻ nhất, không train (arXiv:2410.18363), ước giảm
+  40-60% WER thuật ngữ chuyên ngành. Liên quan A1 (FID-VN-010 §A1, đã có
+  prompt injection cơ bản — mở rộng theo specialty + drug list đầy đủ).
+- [ ] **CT-060b** 🟡 Phonetic fingerprint cho drug alias — dùng XPhoneBERT/
+  CharsiuG2P (`vinai/xphonebert-base`, CPU, có sẵn G2P 3 miền vie-n/vie-c/
+  vie-s) sinh IPA cho 155 thuốc + alias → build dictionary offline 1 lần →
+  match ASR-output bằng IPA-distance kết hợp RapidFuzz hiện có. Nuôi CT-053
+  (Vietnamese Medical Phonetic Encoder) bằng dữ liệu IPA thật thay vì enumerate
+  tay.
+- [ ] **CT-060c** 🟡 "Province Converter" rule-based cho `detect_region()` —
+  arXiv:2605.24451 cung cấp bộ quy tắc biến đổi initial/vowel/final/tone theo
+  3 miền (vd tone merger, final-consonant drop Nam, vowel centralization Bắc)
+  dựa trên cấu trúc âm tiết (initial+rhyme+tone, theo ViSpeechFormer
+  arXiv:2602.10003). Thay/bổ sung cho lexical word-count hiện tại trong
+  `src/core/dialect_norm.py:311` — liên quan CT-038 (Huế region-detection bug).
+  Cùng bộ quy tắc này dùng để mở rộng `phonetic_variants`/`_phonological_variants()`
+  (CT-042) một cách có hệ thống thay vì enumerate tay.
+- [ ] Dài hạn (cần GPU, KHÔNG làm v1): LoRA per-doctor/per-specialty adapter,
+  dialect-ID model train trên ViMD (102.56h, 63 tỉnh, arXiv:2410.03458), VTLN
+  tích hợp feature-extraction (đã có trong CT-037 POC).
+- Priority: 🟢 LOW-🟡 MEDIUM — research note, chưa viết FID. CT-060a có ROI cao
+  nhất nếu Andy muốn làm trước (Tầng 2, <100 LOC, không đổi pipeline schema).
+
+### CT-060 — Đợt 2: review sâu PhoWhisper/PhoBERT/PhoGPT/BARTPhoBEiT/XPhoneBERT/
+  ViSpeechFormer + triage toàn bộ `Andy/` (2026-06-13)
+- [ ] **CT-060d** 🟡 Phoneme-level post-processing (ViSpeechFormer arXiv:2602.10003
+  + `Andy/2605.27874v1.pdf` "Syllabic-Structure Decoder for ASR in Vietnamese",
+  UIT/VNU-HCM 5/2026, methodology — KHÔNG có model release): ý tưởng decode
+  initial+rhyme+tone tăng OOV accuracy ~2x trên ViVOS/LSVSC. Áp dụng: viết logic
+  rule-based decompose chuỗi ASR-output → phoneme (initial/rhyme/tone) sau L1a,
+  dùng làm re-scoring layer cho L1b drug match (thay/bổ sung RapidFuzz
+  character-distance). Không cần GPU, không cần train — nuôi CT-053.
+- [ ] **CT-060e** 🟡 Dialect ID via F0/formants (`Andy/dangqa1951,+7905_Hung_Loan.pdf`
+  "Automatic Identification of Vietnamese Dialects", 2016, GMM+MFCC+F0+formants,
+  72.2% acc): hướng acoustic-based thay cho `detect_region()` lexical hiện tại
+  (CT-038). Cổ điển, rẻ, chạy CPU — pre-ASR classifier để route audio sang bảng
+  phonetic_variants theo vùng trước khi vào L1a/L1b.
+- [ ] **CT-060f** ✅ Confirmed: BERTology (`Andy/BERTology Models 2209.10482v1.pdf`)
+  xác nhận PhoBERT-base đúng cho L1c NER (thắng mBERT/XLM-R trên text VN). Backup
+  nếu PhoBERT+CRF kém trên văn nói sau pilot: vELECTRA hoặc viBERT4news.
+- [ ] **NO ACTION**: PhoGPT (3.7B, cần GPU, hallucination risk — vi phạm L4
+  "AI không tự suy luận", đã reject theo CT-028), BARTPhoBEiT (VQA ảnh tự nhiên,
+  không liên quan M4 OCR), XPhoneBERT (TTS encoder — chỉ revisit nếu BS phàn nàn
+  chất lượng gTTS Queue TTS).
+- [ ] Triage 50+ PDF còn lại trong `Andy/` + `Andy/Others/`: phần lớn (c) không
+  liên quan (CV/robotics/RL/toán lý thuyết/ngôn ngữ khác). 2 file liên quan thêm:
+  `Andy/2603.14779v1.pdf` (Qualcomm, 500h VN ASR dataset-building pipeline — tham
+  khảo cho TRAIN-001) và `Andy/2506.01322v1.pdf` (PhoAudiobook zero-shot VN TTS —
+  backup nếu gTTS Queue TTS không đủ tốt, low priority).
+- [ ] 🧹 Cleanup: `Andy/2605.27874v1 (1).pdf` và `Andy/2605.27874v1 (2).pdf` là
+  duplicate của `Andy/2605.27874v1.pdf` — Andy có thể xoá 2 file trùng khi tiện.
+- Priority: 🟢 LOW — research note. CT-060d/e cùng nhóm "rule-based, no-GPU" với
+  CT-060c, nên gộp khi viết FID phonetic-encoder (CT-053).
+
+### FID-VN-021 — L1b Phoneme-Key Re-scoring cho Drug Matching (CT-060d) [DRAFT 2026-06-13]
+- [ ] `fids/FID-VN-021.md` — DRAFT, chờ Andy approve (PA-025)
+- [ ] Scope: module mới `src/core/vn_phoneme.py` (decompose âm tiết VN ->
+  onset/rhyme/tone, bỏ tone -> phoneme key) + thêm 1 tầng re-scoring phụ trong
+  `_fuzzy_match()` (L1b), KHÔNG đổi alias_map 1913 entries (CT-042)
+- [ ] CT-060c (dialect detection) + CT-060e (F0/formant acoustic) bị defer khỏi
+  FID này — cần audio thật, giữ trong CT-053/Phase 2
+- [ ] Nếu approve: implement trên branch `experiment/*`, A/B benchmark
+  BENCH-002b trước khi merge (precedent CT-054) — chỉ merge nếu Drug Recall
+  tăng/giữ nguyên VÀ Precision không giảm >2pp
+- Priority: 🟡 MEDIUM — chờ Andy review fids/FID-VN-021.md
+
 ## CT-053 — Vietnamese Medical Phonetic Encoder (Phase 2, supersedes CT-052) [NEW 2026-06-12]
 - [ ] Phát sinh từ FID-VN-019 v3 (CT-042 revision, CONS-20260612-001 ChatGPT+Grok
   review) — hướng kiến trúc dài hạn thay cho việc tiếp tục mở rộng
