@@ -79,22 +79,32 @@ tại) hoặc truyền `push=True` SAU KHI đã thông báo Andy.
 
 ## ACCEPTANCE CRITERIA (Khi nào gọi là DONE?)
 
-- [ ] `detect_confusion()` — unit test với câu chứa/không chứa trigger keywords T1-T5
-- [ ] `create_consultation_request()` — sinh file đúng format `CONSULTATION_TEMPLATE.md`,
+- [x] `detect_confusion()` — unit test với câu chứa/không chứa trigger keywords T1-T5
+  → `test_detect_confusion_trigger_keywords` (T1), `test_detect_confusion_t5_low_confidence`
+  (T5), `test_detect_confusion_no_trigger`
+- [x] `create_consultation_request()` — sinh file đúng format `CONSULTATION_TEMPLATE.md`,
   số thứ tự NNN tự tăng đúng trong cùng ngày (test với 2 lần gọi liên tiếp)
-- [ ] `close_session(updates, push=False)`:
-  - Patch đúng 5 file tại marker xác định (test bằng tmp_path copy của 5 file thật,
-    KHÔNG sửa file thật trong test)
-  - Gọi `iso_audit.py --increment-session` qua subprocess (mock trong test, integration
-    test riêng KHÔNG mock chạy thật trên branch — không trên CI)
-  - `git commit` thật chỉ test trên tmp git repo riêng (KHÔNG commit vào repo thật từ
-    test suite)
-  - `push=False` default — verified bằng test rằng `git push` KHÔNG được gọi nếu
-    `push` không truyền
-- [ ] 958/958 tests hiện có PASS + N tests mới, bandit 0 HIGH
-- [ ] CHANGELOG entry
-- [ ] **KHÔNG thay đổi** `start_session()`/`consult()`/`consistency_check()` hiện có
-  (chỉ thêm function mới + CLI subcommands)
+  → `test_create_consultation_request_format_and_numbering` (`-001.md`/`-002.md`,
+  verify QUESTION/OPTIONS/HARD CONSTRAINTS/ANALYSIS sections)
+- [x] `close_session(updates, push=False)`:
+  - Patch đúng 5 file tại marker xác định (test bằng tmp_path, KHÔNG sửa file thật)
+    → `_patch_backlog`/`_patch_project_progress`/`_patch_changelog`/`_patch_claude_md`
+    mỗi hàm có unit test riêng trên `tmp_path` (TestPatchHelpers)
+  - Gọi `iso_audit.py --increment-session` qua subprocess (mock trong test)
+    → mocked via `patch("scripts.orchestrator.subprocess.run")` trong
+    `TestCloseSessionPushDefault`
+  - `git commit` — mocked trong unit tests (không commit vào repo thật từ test suite)
+  - `push=False` default — verified: `test_close_session_push_false_by_default`
+    (assert không có call chứa `"push"`) +
+    `test_close_session_push_true_calls_git_push` (push=True → git push gọi)
+- [x] 973/973 tests hiện có PASS + 11 tests mới = **984/984 PASS**, bandit 0 HIGH
+  (9 MEDIUM pre-existing không đổi, LOW 2→13 — subprocess B404/B603/B607 mới từ
+  `close_session()`, không phải HIGH/MEDIUM)
+- [x] CHANGELOG entry — v0.11.20
+- [x] **KHÔNG thay đổi** `start_session()`/`consult()`/`consistency_check()` hiện có
+  (chỉ thêm 3 hàm mới + helper `_patch_*`/`_next_consultation_number`/
+  `_write_last_session`; hàm cũ `close_session()` (checklist) đổi tên thành
+  `print_close_checklist()`, CLI `close` subcommand cập nhật tương ứng)
 
 ## RISKS
 
@@ -106,14 +116,17 @@ tại) hoặc truyền `push=True` SAU KHI đã thông báo Andy.
 
 ## TESTS REQUIRED
 
-- [ ] `tests/unit/test_orchestrator.py` (mới):
-  - `test_detect_confusion_trigger_keywords`
+- [x] `tests/unit/test_orchestrator.py` (mới, 11 tests):
+  - `test_detect_confusion_trigger_keywords`, `test_detect_confusion_t5_low_confidence`,
+    `test_detect_confusion_no_trigger`
   - `test_create_consultation_request_format_and_numbering`
-  - `test_close_session_patches_files_tmp_path` (dùng `tmp_path` fixture, copy 5 file
-    mẫu nhỏ, verify patch đúng vị trí)
-  - `test_close_session_push_false_by_default` (mock `subprocess.run`, assert không
-    có call chứa `"push"`)
-- [ ] 958/958 existing PASS không đổi
+  - `test_patch_backlog_replaces_existing_heading`, `test_patch_backlog_inserts_new_heading`,
+    `test_patch_project_progress_appends_row`, `test_patch_changelog_inserts_before_first_entry`,
+    `test_patch_claude_md_updates_current_state` (thay cho
+    `test_close_session_patches_files_tmp_path` — patch logic test theo từng hàm
+    `_patch_*` riêng, dễ debug hơn 1 test lớn)
+  - `test_close_session_push_false_by_default`, `test_close_session_push_true_calls_git_push`
+- [x] 973/973 existing PASS + 11 mới = 984/984 PASS
 
 ## COMMIT FORMAT
 

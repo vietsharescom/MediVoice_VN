@@ -305,9 +305,9 @@ def consistency_check(topic: str, question: str) -> None:
     })
 
 
-# ── Close Session ─────────────────────────────────────────────────────────────
+# ── Close Session Checklist ──────────────────────────────────────────────────
 
-def close_session() -> None:
+def print_close_checklist() -> None:
     _banner("CLOSE SESSION — Checklist")
     steps = [
         "1. Update docs/records/BACKLOG.md       (DOING → DONE)",
@@ -321,6 +321,233 @@ def close_session() -> None:
         print(f"  □ {s}")
     print("\n  Capture Rules: docs/dev/SESSION_CAPTURE_RULES.md")
     print("=" * 60)
+
+
+# ── Confusion Detection & Consultation Requests (FID-VN-020, CT-011) ───────────
+
+_CONFUSION_TRIGGERS: dict[str, list[str]] = {
+    "T1": ["≥ 2 option", ">= 2 option", "2 option", "hai option", "không rõ option nào đúng"],
+    "T2": ["domain knowledge", "luật vn", "medical standard", "quy định byt"],
+    "T3": ["architecture", "irreversible", "ảnh hưởng phase"],
+    "T4": ["hỏi thêm ai khác", "so sánh", "ý kiến thứ 2", "second opinion"],
+    "T5": ["<70%", "dưới 70%", "không chắc", "low confidence"],
+}
+
+
+def detect_confusion(note: str) -> dict:
+    """Heuristic check for CONSULTATION_TEMPLATE.md triggers T1-T5 (FID-VN-020).
+
+    This is a SUGGESTION only — Claude decides whether to call
+    create_consultation_request(); it does NOT block the workflow.
+    """
+    text = note.lower()
+    matched = [
+        trigger
+        for trigger, keywords in _CONFUSION_TRIGGERS.items()
+        if any(kw in text for kw in keywords)
+    ]
+    if matched:
+        reason = f"Matched trigger(s) {', '.join(matched)} — xem xét tạo consultation request."
+    else:
+        reason = "Không match trigger nào — Claude tự quyết định."
+    return {"should_consult": bool(matched), "matched_triggers": matched, "reason": reason}
+
+
+def _next_consultation_number(out_dir: Path, date_str: str) -> int:
+    existing = sorted(out_dir.glob(f"CONS-{date_str}-*.md"))
+    if not existing:
+        return 1
+    last_num = existing[-1].stem.rsplit("-", 1)[-1]
+    return int(last_num) + 1
+
+
+def create_consultation_request(
+    topic: str,
+    question: str,
+    options: list[dict],
+    hard_constraints: list[str],
+    analysis: dict,
+) -> Path:
+    """Generate docs/records/consultations/CONS-YYYYMMDD-NNN.md per
+    docs/dev/CONSULTATION_TEMPLATE.md (FID-VN-020).
+
+    options: list of {"name", "description", "pros": [...], "cons": [...],
+             "risks": str, "effort": str, "timeline": str}
+    analysis: {"lean": str, "confidence": int, "main_reason": str,
+               "main_uncertainty": str}
+    """
+    out_dir = ROOT / "docs" / "records" / "consultations"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    date_str = datetime.now().strftime("%Y%m%d")
+    num = _next_consultation_number(out_dir, date_str)
+    cons_id = f"CONS-{date_str}-{num:03d}"
+
+    sep = "━" * 60
+    lines = [
+        sep,
+        f"CONSULTATION REQUEST [{cons_id}]",
+        f"From: Claude Sonnet 4.6 | MediVoice VN | SES-{date_str}",
+        sep,
+        "",
+        "## QUESTION",
+        question,
+        "",
+        "## OPTIONS EVALUATED",
+    ]
+    for letter, opt in zip("ABCD", options):
+        lines += [
+            "",
+            f"### Option {letter}: {opt.get('name', '')}",
+            f"Mô tả: {opt.get('description', '')}",
+            "Pros:",
+            *[f"  - {p}" for p in opt.get("pros", [])],
+            "Cons:",
+            *[f"  - {c}" for c in opt.get("cons", [])],
+            f"Risks: {opt.get('risks', '')}",
+            f"Effort: {opt.get('effort', '')} | Timeline: {opt.get('timeline', '')}",
+        ]
+
+    lines += ["", "## HARD CONSTRAINTS (KHÔNG thể vi phạm)"]
+    lines += [f"- {c}" for c in hard_constraints]
+
+    lines += [
+        "",
+        "## CLAUDE'S CURRENT ANALYSIS",
+        f"Lean toward: Option {analysis.get('lean', '')}",
+        f"Confidence: {analysis.get('confidence', '')}%",
+        f"Main reason: {analysis.get('main_reason', '')}",
+        f"Main uncertainty: {analysis.get('main_uncertainty', '')}",
+        sep,
+    ]
+
+    path = out_dir / f"{cons_id}.md"
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
+
+
+# ── Close Session Automation (FID-VN-020, CT-011) ───────────────────────────────
+
+def _patch_backlog(root: Path, entries: list[tuple[str, str, str]]) -> None:
+    """Insert/replace `## {task_id} — {description} [{status}]` heading lines."""
+    path = root / "docs" / "records" / "BACKLOG.md"
+    lines = path.read_text(encoding="utf-8").splitlines()
+    for task_id, status, description in entries:
+        heading = f"## {task_id} — {description} [{status}]"
+        for i, line in enumerate(lines):
+            if line.startswith(f"## {task_id} —") or line.startswith(f"## {task_id} ("):
+                lines[i] = heading
+                break
+        else:
+            lines[3:3] = ["", heading]
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _patch_project_progress(root: Path, progress_row: str) -> None:
+    """Append a row to the LỊCH SỬ PHIÊN table."""
+    path = root / "docs" / "records" / "PROJECT_PROGRESS.md"
+    lines = path.read_text(encoding="utf-8").splitlines()
+    for i, line in enumerate(lines):
+        if line.strip() == "## LỊCH SỬ PHIÊN":
+            j = i + 1
+            while j < len(lines) and not lines[j].startswith("|"):
+                j += 1
+            k = j + 2  # skip header row + separator row
+            while k < len(lines) and lines[k].startswith("|"):
+                k += 1
+            lines.insert(k, progress_row)
+            break
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _patch_changelog(root: Path, changelog_entry: str) -> None:
+    """Insert a new entry before the first `## [vX.Y.Z]` block."""
+    path = root / "CHANGELOG.md"
+    lines = path.read_text(encoding="utf-8").splitlines()
+    for i, line in enumerate(lines):
+        if line.startswith("## ["):
+            lines[i:i] = [*changelog_entry.splitlines(), ""]
+            break
+    else:
+        lines += ["", *changelog_entry.splitlines()]
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _patch_claude_md(root: Path, current_state: dict) -> None:
+    """Replace value cells in the CURRENT STATE table by field name."""
+    path = root / "CLAUDE.md"
+    lines = path.read_text(encoding="utf-8").splitlines()
+    in_table = False
+    for i, line in enumerate(lines):
+        if line.strip() == "## CURRENT STATE":
+            in_table = True
+            continue
+        if not in_table:
+            continue
+        if not line.startswith("|"):
+            if line.strip() == "":
+                continue
+            break
+        field = line.split("|")[1].strip()
+        if field in current_state:
+            lines[i] = f"| {field} | {current_state[field]} |"
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def _write_last_session(root: Path, content: str) -> None:
+    path = root / "docs" / "records" / "LAST_SESSION.md"
+    path.write_text(content, encoding="utf-8")
+
+
+def close_session(updates: dict, commit_message: str = "", push: bool = False) -> dict:
+    """Patch the 5 session-end files, run iso_audit, git commit (FID-VN-020).
+
+    updates: {
+      "backlog_entries": [(task_id, status, description), ...],
+      "progress_row": "| SES-... | ... |",
+      "changelog_entry": "## [vX.Y.Z] — ...\\n\\n### Added\\n- ...",
+      "current_state": {"Version": "...", "Status": "...", ...},
+      "last_session_md": "full LAST_SESSION.md content",
+    }
+    push: if True, also `git push` (default False — Claude must confirm with
+    Andy before pushing, per "Executing actions with care").
+    """
+    if updates.get("backlog_entries"):
+        _patch_backlog(ROOT, updates["backlog_entries"])
+    if updates.get("progress_row"):
+        _patch_project_progress(ROOT, updates["progress_row"])
+    if updates.get("changelog_entry"):
+        _patch_changelog(ROOT, updates["changelog_entry"])
+    if updates.get("current_state"):
+        _patch_claude_md(ROOT, updates["current_state"])
+    if updates.get("last_session_md"):
+        _write_last_session(ROOT, updates["last_session_md"])
+
+    audit = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "iso_audit.py"), "--increment-session"],
+        capture_output=True, text=True, cwd=str(ROOT),
+    )
+
+    result = {
+        "committed": False, "commit_hash": "", "pushed": False,
+        "iso_audit_output": audit.stdout + audit.stderr,
+    }
+
+    subprocess.run(["git", "add", "-A"], cwd=str(ROOT), capture_output=True, text=True)
+    msg = commit_message or f"chore(session-end): close session {datetime.now():%Y-%m-%d}"
+    commit = subprocess.run(
+        ["git", "commit", "-m", msg], cwd=str(ROOT), capture_output=True, text=True,
+    )
+    if commit.returncode == 0:
+        result["committed"] = True
+        rev = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=str(ROOT), capture_output=True, text=True,
+        )
+        result["commit_hash"] = rev.stdout.strip()
+        if push:
+            p = subprocess.run(["git", "push"], cwd=str(ROOT), capture_output=True, text=True)
+            result["pushed"] = p.returncode == 0
+
+    return result
 
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
@@ -345,7 +572,7 @@ def main() -> None:
         consistency_check(args[1], args[2])
 
     elif cmd == "close":
-        close_session()
+        print_close_checklist()
 
     else:
         print("Commands: start | consult <topic> <question> | check <topic> <question> | close")

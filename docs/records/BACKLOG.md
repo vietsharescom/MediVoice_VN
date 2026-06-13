@@ -29,23 +29,32 @@
   clusters](https://ctujs.ctu.edu.vn/index.php/ctujs/article/view/448)
 - Priority: 🟡 MEDIUM — chờ thêm pilot audio trước khi viết FID riêng
 
-## CT-011 / FID-VN-020 — Orchestrator v1.0 Automation [APPROVED 2026-06-12, chưa implement]
-- [ ] `fids/FID-VN-020.md` — Status: APPROVED by Andy ("APPROVE FID 20 TIẾP TỤC", 2026-06-12)
-- [ ] 3 hàm mới trong `scripts/orchestrator.py` (~180-220 LOC):
+## CT-011 / FID-VN-020 — Orchestrator v1.0 Automation [DONE 2026-06-12]
+- [x] `fids/FID-VN-020.md` — Status: APPROVED by Andy ("APPROVE FID 20 TIẾP TỤC", 2026-06-12)
+  → implemented + acceptance criteria checked off với kết quả thật
+- [x] 3 hàm mới trong `scripts/orchestrator.py`:
   1. `detect_confusion(note) -> dict` — heuristic match trigger T1-T5
-     (`docs/dev/CONSULTATION_TEMPLATE.md`), chỉ gợi ý KHÔNG block workflow
+     (`docs/dev/CONSULTATION_TEMPLATE.md`) qua `_CONFUSION_TRIGGERS`, chỉ gợi ý
+     KHÔNG block workflow
   2. `create_consultation_request(topic, question, options, hard_constraints,
      analysis) -> Path` — sinh `docs/records/consultations/CONS-YYYYMMDD-NNN.md`
-     đúng format, NNN tự tăng theo ngày
-  3. `close_session(updates, push=False) -> dict` — patch 5 file session-end
-     (BACKLOG/PROJECT_PROGRESS/CHANGELOG/CLAUDE.md CURRENT STATE/LAST_SESSION) tại
-     marker xác định + `iso_audit.py --increment-session` + git commit
-     (push CHỈ khi `push=True`, default False)
-- [ ] Tests: `tests/unit/test_orchestrator.py` (detect_confusion trigger keywords,
-  consultation numbering, close_session patch tmp_path, push=False default)
-- [ ] KHÔNG đổi `start_session()`/`consult()`/`consistency_check()` hiện có
-- [ ] 973/973 existing PASS + N tests mới, bandit 0 HIGH, CHANGELOG entry
-- Priority: 🟡 MEDIUM — Risk LOW (dev-tooling only), để phiên sau implement
+     đúng format `CONSULTATION_TEMPLATE.md`, NNN tự tăng theo ngày
+     (`_next_consultation_number` quét file thực tế, tránh trùng đa máy — R-ORCH-03)
+  3. `close_session(updates, push=False) -> dict` — 4 hàm `_patch_backlog`/
+     `_patch_project_progress`/`_patch_changelog`/`_patch_claude_md` patch 5 file
+     session-end tại marker xác định + `_write_last_session` + chạy
+     `iso_audit.py --increment-session` (subprocess) + `git add -A && git commit`
+     (push CHỈ khi `push=True`, default False — R-ORCH-02)
+  - Hàm `close_session()` cũ (checklist printer) đổi tên → `print_close_checklist()`,
+    CLI `close` subcommand cập nhật theo
+- [x] Tests: `tests/unit/test_orchestrator.py` (mới, 11 tests) — detect_confusion
+  trigger keywords T1/T5/no-trigger, consultation numbering+format,
+  `_patch_*` helpers (tmp_path), close_session push=False/True default
+- [x] KHÔNG đổi `start_session()`/`consult()`/`consistency_check()` hiện có
+- [x] 973/973 existing PASS + 11 mới = 984/984 PASS, bandit 0 HIGH (9 MEDIUM
+  pre-existing không đổi, LOW 2→13 — subprocess B404/B603/B607 mới từ
+  `close_session()`, không phải HIGH/MEDIUM), CHANGELOG entry v0.11.20
+- Priority: 🟡 MEDIUM — Risk LOW (dev-tooling only) — DONE
 
 ## CT-051 — L1b drug match window 1-4 → 1-6 words [DONE 2026-06-12]
 - [x] `src/core/l1b_drug_correct.py::_match_window()` window (4,3,2,1) → (6,5,4,3,2,1)

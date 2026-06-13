@@ -1,6 +1,34 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.20] — 2026-06-12 — Orchestrator v1.0 automation: detect_confusion + create_consultation_request + close_session [FID-VN-020]
+
+### Added
+- `scripts/orchestrator.py`:
+  - `detect_confusion(note: str) -> dict` — heuristic trigger-keyword (T1-T5)
+    detection per `docs/dev/CONSULTATION_TEMPLATE.md`, suggestion-only
+  - `create_consultation_request(topic, question, options, hard_constraints,
+    analysis) -> Path` — generates `docs/records/consultations/CONS-YYYYMMDD-NNN.md`
+    in template format, NNN auto-increments per day by scanning existing files
+  - `close_session(updates: dict, commit_message: str = "", push: bool = False) -> dict`
+    — patches BACKLOG.md / PROJECT_PROGRESS.md / CHANGELOG.md / CLAUDE.md
+    (CURRENT STATE table) / LAST_SESSION.md at known markers via
+    `_patch_backlog` / `_patch_project_progress` / `_patch_changelog` /
+    `_patch_claude_md` / `_write_last_session`, runs
+    `iso_audit.py --increment-session`, then `git add -A && git commit`
+    (push only when `push=True`, default `False`)
+- `tests/unit/test_orchestrator.py` (new, 11 tests)
+
+### Changed
+- Old no-arg `close_session()` (checklist printer) renamed to
+  `print_close_checklist()`; CLI `close` subcommand updated accordingly.
+  `start_session()` / `consult()` / `consistency_check()` unchanged.
+
+### Tests
+- 973/973 existing PASS + 11 new = 984/984 PASS, bandit 0 HIGH (9 MEDIUM
+  pre-existing unchanged, LOW 2→13 from new subprocess usage in
+  `close_session()` — B404/B603/B607, all Low severity)
+
 ## [v0.11.19] — 2026-06-12 — L1b phonological alias expansion [FID-VN-019]
 
 ### Added
