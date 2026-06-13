@@ -75,6 +75,8 @@ def main():
     parser.add_argument("--manifest", default=str(DEFAULT_MANIFEST))
     parser.add_argument("--epochs", type=int, default=3)
     parser.add_argument("--batch", type=int, default=2)
+    parser.add_argument("--grad-accum", type=int, default=1,
+                         help="gradient accumulation steps (effective batch = --batch * --grad-accum)")
     parser.add_argument("--smoke-test", action="store_true",
                          help="1 training step on 2 samples — validates pipeline only")
     parser.add_argument("--fp16", action="store_true",
@@ -109,11 +111,13 @@ def main():
     training_args = Seq2SeqTrainingArguments(
         output_dir=str(OUT_DIR),
         per_device_train_batch_size=args.batch,
+        gradient_accumulation_steps=args.grad_accum,
         num_train_epochs=args.epochs,
         max_steps=1 if args.smoke_test else -1,
         save_strategy="no" if args.smoke_test else "epoch",
         logging_steps=1,
         fp16=args.fp16,
+        gradient_checkpointing=args.fp16,
         report_to=[],
     )
 
