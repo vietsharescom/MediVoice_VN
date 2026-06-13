@@ -1,6 +1,6 @@
 # FID-VN-020 — Orchestrator v1.0 Automation (ORCH-001, CT-011)
 # Feature Intent Document | ISO_VN v1.0
-# Status: DRAFT
+# Status: APPROVED
 
 | Field | Value |
 |---|---|
@@ -9,8 +9,8 @@
 | LOC estimate | ~180-220 LOC (3 new functions + tests) |
 | Risk level | LOW — dev-tooling only, không chạm pipeline/runtime API |
 | Created | 2026-06-12 |
-| Approved by | — |
-| Approved date | — |
+| Approved by | Andy |
+| Approved date | 2026-06-12 |
 
 ---
 

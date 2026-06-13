@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-12 | v0.11.18
+# Cập nhật: 2026-06-12 | v0.11.19
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -342,6 +342,7 @@
 | SES-20260611d...e | 2026-06-11 | v0.11.14→v0.11.16 | FID-VN-007 v1+v2 ✅ — TRAIN-001 prep: `scripts/build_asr_manifest.py` (`build_manifest`/`build_vietmed_manifest`/`build_pilot_manifest`) + `scripts/train_asr_phowhisper.py` (`--smoke-test`/`--fp16`) + `docs/dev/COLAB_KAGGLE_TRAINING.md`. ADR `docs/records/DECISIONS.md` 2026-06-11 Pilot Phase Exception #2 (audio PII tạm upload Colab/Kaggle, consent đã có — Andy "làm đi") + RISK_REGISTER R-P03. PA-024 (HF_TOKEN VietMed) + PA-025 (Colab/Kaggle pipeline DONE). 956/956 PASS (+8), bandit 0 HIGH/9 MEDIUM (pre-existing) |
 | SES-20260612 | 2026-06-12 | v0.11.16→v0.11.17 | CT-050 ✅ — dev-machine bootstrap (env-only, no feature change): `tests/conftest.py` gọi `init_db()` trực tiếp (FastAPI `startup` event không chạy khi `TestClient(app)` không dùng `with` → schema thiếu trên máy mới); cài `silero-vad==6.2.1`; tạo lại fixture local `data/audio/ground_truth_lam_sang_template.json` (gitignored, 7 entries); `tests/unit/test_build_asr_manifest.py` thêm `@pytest.mark.skipif` khi pilot audio (`data/audio/reference_voices/`, gitignored) absent local. 954/956 PASS + 2 skipped, bandit 0 HIGH. CT-042 🔴 flagged (BACKLOG IMMEDIATE, cần FID trước khi sửa L1b FROZEN) |
 | SES-20260612b | 2026-06-12 | v0.11.17→v0.11.18 | VIETMED-FIX-001 v2 ✅ DONE (FID-VN-007 v3, fix dataset ID `leduckhai/VietMed` + audio decode) + COLAB_KAGGLE_TRAINING.md updated + Colab smoke-test thật chạy OK (85 samples, `--batch 2`, loss 2.613, không download checkpoint vì chưa có giá trị fine-tune). CT-051 ✅ — `_match_window()` (`src/core/l1b_drug_correct.py`) window 1-4→1-6 từ, unlock 187 `phonetic_variants` 5-6 từ (Azithromycin/Ciprofloxacin/Atorvastatin/Rosuvastatin...) curated nhưng không match được trước đó (CT-027 phần 5). 958/958 PASS (+2 tests) |
+| SES-20260612c | 2026-06-12 | v0.11.18→v0.11.19 | CT-042 ✅ DONE — FID-VN-019 v3 implemented: `_phonological_variants()` (4 rule groups: aspiration b↔p/d↔t/g↔k/c↔k/đ→t, coda drop multi-syllable, th→t/d, r/l/n region-split) + guards (first+last syllable, ambiguity-guard, min-length, 43-word blacklist) wired vào `_build_alias_map()` — 1028→1913 keys (+885), 21 collisions skipped. +15 tests (973/973 PASS), bandit 0 HIGH. A/B benchmark: Drug Recall/Precision unchanged vs master (CT-054 stale baseline noted separately). Merged fast-forward → `master` (`13aff3a`). FID-VN-020 (ORCH-001/CT-011 — orchestrator `detect_confusion`/`create_consultation_request`/`close_session`) APPROVED by Andy, implementation để phiên sau |
 
 ---
 

@@ -29,6 +29,24 @@
   clusters](https://ctujs.ctu.edu.vn/index.php/ctujs/article/view/448)
 - Priority: 🟡 MEDIUM — chờ thêm pilot audio trước khi viết FID riêng
 
+## CT-011 / FID-VN-020 — Orchestrator v1.0 Automation [APPROVED 2026-06-12, chưa implement]
+- [ ] `fids/FID-VN-020.md` — Status: APPROVED by Andy ("APPROVE FID 20 TIẾP TỤC", 2026-06-12)
+- [ ] 3 hàm mới trong `scripts/orchestrator.py` (~180-220 LOC):
+  1. `detect_confusion(note) -> dict` — heuristic match trigger T1-T5
+     (`docs/dev/CONSULTATION_TEMPLATE.md`), chỉ gợi ý KHÔNG block workflow
+  2. `create_consultation_request(topic, question, options, hard_constraints,
+     analysis) -> Path` — sinh `docs/records/consultations/CONS-YYYYMMDD-NNN.md`
+     đúng format, NNN tự tăng theo ngày
+  3. `close_session(updates, push=False) -> dict` — patch 5 file session-end
+     (BACKLOG/PROJECT_PROGRESS/CHANGELOG/CLAUDE.md CURRENT STATE/LAST_SESSION) tại
+     marker xác định + `iso_audit.py --increment-session` + git commit
+     (push CHỈ khi `push=True`, default False)
+- [ ] Tests: `tests/unit/test_orchestrator.py` (detect_confusion trigger keywords,
+  consultation numbering, close_session patch tmp_path, push=False default)
+- [ ] KHÔNG đổi `start_session()`/`consult()`/`consistency_check()` hiện có
+- [ ] 973/973 existing PASS + N tests mới, bandit 0 HIGH, CHANGELOG entry
+- Priority: 🟡 MEDIUM — Risk LOW (dev-tooling only), để phiên sau implement
+
 ## CT-051 — L1b drug match window 1-4 → 1-6 words [DONE 2026-06-12]
 - [x] `src/core/l1b_drug_correct.py::_match_window()` window (4,3,2,1) → (6,5,4,3,2,1)
 - [x] Unlock 187 phonetic_variants 5-6 từ trong `drug_db_v200.json` (Azithromycin,
