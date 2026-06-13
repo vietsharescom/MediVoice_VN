@@ -112,6 +112,18 @@ class TestLayer1Exact:
         txt, matches = correct_drug_names_v2("ke don xi pro phlo xa xin 500mg")
         assert any(m.inn == "Ciprofloxacin" and m.match_layer == 1 for m in matches)
 
+    def test_metronidazole_consonant_swap_garble(self):
+        # FID-VN-019 (CT-042): phonetic_variants.south "me tro ni đa" -> rule1
+        # (đ→t aspiration) sinh biến thể "me tro ni ta"
+        txt, matches = correct_drug_names_v2("cho benh nhan me tro ni ta 500mg")
+        assert any(m.inn == "Metronidazole" and m.match_layer == 1 for m in matches)
+
+    def test_theophylline_th_garble(self):
+        # FID-VN-019 (CT-042): phonetic_variants "theo phylli ne" -> rule3
+        # ("th" -> "t") sinh biến thể "teo phylli ne"
+        txt, matches = correct_drug_names_v2("teo phylli ne 100mg")
+        assert any(m.inn == "Theophylline" and m.match_layer == 1 for m in matches)
+
 
 # ─── LAYER 2 — Fuzzy match ────────────────────────────────────────────────────
 

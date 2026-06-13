@@ -63,6 +63,121 @@ def _normalize(text: str) -> str:
     return "".join(c for c in nfkd if not unicodedata.combining(c))
 
 
+# ─── Phonological variant generation (FID-VN-019, CT-042) ─────────────────────
+# Vietnamese-English contrastive phonology — see fids/FID-VN-019.md WHY for
+# academic sources. Rules 1-4 below operate on already-_normalize()'d aliases
+# (lowercase, diacritics stripped — except "đ", which NFKD does not decompose).
+
+# Rule 1: aspiration neutralization onset swap (b/p, d/t, g/k/c).
+# "đ" -> "t" per FID-VN-019 example ("đa" -> "ta", Metronidazole garble).
+_ASPIRATION_MAP: dict[str, tuple[str, ...]] = {
+    "b": ("p",), "p": ("b",),
+    "d": ("t",), "t": ("d",),
+    "đ": ("t",),
+    "g": ("k",), "c": ("k",), "k": ("g", "c"),
+}
+
+# Rule 2: coda restriction — drop final consonant if it's a voiced obstruent or
+# "l" (not in Vietnamese's valid 6-consonant coda set {p,t,k,c,m,n,ng,nh}).
+_CODA_DROP_SET = frozenset({"l", "z", "v", "d", "đ"})
+
+# Rule 8: common Vietnamese clinical words — any generated variant containing
+# one of these tokens is dropped (false-positive guard, CONS-20260612-001 Round 3).
+_PHON_BLACKLIST: frozenset[str] = frozenset({
+    "co", "khong", "đau", "met", "ve", "voi", "nay", "la", "ma", "thi",
+    "cho", "cua", "se", "roi", "chua", "con", "nua", "them", "it", "nhieu",
+    "hay", "nen", "phai", "đuoc", "bi", "sau", "truoc", "trong", "ngoai",
+    "tren", "duoi", "khi", "neu", "vi", "tai", "di", "ngoi", "nam", "an",
+    "uong", "ngu", "ngay", "vay",
+})
+
+_PHON_MIN_VARIANT_LEN = 3  # Rule 7: skip variants <3 chars (excl. spaces)
+
+
+def _phon_syllable_onset_variants(syllable: str, region: str | None) -> set[str]:
+    """Rules 1/3/4 — onset swaps for a single syllable. region: north/central/south/None."""
+    variants: set[str] = set()
+    if not syllable:
+        return variants
+    first = syllable[0]
+
+    # Rule 1: aspiration onset swap
+    for repl in _ASPIRATION_MAP.get(first, ()):
+        variants.add(repl + syllable[1:])
+
+    # Rule 3: "th" -> "t"/"d" onset
+    if syllable.startswith("th"):
+        variants.add("t" + syllable[2:])
+        variants.add("d" + syllable[2:])
+
+    # Rule 4: r/l/n onset swap, split by region (CONS-20260612-001)
+    if first in ("l", "n") and region in (None, "north"):
+        variants.add(("n" if first == "l" else "l") + syllable[1:])
+    if first == "r" and region in (None, "central", "south"):
+        variants.add("l" + syllable[1:])
+        variants.add("z" + syllable[1:])
+
+    variants.discard(syllable)
+    return variants
+
+
+def _phonological_variants(alias: str, region: str | None = None) -> set[str]:
+    """
+    Generate Vietnamese phonological spelling variants of an already-normalized
+    drug alias (FID-VN-019 v3, rules 1-4 + guards 5-8).
+
+    region: "north"/"central"/"south" for phonetic_variants entries (drives
+    Rule 4 split), or None for brands/name_variants (all regions apply).
+    """
+    tokens = alias.split(" ")
+    multi_syllable = len(tokens) >= 2
+    # Rule 5: limit to the first and last syllable (same syllable if single-token alias)
+    target_indices = {0, len(tokens) - 1}
+
+    results: set[str] = set()
+    for idx in target_indices:
+        syllable = tokens[idx]
+        onset_variants = {syllable} | _phon_syllable_onset_variants(syllable, region)
+        for onset_variant in onset_variants:
+            candidates = {onset_variant}
+            # Rule 2: coda restriction (multi-syllable aliases only — CONSTRAINT 1)
+            if (
+                multi_syllable
+                and len(onset_variant) > 1
+                and onset_variant[-1] in _CODA_DROP_SET
+            ):
+                candidates.add(onset_variant[:-1])
+            for candidate in candidates:
+                if candidate == syllable:
+                    continue
+                new_tokens = list(tokens)
+                new_tokens[idx] = candidate
+                results.add(" ".join(new_tokens))
+
+    # Rule 7 (min length) + Rule 8 (blacklist)
+    filtered: set[str] = set()
+    for variant in results:
+        variant_tokens = variant.split(" ")
+        if len("".join(variant_tokens)) < _PHON_MIN_VARIANT_LEN:
+            continue
+        if any(t in _PHON_BLACKLIST for t in variant_tokens):
+            continue
+        filtered.add(variant)
+    return filtered
+
+
+def _add_phon_alias(alias_map: dict[str, str], key: str, inn: str) -> None:
+    """Insert a generated phonological alias, skipping on INN collision (R-PHON-02)."""
+    existing = alias_map.get(key)
+    if existing is not None and existing != inn:
+        logger.debug(
+            "Phonological alias collision: %r already maps to %s, skip %s",
+            key, existing, inn,
+        )
+        return
+    alias_map[key] = inn
+
+
 # ─── Alias map builder ────────────────────────────────────────────────────────
 
 @lru_cache(maxsize=1)
@@ -76,9 +191,15 @@ def _build_alias_map() -> dict[str, str]:
     for inn, entry in db.get("by_inn", {}).items():
         alias_map[_normalize(inn)] = inn
         for brand in entry.get("brands", []):
-            alias_map[_normalize(brand)] = inn
+            normalized = _normalize(brand)
+            alias_map[normalized] = inn
+            for variant in _phonological_variants(normalized):
+                _add_phon_alias(alias_map, variant, inn)
         for variant in entry.get("name_variants", []):
-            alias_map[_normalize(variant)] = inn
+            normalized = _normalize(variant)
+            alias_map[normalized] = inn
+            for phon_variant in _phonological_variants(normalized):
+                _add_phon_alias(alias_map, phon_variant, inn)
         # v200: phonetic_variants per region
         # Min 3 syllables (>=2 spaces): 2-syllable prefixes like "ga ba", "am lo"
         # are too generic and match common Vietnamese words in clinical text.
@@ -93,6 +214,8 @@ def _build_alias_map() -> dict[str, str]:
                 if normalized.count(" ") < 2 and len(normalized) < 9:
                     continue
                 alias_map[normalized] = inn
+                for phon_variant in _phonological_variants(normalized, region=_region):
+                    _add_phon_alias(alias_map, phon_variant, inn)
     return alias_map
 
 

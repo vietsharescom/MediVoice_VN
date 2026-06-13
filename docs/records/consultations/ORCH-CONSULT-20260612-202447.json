@@ -1,0 +1,30 @@
+{
+  "type": "consultation",
+  "topic": "FID-VN-019 v2 (CT-042) — L1b Phonological Alias Expansion",
+  "question": "MediVoice VN dung PhoWhisper (ASR) de transcribe loi BS doc ten thuoc tieng Anh\n(vd Metronidazole, Theophylline, Ciprofloxacin) sang tieng Viet. BS Viet phat am\nten thuoc tieng Anh bi anh huong boi am vi tieng Viet (L1 transfer), nen transcript\nkhong khop voi cac 'phonetic_variants' da curate trong drug_db_v200.json.\n\nDe xuat ham _phonological_variants(alias) sinh them bien the chinh ta cho alias,\ndua tren 4 nhom quy tac (toi da 2 am tiet/alias - dau + cuoi):\n  1. Aspiration neutralization: hoan doi b<->p, d<->t, g<->k, c<->k o dau am tiet\n     (tieng Viet khong phan biet am vi bat hoi/khong bat hoi nhu tieng Anh)\n  2. Coda restriction: neu am tiet ket thuc bang phu am KHONG thuoc bo 6 coda hop le\n     tieng Viet {p,t,k,c,m,n,ng,nh} (vd \"l\",\"s\",\"z\",\"v\",\"f\",\"x\",\"d\" cuoi) -> sinh\n     them bien the RUNG phu am cuoi do (vd \"zol\"->\"zo\", \"mid\"->\"mi\", \"vas\"->\"va\")\n  3. th -> t/d: am tiet bat dau \"th\" (theta/dh khong co trong tieng Viet) -> sinh\n     bien the \"t\"/\"d\" (vd \"theo\"->\"teo\"/\"deo\")\n  4. r/l/n merger: hoan doi r<->l, l<->n o dau am tiet (phuong ngu Bac Bo \"noi/loi\",\n     r thuong -> l/z/d trong giong Viet)\n\nCAU HOI:\n1. 4 nhom quy tac nay co du/dung de cover phan lon cac bien the phat am sai thuc te\n   cua BS Viet khi doc ten thuoc tieng Anh khong? Co nhom hien tuong quan trong nao\n   bi thieu, hoac nhom nao trong 4 nhom la rui ro false-positive cao can bo/sua?\n2. Cho rule 4 (r/l/n): nen ap dung dong thoi r<->l<->n (3-way) hay tach theo vung\n   mien (Bac: l<->n; Nam/Trung: r->l hoac r->z)?\n3. Co nen lam thuat toan tong quat nay (Option A) hay chi curate thu cong tung case\n   tu audio thuc te (Option B, cham nhung zero risk false-positive moi)?\n\nTra loi format:\n  RECOMMENDATION: [A/B/other]\n  CONFIDENCE: [X%]\n  KEY RISKS: [list]\n  RULE-4 RECOMMENDATION: [3-way / split-by-region / other]",
+  "responses": {
+    "Groq/LLaMA-3.3-70B": {
+      "model": "llama-3.3-70b-versatile",
+      "response": "RECOMMENDATION: A\nCONFIDENCE: 80%\nKEY RISKS: \n - False-positive cao do quy tắc không chính xác\n - Thiếu dữ liệu thực tế để kiểm tra hiệu quả của quy tắc\n - Có thể không bao phủ được tất cả các biến thể phát âm sai\nRULE-4 RECOMMENDATION: split-by-region\n\nGiải thích:\n4 nhóm quy tắc đề xuất có thể giúp giảm thiểu một số biến thể phát âm sai khi bác sĩ Việt đọc tên thuốc tiếng Anh. Tuy nhiên, vẫn có thể có một số trường hợp ngoại lệ hoặc biến thể không được bao phủ.\n\nNhóm quy tắc 4 (r/l/n merger) có thể được áp dụng theo vùng miền để giảm thiểu false-positive. Ví dụ, ở miền Bắc, có thể áp dụng quy tắc l<->n, trong khi ở miền Nam và Trung, có thể áp dụng quy tắc r->l hoặc r->z.\n\nLựa chọn Option A (thuật toán tổng quat) có thể giúp giảm thiểu công việc curate dữ liệu, nhưng cũng có thể dẫn đến false-positive nếu quy tắc không chính xác. Lựa chọn Option B (curate thủ công) có thể giúp giảm thiểu false-positive, nhưng cũng có thể tốn nhiều thời gian và công sức.\n\nDo đó, tôi khuyến nghị lựa chọn Option A với một số điều chỉnh để giảm thiểu false-positive, chẳng hạn như áp dụng quy tắc theo vùng miền và kiểm tra hiệu quả của quy tắc trên dữ liệu thực tế.",
+      "usage": {
+        "queue_time": 0.008512815,
+        "prompt_tokens": 857,
+        "prompt_time": 0.119731419,
+        "completion_tokens": 312,
+        "completion_time": 1.1521044759999999,
+        "total_tokens": 1169,
+        "total_time": 1.271835895
+      }
+    },
+    "OpenAI/GPT-4o-mini": {
+      "error": "HTTP 429: {\n    \"error\": {\n        \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/gu"
+    },
+    "xAI/Grok-3": {
+      "error": "HTTP 403: {\"code\":\"permission-denied\",\"error\":\"Your newly created team doesn't have any credits or licenses yet. You can purchase those on https://console.x.ai/team/2c812287-5c53-4bdc-913e-6414f70b422a.\"}"
+    },
+    "OpenRouter/LLaMA-3.3-70B-free": {
+      "error": "HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"meta-llama/llama-3.3-70b-instruct:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to ac"
+    }
+  },
+  "timestamp": "2026-06-12T20:24:47.695206"
+}

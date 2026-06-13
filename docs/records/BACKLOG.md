@@ -2,6 +2,33 @@
 # v0.9.4 — Updated 2026-06-12
 # Single source of truth cho tasks.
 
+## CT-053 — Vietnamese Medical Phonetic Encoder (Phase 2, supersedes CT-052) [NEW 2026-06-12]
+- [ ] Phát sinh từ FID-VN-019 v3 (CT-042 revision, CONS-20260612-001 ChatGPT+Grok
+  review) — hướng kiến trúc dài hạn thay cho việc tiếp tục mở rộng
+  `_phonological_variants()` (enumerate-based sẽ "nổ" theo cấp số nhân khi
+  155→300→1000 thuốc)
+- [ ] Đề xuất: Soundex/Metaphone/Double-Metaphone-style encoder cho tên thuốc
+  tiếng Việt — encode alias → canonical code (vd "mét phọc min"/"mét phô min"/
+  "mét pho min" đều → `MTFRMN`), match qua code thay vì enumerate biến thể
+- [ ] Phạm vi gộp 3 nhóm hiện tượng (KHÔNG implement trong FID-VN-019):
+  1. **Consonant cluster reduction/epenthesis** (cũ CT-052) — tiếng Việt không có
+     cluster phụ âm → English cluster ("-stat-in", "pred-ni-sone") bị rụng 1 phụ
+     âm hoặc chèn nguyên âm đệm (vd "statin"→"sờ ta tin", "steroid"→"xì tê rôi")
+  2. **Vowel normalization** — biến đổi o/ô/ơ, i/inh, en/eng, an/ang (vd
+     "metformin"→"mét pho min"/"mét phọc min"/"mét phô min")
+  3. **Syllable insertion / stress relocation** — BS Việt thêm âm tiết đệm khi
+     gặp cluster tiếng Anh (vd "clopidogrel"→"cờ lô pi đô gờ ren")
+- [ ] KHÔNG implement cùng FID-VN-019 — cần audio thật (BENCH-002b hoặc pilot) để
+  xác định pattern cụ thể trước khi thiết kế encoder
+- [ ] Kết hợp tốt với Drug Pronunciation Wizard (FID-VN-013/014, Grok round 3
+  CONS-20260612-001): BS đọc tên thuốc → ASR + rule-based variant → confirm alias
+  → enrich `phonetic_variants` tự động (hybrid curation)
+- [ ] Nguồn: [The Adaptation of French Consonant Clusters in Vietnamese Phonology:
+  An OT Account](https://www.sejongjul.org/archive/view_article?pid=jul-18-1-69),
+  [CTU Journal — Common mistakes in pronouncing English consonant
+  clusters](https://ctujs.ctu.edu.vn/index.php/ctujs/article/view/448)
+- Priority: 🟡 MEDIUM — chờ thêm pilot audio trước khi viết FID riêng
+
 ## CT-051 — L1b drug match window 1-4 → 1-6 words [DONE 2026-06-12]
 - [x] `src/core/l1b_drug_correct.py::_match_window()` window (4,3,2,1) → (6,5,4,3,2,1)
 - [x] Unlock 187 phonetic_variants 5-6 từ trong `drug_db_v200.json` (Azithromycin,
@@ -222,7 +249,30 @@
 - [x] **CT-040** ✅ Mở rộng `pronunciation_en` (Merriam-Webster-style, xem CONS-20260611-001) ra 9 thuốc tim_mach còn thiếu — top-20 wordlist `noi_khoa`+`tim_mach` đều có `pronunciation_en`. (Phase 2 của CT-039) → `fids/FID-VN-017.md` IMPLEMENTED v0.11.8 (2026-06-11)
 - [x] **CT-041** ✅ "stress hint" (viết hoa âm tiết trọng âm trong `vn_phonetic_default` qua `apply_stress_hint()`) + tip ngắn về phụ âm bật hơi p/t/k trong Wizard Part 3. User vẫn tự đọc theo cách của mình (confirm cá nhân hoá FID-VN-016), default chỉ là gợi ý. → `fids/FID-VN-017.md` IMPLEMENTED v0.11.8 (2026-06-11)
 - [ ] **CT-044** 🟢 LOW — **Verify `pronunciation_en` với Merriam-Webster thật** (`docs/records/consultations/CONS-20260611-001.md`): WebFetch `merriam-webster.com` bị chặn (403) trong môi trường Claude Code, nên 25 entries (FID-VN-016) + 9 entries (FID-VN-017) hiện ghi theo kiến thức chung của Claude (format khớp MW ở 2 ví dụ Andy kiểm tra: paracetamol, cetirizine), CHƯA verify từng entry. Khi Andy rảnh: paste respelling MW (`merriam-webster.com/dictionary/{ten-thuoc}#medicalDictionary`) cho từng thuốc → Claude đối chiếu/sửa `pronunciation_en` + cập nhật `pronunciation_en_source` thành "verified vs MW YYYY-MM-DD". Không block FID-VN-017.
-- [ ] **CT-042** 🔴 HIGH — **Phonological correction cho L1b drug matching**: Andy quan sát thực nghiệm — phát âm "p" (bật hơi /pʰ/) thay vì "b" (không bật hơi) khi đọc tên thuốc tiếng Anh giúp tăng độ nhận dạng từ ~20% lên ~50%. Lý do ngôn ngữ học: tiếng Việt KHÔNG phân biệt phụ âm bật hơi/không bật hơi như tiếng Anh (p/b, t/d, k/g theo kiểu Anh khác hẳn pH/p, tH/t của Việt); âm cuối mũi m/n tiếng Anh khác tiếng Việt; phụ âm cuối "l" tiếng Anh thường KHÔNG được phát âm trong tiếng Việt. **Đề xuất**: thêm các quy tắc chuẩn hoá ngữ âm (phonological normalization) vào fuzzy-matching của `src/core/l1b_drug_correct.py` (vd coi b≈p, d≈t, g≈k tương đương khi so khớp transcript với tên thuốc, bỏ qua âm cuối "l"...). **CHẠM PIPELINE FROZEN (L1b)** → bắt buộc FID + Andy approve trước khi code, kèm A/B test trên audio pilot thật để đo recall improvement trước khi merge.
+- [x] **CT-042** ✅ DONE — `fids/FID-VN-019.md` v3 APPROVED by Andy (2026-06-12) +
+  IMPLEMENTED: `_phonological_variants()` + `_add_phon_alias()` trong
+  `src/core/l1b_drug_correct.py`, wired vào `_build_alias_map()` cho
+  brands/name_variants/phonetic_variants (4 rule groups: aspiration b/p-d/t-g/k/c,
+  coda drop {l,z,v,d,đ} multi-syllable only, th→t/d, r/l/n split-by-region +
+  blacklist 43 từ). alias_map 1028→1913 keys (+885), 21 phonological collisions
+  skipped (ambiguity guard). +15 tests (973/973 PASS), bandit 0 HIGH.
+  **A/B benchmark** (branch `experiment/fid-vn-019-phonological`,
+  `tools/bench_002b.py --save-json` → `data/eval/bench_002b_phon_results.json`):
+  Drug Recall 0.556 (KHÔNG ĐỔI so với baseline 55.6% — PASS); Drug Precision 0.714
+  — **KHÔNG ĐỔI so với master HIỆN TẠI** (verified: chạy lại bench trên master HEAD
+  l1b_drug_correct.py + cùng eval data → cũng ra 0.714, FP=2) → FID này KHÔNG thêm
+  FP mới (PASS). LƯU Ý: `data/eval/bench_002b_results.json` (committed baseline,
+  precision 0.833/FP=1) ĐÃ STALE — master hiện tại đã là 0.714/FP=2 (Oresol FP trên
+  REF_HN_P1_Clip3, không liên quan FID-VN-019, có sẵn trước session này) → xem
+  **CT-054** (mới, regenerate baseline + investigate Oresol FP).
+- [ ] **CT-054** 🟡 MEDIUM — `data/eval/bench_002b_results.json` (committed baseline,
+  Drug Precision 0.833/FP=1) stale vs master HEAD hiện tại (0.714/FP=2). FP mới:
+  clip `REF_HN_P1_Clip3.wav` — NER trích "Oresol" làm MEDICATION entity (GT chỉ có
+  Ciprofloxacin) dù alias_map match "oresol" giống nhau trước/sau (L1b không đổi,
+  match_layer=1, confidence=1.0 cả 2 bên) → lỗi nằm ở NER/L3b extraction, không phải
+  L1b. Cần: (1) `python -X utf8 tools/bench_002b.py --save-json` để regenerate
+  baseline đúng với code hiện tại, (2) debug NER extraction cho clip này (có thể
+  liên quan thay đổi `data/drug_vectorstore/chroma.sqlite3` giữa các phiên).
 - [x] **CT-043** ✅ **DVP setup flow reorder**: `dvp-form` reorder (Chuyên khoa chính/phụ TRƯỚC Vùng miền + hint), `READING_PASSAGES_BY_REGION`/`REGION_TEST_SENTENCES` (3 biến thể Bắc/Trung/Nam), `GET /api/calibration/passage-text?cchn=`/`region-sentence?cchn=` region-aware, `calibration_region()` trả `region_match: bool` (double-check `profile.region` declared vs `detect_region(transcript)`) + cảnh báo UI khi mismatch. → `fids/FID-VN-018.md` IMPLEMENTED v0.11.9 (2026-06-11)
 - [x] **CT-045** ✅ **Lab Hiệu chỉnh Giọng nói — hiển thị thông tin BS (personality) trước test** (Andy feedback PA-021, follow-up FID-VN-018): `calib-lab-modal` thêm khối `#lab-doctor-info` (tên/chuyên khoa/vùng miền + nút "Sửa thông tin") NGAY ĐẦU modal, TRƯỚC `lab-grid`; `CalibLab.open()` gọi `_loadDoctorInfo()` trước `goStep(1)`; `CalibLab.editProfile()` đóng Lab → mở `DVP.edit()`. → v0.11.10 (2026-06-11), 4 tests mới `tests/unit/test_dvp_wizard.py`
 - [x] **CT-046** ✅ **Pre-gen audio mẫu phát âm (gTTS) + ưu tiên `phonetic_variants.north`** (Andy yêu cầu "tải audio thuốc cho vào thư viện" + feedback Azithromycin "a dith rô my xin" không đọc được): chạy `scripts/gen_pronunciation_audio.py` sinh 149 mp3 + `_cache.json` (155 INN) tại `src/api/static/audio/pronunciation/`; fix `UnicodeEncodeError` (stdout utf-8 trên Windows); `get_reference_phonetic()` ưu tiên `phonetic_variants.north[0]` trước heuristic transliteration (tránh cụm phụ âm Anh không tồn tại trong tiếng Việt, vd "dith"). → v0.11.11 (2026-06-11), 3 tests mới

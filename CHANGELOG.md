@@ -1,6 +1,30 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.19] — 2026-06-12 — L1b phonological alias expansion [FID-VN-019]
+
+### Added
+- feat(l1b): `_phonological_variants(alias, region=None)` in
+  `src/core/l1b_drug_correct.py` — generates Vietnamese phonological spelling
+  variants for drug aliases per Vietnamese-English contrastive phonology
+  (FID-VN-019 v3, CONS-20260612-001 Groq+ChatGPT+Grok review):
+  - Rule 1: aspiration onset swap b↔p, d↔t, g↔k, c↔k, đ→t
+  - Rule 2: drop final {l,z,v,d,đ} coda, multi-syllable aliases only
+  - Rule 3: "th" onset → "t"/"d"
+  - Rule 4: r/l/n onset swap, split by region (north: l↔n; central/south: r→l, r→z)
+  - Rule 5-8: first+last syllable only, ambiguity-guard on collision (`_add_phon_alias`),
+    min-length filter (<3 chars), 43-word Vietnamese blacklist
+- `_build_alias_map()` wires `_phonological_variants()` for brands/name_variants/
+  phonetic_variants (not INN itself). alias_map: 1028 → 1913 keys (+885), 21
+  phonological collisions skipped.
+- +15 tests: `tests/unit/test_l1b_phonological.py` (13) +
+  `tests/unit/test_l1b_drug_correct_v2.py::TestLayer1Exact`
+  (`test_metronidazole_consonant_swap_garble`, `test_theophylline_th_garble`).
+  973/973 PASS, bandit 0 HIGH.
+- A/B benchmark (`tools/bench_002b.py`, branch `experiment/fid-vn-019-phonological`):
+  Drug Recall 0.556 unchanged (baseline 55.6%); Drug Precision 0.714 unchanged vs
+  master HEAD (0 new FPs) → `data/eval/bench_002b_phon_results.json`.
+
 ## [v0.11.18] — 2026-06-12 — L1b drug match window 4→6 words (CT-027 follow-up)
 
 ### Fixed
