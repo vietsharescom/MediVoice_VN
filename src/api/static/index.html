@@ -943,7 +943,8 @@ function displayDraft(data) {
   }
   const patientGenderEl = document.getElementById('patient-gender');
   if (fd.gioi_tinh && !patientGenderEl.value) {
-    patientGenderEl.value = fd.gioi_tinh;
+    const g = fd.gioi_tinh.trim().toLowerCase();
+    patientGenderEl.value = g === 'nam' ? 'Nam' : g === 'nữ' ? 'Nữ' : '';
   }
   document.getElementById('f-ly-do').value = fd.ly_do || '';
   const sh = fd.sinh_hieu || {};

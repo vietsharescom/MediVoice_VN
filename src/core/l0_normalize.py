@@ -20,6 +20,10 @@ VAD_GAP_MS = 500.0      # merge speech segments with silence gap < 500ms
 
 _vad_model = None  # lazy-loaded, cached — avoid reloading silero-vad per request
 
+# Temp WAV files đi vào data/tmp (ổ D) — tránh ghi vào %TEMP% (ổ C)
+_TMP_DIR = Path(__file__).resolve().parents[2] / "data" / "tmp"
+_TMP_DIR.mkdir(parents=True, exist_ok=True)
+
 
 def normalize(audio_path: str | Path) -> tuple[np.ndarray, str]:
     """
@@ -34,7 +38,7 @@ def normalize(audio_path: str | Path) -> tuple[np.ndarray, str]:
     audio, sr = librosa.load(audio_path, sr=TARGET_SR, mono=True)
 
     # Write to temp WAV
-    tmp = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
+    tmp = tempfile.NamedTemporaryFile(suffix=".wav", delete=False, dir=str(_TMP_DIR))
     sf.write(tmp.name, audio, TARGET_SR, subtype="PCM_16")
     tmp.close()
 

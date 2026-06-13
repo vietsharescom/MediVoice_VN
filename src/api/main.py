@@ -75,6 +75,10 @@ _STATIC = Path(__file__).parent / "static"
 if _STATIC.exists():
     app.mount("/static", StaticFiles(directory=str(_STATIC)), name="static")
 
+# Temp upload files đi vào data/tmp (ổ D) — tránh ghi vào %TEMP% (ổ C)
+_TMP_DIR = Path(__file__).resolve().parents[2] / "data" / "tmp"
+_TMP_DIR.mkdir(parents=True, exist_ok=True)
+
 
 @app.get("/")
 async def index():
@@ -99,7 +103,7 @@ async def transcribe_audio(
     """
     # Lưu audio tạm
     suffix = Path(audio.filename or "audio.wav").suffix or ".wav"
-    tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
+    tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False, dir=str(_TMP_DIR))
     try:
         content = await audio.read()
         tmp.write(content)
@@ -578,7 +582,7 @@ async def pronunciation_enroll(
         raise HTTPException(404, f"Doctor {cchn} chưa đăng ký DVP")
 
     suffix = Path(audio.filename or "audio.wav").suffix or ".wav"
-    tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
+    tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False, dir=str(_TMP_DIR))
     try:
         content = await audio.read()
         tmp.write(content)
@@ -714,7 +718,7 @@ async def calibration_region(cchn: str, audio: UploadFile = File(...)):
         raise HTTPException(404, f"Doctor {cchn} chưa đăng ký DVP")
 
     suffix = Path(audio.filename or "audio.wav").suffix or ".wav"
-    tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
+    tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False, dir=str(_TMP_DIR))
     try:
         content = await audio.read()
         tmp.write(content)
@@ -775,7 +779,7 @@ async def calibration_passage(cchn: str, audio: UploadFile = File(...)):
         raise HTTPException(404, f"Doctor {cchn} chưa đăng ký DVP")
 
     suffix = Path(audio.filename or "audio.wav").suffix or ".wav"
-    tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
+    tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False, dir=str(_TMP_DIR))
     try:
         content = await audio.read()
         tmp.write(content)

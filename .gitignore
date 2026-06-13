@@ -16,6 +16,7 @@ demo/find_shared_drive.py
 logs/
 *.db
 data/memory/
+data/tmp/
 data/audio/
 data/vietmed/
 data/asr_manifest/vietmed_manifest.jsonl

@@ -1,6 +1,21 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.23] — 2026-06-12 — CT-056: fix patient-name/gender UI bugs + temp audio path to D drive
+
+### Fixed
+- `src/core/l1c_ner.py`: `_RE_PATIENT_NAME_AGE` bắt nhầm filler "là" vào tên BN
+  ("18 tuổi là Phạm Minh Tuấn" → "Là Phạm Minh Tuấn"). Thêm `(?:là\s+)?` optional.
+- `src/api/static/index.html`: dropdown "Giới tính" không tự chọn vì
+  `fd.gioi_tinh` ("nam") không khớp `<option value="Nam">` (case-sensitive).
+  Chuẩn hoá lowercase trước khi map sang "Nam"/"Nữ".
+- `src/core/l0_normalize.py` + `src/api/main.py`: temp audio files (upload +
+  normalize) chuyển từ `%TEMP%` (ổ C) → `data/tmp/` (ổ D) qua `_TMP_DIR`
+  constant, áp dụng cho `l0_normalize.normalize()` và 4 endpoint upload trong
+  `src/api/main.py`.
+
+984/984 tests PASS. Không đổi pipeline L0-L10 logic.
+
 ## [v0.11.22] — 2026-06-12 — CT-055: fix remaining eval GT/NOTE spacing across all 57 clips
 
 ### Fixed

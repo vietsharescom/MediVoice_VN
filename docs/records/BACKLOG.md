@@ -319,6 +319,55 @@
   - Còn lại: HN drug CEER 0.334 (Paracetamol/Ciprofloxacin GT NER vẫn miss do BS
     đánh vần phonetic "Pa ra ce ta mol"/"Ci pro flo vac cin" — known issue, xem
     CT-053 Phonetic Encoder Phase 2)
+- [x] **CT-056** ✅ DONE 2026-06-12 — Fix 2 lỗi UI phát hiện qua test thực tế
+  (Andy, case "Phạm Minh Tuấn"):
+  1. **Tên BN dính chữ "Là"**: `_RE_PATIENT_NAME_AGE` (`src/core/l1c_ner.py`)
+     bắt cả filler "là" giữa "...tuổi" và tên ("18 tuổi **là** Phạm Minh Tuấn"
+     → `ho_ten="Là Phạm Minh Tuấn"`). Fix: thêm `(?:là\s+)?` optional sau
+     `\d{1,3}\s*tuổi[,\s]+`.
+  2. **Giới tính không tự chọn**: `fd.gioi_tinh` ("nam"/"Nam") không khớp
+     `<option value="Nam">` (case-sensitive) → dropdown trống. Fix: JS
+     (`src/api/static/index.html`) chuẩn hoá lowercase trước khi map
+     `'nam'→'Nam'`/`'nữ'→'Nữ'`.
+  3. **Temp audio path**: chuyển từ `%TEMP%` (ổ C) → `data/tmp/` (ổ D) —
+     thêm `_TMP_DIR` trong `src/core/l0_normalize.py` + `src/api/main.py`
+     (4 chỗ `NamedTemporaryFile`), `mkdir(parents=True, exist_ok=True)`.
+  984/984 tests PASS. KHÔNG đụng pipeline L0-L10 logic (chỉ regex NER +
+  JS mapping + path storage).
+- [ ] **CT-057** 🟡 — **Lưu audio + transcript mỗi lần test qua UI vào
+  `data/recordings/` (ổ D)** để Andy đánh giá lại sau (quyết định
+  2026-06-12: áp dụng cho MỌI lần gọi `/api/transcribe`, không cần flag
+  riêng). Implement: trước `purge_audio()` trong `src/api/main.py`
+  (`transcribe_audio`), copy `wav_path` → `data/recordings/{ts}_{record_id}.wav`
+  + ghi `data/recordings/{ts}_{record_id}.json` (transcript_raw/corrected,
+  form_data, confidence, route, dvp_specialty/region, dialect_subs).
+  ⚠️ Cân nhắc: vẫn giữ `purge_audio()` cho file tạm gốc (Privacy by Design
+  L0 KHÔNG đổi) — chỉ lưu THÊM 1 bản copy có chủ đích vào `data/recordings/`
+  cho mục đích đánh giá nội bộ (Andy, không phải lưu trữ BN production).
+- [ ] **CT-058** 🟢 — **Dev tool `scripts/gdrive_fetch.py`**: Andy làm việc
+  từ xa (nước ngoài), audio test để trên Google Drive (cá nhân, không phải
+  dữ liệu BN) → script tải file từ link GG Drive về `data/recordings/`
+  (hoặc `data/eval/`) trên ổ D để test pipeline. KHÔNG liên quan production/
+  patient data, KHÔNG vi phạm ABSOLUTE RULE #4 (NĐ13/2023) — chỉ là tool dev
+  cá nhân.
+- [ ] **CT-059** 🟡 — **NER schema gap: "chỉ dẫn điều trị tại chỗ"** (nhỏ
+  tai/nhỏ mắt/bôi/súc miệng...) phát hiện qua test "Nhỏ tai dung dịch sát
+  khuẩn hai lần mỗi ngày" — câu này KHÔNG match `_RE_CHI_DINH` (chỉ bắt
+  CĐHA/xét nghiệm: siêu âm/x-quang/CT/MRI/ECG) và KHÔNG phải tên thuốc
+  trong `drug_db` → rơi ra ngoài hoàn toàn (không vào đơn thuốc, không vào
+  chỉ định), KỂ CẢ KHI ASR đúng 100%. Cần FID (Tầng 1 — entity mới ảnh hưởng
+  schema NER + mapping Mẫu 15/BV1).
+- [ ] **NOTE 2026-06-12** — Test case "Phạm Minh Tuấn" (TMH, 18 tuổi) cũng
+  phát hiện 2 case ASR hallucination MỚI (không sửa bằng regex, cần
+  audio/model tuning — TRAIN-001):
+  1. "Paracetamol năm trăm miligam khi đau tai hoặc sốt" → ASR ra
+     "Paracetamol **and Tramadol** khi đau hoặc sốt" (chèn tên thuốc tiếng
+     Anh không có trong audio). Safety net CT-023/CT-033 (xác nhận từng
+     thuốc + nút xóa) đã hoạt động đúng — Tramadol hiện "chưa xác nhận".
+  2. "Nhỏ tai dung dịch sát khuẩn hai lần mỗi ngày" → ASR ra "nhỏ tay và
+     chiêm ngưỡng nước khác **Iron (Ferrous)** khuẩn hai lần mỗi ngày"
+     (garble + hallucination tiếng Anh). → liên quan CT-059 + CT-053 +
+     TRAIN-001.
 - [x] **CT-043** ✅ **DVP setup flow reorder**: `dvp-form` reorder (Chuyên khoa chính/phụ TRƯỚC Vùng miền + hint), `READING_PASSAGES_BY_REGION`/`REGION_TEST_SENTENCES` (3 biến thể Bắc/Trung/Nam), `GET /api/calibration/passage-text?cchn=`/`region-sentence?cchn=` region-aware, `calibration_region()` trả `region_match: bool` (double-check `profile.region` declared vs `detect_region(transcript)`) + cảnh báo UI khi mismatch. → `fids/FID-VN-018.md` IMPLEMENTED v0.11.9 (2026-06-11)
 - [x] **CT-045** ✅ **Lab Hiệu chỉnh Giọng nói — hiển thị thông tin BS (personality) trước test** (Andy feedback PA-021, follow-up FID-VN-018): `calib-lab-modal` thêm khối `#lab-doctor-info` (tên/chuyên khoa/vùng miền + nút "Sửa thông tin") NGAY ĐẦU modal, TRƯỚC `lab-grid`; `CalibLab.open()` gọi `_loadDoctorInfo()` trước `goStep(1)`; `CalibLab.editProfile()` đóng Lab → mở `DVP.edit()`. → v0.11.10 (2026-06-11), 4 tests mới `tests/unit/test_dvp_wizard.py`
 - [x] **CT-046** ✅ **Pre-gen audio mẫu phát âm (gTTS) + ưu tiên `phonetic_variants.north`** (Andy yêu cầu "tải audio thuốc cho vào thư viện" + feedback Azithromycin "a dith rô my xin" không đọc được): chạy `scripts/gen_pronunciation_audio.py` sinh 149 mp3 + `_cache.json` (155 INN) tại `src/api/static/audio/pronunciation/`; fix `UnicodeEncodeError` (stdout utf-8 trên Windows); `get_reference_phonetic()` ưu tiên `phonetic_variants.north[0]` trước heuristic transliteration (tránh cụm phụ âm Anh không tồn tại trong tiếng Việt, vd "dith"). → v0.11.11 (2026-06-11), 3 tests mới

@@ -138,7 +138,7 @@ _NAME_STOP_KW = (
     r"(?:đau|sốt|ho\b|khó|mệt|chóng|buồn|nôn|tiểu|khát|ngứa|phù|tê|sưng|rát|chảy|nuốt|ợ|nghe|vào\s*khám)"
 )
 _RE_PATIENT_NAME_AGE = re.compile(
-    r"\b\d{1,3}\s*tuổi[,\s]+"
+    r"\b\d{1,3}\s*tuổi[,\s]+(?:là\s+)?"
     r"((?:(?!" + _NAME_STOP_KW + r")[a-zà-ỹ]+\s*){1,4}?)"
     r"(?=\s*(?:" + _NAME_STOP_KW + r"|[,.]|$))",
     re.IGNORECASE,
