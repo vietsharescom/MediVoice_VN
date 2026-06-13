@@ -304,14 +304,21 @@
   tương tự). Regenerate: TP=5→6, FN=4→5, FP=2→1, **Drug Recall 0.556→0.545, Drug
   Precision 0.714→0.857**. HN drug CEER 1.000→0.334. 984/984 tests PASS (không
   liên quan src/, chỉ data/eval). KHÔNG đổi pipeline L0-L10.
-  - **CT-055** [NEW] — phát hiện lỗi **thiếu space sau dấu `.` xuất hiện ở HẦU HẾT
-    dòng GT/NOTE trong `data/eval/ref_voice_transcripts_review.txt`** (~40+ dòng,
-    pattern `[a-zà-ỹ]\.[A-ZÀ-Ỹ]`, vd "tuổi.Vào", "cấp.Kê", "vành.Nếu"...) — có thể
-    đang làm GT NER undercount drug/vitals/diag trên toàn bộ 57 clips, khiến CEER
-    "tệ hơn thật". Sửa toàn bộ cần review từng dòng (script tự động thêm space có
-    rủi ro sai context: số thập phân "tám.5", viết tắt...) — để task riêng, ước
-    tính ~1-2h review + regenerate benchmark, có thể cải thiện đáng kể Drug
-    Recall/Precision + CEER toàn bộ. Priority 🟡 MEDIUM.
+- [x] **CT-055** ✅ DONE 2026-06-12 — Fix toàn bộ lỗi **thiếu space sau dấu `.`**
+  trong GT/NOTE của `data/eval/ref_voice_transcripts_review.txt` (52 dòng, pattern
+  `[a-zà-ỹ0-9]\.[A-ZÀ-Ỹ]` tự động + 6 case đặc biệt sửa tay: "độ C.Khám"/"độ
+  C.Mạch"/"P S A.Nếu"/"TÁM.Bệnh"/"nói.tôi"/"độ.nhớ" — không đụng số thập phân
+  vì file không có số thập phân thật trong GT/NOTE, chỉ duration "(15.3s)" ở dòng
+  FILE). Regenerate `bench_002b_results.json`:
+  - Drug: TP 6→8, FN 5→5, **FP 1→0**, Recall 0.545→**0.615**, Precision
+    0.857→**1.0**
+  - Drug CEER ALL 0.519→**0.367**, DN drug CEER 0.500→0.200 (✅)
+  - WER ALL 0.184→0.183 (không đổi đáng kể — chỉ ảnh hưởng entity extraction,
+    không ảnh hưởng ASR text)
+  - 984/984 tests PASS (data/eval only, không đụng src/ — pipeline L0-L10 KHÔNG đổi)
+  - Còn lại: HN drug CEER 0.334 (Paracetamol/Ciprofloxacin GT NER vẫn miss do BS
+    đánh vần phonetic "Pa ra ce ta mol"/"Ci pro flo vac cin" — known issue, xem
+    CT-053 Phonetic Encoder Phase 2)
 - [x] **CT-043** ✅ **DVP setup flow reorder**: `dvp-form` reorder (Chuyên khoa chính/phụ TRƯỚC Vùng miền + hint), `READING_PASSAGES_BY_REGION`/`REGION_TEST_SENTENCES` (3 biến thể Bắc/Trung/Nam), `GET /api/calibration/passage-text?cchn=`/`region-sentence?cchn=` region-aware, `calibration_region()` trả `region_match: bool` (double-check `profile.region` declared vs `detect_region(transcript)`) + cảnh báo UI khi mismatch. → `fids/FID-VN-018.md` IMPLEMENTED v0.11.9 (2026-06-11)
 - [x] **CT-045** ✅ **Lab Hiệu chỉnh Giọng nói — hiển thị thông tin BS (personality) trước test** (Andy feedback PA-021, follow-up FID-VN-018): `calib-lab-modal` thêm khối `#lab-doctor-info` (tên/chuyên khoa/vùng miền + nút "Sửa thông tin") NGAY ĐẦU modal, TRƯỚC `lab-grid`; `CalibLab.open()` gọi `_loadDoctorInfo()` trước `goStep(1)`; `CalibLab.editProfile()` đóng Lab → mở `DVP.edit()`. → v0.11.10 (2026-06-11), 4 tests mới `tests/unit/test_dvp_wizard.py`
 - [x] **CT-046** ✅ **Pre-gen audio mẫu phát âm (gTTS) + ưu tiên `phonetic_variants.north`** (Andy yêu cầu "tải audio thuốc cho vào thư viện" + feedback Azithromycin "a dith rô my xin" không đọc được): chạy `scripts/gen_pronunciation_audio.py` sinh 149 mp3 + `_cache.json` (155 INN) tại `src/api/static/audio/pronunciation/`; fix `UnicodeEncodeError` (stdout utf-8 trên Windows); `get_reference_phonetic()` ưu tiên `phonetic_variants.north[0]` trước heuristic transliteration (tránh cụm phụ âm Anh không tồn tại trong tiếng Việt, vd "dith"). → v0.11.11 (2026-06-11), 3 tests mới

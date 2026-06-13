@@ -2,8 +2,8 @@
   "version": "BENCH-002b-v1",
   "total_clips": 57,
   "wer_by_region": {
-    "HN": 0.293,
-    "ALL": 0.184,
+    "HN": 0.292,
+    "ALL": 0.183,
     "DN": 0.163,
     "SG": 0.163
   },
@@ -16,13 +16,13 @@
     },
     "ALL": {
       "vitals": 0.289,
-      "drug": 0.519,
+      "drug": 0.367,
       "diag": 0.214,
       "followup": 0.182
     },
     "DN": {
       "vitals": 0.208,
-      "drug": 0.5,
+      "drug": 0.2,
       "diag": 0.167,
       "followup": 0.333
     },
@@ -34,11 +34,11 @@
     }
   },
   "drug_aggregate": {
-    "tp": 6,
+    "tp": 8,
     "fn": 5,
-    "fp": 1,
-    "recall": 0.545,
-    "precision": 0.857
+    "fp": 0,
+    "recall": 0.615,
+    "precision": 1.0
   },
   "per_clip": [
     {
@@ -104,7 +104,7 @@
       "bs": "HN",
       "clip_type": 2,
       "duration_s": 34.4,
-      "wer": 0.3824,
+      "wer": 0.3731,
       "pred_drugs": [],
       "gt_drugs": [],
       "pred_chan_doan": "",
@@ -324,14 +324,15 @@
         "Vitamin C (Ascorbic acid)"
       ],
       "gt_drugs": [
-        "Paracetamol"
+        "Paracetamol",
+        "Vitamin C (Ascorbic acid)"
       ],
       "pred_chan_doan": "nhiễm siêu vi đường hô hấp trên",
       "gt_chan_doan": "nhiễm siêu vi đường hô hấp trên",
-      "ceer_drug": 1.0,
-      "drug_tp": 1,
+      "ceer_drug": 0.0,
+      "drug_tp": 2,
       "drug_fn": 0,
-      "drug_fp": 1,
+      "drug_fp": 0,
       "ceer_diag": 0.0
     },
     {
@@ -490,9 +491,15 @@
       "pred_drugs": [
         "Paracetamol"
       ],
-      "gt_drugs": [],
+      "gt_drugs": [
+        "Paracetamol"
+      ],
       "pred_chan_doan": "tăng huyết áp độ một kèm đau đầu",
       "gt_chan_doan": "tăng huyết áp độ một kèm đau đầu",
+      "ceer_drug": 0.0,
+      "drug_tp": 1,
+      "drug_fn": 0,
+      "drug_fp": 0,
       "ceer_diag": 0.0
     },
     {

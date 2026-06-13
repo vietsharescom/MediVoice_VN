@@ -1,6 +1,20 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.22] — 2026-06-12 — CT-055: fix remaining eval GT/NOTE spacing across all 57 clips
+
+### Fixed
+- `data/eval/ref_voice_transcripts_review.txt`: fixed 52 GT/NOTE lines with
+  missing space after `.` (eg "tuổi.Vào", "cấp.Kê", "vành.Nếu", "độ C.Khám",
+  "P S A.Nếu") — same root cause as CT-054, across nearly all 57 clips.
+- `data/eval/bench_002b_results.json` regenerated: Drug TP 6→8, FN 5→5,
+  **FP 1→0**, Drug Recall 0.545→**0.615**, Drug Precision 0.857→**1.0**,
+  Drug CEER ALL 0.519→0.367 (DN drug CEER 0.500→0.200 ✅). No pipeline (L0-L10)
+  or src/ changes — 984/984 tests unaffected.
+- Remaining HN drug CEER 0.334 — Paracetamol/Ciprofloxacin GT NER still misses
+  phonetically spelled-out drug names ("Pa ra ce ta mol"); tracked under CT-053
+  (Phonetic Encoder Phase 2).
+
 ## [v0.11.21] — 2026-06-12 — CT-054: fix eval NOTE/GT spacing, regenerate bench_002b baseline
 
 ### Fixed
