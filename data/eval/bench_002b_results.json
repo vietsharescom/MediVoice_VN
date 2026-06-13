@@ -10,15 +10,15 @@
   "ceer_by_region": {
     "HN": {
       "vitals": 0.556,
-      "drug": 0.5,
-      "diag": 1.0,
-      "followup": 1.0
+      "drug": 0.334,
+      "diag": 0.5,
+      "followup": 0.0
     },
     "ALL": {
-      "vitals": 0.307,
-      "drug": 0.556,
-      "diag": 0.286,
-      "followup": 0.273
+      "vitals": 0.289,
+      "drug": 0.519,
+      "diag": 0.214,
+      "followup": 0.182
     },
     "DN": {
       "vitals": 0.208,
@@ -27,18 +27,18 @@
       "followup": 0.333
     },
     "SG": {
-      "vitals": 0.312,
+      "vitals": 0.271,
       "drug": 0.667,
       "diag": 0.167,
       "followup": 0.0
     }
   },
   "drug_aggregate": {
-    "tp": 5,
-    "fn": 4,
+    "tp": 6,
+    "fn": 5,
     "fp": 1,
-    "recall": 0.556,
-    "precision": 0.833
+    "recall": 0.545,
+    "precision": 0.857
   },
   "per_clip": [
     {
@@ -72,15 +72,19 @@
       "clip_type": 3,
       "duration_s": 35.9,
       "wer": 0.3151,
-      "pred_drugs": [],
-      "gt_drugs": [
-        "Ciprofloxacin"
+      "pred_drugs": [
+        "Oresol"
       ],
-      "pred_chan_doan": "",
-      "gt_chan_doan": "theo dõi nhiễm khuẩn đường tiêu hóa",
-      "ceer_drug": 1.0,
-      "drug_tp": 0,
-      "drug_fn": 1,
+      "gt_drugs": [
+        "Ciprofloxacin",
+        "Paracetamol",
+        "Oresol"
+      ],
+      "pred_chan_doan": "và theo dõi nhiệm vụian uống 2 lần mỗi ngày trong 5 ngày karaoke tamon 500 lindy gan uống khi số trên 38 độ Oresol pha theo hướng dẫn để mà bù nước lớn mà bệnh nhân suốt kéo dài qua quá can ngày hoặc đau bụng tăng lên thì cần quay mặt",
+      "gt_chan_doan": "nhiễm khuẩn đường tiêu hóa",
+      "ceer_drug": 0.667,
+      "drug_tp": 1,
+      "drug_fn": 2,
       "drug_fp": 0,
       "ceer_diag": 1.0
     },
@@ -120,10 +124,10 @@
         "Paracetamol"
       ],
       "gt_drugs": [],
-      "pred_chan_doan": "",
+      "pred_chan_doan": "viêm hoàn cấp cây",
       "gt_chan_doan": "viêm họng cấp",
-      "ceer_diag": 1.0,
-      "ceer_followup": 1.0
+      "ceer_diag": 0.0,
+      "ceer_followup": 0.0
     },
     {
       "file": "REF_HN_P3_Clip1.wav",
@@ -595,9 +599,9 @@
       "gt_drugs": [],
       "pred_chan_doan": "",
       "gt_chan_doan": "",
-      "ceer_vitals": 0.667,
+      "ceer_vitals": 0.333,
       "vitals_stated": 3,
-      "vitals_missed": 2
+      "vitals_missed": 1
     },
     {
       "file": "REF_SG_P3_Clip2.wav",

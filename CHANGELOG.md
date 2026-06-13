@@ -1,6 +1,24 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.21] — 2026-06-12 — CT-054: fix eval NOTE/GT spacing, regenerate bench_002b baseline
+
+### Fixed
+- `data/eval/ref_voice_transcripts_review.txt`: added missing space after `.`
+  in NOTE (`REF_HN_P1_Clip3.wav`, `REF_HN_P1_Clip2.wav`) and GT
+  (`REF_DN_P4_Clip2.wav`) — merged tokens like "ngày.Paracetamol"/"độ.Oresol"
+  prevented `extract_drug_candidates()` from matching drug names in the GT
+  reference text, causing the GT NER to undercount drugs and mis-score correct
+  pipeline output as false positives.
+- `data/eval/bench_002b_results.json` regenerated: Drug TP 5→6, FN 4→5, FP 2→1,
+  Drug Recall 0.556→0.545, Drug Precision 0.714→**0.857**, HN drug CEER
+  1.000→0.334. No pipeline (L0-L10) or src/ changes — 984/984 tests unaffected.
+
+### Added
+- CT-055 (BACKLOG): broader missing-space-after-period issue found across
+  ~40+ GT/NOTE lines in `ref_voice_transcripts_review.txt` — left for a
+  dedicated review pass.
+
 ## [v0.11.20] — 2026-06-12 — Orchestrator v1.0 automation: detect_confusion + create_consultation_request + close_session [FID-VN-020]
 
 ### Added

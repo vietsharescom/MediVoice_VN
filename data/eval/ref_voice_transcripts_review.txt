@@ -24,13 +24,13 @@ NOTE: Tôi là bác sĩ vũ thị thanh hà, tôi đang làm việc tại phòng
 FILE: REF_HN_P1_Clip2.wav (26.2s)
 ASR:  bệnh nhân ngô thị liên nữ bốn mươi lăm tuổi đến khám vì đau bụng dưới âm ỉm bị sốt nhẹ và buồn nôn trong hai ngày gần đây huyết áp của bệnh nhân là một trăm cơn mưa trên tám mươi mặt là bảy mươi lăm lần phút nhiệt độ ba mươi tám độ xê và bệnh nhân chưa sử dụng thuốc điều trị trước khi đến khám.
 GT:   bệnh nhân ngô thị liên nữ bốn mươi lăm tuổi đến khám vì đau bụng dưới âm ỉm bị sốt nhẹ và buồn nôn trong hai ngày gần đây huyết áp của bệnh nhân là một trăm hai mươi trên tám mươi mạch là bảy mươi lăm lần phút nhiệt độ ba mươi tám độ xê và bệnh nhân chưa sử dụng thuốc điều trị trước khi đến khám.  
-NOTE: Bệnh nhân NGÔ THỊ LIÊN, nữ, bốn mươi lăm tuổi.Đến khám vì đau bụng dưới âm ỉ, sốt nhẹ và buồn nôn trong hai ngày gần đây.Huyết áp một trăm hai mươi trên tám mươi.Mạch bảy mươi lăm lần một phút.Nhiệt độ ba mươi tám độ C.Bệnh nhân chưa sử dụng thuốc điều trị trước khi đến khám
+NOTE: Bệnh nhân NGÔ THỊ LIÊN, nữ, bốn mươi lăm tuổi. Đến khám vì đau bụng dưới âm ỉ, sốt nhẹ và buồn nôn trong hai ngày gần đây. Huyết áp một trăm hai mươi trên tám mươi. Mạch bảy mươi lăm lần một phút. Nhiệt độ ba mươi tám độ C. Bệnh nhân chưa sử dụng thuốc điều trị trước khi đến khám
 
 
 FILE: REF_HN_P1_Clip3.wav (35.9s)
 ASR:  theo chẩn đoán và theo dõi nhiệm vụian uống hai lần mỗi ngày trong năm ngày karaoke tamon năm trăm lindy gan uống khi số trên ba mươi tám độ oresol pha theo hướng dẫn để mà bù nước lớn mà bệnh nhân suốt kéo dài qua quá can ngày hoặc đau bụng tăng lên thì cần quay mặt tái kháng gan.
 GT:   theo chẩn đoán và theo dõi nhiễm khuẩn đường tiêu hoá. Kê đơn là Ci pro flo vac cin năm trăm miligam uống hai lần mỗi ngày trong năm ngày năm trăm miligam uống khi số trên ba mươi tám độ oresol pha theo hướng dẫn để mà bù nước lớn mà bệnh nhân suốt kéo dài qua quá ba ngày hoặc đau bụng tăng lên thì cần quay lại tái kháng ngay.
-NOTE: Chẩn đoán theo dõi nhiễm khuẩn đường tiêu hóa. Kê Ciprofloxacin năm trăm miligam, uống hai lần mỗi ngày trong năm ngày.Paracetamol năm trăm miligam uống khi sốt trên ba mươi tám độ.Oresol pha theo hướng dẫn để bù nước.Nếu sốt kéo dài quá ba ngày hoặc đau bụng tăng lên cần quay lại tái khám ngay
+NOTE: Chẩn đoán theo dõi nhiễm khuẩn đường tiêu hóa. Kê Ciprofloxacin năm trăm miligam, uống hai lần mỗi ngày trong năm ngày. Paracetamol năm trăm miligam uống khi sốt trên ba mươi tám độ. Oresol pha theo hướng dẫn để bù nước. Nếu sốt kéo dài quá ba ngày hoặc đau bụng tăng lên cần quay lại tái khám ngay
 
 
 FILE: REF_HN_P2_Clip1.wav (26.6s)
@@ -135,7 +135,7 @@ NOTE:
 
 FILE: REF_DN_P4_Clip2.wav (16.2s)
 ASR:  chẩn đoán nhiễm siêu vi đường hô hấp trên kê đơn paracetamol uống khi sốt trên ba mươi tám độ cách nhau ít nhất bốn giờ vitamin c một gam mỗi ngày súc họng nước muối sinh lý ba lần mỗi ngày.
-GT:   Chẩn đoán nhiễm siêu vi đường hô hấp trên.Kê đơn Paracetamol năm trăm miligam, uống khi sốt trên ba mươi tám độ, cách nhau ít nhất bốn giờ.Vitamin C một gam mỗi ngày.Súc họng nước muối sinh lý ba lần mỗi ngày.
+GT:   Chẩn đoán nhiễm siêu vi đường hô hấp trên. Kê đơn Paracetamol năm trăm miligam, uống khi sốt trên ba mươi tám độ, cách nhau ít nhất bốn giờ. Vitamin C một gam mỗi ngày. Súc họng nước muối sinh lý ba lần mỗi ngày.
 
 NOTE: 
 

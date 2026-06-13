@@ -292,14 +292,26 @@
   precision 0.833/FP=1) ĐÃ STALE — master hiện tại đã là 0.714/FP=2 (Oresol FP trên
   REF_HN_P1_Clip3, không liên quan FID-VN-019, có sẵn trước session này) → xem
   **CT-054** (mới, regenerate baseline + investigate Oresol FP).
-- [ ] **CT-054** 🟡 MEDIUM — `data/eval/bench_002b_results.json` (committed baseline,
-  Drug Precision 0.833/FP=1) stale vs master HEAD hiện tại (0.714/FP=2). FP mới:
-  clip `REF_HN_P1_Clip3.wav` — NER trích "Oresol" làm MEDICATION entity (GT chỉ có
-  Ciprofloxacin) dù alias_map match "oresol" giống nhau trước/sau (L1b không đổi,
-  match_layer=1, confidence=1.0 cả 2 bên) → lỗi nằm ở NER/L3b extraction, không phải
-  L1b. Cần: (1) `python -X utf8 tools/bench_002b.py --save-json` để regenerate
-  baseline đúng với code hiện tại, (2) debug NER extraction cho clip này (có thể
-  liên quan thay đổi `data/drug_vectorstore/chroma.sqlite3` giữa các phiên).
+- [x] **CT-054** ✅ DONE 2026-06-12 — `data/eval/bench_002b_results.json` regenerated.
+  Root cause của Oresol FP trên `REF_HN_P1_Clip3.wav`: **KHÔNG phải bug L1b/L1c** —
+  `data/eval/ref_voice_transcripts_review.txt` dòng NOTE thiếu space sau dấu `.`
+  (`"...năm ngày.Paracetamol năm trăm..."`, `"...ba mươi tám độ.Oresol pha..."`)
+  → `extract_drug_candidates()` (L1b) không match được "Paracetamol"/"Oresol" vì
+  bị dính liền với từ trước → GT NER undercount → "Oresol" do pred pipeline trích
+  đúng (NOTE thật có Oresol) bị tính sai thành FP. Fix: thêm space sau `.` trong
+  NOTE của `REF_HN_P1_Clip3.wav` (3 dấu câu) + `REF_HN_P1_Clip2.wav` (4 dấu câu,
+  cùng lỗi, ảnh hưởng vitals CEER) + GT của `REF_DN_P4_Clip2.wav` (Vitamin C FP
+  tương tự). Regenerate: TP=5→6, FN=4→5, FP=2→1, **Drug Recall 0.556→0.545, Drug
+  Precision 0.714→0.857**. HN drug CEER 1.000→0.334. 984/984 tests PASS (không
+  liên quan src/, chỉ data/eval). KHÔNG đổi pipeline L0-L10.
+  - **CT-055** [NEW] — phát hiện lỗi **thiếu space sau dấu `.` xuất hiện ở HẦU HẾT
+    dòng GT/NOTE trong `data/eval/ref_voice_transcripts_review.txt`** (~40+ dòng,
+    pattern `[a-zà-ỹ]\.[A-ZÀ-Ỹ]`, vd "tuổi.Vào", "cấp.Kê", "vành.Nếu"...) — có thể
+    đang làm GT NER undercount drug/vitals/diag trên toàn bộ 57 clips, khiến CEER
+    "tệ hơn thật". Sửa toàn bộ cần review từng dòng (script tự động thêm space có
+    rủi ro sai context: số thập phân "tám.5", viết tắt...) — để task riêng, ước
+    tính ~1-2h review + regenerate benchmark, có thể cải thiện đáng kể Drug
+    Recall/Precision + CEER toàn bộ. Priority 🟡 MEDIUM.
 - [x] **CT-043** ✅ **DVP setup flow reorder**: `dvp-form` reorder (Chuyên khoa chính/phụ TRƯỚC Vùng miền + hint), `READING_PASSAGES_BY_REGION`/`REGION_TEST_SENTENCES` (3 biến thể Bắc/Trung/Nam), `GET /api/calibration/passage-text?cchn=`/`region-sentence?cchn=` region-aware, `calibration_region()` trả `region_match: bool` (double-check `profile.region` declared vs `detect_region(transcript)`) + cảnh báo UI khi mismatch. → `fids/FID-VN-018.md` IMPLEMENTED v0.11.9 (2026-06-11)
 - [x] **CT-045** ✅ **Lab Hiệu chỉnh Giọng nói — hiển thị thông tin BS (personality) trước test** (Andy feedback PA-021, follow-up FID-VN-018): `calib-lab-modal` thêm khối `#lab-doctor-info` (tên/chuyên khoa/vùng miền + nút "Sửa thông tin") NGAY ĐẦU modal, TRƯỚC `lab-grid`; `CalibLab.open()` gọi `_loadDoctorInfo()` trước `goStep(1)`; `CalibLab.editProfile()` đóng Lab → mở `DVP.edit()`. → v0.11.10 (2026-06-11), 4 tests mới `tests/unit/test_dvp_wizard.py`
 - [x] **CT-046** ✅ **Pre-gen audio mẫu phát âm (gTTS) + ưu tiên `phonetic_variants.north`** (Andy yêu cầu "tải audio thuốc cho vào thư viện" + feedback Azithromycin "a dith rô my xin" không đọc được): chạy `scripts/gen_pronunciation_audio.py` sinh 149 mp3 + `_cache.json` (155 INN) tại `src/api/static/audio/pronunciation/`; fix `UnicodeEncodeError` (stdout utf-8 trên Windows); `get_reference_phonetic()` ưu tiên `phonetic_variants.north[0]` trước heuristic transliteration (tránh cụm phụ âm Anh không tồn tại trong tiếng Việt, vd "dith"). → v0.11.11 (2026-06-11), 3 tests mới
