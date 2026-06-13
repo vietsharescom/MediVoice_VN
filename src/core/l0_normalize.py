@@ -10,6 +10,7 @@ import os
 import shutil
 import tempfile
 import uuid
+from datetime import datetime
 import numpy as np
 from pathlib import Path
 
@@ -30,6 +31,9 @@ _TMP_DIR.mkdir(parents=True, exist_ok=True)
 # TRAIN-001 pilot audio retention — xem retain_pilot_audio()
 _FACILITY_CONFIG_PATH = Path(__file__).resolve().parents[2] / "config" / "facility_config.json"
 _PILOT_AUDIO_DIR = Path(__file__).resolve().parents[2] / "data" / "audio" / "pilot"
+
+# CT-057: lưu mọi lần /api/transcribe để Andy đánh giá lại sau
+_RECORDINGS_DIR = Path(__file__).resolve().parents[2] / "data" / "recordings"
 
 
 def normalize(audio_path: str | Path) -> tuple[np.ndarray, str]:
@@ -193,5 +197,28 @@ def retain_pilot_audio(wav_path: str | None, transcript: str) -> None:
         name = f"pilot_{uuid.uuid4().hex[:12]}"
         shutil.copy2(wav_path, _PILOT_AUDIO_DIR / f"{name}.wav")
         (_PILOT_AUDIO_DIR / f"{name}.txt").write_text(transcript or "", encoding="utf-8")
+    except OSError:
+        pass  # best-effort — không crash pipeline
+
+
+def save_recording(wav_path: str | None, record_id: str, metadata: dict) -> None:
+    """
+    CT-057 (quyết định 2026-06-12): mỗi lần gọi /api/transcribe, copy audio +
+    metadata (transcript_raw/corrected, form_data, confidence, route,
+    dvp_specialty/region, dialect_subs) vào data/recordings/ để Andy đánh giá
+    lại sau. Áp dụng cho MỌI request, không cần flag — không thay thế
+    purge_audio() (vẫn xóa file gốc, Privacy by Design L0 không đổi).
+    Gọi TRƯỚC purge_audio() trong finally block. Best-effort — không raise.
+    """
+    if not wav_path or not os.path.exists(wav_path):
+        return
+    try:
+        _RECORDINGS_DIR.mkdir(parents=True, exist_ok=True)
+        ts = datetime.now().strftime("%Y%m%dT%H%M%S")
+        stem = f"{ts}_{record_id}"
+        shutil.copy2(wav_path, _RECORDINGS_DIR / f"{stem}.wav")
+        (_RECORDINGS_DIR / f"{stem}.json").write_text(
+            json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
     except OSError:
         pass  # best-effort — không crash pipeline

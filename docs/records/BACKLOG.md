@@ -421,16 +421,17 @@
      (4 chỗ `NamedTemporaryFile`), `mkdir(parents=True, exist_ok=True)`.
   984/984 tests PASS. KHÔNG đụng pipeline L0-L10 logic (chỉ regex NER +
   JS mapping + path storage).
-- [ ] **CT-057** 🟡 — **Lưu audio + transcript mỗi lần test qua UI vào
+- [x] **CT-057** ✅ DONE 2026-06-13 — **Lưu audio + transcript mỗi lần test qua UI vào
   `data/recordings/` (ổ D)** để Andy đánh giá lại sau (quyết định
   2026-06-12: áp dụng cho MỌI lần gọi `/api/transcribe`, không cần flag
-  riêng). Implement: trước `purge_audio()` trong `src/api/main.py`
-  (`transcribe_audio`), copy `wav_path` → `data/recordings/{ts}_{record_id}.wav`
-  + ghi `data/recordings/{ts}_{record_id}.json` (transcript_raw/corrected,
-  form_data, confidence, route, dvp_specialty/region, dialect_subs).
-  ⚠️ Cân nhắc: vẫn giữ `purge_audio()` cho file tạm gốc (Privacy by Design
-  L0 KHÔNG đổi) — chỉ lưu THÊM 1 bản copy có chủ đích vào `data/recordings/`
-  cho mục đích đánh giá nội bộ (Andy, không phải lưu trữ BN production).
+  riêng). `src/core/l0_normalize.py::save_recording()` — copy `wav_path` →
+  `data/recordings/{ts}_{record_id}.wav` + ghi `data/recordings/{ts}_{record_id}.json`
+  (transcript_raw/corrected, form_data, confidence, route, dvp_specialty/region,
+  dialect_subs), gọi trong `src/api/main.py::transcribe_audio` finally block
+  TRƯỚC `purge_audio()` (vẫn giữ purge cho file gốc — Privacy by Design L0
+  KHÔNG đổi, chỉ lưu THÊM 1 bản copy cho đánh giá nội bộ). `data/recordings/`
+  thêm vào `.gitignore`. 3 tests mới (`tests/unit/test_save_recording.py`) —
+  1001/1001 PASS.
 - [ ] **CT-058** 🟢 — **Dev tool `scripts/gdrive_fetch.py`**: Andy làm việc
   từ xa (nước ngoài), audio test để trên Google Drive (cá nhân, không phải
   dữ liệu BN) → script tải file từ link GG Drive về `data/recordings/`

@@ -207,6 +207,23 @@ async def transcribe_audio(
             l0_normalize.retain_pilot_audio(
                 wav_path, locals().get("transcript_corrected") or locals().get("transcript_raw") or ""
             )
+            # CT-057: lưu mọi lần transcribe vào data/recordings/ để Andy đánh giá lại sau
+            _record = locals().get("record")
+            l0_normalize.save_recording(
+                wav_path,
+                _record.record_id if _record else "no_record",
+                {
+                    "transcript_raw": locals().get("transcript_raw", ""),
+                    "transcript_corrected": locals().get("transcript_corrected", ""),
+                    "form_data": locals().get("form_data", {}),
+                    "confidence_scores": locals().get("conf_scores", {}),
+                    "overall_confidence": locals().get("overall_conf", None),
+                    "route": locals().get("route", ""),
+                    "dvp_specialty": locals().get("_specialty", ""),
+                    "dvp_region": locals().get("_region", ""),
+                    "dialect_subs": locals().get("_dialect_subs", []),
+                },
+            )
         # SRS-L0-003: xóa audio sau transcription — NĐ13/2023 data minimization
         l0_normalize.purge_audio(tmp.name)
         if 'wav_path' in locals():

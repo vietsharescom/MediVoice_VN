@@ -18,6 +18,7 @@ logs/
 data/memory/
 data/tmp/
 data/audio/
+data/recordings/
 data/vietmed/
 data/asr_manifest/vietmed_manifest.jsonl
 data/asr_manifest/pilot_manifest.jsonl

@@ -1,6 +1,28 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.27] — 2026-06-13 — CT-057: save every /api/transcribe to data/recordings/ for review
+
+### Added
+- `src/core/l0_normalize.py::save_recording()` — on every `/api/transcribe` call
+  (no opt-in flag, decision 2026-06-12), copies audio + run metadata
+  (transcript_raw/corrected, form_data, confidence_scores, overall_confidence,
+  route, dvp_specialty/region, dialect_subs) to
+  `data/recordings/{ts}_{record_id}.wav`+`.json` before `purge_audio()` runs.
+  `data/recordings/` added to `.gitignore`.
+- Wired into `/api/transcribe` (`src/api/main.py`) finally block, after
+  `retain_pilot_audio()`, before purge.
+- `tests/unit/test_save_recording.py` — 3 tests.
+- Fixed `notebooks/TRAIN_001_colab_kaggle.ipynb` cell 8/9 for Colab/Kaggle:
+  cell 8 now `--batch 2 --grad-accum 4 --epochs 1` (per-device batch 8 OOMs
+  on 14.5GB T4/P100); cell 9 falls back to a `vietmed_manifest.jsonl` slice
+  when `ref_voice_manifest.jsonl` is empty (gitignored reference audio on a
+  fresh clone). `scripts/train_asr_phowhisper.py` adds `--grad-accum` and
+  enables `gradient_checkpointing` under `--fp16`.
+
+### Tests
+- 1001/1001 PASS (998 + 3 new).
+
 ## [v0.11.26] — 2026-06-13 — TRAIN-001 (CT-061): opt-in pilot audio retention
 
 ### Added
