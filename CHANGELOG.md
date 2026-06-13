@@ -1,6 +1,23 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.25] — 2026-06-13 — TRAIN-001: eval script + consolidated Colab/Kaggle notebook
+
+### Added
+- `scripts/eval_asr_phowhisper.py` — evaluates a PhoWhisper checkpoint (base or
+  fine-tuned) against a manifest, computes per-sample + mean WER via `jiwer`,
+  writes JSON results to `data/eval/train001_eval_results.json`.
+- `tests/unit/test_eval_asr_phowhisper.py` — 7 tests for `_norm`/`compute_wer`/`aggregate`.
+- `notebooks/TRAIN_001_colab_kaggle.ipynb` — consolidated Colab/Kaggle notebook:
+  clone → install → download VietMed → (optional pilot audio) → build manifest →
+  smoke-test → full fine-tune → evaluate (baseline vs fine-tuned WER) → download
+  checkpoint + cleanup.
+- `docs/dev/COLAB_KAGGLE_TRAINING.md` — new step 9b (evaluate, output results) +
+  pointer to the consolidated notebook.
+
+### Tests
+- 991/991 PASS (984 + 7 new).
+
 ## [v0.11.24] — 2026-06-13 — docs sync: catch-up v0.11.20-23 + FID-VN-021 research note
 
 ### Docs

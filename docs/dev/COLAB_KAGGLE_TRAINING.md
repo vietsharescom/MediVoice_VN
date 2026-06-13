@@ -1,5 +1,9 @@
 # Colab/Kaggle GPU Setup — PhoWhisper Fine-tune (TRAIN-001)
 
+> **Consolidated notebook**: `notebooks/TRAIN_001_colab_kaggle.ipynb` chains all
+> steps below (1-10) including step 9b (evaluate WER, output results) — upload it
+> directly to Colab/Kaggle to run end-to-end. This page documents each step.
+
 > Compliance note: `docs/records/DECISIONS.md` 2026-06-11 (PILOT PHASE EXCEPTION #2) +
 > `docs/compliance/RISK_REGISTER.md` R-P03. Uploading **pilot audio with patient PII**
 > to Colab/Kaggle (Google Cloud, ngoài VN) is TEMPORARY, pilot-only, with Andy's
@@ -77,7 +81,29 @@ folder.
     --epochs 3 --batch 8 --fp16
 ```
 
-## 9. Download checkpoint, clean up
+## 9b. Evaluate — output results (WER)
+
+`scripts/eval_asr_phowhisper.py` transcribes a manifest with a model/checkpoint
+and computes WER per sample + aggregate via `jiwer`, writing a JSON results file.
+Run it once with the base model (baseline) and once with the fine-tuned checkpoint:
+
+```bash
+!python -X utf8 scripts/eval_asr_phowhisper.py \
+    --model vinai/PhoWhisper-medium \
+    --manifest data/asr_manifest/ref_voice_manifest.jsonl \
+    --out data/eval/train001_eval_baseline.json
+
+!python -X utf8 scripts/eval_asr_phowhisper.py \
+    --model models/asr_phowhisper \
+    --manifest data/asr_manifest/ref_voice_manifest.jsonl \
+    --out data/eval/train001_eval_results.json
+```
+
+Output JSON: `{"model", "manifest", "n", "wer_mean", "samples": [{"audio", "ref", "hyp", "wer"}, ...]}`.
+Compare `wer_mean` baseline vs fine-tuned to confirm the fine-tune improved WER
+(current baseline ALL=0.183, HN=0.292 — see `docs/records/PROJECT_PROGRESS.md`).
+
+## 10. Download checkpoint, clean up
 
 - Download `models/asr_phowhisper/` (model files only — no audio).
 - Delete any uploaded pilot audio from the Colab/Kaggle session, Drive, or Dataset:
