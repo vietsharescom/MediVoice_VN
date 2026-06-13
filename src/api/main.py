@@ -202,6 +202,11 @@ async def transcribe_audio(
         }
 
     finally:
+        # TRAIN-001: pilot-only, opt-in qua config/facility_config.json
+        if 'wav_path' in locals():
+            l0_normalize.retain_pilot_audio(
+                wav_path, locals().get("transcript_corrected") or locals().get("transcript_raw") or ""
+            )
         # SRS-L0-003: xóa audio sau transcription — NĐ13/2023 data minimization
         l0_normalize.purge_audio(tmp.name)
         if 'wav_path' in locals():

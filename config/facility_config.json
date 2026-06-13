@@ -12,5 +12,6 @@
   "app_host": "127.0.0.1",
   "app_port": 8000,
   "db_path": "medivoice.db",
-  "log_level": "INFO"
+  "log_level": "INFO",
+  "pilot_audio_retention": false
 }

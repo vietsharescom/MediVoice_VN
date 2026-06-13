@@ -1,6 +1,19 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.26] — 2026-06-13 — TRAIN-001 (CT-061): opt-in pilot audio retention
+
+### Added
+- `src/core/l0_normalize.py::pilot_audio_retention_enabled()` + `retain_pilot_audio()` —
+  opt-in (config/facility_config.json: `"pilot_audio_retention": false` by default).
+  When enabled, copies audio + AI-corrected transcript to `data/audio/pilot/<name>.wav`+`.txt`
+  (format for `scripts/build_asr_manifest.py --pilot`) before `purge_audio()` runs.
+- Wired into `/api/transcribe` (`src/api/main.py`) finally block, before purge.
+- `tests/unit/test_pilot_audio_retention.py` — 7 tests.
+
+### Tests
+- 998/998 PASS (991 + 7 new).
+
 ## [v0.11.25] — 2026-06-13 — TRAIN-001: eval script + consolidated Colab/Kaggle notebook
 
 ### Added

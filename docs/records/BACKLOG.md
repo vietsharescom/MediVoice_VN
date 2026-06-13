@@ -343,6 +343,16 @@
   - [x] **FID-VN-007 v3** ✅ VIETMED-FIX-001 v2 (2026-06-12): dataset ID đúng `leduckhai/VietMed`
     (không gated, PA-024 đóng) + audio decode fix. VietMed 16h sẵn sàng train ngay (local hoặc
     Colab/Kaggle). TRAIN-001 full run chỉ còn chặn bởi 50-100h pilot audio.
+  - [x] **CT-061** ✅ (2026-06-13) Pilot audio retention (opt-in) — `src/core/l0_normalize.py`
+    (`pilot_audio_retention_enabled()` + `retain_pilot_audio()`), wired vào `/api/transcribe`
+    (`src/api/main.py`) trước `purge_audio()`. Flag `pilot_audio_retention` trong
+    `config/facility_config.json` (default `false`). Khi `true`: copy audio + transcript
+    (AI-corrected, trước L4 approve) vào `data/audio/pilot/<name>.wav`+`.txt` — đúng format
+    `scripts/build_asr_manifest.py --pilot`. 998/998 PASS (+7 tests). Cho phép BS ghi âm thật
+    tại phòng khám (local FastAPI, PhoWhisper+PhoBERT — an toàn, không Groq/CT-025) và tự động
+    tích lũy data cho TRAIN-001.
+    - Pending: bật flag `true` tại facility pilot (Andy) sau khi confirm consent — Pilot Phase
+      Exception (`docs/records/DECISIONS.md` 2026-06-11).
 
 ### FID-VN-017/018 IMPLEMENTED — Phonetic guidance + DVP flow reorder [2026-06-11]
 > Andy feedback session 2026-06-11 (sau FID-VN-016 test) — 4 ý lớn. CT-040/041 →

@@ -4,9 +4,12 @@
 # A2-VAD-CHUNK: FID-VN-010 — silence-aware chunking (replaces fixed 10s chunks)
 
 from __future__ import annotations
+import json
 import logging
 import os
+import shutil
 import tempfile
+import uuid
 import numpy as np
 from pathlib import Path
 
@@ -23,6 +26,10 @@ _vad_model = None  # lazy-loaded, cached — avoid reloading silero-vad per requ
 # Temp WAV files đi vào data/tmp (ổ D) — tránh ghi vào %TEMP% (ổ C)
 _TMP_DIR = Path(__file__).resolve().parents[2] / "data" / "tmp"
 _TMP_DIR.mkdir(parents=True, exist_ok=True)
+
+# TRAIN-001 pilot audio retention — xem retain_pilot_audio()
+_FACILITY_CONFIG_PATH = Path(__file__).resolve().parents[2] / "config" / "facility_config.json"
+_PILOT_AUDIO_DIR = Path(__file__).resolve().parents[2] / "data" / "audio" / "pilot"
 
 
 def normalize(audio_path: str | Path) -> tuple[np.ndarray, str]:
@@ -153,3 +160,38 @@ def purge_audio(wav_path: str | None) -> None:
             os.unlink(wav_path)
         except OSError:
             pass  # best-effort — không crash pipeline nếu file đã bị xóa
+
+
+def pilot_audio_retention_enabled() -> bool:
+    """
+    Đọc `pilot_audio_retention` từ config/facility_config.json (default False).
+    Chỉ true tại cơ sở pilot đã có consent BS/BN (Pilot Phase Exception,
+    docs/records/DECISIONS.md 2026-06-11).
+    """
+    try:
+        with open(_FACILITY_CONFIG_PATH, encoding="utf-8") as f:
+            config = json.load(f)
+        return bool(config.get("pilot_audio_retention", False))
+    except (OSError, json.JSONDecodeError):
+        return False
+
+
+def retain_pilot_audio(wav_path: str | None, transcript: str) -> None:
+    """
+    TRAIN-001: nếu pilot_audio_retention=true, copy audio + transcript (AI
+    đã sửa, trước L4 approve) vào data/audio/pilot/ TRƯỚC khi purge_audio()
+    xóa file gốc — đúng format cho scripts/build_asr_manifest.py --pilot
+    (<name>.wav + <name>.txt cùng tên).
+    Gọi TRƯỚC purge_audio() trong finally block. Best-effort — không raise.
+    """
+    if not pilot_audio_retention_enabled():
+        return
+    if not wav_path or not os.path.exists(wav_path):
+        return
+    try:
+        _PILOT_AUDIO_DIR.mkdir(parents=True, exist_ok=True)
+        name = f"pilot_{uuid.uuid4().hex[:12]}"
+        shutil.copy2(wav_path, _PILOT_AUDIO_DIR / f"{name}.wav")
+        (_PILOT_AUDIO_DIR / f"{name}.txt").write_text(transcript or "", encoding="utf-8")
+    except OSError:
+        pass  # best-effort — không crash pipeline
