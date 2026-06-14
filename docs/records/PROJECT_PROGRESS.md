@@ -1,6 +1,6 @@
 # PROJECT_PROGRESS.md | DS-VN-REC-PROGRESS
 # MediVoice VN — Bảng Theo Dõi Tiến Độ Toàn Dự Án
-# Cập nhật: 2026-06-13 | v0.11.24
+# Cập nhật: 2026-06-13 | v0.11.28
 # Owner: Andy Phan — Maple Leaf Group
 
 ---
@@ -217,7 +217,7 @@
 | P1.WEBSITE | ├─ Website Widget | Booking embed + REST API | ⏳ | — | |
 | P1.CDHA | ├─ Plugin CĐHA | Báo cáo siêu âm/X-quang (FID-VN-001) | ⏳ | — | |
 | P1.NHA | ├─ Plugin Nha khoa | Mẫu 16/BV-01 (FID-VN-002) | ⏳ | — | |
-| P1.TRAIN | ├─ TRAIN-001 | Fine-tune PhoWhisper 50-100h audio | ⏳ | — | Sau pilot |
+| P1.TRAIN | ├─ TRAIN-001 | Fine-tune PhoWhisper — Kaggle run 1: WER 0.2968→0.1517 (n=30) | 🔵 | CT-062 | Cần full eval + ref_voice + Drug CEER trước GO |
 | P1.LEGAL | └─ LEGAL-001 sign-off | Luật sư ký → launch thương mại | 🔵 | — | Email gửi rồi |
 | | | | | | |
 | | **▼** | | | | |
@@ -272,11 +272,12 @@
 
 ---
 
-## METRICS HIỆN TẠI (2026-06-13 · v0.11.24)
+## METRICS HIỆN TẠI (2026-06-13 · v0.11.28)
 
 | KPI | Target | Actual | Status |
 |---|---|---|---|
-| Tests PASS | 100% | **984/984** (master) — 1009/1009 trên `experiment/fid-vn-021-phoneme` | 🟢 |
+| Tests PASS | 100% | **1001/1001** (master) — 1009/1009 trên `experiment/fid-vn-021-phoneme` | 🟢 |
+| **TRAIN-001 WER (Kaggle run 1, n=30 vietmed slice)** | **<0.20** | **baseline 0.2968 → fine-tuned 0.1517** | 🔵 chưa đủ GO (cần full dataset + ref_voice + Drug CEER, CT-062) |
 | **Drug Recall Groq vs local (CT-029)** | ≥70% | Groq=88.9% (hallucination chưa fix) vs local=61.5% | 🔴 TRAIN-001 required (Groq REJECTED — CT-028) |
 | **Diag CEER Groq vs local (CT-029)** | <30% | local=0.214 vs Groq=0.429 | 🟢 local thắng |
 | bandit | 0 HIGH/MEDIUM | 0/9 (9 MEDIUM pre-existing, không đổi) | 🟢 |
@@ -345,8 +346,10 @@
 | SES-20260612c | 2026-06-12 | v0.11.18→v0.11.19 | CT-042 ✅ DONE — FID-VN-019 v3 implemented: `_phonological_variants()` (4 rule groups: aspiration b↔p/d↔t/g↔k/c↔k/đ→t, coda drop multi-syllable, th→t/d, r/l/n region-split) + guards (first+last syllable, ambiguity-guard, min-length, 43-word blacklist) wired vào `_build_alias_map()` — 1028→1913 keys (+885), 21 collisions skipped. +15 tests (973/973 PASS), bandit 0 HIGH. A/B benchmark: Drug Recall/Precision unchanged vs master (CT-054 stale baseline noted separately). Merged fast-forward → `master` (`13aff3a`). FID-VN-020 (ORCH-001/CT-011 — orchestrator `detect_confusion`/`create_consultation_request`/`close_session`) APPROVED by Andy, implementation để phiên sau |
 | SES-20260612d...g | 2026-06-12 | v0.11.19→v0.11.23 | (catch-up, ghi nhận lùi) CT-054 ✅ regenerate `data/eval/bench_002b_results.json` baseline — phát hiện + fix GT spacing bug → Drug Recall 55.6%→61.5% (TP=8/FN=5/FP=0), Drug Precision →100%, Diag CEER 71.4%→21.4%, Vitals CEER →28.9% · CT-055 ✅ áp dụng baseline mới vào docs · CT-056 ✅ theo dõi/đóng các pending nhỏ liên quan. 984/984 PASS, bandit 0 HIGH/9 MEDIUM (pre-existing). (4 versions này đã commit vào master qua CHANGELOG.md nhưng chưa từng có LAST_SESSION.md/PROJECT_PROGRESS.md entry — bổ sung tại SES-20260613) |
 | SES-20260613 | 2026-06-13 | v0.11.23→v0.11.24 | FID-VN-021 (CT-060d, L1b phoneme-key re-scoring) ✅ implemented trên `experiment/fid-vn-021-phoneme`: `src/core/vn_phoneme.py` (decompose_syllable/phoneme_key, 25 tests) + `_fuzzy_match()` rewrite trong `src/core/l1b_drug_correct.py` (phoneme-key second pass, `PHONEME_WEIGHT=0.9`). 1009/1009 PASS. A/B benchmark byte-identical vs baseline (`data/eval/bench_002b_results_fid021.json`) → quyết định theo CT-028 precedent: giữ làm **research note**, KHÔNG merge vào master. Docs-sync session: PENDING_REQUESTS.md (CT-011/054/055/056/FID-VN-021 → DONE) + PROJECT_PROGRESS.md (metrics v0.11.24) + CLAUDE.md CURRENT STATE cập nhật |
+| SES-20260613b | 2026-06-13 | v0.11.24→v0.11.27 | CT-057 ✅ — `src/core/l0_normalize.py::save_recording()` lưu mọi lần `/api/transcribe` vào `data/recordings/` (always-on, no flag). `notebooks/TRAIN_001_colab_kaggle.ipynb` + `scripts/train_asr_phowhisper.py` fixes (`--grad-accum`, `gradient_checkpointing`, `--limit`, `CUDA_VISIBLE_DEVICES=0` cho Kaggle T4×2 DataParallel OOM). 1001/1001 PASS |
+| SES-20260613c | 2026-06-13 | v0.11.27→v0.11.28 | **TRAIN-001 first Kaggle GPU run** ✅ — 1 epoch trên `combined_manifest.jsonl`, checkpoint-1151 → `models/asr_phowhisper/` (local, gitignored). Eval n=30 (`vietmed_manifest.jsonl` slice): **WER 0.2968→0.1517** (`data/eval/train001_eval_baseline.json`/`train001_eval_results.json`). Hỗ trợ BS pilot (chưa cài Python) cài đặt: chẩn đoán `torch==2.3.0` không có wheel cho Python 3.13 → hướng dẫn cài thêm Python 3.11 + `py -3.11 -m venv venv`. CT-062 thêm vào BACKLOG (full eval + ref_voice + Drug CEER trước khi viết FID swap `l1a_asr.py` MODEL_ID — theo FID-VN-007 §Side effects, GO criteria WER<0.20 + Drug CEER<0.10 trên full dataset). 1001/1001 PASS (no code change, chỉ docs + data/eval/ artifacts) |
 
 ---
 
-*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.13 | 2026-06-13*
+*DS-VN-REC-PROGRESS | PROJECT_PROGRESS v1.14 | 2026-06-13*
 *Cập nhật mỗi phiên đóng. Đọc cùng BACKLOG.md + PENDING_REQUESTS.md*

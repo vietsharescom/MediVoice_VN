@@ -1,0 +1,188 @@
+{
+  "model": "models/asr_phowhisper",
+  "manifest": "data/asr_manifest/vietmed_manifest.jsonl",
+  "n": 30,
+  "wer_mean": 0.1517,
+  "samples": [
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00000.wav",
+      "ref": "gì có phải là do cái cơn khó thở hay là còn có chuyện gì khác đôi khi nó có thể là hai ba nguyên nhân cùng một lúc nó",
+      "hyp": "cái gì có phải là do cái cơn khó thở hay là còn có chuyện gì khác đôi khi nó có thể là hai ba nguyên nhân cùng một lúc thì nó",
+      "wer": 0.0667
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00001.wav",
+      "ref": "phải mang nịt rồi phải đi châm cứu rồi cho uống thuốc kết hợp đông tây luôn",
+      "hyp": "lượng đó là phải mang cho phải đi chăm phú cho uống thuốc kết hợp đông đông đông",
+      "wer": 0.5882
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00002.wav",
+      "ref": "chưa mạch máu của chúng ta vấn đề gì chưa tim của chúng ta có vấn đề chưa hoặc là chúng ta có cần có những cái",
+      "hyp": "chưa mạch máu của chúng ta vấn đề gì chưa tim của chúng ta có vấn đề gì chưa hoặc là chúng ta có cần có những cái tình trạng",
+      "wer": 0.1111
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00003.wav",
+      "ref": "cho tất cả những khán giả mắc những vấn đề liên quan tới chủ đề của chương trình ngày hôm nay vâng thưa quý vị giao mùa thì",
+      "hyp": "cho tất cả những khán giả mắc những cái vấn đề liên quan tới chủ đề của chương trình ngày hôm nay vâng thưa quý vị do",
+      "wer": 0.1429
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00004.wav",
+      "ref": "bài tập nặng mạnh để hi vọng rằng nó vượt qua được nhưng mà thực tế mà nói thì chúng tôi rất là khuyên rằng là",
+      "hyp": "tập nặng mạnh để hi vọng rằng nó vượt qua được nhưng mà thực tế mà nói thì chúng tôi rất là",
+      "wer": 0.1538
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00005.wav",
+      "ref": "khớp thì chúng ta thường nói tới đối tượng là người già đúng không ạ và nhất là trong cái thời tiết trở trời như thế này vậy thì như chúng ta có vừa chia sẻ",
+      "hyp": "khớp thì chúng ta thường nói tới đối tượng là người già đúng không ạ và nhất là trong cái thời tiết trở trời như thế này vậy thì như chúng ta có vừa trước",
+      "wer": 0.0556
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00006.wav",
+      "ref": "giận nó hay đau đau cả cả ngày đêm nhưng",
+      "hyp": "giận nó hay đau đau cả ngày đến",
+      "wer": 0.3
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00007.wav",
+      "ref": "khớp tại việt nam để sản xuất nên cái thực phẩm bảo vệ sức khỏe viêm xương",
+      "hyp": "khớp tại việt nam để sản xuất nên cái thực phẩm bảo vệ sức khỏe từ",
+      "wer": 0.1176
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00008.wav",
+      "ref": "cái hệ cơ xương khớp thật là khỏe mạnh tuy nhiên thì bác cũng đã gặp phải tai nạn rồi cho nên cái việc mà khắc phục",
+      "hyp": "có một cái hệ cơ xương khớp thật là khỏe mạnh tuy nhiên thì bác cũng đã gặp phải tai nạn rồi cho nên cái việc mà",
+      "wer": 0.1481
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00009.wav",
+      "ref": "mổ và đôi khi là nó bị tổn thương như này nhưng mà nếu nếu mà mình mổ mình can thiệp vào trong não nhiều quá thì có khi",
+      "hyp": "người ta mới mổ và đôi khi là nó bị tổn thương như này nhưng mà nếu mà mình mổ mình can thiệp vào trong não nhiều quá thì",
+      "wer": 0.2069
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00010.wav",
+      "ref": "gây ra ảnh hưởng đến các cái chất lượng và về lâu về dài khi mà chúng ta cứ tích lũy đi tích lũy lại như vậy thì bản thân",
+      "hyp": "gây ra ảnh hưởng đến các cái chất lượng và về lâu về dài khi mà chúng ta cứ tích lũy đi tích lũy lại như vậy thì",
+      "wer": 0.0667
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00011.wav",
+      "ref": "thời gian quanh năm thì rất là khỏe mạnh nhưng mà khi mà thay đổi thời tiết thì tự nhiên cơ thể mình trở nên lại rất là",
+      "hyp": "thời gian quanh năm thì rất là khỏe mạnh nhưng mà khi mà thay đổi thời tiết thì tự nhiên cơ thể mình trở nên tốt hơn",
+      "wer": 0.1071
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00012.wav",
+      "ref": "đầu tiên chúng tôi khuyên là như vậy và cái thứ hai nữa là có lẽ là bác nên có một cái đai thắt lưng để mình bảo vệ cái",
+      "hyp": "điện chúng tôi khuyên là như vậy và cái thứ hai nữa là có lẽ là bác nên có một cái đai thắt lưng để mình tăng",
+      "wer": 0.1667
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00013.wav",
+      "ref": "cái chế độ sinh hoạt một cách phù hợp và dựa trên những cái mô tả như thế này sơ bộ chúng tôi cũng cảm giác rằng là cái",
+      "hyp": "chế độ sinh hoạt một cách phù hợp và dựa trên những cái mô tả như thế này sơ bộ chúng tôi cũng cảm giác rằng là cái",
+      "wer": 0.0345
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00014.wav",
+      "ref": "một số các cái giải pháp điều trị nó vừa tin cậy với mình vừa an toàn với mình mà nó có thể đồng hành với mình trong cái",
+      "hyp": "các cái giải pháp điều trị nó vừa tin cậy với mình vừa an toàn với mình mà nó có thể đồng hành với mình thì",
+      "wer": 0.1379
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00015.wav",
+      "ref": "ra là vô là nằm bẹp luôn ở lại đi chụp hình cột sống thì bác sĩ kết luận nói là",
+      "hyp": "ra là vô là nằm bẹp luôn là đi chụp hình cột sống thì bác sĩ",
+      "wer": 0.2857
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00016.wav",
+      "ref": "như này thì người ta lại hoàn toàn có thể làm tất cả những cái việc như vậy thế cho nên là cái việc mà chúng ta đến thăm khám để có cái phác đồ điều trị",
+      "hyp": "chị khỏi như này thì người ta lại hoàn toàn có thể làm tất cả những cái việc như vậy thế cho nên là cái việc mà chúng ta đến thăm khám để có những cái",
+      "wer": 0.1892
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00017.wav",
+      "ref": "muốn hỗ trợ giảm đau xương khớp thoái hóa nói chung thì phải đáp ứng được ba",
+      "hyp": "muốn hỗ trợ giảm đau xương khớp thoái hóa nói chung thì phải đáp ứng được ba chín phần",
+      "wer": 0.1176
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00018.wav",
+      "ref": "sẽ phải cần để làm những cái thăm dò để có thể khẳng định xem là liệu mình có các cái cái cái nghi ngờ hoặc là là một",
+      "hyp": "rằng là anh sẽ phải cần để làm những cái thăm dò để có thể khẳng định xem là liệu mình có các cái cái cái cái nghi ngờ hoặc là có những cái",
+      "wer": 0.2414
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00019.wav",
+      "ref": "động nhưng không nên đi lại nhiều nghĩa là gì chúng ta nên tập tại chỗ thôi bác ngồi tại chỗ bác tập bác nằm tại chỗ bác",
+      "hyp": "cường hoạt động nhưng không nên đi lại nhiều nghĩa là gì chúng ta nên tập tại chỗ thôi bác ngồi tại chỗ bác tập bác nằm tại chỗ bác",
+      "wer": 0.0714
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00020.wav",
+      "ref": "cái tình trạng này không ạ đúng là một cái vấn đề này khá là khá là phổ biến đặc biệt là trong những cái thời gian",
+      "hyp": "cái tình trạng này không ạ đúng là một cái vấn đề này khá là khá là phổ biến đặc biệt là trong những cái thời gian",
+      "wer": 0.0
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00021.wav",
+      "ref": "biểu hiện của cái thoái hóa cột sống của chúng ta dường như nó không phải là quá không phải ở những giai đoạn rất là sớm",
+      "hyp": "biểu hiện của cái thoái hóa cuộc sống của chúng ta dường như nó không phải là quá không phải ở những giai đoạn rất là",
+      "wer": 0.0741
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00022.wav",
+      "ref": "biểu hiện đau nhức xương khớp nó ở từ những cái lứa tuổi rất là sớm tránh nó",
+      "hyp": "biểu hiện đau nhức xương khớp nó ở từ những cái lứa tuổi rất là sớm tránh nó sẽ có những cái",
+      "wer": 0.2222
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00023.wav",
+      "ref": "nhiều sức khỏe vâng mỗi người thì lại có một cái vấn đề khác nhau tuy nhiên thì bệnh xương khớp",
+      "hyp": "bác nhiều sức khỏe vâng mỗi người thì sẽ có một cái vấn đề khác nhau tuy nhiên thì bệnh xương khớp",
+      "wer": 0.0952
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00024.wav",
+      "ref": "của tôi với bác sĩ ạ thì chắc chắn là nhiều người có những cái thắc mắc liên quan tới bệnh xương khớp rồi và vừa rồi",
+      "hyp": "bác sĩ ạ thì chắc chắn là nhiều người có những cái thắc mắc liên quan tới bệnh xương khớp rồi và vừa rồi thì thì",
+      "wer": 0.1852
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00025.wav",
+      "ref": "nhỏ bên trong cột sống này trong các cái thân đốt sống này thì chính vì vậy cho nên quay ngược lại ta lại thấy rằng là",
+      "hyp": "xương rất là nhỏ bên trong cột sống này trong các cái thân đốt sống này thì chính vì vậy cho nên quay ngược lại ta lại thấy là",
+      "wer": 0.1481
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00026.wav",
+      "ref": "cái việc vận động đều nó sẽ giúp cho các cái mạch máu nó nuôi dưỡng các cái xương khớp và mang lại các cái nhiệt lượng một",
+      "hyp": "cái việc vận động đều nó sẽ giúp cho các cái mạch máu nó nuôi dưỡng các cái xương khớp mà mang lại các cái",
+      "wer": 0.1429
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00027.wav",
+      "ref": "của chúng ta cần phải đến cái thời điểm chúng ta phải chữa trị cũng như là đến khám bác sĩ rồi ạ cảm ơn cái câu hỏi của",
+      "hyp": "của chúng ta cần phải đến cái thời điểm chúng ta phải chữa trị cũng như là đến khám bác sĩ rồi ạ cảm ơn những cái câu hỏi của",
+      "wer": 0.0345
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00028.wav",
+      "ref": "cái lời khuyên vâng xin mời bác sĩ ạ vâng trước hết thì cũng xin hỏi bác là bác muốn đặt câu hỏi gì cho chương trình",
+      "hyp": "mình những cái lời khuyên vâng xin mời bác sĩ ạ vâng trước hết thì cũng xin hỏi bác là bác muốn đặt câu hỏi gì cho bác sĩ",
+      "wer": 0.1481
+    },
+    {
+      "audio": "/kaggle/working/MediVoice_VN/data/vietmed/train/audio/train_00029.wav",
+      "ref": "bệnh đau xương khớp thì nhiều người cũng bị tái phát vậy thì trong cái thời tiết hiện tại thì bác sĩ cũng lời khuyên nào",
+      "hyp": "những cái bệnh đau xương khớp thì nhiều người cũng bị tái phát vậy thì trong cái thời tiết hiện tại thì bác sĩ có lời khuyên như thế",
+      "wer": 0.1923
+    }
+  ]
+}

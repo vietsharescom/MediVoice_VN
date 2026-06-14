@@ -1,6 +1,22 @@
 # CHANGELOG — MediVoice VN
 # ISO/IEC 42001:2023 Clause 10.2
 
+## [v0.11.28] — 2026-06-13 — TRAIN-001 first Kaggle GPU run: WER 0.2968 → 0.1517 (n=30)
+
+### Added
+- `data/eval/train001_eval_baseline.json` + `data/eval/train001_eval_results.json` —
+  eval results from first TRAIN-001 fine-tune run on Kaggle GPU (1 epoch,
+  `combined_manifest.jsonl`), eval on n=30 slice of `vietmed_manifest.jsonl`.
+  WER baseline (vinai/PhoWhisper-medium) 0.2968 → fine-tuned (checkpoint-1151) 0.1517.
+- Fine-tuned checkpoint downloaded to `models/asr_phowhisper/` (local only,
+  gitignored — NOT in repo).
+
+### Notes
+- Does NOT yet meet FID-VN-007 GO criteria (full-dataset eval + ref_voice_manifest
+  eval + Drug CEER <0.10) — `src/core/l1a_asr.py` MODEL_ID unchanged. CT-062 added
+  to BACKLOG for the remaining eval steps before a production-swap FID.
+- No pipeline code changes this session; tests unaffected (1001/1001 PASS).
+
 ## [v0.11.27] — 2026-06-13 — CT-057: save every /api/transcribe to data/recordings/ for review
 
 ### Added

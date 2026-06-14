@@ -353,6 +353,22 @@
     tích lũy data cho TRAIN-001.
     - Pending: bật flag `true` tại facility pilot (Andy) sau khi confirm consent — Pilot Phase
       Exception (`docs/records/DECISIONS.md` 2026-06-11).
+  - [x] **TRAIN-001 first run** ✅ (2026-06-13, Kaggle GPU, 1 epoch, `combined_manifest.jsonl`):
+    checkpoint-1151 → downloaded to `models/asr_phowhisper/` (gitignored, NOT in repo).
+    Eval (n=30 slice `vietmed_manifest.jsonl`, `data/eval/train001_eval_baseline.json` +
+    `train001_eval_results.json`): **WER baseline 0.2968 → fine-tuned 0.1517** (-49% relative).
+    ⚠️ CHƯA ĐẠT GO criteria đầy đủ (FID-VN-007 §Side effects): cần (1) full dataset eval
+    (9207 samples, không phải n=30 slice), (2) eval trên `ref_voice_manifest.jsonl` (57 clip
+    giọng BS thật — đại diện pilot thực tế, KHÔNG phải VietMed đọc), (3) đo Drug CEER
+    (<0.10 target). KHÔNG sửa `src/core/l1a_asr.py` (MODEL_ID) cho đến khi đủ 3 điều kiện
+    + FID riêng cho việc swap production model.
+  - [ ] **CT-062** 🟡 Full eval cho model fine-tune (checkpoint-1151,
+    `models/asr_phowhisper/`): (1) eval full `vietmed_manifest.jsonl` (9207 samples, không
+    `--limit`); (2) eval `ref_voice_manifest.jsonl` (57 clip BS thật — cần upload
+    `data/audio/reference_voices/` lên Kaggle theo Pilot Exception #2, PII tạm thời); (3) đo
+    Drug CEER (so với `data/eval/drug_correction_eval.json` baseline). Nếu đạt GO (WER<0.20 +
+    Drug CEER<0.10) trên cả (1)+(2)+(3) → viết FID mới cho việc swap `MODEL_ID` trong
+    `src/core/l1a_asr.py` sang local path `models/asr_phowhisper/`.
 
 ### FID-VN-017/018 IMPLEMENTED — Phonetic guidance + DVP flow reorder [2026-06-11]
 > Andy feedback session 2026-06-11 (sau FID-VN-016 test) — 4 ý lớn. CT-040/041 →
